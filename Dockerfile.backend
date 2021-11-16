@@ -1,0 +1,5 @@
+FROM openjdk:latest
+WORKDIR /app
+ARG APP_NAME
+COPY ./msc-backend/target/msc-backend.jar ./artifacts/msc-backend.jar
+CMD ["java", "-jar", "./artifacts/msc-backend.jar"]

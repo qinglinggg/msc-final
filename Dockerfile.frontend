@@ -1,0 +1,9 @@
+FROM node:16 AS build
+WORKDIR /app
+COPY ./msc-frontend/package.json .
+RUN npm install
+COPY ./msc-frontend/ .
+RUN npm run build
+
+FROM nginx:latest
+COPY --from=build ./app/build/ /usr/share/nginx/html
