@@ -1,11 +1,11 @@
 version: "3"
 services:
-  msc_backend:
+  msc-backend:
     image: jsuryadharma/msc-backend:latest
     container_name: msc-backend
     ports:
       - "8080:8080"
-  msc_frontend:
+  msc-frontend:
     image: jsuryadharma/msc-frontend:latest
     container_name: msc-frontend
     depends_on:
