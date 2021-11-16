@@ -1,0 +1,8 @@
+app:
+  datasource:
+    main:
+      driver-class-name: com.mysql.jdbc.Driver
+      jdbc-url: jdbc:mysql://localhost:3306/msc_database
+      username: user
+      password: password
+      pool-size: 30
