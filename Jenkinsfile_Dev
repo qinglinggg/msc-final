@@ -12,6 +12,7 @@ pipeline {
             
             steps {
                 git branch: 'main', url: 'https://github.com/qinglinggg/msc-final.git'
+                sh "cd msc-backend"
                 // clean the target forder, so only the newer components + artifacts will be released.
                 sh "mvn clean compile"
             }
