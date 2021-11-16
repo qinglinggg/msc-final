@@ -1,0 +1,240 @@
+:root {
+  --navbar-color: blue;
+  --pagebar-color: white;
+  --border-page: #ccc 1px solid;
+  --btn-hover: #ddd;
+  --btn-click: #ccc;
+  --btn-color: inherit;
+  --tc-navbar: white;
+  --gray-email: #8e8e8e;
+  --gray-profileimage: #c4c4c4;
+  --gray-border: #878787;
+  --font-roboto: "Roboto";
+  --font-weight: 500;
+  --item-name: black;
+  --item-desc: #878787;
+  --minWidth-size: 1200px;
+}
+
+html {
+  font-size: 10px;
+}
+
+/* Navigation bar */
+
+.navbar {
+  overflow: hidden;
+  background-color: var(--navbar-color);
+  width: 100%;
+  min-width: var(--minWidth-size);
+  /* min-width: fit-content; */
+  height: 8vh;
+  display: inline;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  /* display: inline; */
+  /* flex-wrap: wrap; */
+}
+
+#app-title {
+  width: 50%;
+  height: 100%;
+  color: white;
+  font-size: 4rem;
+  font-style: italic;
+  line-height: 8vh;
+  text-align: left;
+  vertical-align: center;
+  /* margin-left: 50px; */
+  font-style: normal;
+  text-decoration: none;
+  justify-content: left;
+  /* text-align: left; */
+}
+
+#profile-container {
+  height: 90%;
+  width: 50%;
+  right: 300px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  vertical-align: center;
+  justify-content: right;
+}
+
+.profile-preview {
+  display: flex;
+  flex-direction: column;
+  margin-right: 20px;
+}
+
+.profile-image {
+  height: 50px;
+  width: 50px;
+  background-color: var(--gray-profileimage);
+  border-radius: 20rem;
+  margin-right: 50px;
+}
+
+#pr-username {
+  color: var(--tc-navbar);
+  font-weight: 500;
+  font-size: medium;
+}
+
+#pr-email {
+  color: var(--gray-email);
+  font-weight: 500;
+  font-size: medium;
+}
+
+/* Home Page Fragment */
+
+.container {
+  width: 100%;
+  min-width: 1200px;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: black 1px solid;
+}
+
+.page-title {
+  width: 80%;
+  text-align: left;
+  font-size: 5rem;
+  font-family: var(--font-roboto);
+  margin-top: 50px;
+}
+
+.menu-bar {
+  width: 80%;
+  height: 45px;
+  margin-top: 50px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: var(--pagebar-color);
+  border: var(--border-page);
+}
+
+#page-selection {
+  width: 50%;
+  display: inline-flex;
+  flex-direction: row;
+  text-align: center;
+}
+
+.page-button {
+  font-size: medium;
+  text-align: center;
+  padding: 14px;
+  background-color: var(--btn-color);
+}
+
+.page-button:hover {
+  background-color: var(--btn-click);
+  transition: 0.3s;
+}
+
+#page-others {
+  height: 100%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 14px;
+}
+
+.list-container {
+  width: 80%;
+  display: grid;
+  grid-template-columns: repeat(4, 0.5fr);
+  grid-auto-rows: 300px;
+  align-items: center;
+  justify-items: center;
+  border-left: var(--border-page);
+  border-right: var(--border-page);
+  border-bottom: var(--border-page);
+}
+
+.item-container {
+  min-height: 220px;
+  height: 220px;
+  max-height: 300px;
+  width: 200px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  border: var(--gray-border) 1px solid;
+  border-radius: 10px;
+}
+
+.item-meta {
+  height: 100%;
+  margin-top: 15px;
+  color: var(--item-name);
+  font-family: var(--font-roboto);
+  font-size: small;
+}
+
+#item-name {
+  font-size: medium;
+  font-weight: var(--font-weight);
+}
+
+#item-desc {
+  color: var(--item-desc);
+}
+
+#addNewItem {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  /* margin-top: 10%; */
+}
+
+#addNewItem:hover {
+  background-color: var(--btn-click);
+  transition: 0.3s;
+}
+
+#btn-addItem {
+  font-size: 10rem;
+  text-align: center;
+  color: var(--item-desc);
+}
+
+#btn-addItem2 {
+  font-size: 1.5rem;
+  text-align: center;
+  color: var(--item-desc);
+}
+
+.popup {
+  position: fixed;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+#popup-addItem {
+  background-color: white;
+  position: absolute;
+  top: 20%;
+  left: 30%;
+  width: 40%;
+  padding: 20px;
+  border-radius: 5px;
+  border: 2px solid black;
+}
+
+.closePopup {
+  color: Black;
+  float: right;
+  font-size: 2rem;
+}
