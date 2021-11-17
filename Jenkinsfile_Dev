@@ -18,19 +18,19 @@ pipeline {
             
         }
         
-        stage('Maven - Test') { 
-            
-            steps {
-                sh 'mvn -f ./msc-backend test'
-            }
-            post {
-                always {
-                    // Generates the Test Results, using the Maven for the Unit Testing, and show the results by JUnit.
-                    junit '**/target/surefire-reports/TEST-*.xml'
-                }
-            }
-            
-        }
+//        stage('Maven - Test') { 
+//            
+//            steps {
+//                sh 'mvn -f ./msc-backend test'
+//            }
+//            post {
+//                always {
+//                    // Generates the Test Results, using the Maven for the Unit Testing, and show the results by JUnit.
+//                    junit '**/target/surefire-reports/TEST-*.xml'
+//                }
+//            }
+//            
+//        }
         
         stage('Maven - Package') {
             steps {
