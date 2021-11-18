@@ -25,7 +25,7 @@ pipeline {
             post {
                 success {
                     // So that, Jenkins (CICD Platform) can recognize that there is a new artifacts to be archived.
-                    archiveArtifacts './msc-backend/target/*.jar'
+                    archiveArtifacts 'msc-backend/target/*.jar'
                 }
             }
         }
