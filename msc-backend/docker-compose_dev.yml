@@ -2,28 +2,31 @@ version: '3.3'
 
 services:
   mysqldatabase:
-      image: mysql:5.7
-      restart: always
-      environment:
-        MYSQL_DATABASE: 'msc_database'
-        MYSQL_USER: 'user'
-        MYSQL_PASSWORD: 'password'
-        MYSQL_ROOT_PASSWORD: 'password'
-      ports:
-        - '3306:3306'
-      expose:
-        - '3306'
-      networks:
-        - msc_network
-      volumes:
-        - msc_database:/var/msc/mysql
-
-  msc-backend:
-    image: msc-backend
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'msc_database'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    container_name: mysqldatabase
     networks:
-      - msc_network
-    depends_on:
-      - mysqldatabase
-
+      - msc-network
+  jenkins-service:
+    image: jenkins/jenkins:lts
+    ports:
+      - '8070:8080'
+    expose:
+      - '8070'
+    container_name: jenkins-service
+    volumes:
+      - C:/Users/jsury/OneDrive/Desktop/jenkins_home:/var/jenkins_home
+    networks:
+      - msc-network
 networks:
-  msc_network:
+  msc-network:
+    driver: bridge

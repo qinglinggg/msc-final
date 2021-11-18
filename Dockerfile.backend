@@ -1,4 +1,4 @@
-FROM openjdk:latest
+FROM openjdk:11
 WORKDIR /app
 ARG APP_NAME
 COPY ./msc-backend/target/msc-backend.jar ./artifacts/msc-backend.jar

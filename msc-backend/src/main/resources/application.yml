@@ -2,7 +2,7 @@ app:
   datasource:
     main:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      jdbc-url: jdbc:mysql://mysqldatabase/msc_database
+      jdbc-url: jdbc:mysql://mysqldatabase:3306/msc_database
       username: user
       password: password
       pool-size: 30

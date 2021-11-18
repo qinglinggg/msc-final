@@ -13,18 +13,20 @@ services:
     expose:
       - '3306'
     networks:
-      - msc_network
+      - msc-network
     volumes:
-      - msc_database:/var/msc/mysql
+      - C:/msc_database:/var/msc/mysql
   msc-backend:
     image: jsuryadharma/msc-backend:latest
-    container_name: msc-backend
-    ports:
-      - "8080:8080"
-    networks:
-      - msc_network
     depends_on:
       - mysqldatabase
+    ports:
+      - '8080:8080'
+    expose:
+      - '8080'
+    container_name: msc-backend
+    networks:
+      - msc-network
   msc-frontend:
     image: jsuryadharma/msc-frontend:latest
     container_name: msc-frontend
@@ -33,6 +35,4 @@ services:
     ports:
       - "3000:80"
     networks:
-      - msc_network
-networks:
-  msc_network:
+      - msc-network
