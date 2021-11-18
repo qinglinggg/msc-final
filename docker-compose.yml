@@ -1,21 +1,5 @@
 version: "3.3"
 services:
-  mysqldatabase:
-    image: mysql:5.7
-    restart: always
-    environment:
-      MYSQL_DATABASE: 'msc_database'
-      MYSQL_USER: 'user'
-      MYSQL_PASSWORD: 'password'
-      MYSQL_ROOT_PASSWORD: 'password'
-    ports:
-      - '3306:3306'
-    expose:
-      - '3306'
-    networks:
-      - msc-network
-    volumes:
-      - C:/msc_database:/var/msc/mysql
   msc-backend:
     image: jsuryadharma/msc-backend:latest
     depends_on:

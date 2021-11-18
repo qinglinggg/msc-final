@@ -17,7 +17,7 @@ services:
     networks:
       - msc-network
   jenkins-service:
-    image: jenkins/jenkins:lts
+    image: jenkins-docker
     ports:
       - '8070:8080'
     expose:
@@ -25,6 +25,7 @@ services:
     container_name: jenkins-service
     volumes:
       - C:/Users/jsury/OneDrive/Desktop/jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - msc-network
 networks:
