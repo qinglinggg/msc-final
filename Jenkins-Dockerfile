@@ -1,7 +1,6 @@
 FROM jenkins/jenkins:lts
 USER root
-RUN curl -sSL https://get.docker.com | sh
+# RUN curl -sSL https://get.docker.com | sh
 RUN apt-get update && apt-get -y install sudo
-CMD sudo chmod 666 /var/run/docker.sock
 RUN apt-get update && apt-get -y install docker-compose
 USER jenkins

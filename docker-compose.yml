@@ -1,6 +1,9 @@
 version: "3.3"
 services:
   msc-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
     image: jsuryadharma/msc-backend:latest
     depends_on:
       - mysqldatabase
@@ -12,6 +15,9 @@ services:
     networks:
       - msc-network
   msc-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
     image: jsuryadharma/msc-frontend:latest
     container_name: msc-frontend
     depends_on:

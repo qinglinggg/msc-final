@@ -17,6 +17,9 @@ services:
     networks:
       - msc-network
   jenkins-service:
+    build:
+      context: .
+      dockerfile: Jenkins-Dockerfile
     image: jenkins-docker
     ports:
       - '8070:8080'
