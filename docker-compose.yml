@@ -27,4 +27,3 @@ services:
 networks:
   msc-network:
     external: true
-    name: msc-network
