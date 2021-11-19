@@ -136,7 +136,9 @@ pipeline {
                     def mailRecipients = "jsuryadharma9@gmail.com, lim.lynnelle@gmail.com"
                     def jobName = currentBuild.fullDisplayName
 
-                    emailext body: '${JELLY_SCRIPT, template="html"}',
+                    emailext body: '''${JELLY_SCRIPT, template="html"}
+                    <br/>
+                    Build Status: $BUILD_STATUS''',
                         subject: "[Jenkins] ${jobName}",
                         to: "${mailRecipients}",
                         recipientProviders: [[$class: 'CulpritsRecipientProvider']]
