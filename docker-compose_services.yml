@@ -33,4 +33,4 @@ services:
       - msc-network
 networks:
   msc-network:
-    driver: bridge
+    external: true

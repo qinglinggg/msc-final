@@ -11,7 +11,7 @@ services:
       - '8080'
     container_name: msc-backend
     networks:
-      - msc-network
+      - default
   msc-frontend:
     build:
       context: .
@@ -23,7 +23,8 @@ services:
     ports:
       - "3000:80"
     networks:
-      - msc-network
+      - default
 networks:
-  msc-network:
-    external: true
+  default:
+    external:
+      name: msc-network
