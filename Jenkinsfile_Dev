@@ -15,7 +15,22 @@ pipeline {
                 // clean the target forder, so only the newer components + artifacts will be released.
                 sh "mvn -f ./msc-backend clean compile"
             }
-            
+            post {
+                always{
+                    script{
+                        def mailRecipients = "jsuryadharma9@gmail.com, lim.lynnelle@gmail.com"
+                        def jobName = currentBuild.fullDisplayName
+
+                        emailext body: '''${JELLY_SCRIPT, template="html"}
+                        <br/>
+                        Build Status: $BUILD_STATUS''',
+                            subject: "[Jenkins] ${jobName}",
+                            to: "${mailRecipients}",
+                            recipientProviders: [[$class: 'CulpritsRecipientProvider']]
+                    }
+                }
+            }
+
         }
         
         stage('Maven - Package') {
@@ -126,25 +141,7 @@ pipeline {
                 echo "current build number: ${currentBuild.number}"
                 echo "previous build number: ${currentBuild.previousBuild.getNumber()}"
             }
-
-        }
-
-        stage('Notifications - Send Email') {
-
-            steps{
-                script{
-                    def mailRecipients = "jsuryadharma9@gmail.com, lim.lynnelle@gmail.com"
-                    def jobName = currentBuild.fullDisplayName
-
-                    emailext body: '''${JELLY_SCRIPT, template="html"}
-                    <br/>
-                    Build Status: $BUILD_STATUS''',
-                        subject: "[Jenkins] ${jobName}",
-                        to: "${mailRecipients}",
-                        recipientProviders: [[$class: 'CulpritsRecipientProvider']]
-                }
-            }
-
+            
         }
 
     }
