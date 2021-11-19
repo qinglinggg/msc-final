@@ -14,6 +14,7 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/qinglinggg/msc-final.git'
                 // clean the target forder, so only the newer components + artifacts will be released.
                 sh "mvn -f ./msc-backend clean compile"
+                emailext body: 'A Test Email', recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'RequesterRecipientProvider']], subject: 'Test'
             }
             
         }
@@ -126,7 +127,7 @@ pipeline {
                 echo "current build number: ${currentBuild.number}"
                 echo "previous build number: ${currentBuild.previousBuild.getNumber()}"
             }
-            
+
         }
         
     }
