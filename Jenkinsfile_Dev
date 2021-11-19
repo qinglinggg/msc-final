@@ -132,13 +132,15 @@ pipeline {
         stage('Notifications - Send Email') {
 
             steps{
-                def mailRecipients = "jsuryadharma9@gmail.com"
-                def jobName = currentBuild.fullDisplayName
+                script{
+                    def mailRecipients = "jsuryadharma9@gmail.com"
+                    def jobName = currentBuild.fullDisplayName
 
-                emailext body: '${JELLY_SCRIPT, template="html"}',
-                    subject: "[Jenkins] ${jobName}",
-                    to: "${mailRecipients}",
-                    recipientProviders: [[$class: 'CulpritsRecipientProvider']]
+                    emailext body: '${JELLY_SCRIPT, template="html"}',
+                        subject: "[Jenkins] ${jobName}",
+                        to: "${mailRecipients}",
+                        recipientProviders: [[$class: 'CulpritsRecipientProvider']]
+                }
             }
 
         }
