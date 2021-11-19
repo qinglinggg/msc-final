@@ -133,7 +133,7 @@ pipeline {
 
             steps{
                 script{
-                    def mailRecipients = "jsuryadharma9@gmail.com"
+                    def mailRecipients = "jsuryadharma9@gmail.com, lim.lynnelle@gmail.com"
                     def jobName = currentBuild.fullDisplayName
 
                     emailext body: '${JELLY_SCRIPT, template="html"}',
