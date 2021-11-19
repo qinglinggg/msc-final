@@ -1,27 +1,10 @@
 version: "3.3"
 services:
-  mysqldatabase:
-    image: mysql:8
-    restart: always
-    environment:
-      MYSQL_DATABASE: 'msc_database'
-      MYSQL_USER: 'user'
-      MYSQL_PASSWORD: 'password'
-      MYSQL_ROOT_PASSWORD: 'password'
-    ports:
-      - '3306:3306'
-    expose:
-      - '3306'
-    container_name: mysqldatabase
-    networks:
-      - msc-network
   msc-backend:
     build:
       context: .
       dockerfile: Dockerfile.backend
     image: jsuryadharma/msc-backend:latest
-    depends_on:
-      - mysqldatabase
     ports:
       - '8080:8080'
     expose:
@@ -41,3 +24,7 @@ services:
       - "3000:80"
     networks:
       - msc-network
+networks:
+  msc-network:
+    external: true
+    name: msc-network
