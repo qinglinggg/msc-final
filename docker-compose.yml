@@ -1,9 +1,6 @@
 version: "3.3"
 services:
   msc-backend:
-    build:
-      context: .
-      dockerfile: Dockerfile.backend
     image: jsuryadharma/msc-backend:latest
     ports:
       - '8080:8080'
@@ -13,9 +10,6 @@ services:
     networks:
       - default
   msc-frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
     image: jsuryadharma/msc-frontend:latest
     container_name: msc-frontend
     depends_on:

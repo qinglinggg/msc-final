@@ -19,6 +19,7 @@ pipeline {
         }
         
         stage('Maven - Package') {
+
             steps {
                 sh 'mvn -f ./msc-backend package'
             }
@@ -28,23 +29,34 @@ pipeline {
                     archiveArtifacts 'msc-backend/target/*.jar'
                 }
             }
+
         }
-      
-        stage('Docker Compose - Build & Deployment') {
+
+        stage('Docker - Image Build') {
             
             steps {
-                script{
+                sh "docker build . --file=Dockerfile.frontend -t jsuryadharma/msc_frontend:version-${currentBuild.number}"
+                sh "docker build . --file=Dockerfile.backend -t jsuryadharma/msc:version-${currentBuild.number}"
+                
+                script{      
                     try{
-                        sh "docker-compose -f docker-compose.yml up -d"
-                    } catch(error) {
-                        sh "docker-compose -f docker-compose.yml down"
-                        sh "docker-compose -f docker-compose.yml up -d"
+                        sh "docker rmi jsuryadharma/msc_frontend:latest"
+                        sh "docker rmi jsuryadharma/msc:latest"
+                        echo '+++++++++++++++++++++++++++++++++++++++++++++++++++'
+                        echo 'docker for latest version of image is available..'
+                        echo 'removed latest local version of image!'
+                        echo '+++++++++++++++++++++++++++++++++++++++++++++++++++'
+                    }catch(error){
+                        echo '+++++++++++++++++++++++++++++++++++++++++++++++++++'
+                        echo 'docker for latest version of image is unavailable..'
+                        echo 'ignoring...'
+                        echo '+++++++++++++++++++++++++++++++++++++++++++++++++++'
                     }
                 }
             }
             
         }
-        
+
         stage('Docker - Upload to Registry'){
         
             steps {              
@@ -88,13 +100,24 @@ pipeline {
                     
                     sh "docker push ${USERNAME}/msc-backend:version-${currentBuild.number}"
                     sh "docker push ${USERNAME}/msc-frontend:version-${currentBuild.number}"
-                    
-                    
-//                  sh "chmod +x changeTag.sh"
-//                  sh "./changeTag.sh version-${currentBuild.number}"
                 }
             }
         
+        }
+
+        stage('Docker Compose - Deployment') {
+            
+            steps {
+                script{
+                    try{
+                        sh "docker-compose -f docker-compose.yml up -d"
+                    } catch(error) {
+                        sh "docker-compose -f docker-compose.yml down"
+                        sh "docker-compose -f docker-compose.yml up -d"
+                    }
+                }
+            }
+            
         }
 
         stage('Summary - Check Builds') {
