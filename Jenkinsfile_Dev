@@ -29,26 +29,16 @@ pipeline {
                 }
             }
         }
-        
-        stage('Docker - Image Build') {
+      
+        stage('Docker Compose - Build & Deployment') {
             
             steps {
-                sh "docker build . --file=./Dockerfile.backend -t jsuryadharma/msc-backend:version-${currentBuild.number}"
-                sh "docker build . --file=./Dockerfile.frontend -t jsuryadharma/msc-frontend:version-${currentBuild.number}"
-                
-                script{      
+                script{
                     try{
-                        sh "docker rmi jsuryadharma/msc-backend:latest"
-                        sh "docker rmi jsuryadharma/msc-frontend:latest"
-                        echo '+++++++++++++++++++++++++++++++++++++++++++++++++++'
-                        echo 'docker for latest version of image is available..'
-                        echo 'removed latest local version of image!'
-                        echo '+++++++++++++++++++++++++++++++++++++++++++++++++++'
-                    }catch(error){
-                        echo '+++++++++++++++++++++++++++++++++++++++++++++++++++'
-                        echo 'docker for latest version of image is unavailable..'
-                        echo 'ignoring...'
-                        echo '+++++++++++++++++++++++++++++++++++++++++++++++++++'
+                        sh "docker-compose -f docker-compose.yml up -d"
+                    } catch(error) {
+                        sh "docker-compose -f docker-compose.yml down"
+                        sh "docker-compose -f docker-compose.yml up -d"
                     }
                 }
             }
@@ -106,22 +96,7 @@ pipeline {
             }
         
         }
-             
-        stage('Docker - Deployment') {
-            
-            steps {
-                script{
-                    try{
-                        sh "docker-compose -f docker-compose.yml up -d"
-                    } catch(error) {
-                        sh "docker-compose -f docker-compose.yml down"
-                        sh "docker-compose -f docker-compose.yml up -d"
-                    }
-                }
-            }
-            
-        }
-        
+
         stage('Summary - Check Builds') {
             
             steps {
