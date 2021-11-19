@@ -27,4 +27,4 @@ services:
 networks:
   default:
     external:
-      name: msc-network
+      name: msc-final_msc-network
