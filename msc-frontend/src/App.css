@@ -14,6 +14,7 @@
   --item-name: black;
   --item-desc: #878787;
   --minWidth-size: 1200px;
+  --minHeight-size: 50px;
 }
 
 html {
@@ -23,45 +24,54 @@ html {
 /* Navigation bar */
 
 .navbar {
-  overflow: hidden;
+  overflow: visible;
   background-color: var(--navbar-color);
   width: 100%;
   min-width: var(--minWidth-size);
+  min-height: var(--minHeight-size);
   /* min-width: fit-content; */
-  height: 8vh;
-  display: inline;
+  height: 10vh;
+  display: inline-block;
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  vertical-align: center;
+  border: black 1px solid;
   /* display: inline; */
-  /* flex-wrap: wrap; */
+  /* flex-wrap: nowrap; */
 }
 
 #app-title {
-  width: 50%;
+  width: 25%;
   height: 100%;
+  min-height: var(--minHeight-size);
   color: white;
   font-size: 4rem;
   font-style: italic;
-  line-height: 8vh;
+  line-height: 10vh;
   text-align: left;
   vertical-align: center;
   /* margin-left: 50px; */
   font-style: normal;
   text-decoration: none;
-  justify-content: left;
+  justify-content: center;
   /* text-align: left; */
+  float: left;
+  padding-left: 50px;
 }
 
 #profile-container {
-  height: 90%;
-  width: 50%;
+  height: 100%;
+  min-height: var(--minHeight-size);
+  width: 25%;
+  margin-top: 10px;
   right: 300px;
   display: flex;
   flex-direction: row;
   align-items: center;
   vertical-align: center;
   justify-content: right;
+  float: right;
 }
 
 .profile-preview {
@@ -99,7 +109,7 @@ html {
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: black 1px solid;
+  /* border: black 1px solid; */
 }
 
 .page-title {
@@ -189,7 +199,7 @@ html {
   color: var(--item-desc);
 }
 
-#addNewItem {
+.addNewItem {
   height: 100%;
   width: 100%;
   display: flex;
@@ -197,7 +207,7 @@ html {
   /* margin-top: 10%; */
 }
 
-#addNewItem:hover {
+addNewItem:hover {
   background-color: var(--btn-click);
   transition: 0.3s;
 }
@@ -205,21 +215,26 @@ html {
 #btn-addItem {
   font-size: 10rem;
   text-align: center;
+  cursor: pointer;
   color: var(--item-desc);
 }
 
 #btn-addItem2 {
   font-size: 1.5rem;
   text-align: center;
+  cursor: pointer;
   color: var(--item-desc);
 }
+
+/* form Make A New Questionnaire */
 
 .popup {
   position: fixed;
   z-index: 1;
   width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.25);
+  height: fit-content;
+  /* background-color: rgba(0, 0, 0, 0.25); */
+  /* display: ; */
 }
 
 #popup-addItem {
@@ -228,7 +243,8 @@ html {
   top: 20%;
   left: 30%;
   width: 40%;
-  padding: 20px;
+  height: fit-content;
+  padding: 30px;
   border-radius: 5px;
   border: 2px solid black;
 }
@@ -237,4 +253,131 @@ html {
   color: Black;
   float: right;
   font-size: 2rem;
+  cursor: pointer;
+}
+
+.form-components {
+  height: fit-content;
+  display: inline-block;
+}
+.form-alignright {
+  float: right;
+  margin-left: 25px;
+}
+
+/* Title */
+/* ex: Dashboard */
+
+.title-container {
+  padding-top: 10px;
+  margin-left: 10px;
+  height: fit-content;
+  display: flex;
+  flex-direction: row;
+}
+
+/* .menu-icon {
+
+} */
+
+.title {
+  padding-left: 10px;
+  font-size: 35px;
+  width: fit-content;
+}
+
+.dashboard-icon {
+  float: right;
+  width: fit-content;
+  justify-content: right;
+  padding-left: 900px;
+}
+
+.icon-image {
+  /* padding-left: 3px; */
+  padding-top: 15px;
+  border-radius: 20rem;
+  margin-right: 20px;
+  height: 25px;
+  width: 25px;
+  cursor: pointer;
+}
+
+#menu-icon {
+  padding-left: 5px;
+  height: 30px;
+  width: 30px;
+}
+
+#other-icon {
+  height: 20px;
+  width: 20px;
+}
+
+/* question items */
+
+.questions-container {
+  margin-top: 40px;
+  width: 1200px;
+  height: 450px;
+  border: var(--border-page);
+  border-radius: 1rem;
+  display: block;
+  /* width: 80%; */
+  /* display: grid;
+  grid-template-columns: repeat(4, 0.5fr);
+  grid-auto-rows: 300px; */
+  align-items: center;
+  justify-content: center;
+  /* vertical-align: center; */
+}
+
+.question {
+  min-height: 300px;
+  height: 300px;
+  /* max-height: 300px; */
+  width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 65px;
+  padding: 15px;
+  /* display: inline-block; */
+  display: block;
+  justify-content: center;
+  flex-direction: column;
+  border: var(--gray-border) 1px solid;
+  border-radius: 10px;
+}
+
+#question-title-font {
+  text-decoration: italic;
+  font-size: 1.5rem;
+
+  margin-top: 3%;
+  margin-left: 3%;
+
+  cursor: pointer;
+}
+
+#question-input {
+  border: none;
+  background: transparent;
+  border-bottom: 1px solid #fff;
+  outline: none;
+  width: 270px;
+  max-width: 270px;
+  display: inline-block;
+  height: fit-content;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-all;
+  overflow: hidden;
+  /* white-space: ; */
+}
+
+#border {
+  margin-top: 2.5%;
+  margin-left: 2.5%;
+  width: 275px;
+  border: var(--border-page);
 }

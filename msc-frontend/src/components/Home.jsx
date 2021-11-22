@@ -1,9 +1,16 @@
 import react from "react";
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import { Fragment } from "react";
 import Page1Items from "./Page1Items";
+import Dashboard from "./Dashboard";
 
 class Home extends React.Component {
+  constructor() {
+    super();
+    this.handleAddItem = this.handleAddItem.bind(this);
+  }
+
   state = {
     isPage1: true,
     isAdd: false,
@@ -17,18 +24,14 @@ class Home extends React.Component {
     this.setState({ isPage1: false });
   }
 
-  handleClickAddItem() {
-    this.setState({ isAdd: true });
+  handleAddItem() {
+    this.setState({ isAdd: !this.state.isAdd });
   }
 
-  handleCloseAddItem() {
-    this.setState({ isAdd: false });
-  }
-
-  handleClickConfirm() {
-    // item1 -> digenerate dari UUID tiap kuesioner, jadi hrusnya {itemUUID}
-    this.props.history.push("/item1/dashboard"); // ada passing data g ya
-  }
+  // handleClickConfirm() {
+  //   // item1 -> digenerate dari UUID tiap kuesioner, jadi hrusnya {itemUUID}
+  //   const navigateTo = useNavigate().push("/item1/dashboard"); // ada passing data g ya
+  // }
 
   render() {
     const isPage1 = this.state.isPage1;
@@ -88,12 +91,12 @@ class Home extends React.Component {
   }
 
   displayPage1() {
-    const isAdd = this.state.isAdd;
-    let popup;
+    // const isAdd = this.state.isAdd;
+    // let popup;
 
-    if (isAdd) {
-      popup = this.displayPopUp();
-    }
+    // if (isAdd) {
+    //   popup = this.displayPopUp();
+    // }
 
     return (
       <React.Fragment>
@@ -101,10 +104,10 @@ class Home extends React.Component {
           <Page1Items key={data.id} data={data} />
         ))}
         <div className="item-container">
-          <div onClick={() => this.handleClickAddItem()} id="addNewItem">
+          <div className="addNewItem" onClick={() => this.handleAddItem()}>
             <div id="btn-addItem">+</div>
             <div id="btn-addItem2">Add new Item</div>
-            {popup}
+            {this.state.isAdd ? this.displayPopUp() : null}
           </div>
         </div>
       </React.Fragment>
@@ -123,48 +126,57 @@ class Home extends React.Component {
     return (
       <React.Fragment>
         <div className="popup" id="popup-addItem">
-          <span
-            className="closePopup"
-            onClick={() => this.handleCloseAddItem()}
-          >
+          <span className="closePopup" onClick={() => this.handleAddItem()}>
             &times;
           </span>
-          <form>
+          <form className="form-components">
             <h1>Make A New Questionnaire</h1>
+            <br />
             <label>
               Name
-              <input type="text" name="name" />
+              <input className="form-alignright" type="text" name="name" />
             </label>
+            <br />
             <br />
             <label>
               Description
-              <input type="text" name="desc" />
+              <input className="form-alignright" type="text" name="desc" />
             </label>
+            <br />
             <br />
             <label>
               Respondent Privacy
-              <input
-                type="radio"
-                name="privacy"
-                id="anonymous"
-                value="anonymous"
-              />
-              <label for="anonymous">Anonymous</label>
-              <input
-                type="radio"
-                name="privacy"
-                id="not-anonymous"
-                value="not-anonymous"
-              />
-              <label for="not-anonymous">Not Anonymous</label>
+              <div className="form-alignright">
+                <input
+                  type="radio"
+                  name="privacy"
+                  id="anonymous"
+                  value="anonymous"
+                />
+                <label for="anonymous">Anonymous</label>
+              </div>
+              <div className="form-alignright">
+                <input
+                  type="radio"
+                  name="privacy"
+                  id="not-anonymous"
+                  value="not-anonymous"
+                />
+                <label for="not-anonymous">Not Anonymous</label>
+                <br />
+              </div>
               <br />
             </label>
             <br />
-            <input
+            <br />
+            {/* <input
               type="submit"
               value="Confirm"
-              onClick={() => this.handleClickConfirm()}
-            />
+              onClick={() => this.handleClickConfirm.bind(this)}
+            /> */}
+            <Link to="/item1/dashboard">
+              <button>Confirm</button>
+            </Link>
           </form>
         </div>
       </React.Fragment>
