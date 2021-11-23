@@ -7,6 +7,7 @@ import iconMenubarWhite from "./images/menubarWhite.png";
 import iconVisibility from "./images/visibility.png";
 import iconSettings from "./images/settings.png";
 // import { TextInput } from "react-native-paper";
+// import { Dropdown } from "react-bootstrap";
 
 class Dashboard extends React.Component {
   constructor() {
@@ -98,13 +99,47 @@ class Dashboard extends React.Component {
             type="textarea"
             name="inputted-question"
             placeholder="Please type your question..."
-            // multiline={true}
+            multiline={true}
             rows="14"
             cols="10"
             wrap="soft"
           />
         </div>
         <div id="border"></div>
+        {/* <div class="dropdown">
+          <button
+            class="btn btn-secondary dropdown-toggle"
+            type="button"
+            id="dropdownMenuButton"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            Dropdown button
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="#">
+              Action
+            </a>
+            <a class="dropdown-item" href="#">
+              Another action
+            </a>
+            <a class="dropdown-item" href="#">
+              Something else here
+            </a>
+          </div>
+        </div> */}
+        {/* <Dropdown>
+          <Dropdown.Toggle variant="success" id="dropdown-basic">
+            Dropdown Button
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu>
+            <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
+            <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
+            <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown> */}
       </React.Fragment>
     );
   }

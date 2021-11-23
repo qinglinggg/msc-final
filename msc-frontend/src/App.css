@@ -86,6 +86,7 @@ html {
   background-color: var(--gray-profileimage);
   border-radius: 20rem;
   margin-right: 50px;
+  object-fit: cover;
 }
 
 #pr-username {
@@ -180,6 +181,11 @@ html {
   flex-direction: column;
   border: var(--gray-border) 1px solid;
   border-radius: 10px;
+}
+
+#item-image {
+  width: 175px;
+  height: 200px;
 }
 
 .item-meta {
@@ -367,12 +373,21 @@ addNewItem:hover {
   width: 270px;
   max-width: 270px;
   display: inline-block;
-  height: fit-content;
+  /* height: fit-content; */
+  resize: none;
+  height: 100px;
+  /* max-height: 300px; */
   overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-all;
-  overflow: hidden;
+  overflow: scroll;
+  scrollbar-width: none;
+  border: var(--border-page);
   /* white-space: ; */
+}
+
+#question-input::-webkit-scrollbar {
+  display: none;
 }
 
 #border {

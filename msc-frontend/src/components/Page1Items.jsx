@@ -1,10 +1,11 @@
 import React, { Component } from "react";
+import dummyItemImage from "./images/form.png";
 
 class Page1Items extends React.Component {
   render() {
     return (
       <div className="item-container">
-        <img src="ricky.jpg" />
+        <img id="item-image" src={dummyItemImage} />
         <div className="item-meta">
           <div id="item-name">Item-name</div>
           <div id="item-desc">

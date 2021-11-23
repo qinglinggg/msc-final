@@ -5,6 +5,8 @@ import Home from "./components/Home";
 import Dashboard from "./components/Dashboard";
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+// import "bootstrap/dist/css/bootstrap.css";
+// import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
 class App extends React.Component {
   state = {

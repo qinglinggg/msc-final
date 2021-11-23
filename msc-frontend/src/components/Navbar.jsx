@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import dummyProfile from "./images/woman.jpg";
 
 class Navbar extends React.Component {
   render() {
@@ -14,7 +15,7 @@ class Navbar extends React.Component {
               <span id="pr-username">Username</span>
               <span id="pr-email">Email</span>
             </div>
-            <img className="profile-image" src="./ricky.jpg" />
+            <img className="profile-image" src={dummyProfile} />
           </div>
         </div>
       </nav>
