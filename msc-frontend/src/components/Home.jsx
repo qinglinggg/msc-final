@@ -26,12 +26,8 @@ class Home extends React.Component {
 
   handleAddItem() {
     this.setState({ isAdd: !this.state.isAdd });
+    // console.log(this.state.isAdd);
   }
-
-  // handleClickConfirm() {
-  //   // item1 -> digenerate dari UUID tiap kuesioner, jadi hrusnya {itemUUID}
-  //   const navigateTo = useNavigate().push("/item1/dashboard"); // ada passing data g ya
-  // }
 
   render() {
     const isPage1 = this.state.isPage1;
@@ -107,8 +103,8 @@ class Home extends React.Component {
           <div className="addNewItem" onClick={() => this.handleAddItem()}>
             <div id="btn-addItem">+</div>
             <div id="btn-addItem2">Add new Item</div>
-            {this.state.isAdd ? this.displayPopUp() : null}
           </div>
+          {this.state.isAdd ? this.displayPopUp() : null}
         </div>
       </React.Fragment>
     );
