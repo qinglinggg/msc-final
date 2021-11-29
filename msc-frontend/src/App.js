@@ -5,42 +5,30 @@ import Home from "./components/Home";
 import Dashboard from "./components/Dashboard";
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import axios from 'axios';
 // import "bootstrap/dist/css/bootstrap.css";
 // import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
 class App extends React.Component {
   state = {
-    page1_data: [
-      {
-        id: 1,
-        title: "Sample Data",
-        desc: "Sample Desc",
-        imagePreview: "",
-        lastEdited: "",
-      },
-      {
-        id: 2,
-        title: "Sample Data",
-        desc: "Sample Desc",
-        imagePreview: "",
-        lastEdited: "",
-      },
-      {
-        id: 3,
-        title: "Sample Data",
-        desc: "Sample Desc",
-        imagePreview: "",
-        lastEdited: "",
-      },
-      {
-        id: 4,
-        title: "Sample Data",
-        desc: "Sample Desc",
-        imagePreview: "",
-        lastEdited: "",
-      },
-    ],
+    userProfiles: [],
+    forms: [],
   };
+
+  componentDidMount() {
+    axios.get(`http://localhost:8080/api/v1/user-profiles`)
+    .then(res => {
+      const userProfiles = res.data;
+      this.setState({ userProfiles });
+      console.log(this.state);
+    })
+    axios.get(`http://localhost:8080/api/v1/forms`)
+    .then(res => {
+      const forms = res.data;
+      this.setState({ forms });
+      console.log(this.state);
+    })
+  }
 
   render() {
     return (
@@ -52,11 +40,11 @@ class App extends React.Component {
       // </div>
 
       <Router>
-        <Navbar />
+        <Navbar user_data={this.state.userProfiles}/>
         <Routes>
           <Route
             path="/"
-            element={<Home page1_data={this.state.page1_data} />}
+            element={<Home page1_data={this.state.forms} />}
           />
           <Route
             path="/item1/dashboard"

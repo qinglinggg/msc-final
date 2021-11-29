@@ -100,7 +100,7 @@ class Home extends React.Component {
     return (
       <React.Fragment>
         {this.props.page1_data.map((data) => (
-          <Page1Items key={data.id} data={data} />
+          <Page1Items key={data.formId} data={data} />
         ))}
         <div className="item-container">
           <div className="addNewItem" onClick={() => this.handleAddItem()}>

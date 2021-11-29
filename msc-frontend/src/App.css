@@ -159,7 +159,7 @@ html {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(4, 0.5fr);
-  grid-auto-rows: 300px;
+  grid-auto-rows: 350px;
   align-items: center;
   justify-items: center;
   border-left: var(--border-page);
@@ -170,7 +170,7 @@ html {
 
 .item-container {
   min-height: 220px;
-  height: 220px;
+  height: 250px;
   max-height: 300px;
   width: 200px;
   padding: 15px;
@@ -178,6 +178,7 @@ html {
   flex-direction: column;
   border: var(--gray-border) 1px solid;
   border-radius: 10px;
+  overflow: hidden;
 }
 
 #item-image {
@@ -194,12 +195,21 @@ html {
 }
 
 #item-name {
+  height: 40px;
+  overflow: hidden;
   font-size: medium;
   font-weight: var(--font-weight);
 }
 
 #item-desc {
   color: var(--item-desc);
+  height: 30px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+#item-desc::-webkit-scrollbar {
+  display: none;
 }
 
 .addNewItem {
@@ -209,19 +219,22 @@ html {
   flex-direction: column;
 }
 
-addNewItem:hover {
+.addNewItem:hover {
   background-color: var(--btn-click);
   transition: 0.3s;
 }
 
 #btn-addItem {
+  height: 60%;
   font-size: 10rem;
   text-align: center;
+  line-height: 180px;
   cursor: pointer;
   color: var(--item-desc);
 }
 
 #btn-addItem2 {
+  height: 40%;
   font-size: 1.5rem;
   text-align: center;
   cursor: pointer;
