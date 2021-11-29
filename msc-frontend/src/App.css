@@ -329,13 +329,8 @@ addNewItem:hover {
   border: var(--border-page);
   border-radius: 1rem;
   display: inline;
-  /* width: 80%; */
-  /* display: grid;
-  grid-template-columns: repeat(4, 0.5fr);
-  grid-auto-rows: 300px; */
   align-items: center;
   justify-content: center;
-  /* vertical-align: center; */
 }
 
 .question {
@@ -356,7 +351,7 @@ addNewItem:hover {
 }
 
 #question-title-font {
-  text-decoration: italic;
+  /* text-decoration: italic; */
   font-size: 1.5rem;
   width: 100%;
   margin-top: 3%;
@@ -393,6 +388,15 @@ addNewItem:hover {
 
 #question-selection {
   width: 100px;
+}
+
+#answer-selection .inputText {
+  margin-left: 5px;
+  border: var(--gray-border) 1px solid;
+  text-decoration: italic;
+  border: none;
+  /* border-radius: 10px; */
+  width: 260px;
 }
 
 #border {

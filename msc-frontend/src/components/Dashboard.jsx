@@ -23,6 +23,7 @@ class Dashboard extends React.Component {
     openSettings: false,
     isAdd: false,
     typeQuestion: false,
+    isAnswerFilled: true,
   };
 
   questionOptions = [
@@ -47,6 +48,18 @@ class Dashboard extends React.Component {
 
   handleAddItem() {
     this.setState({ isAdd: !this.state.isAdd });
+  }
+
+  validateInput() {
+    // if (document.form.question.value == "") return null;
+  }
+
+  handleUserInput(event) {
+    this.setState({ value: event.target.value });
+  }
+
+  handleTextField() {
+    this.setState({ isAnswerFilled: !this.state.isAnswerFilled });
   }
 
   render() {
@@ -100,6 +113,9 @@ class Dashboard extends React.Component {
   }
 
   displayNewQuestion() {
+    let answerFilled = this.state.isAnswerFilled;
+    if (answerFilled) {
+    }
     return (
       <React.Fragment>
         <div id="question-title-font">
@@ -122,40 +138,27 @@ class Dashboard extends React.Component {
           </div>
         </div>
         <div id="border"></div>
-        {/* <div class="dropdown">
-          <button
-            class="btn btn-secondary dropdown-toggle"
-            type="button"
-            id="dropdownMenuButton"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-          >
-            Dropdown button
-          </button>
-          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="#">
-              Action
-            </a>
-            <a class="dropdown-item" href="#">
-              Another action
-            </a>
-            <a class="dropdown-item" href="#">
-              Something else here
-            </a>
-          </div>
-        </div> */}
-        {/* <Dropdown>
-          <Dropdown.Toggle variant="success" id="dropdown-basic">
-            Dropdown Button
-          </Dropdown.Toggle>
+        <br />
+        <div id="answer-selection">
+          {/* nilai true untuk pertama kali */}
+          {this.state.isAnswerFilled ? this.displayNewOption() : null}
+        </div>
+      </React.Fragment>
+    );
+  }
 
-          <Dropdown.Menu>
-            <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-            <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-            <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown> */}
+  displayNewOption() {
+    return (
+      <React.Fragment>
+        <input type="radio" value="{option1}" checked={false} />
+        {/* ambil value buat nanti ditampilin di question */}
+        <input
+          class="inputText"
+          type="text"
+          placeholder="Please type answer choices..."
+          wrap="soft"
+          onChange={() => this.handleUserInput()}
+        />
       </React.Fragment>
     );
   }
