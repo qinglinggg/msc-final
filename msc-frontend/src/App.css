@@ -1,5 +1,5 @@
 :root {
-  --navbar-color: blue;
+  --navbar-color: #1dccd1;
   --pagebar-color: white;
   --border-page: #ccc 1px solid;
   --btn-hover: #ddd;
@@ -34,7 +34,7 @@ html {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  border: black 1px solid;
+  border-radius: 0px 0px 25px 25px;
 }
 
 #app-title {
@@ -97,6 +97,7 @@ html {
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
   /* border: black 1px solid; */
 }
 
@@ -108,15 +109,23 @@ html {
   margin-top: 50px;
 }
 
-.menu-bar {
+#page-content {
   width: 80%;
-  height: 45px;
+  height: 100%;
   margin-top: 50px;
+  box-shadow: 4px 5px 1px rgba(128, 128, 128, 0.233);
+  border-radius: 25px;
+}
+
+.menu-bar {
+  width: 100%;
+  height: 45px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   background-color: var(--pagebar-color);
   border: var(--border-page);
+  border-radius: 25px 25px 0px 0px;
 }
 
 #page-selection {
@@ -147,7 +156,7 @@ html {
 }
 
 .list-container {
-  width: 80%;
+  width: 100%;
   display: grid;
   grid-template-columns: repeat(4, 0.5fr);
   grid-auto-rows: 300px;
@@ -156,6 +165,7 @@ html {
   border-left: var(--border-page);
   border-right: var(--border-page);
   border-bottom: var(--border-page);
+  border-radius: 0px 0px 25px 25px;
 }
 
 .item-container {
@@ -219,6 +229,14 @@ addNewItem:hover {
 }
 
 /* form Make A New Questionnaire */
+
+.popup-background {
+  position: absolute;
+  z-index: 10;
+  width: 100vw;
+  height: 100vh;
+  background-color: #87878775;
+}
 
 .popup {
   position: fixed;

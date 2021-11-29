@@ -43,44 +43,47 @@ class Home extends React.Component {
       <React.Fragment>
         <div className="container">
           <div className="page-title">Home</div>
-          <div className="menu-bar">
-            <div id="page-selection">
-              <div
-                onClick={() => this.handleClickPage1()}
-                className="page-button clicked"
-                id="btn-page1"
-              >
-                Your Recent Questionnaire
+          <div id="page-content">
+            <div className="menu-bar">
+              <div id="page-selection">
+                <div
+                  onClick={() => this.handleClickPage1()}
+                  className="page-button clicked"
+                  id="btn-page1"
+                >
+                  Your Recent Questionnaire
+                </div>
+                <div
+                  onClick={() => this.handleClickPage2()}
+                  className="page-button"
+                  id="btn-page2"
+                >
+                  Waiting to be Filled
+                </div>
               </div>
-              <div
-                onClick={() => this.handleClickPage2()}
-                className="page-button"
-                id="btn-page2"
-              >
-                Waiting to be Filled
+              <div id="page-others">
+                <div id="search-box">
+                  <form className="form-inline">
+                    <input
+                      className="form-control mr-sm-2"
+                      type="search"
+                      placeholder="Search"
+                      aria-label="Search"
+                    />
+                    <button
+                      className="btn btn-outline-success my-2 my-sm-0"
+                      type="submit"
+                    >
+                      Search
+                    </button>
+                  </form>
+                </div>
+                <img src="" alt="" id="history-btn" />
               </div>
             </div>
-            <div id="page-others">
-              <div id="search-box">
-                <form className="form-inline">
-                  <input
-                    className="form-control mr-sm-2"
-                    type="search"
-                    placeholder="Search"
-                    aria-label="Search"
-                  />
-                  <button
-                    className="btn btn-outline-success my-2 my-sm-0"
-                    type="submit"
-                  >
-                    Search
-                  </button>
-                </form>
-              </div>
-              <img src="" alt="" id="history-btn" />
-            </div>
+            <div className="list-container">{page}</div>
           </div>
-          <div className="list-container">{page}</div>
+            {this.state.isAdd ? this.displayPopUp() : null}
         </div>
       </React.Fragment>
     );
@@ -104,7 +107,6 @@ class Home extends React.Component {
             <div id="btn-addItem">+</div>
             <div id="btn-addItem2">Add new Item</div>
           </div>
-          {this.state.isAdd ? this.displayPopUp() : null}
         </div>
       </React.Fragment>
     );
@@ -121,59 +123,61 @@ class Home extends React.Component {
   displayPopUp() {
     return (
       <React.Fragment>
-        <div className="popup" id="popup-addItem">
-          <span className="closePopup" onClick={() => this.handleAddItem()}>
-            &times;
-          </span>
-          <form className="form-components">
-            <h1>Make A New Questionnaire</h1>
-            <br />
-            <label>
-              Name
-              <input className="form-alignright" type="text" name="name" />
-            </label>
-            <br />
-            <br />
-            <label>
-              Description
-              <input className="form-alignright" type="text" name="desc" />
-            </label>
-            <br />
-            <br />
-            <label>
-              Respondent Privacy
-              <div className="form-alignright">
-                <input
-                  type="radio"
-                  name="privacy"
-                  id="anonymous"
-                  value="anonymous"
-                />
-                <label for="anonymous">Anonymous</label>
-              </div>
-              <div className="form-alignright">
-                <input
-                  type="radio"
-                  name="privacy"
-                  id="not-anonymous"
-                  value="not-anonymous"
-                />
-                <label for="not-anonymous">Not Anonymous</label>
-                <br />
-              </div>
+        <div className="popup-background">
+          <div className="popup" id="popup-addItem">
+            <span className="closePopup" onClick={() => this.handleAddItem()}>
+              &times;
+            </span>
+            <form className="form-components">
+              <h1>Make A New Questionnaire</h1>
               <br />
-            </label>
-            <br />
-            <br />
-            {/* <input
-              type="submit"
-              value="Confirm"
-              onClick={() => this.handleClickConfirm.bind(this)}
-            /> */}
-            <Link to="/item1/dashboard">
-              <button>Confirm</button>
-            </Link>
-          </form>
+              <label>
+                Name
+                <input className="form-alignright" type="text" name="name" />
+              </label>
+              <br />
+              <br />
+              <label>
+                Description
+                <input className="form-alignright" type="text" name="desc" />
+              </label>
+              <br />
+              <br />
+              <label>
+                Respondent Privacy
+                <div className="form-alignright">
+                  <input
+                    type="radio"
+                    name="privacy"
+                    id="anonymous"
+                    value="anonymous"
+                  />
+                  <label for="anonymous">Anonymous</label>
+                </div>
+                <div className="form-alignright">
+                  <input
+                    type="radio"
+                    name="privacy"
+                    id="not-anonymous"
+                    value="not-anonymous"
+                  />
+                  <label for="not-anonymous">Not Anonymous</label>
+                  <br />
+                </div>
+                <br />
+              </label>
+              <br />
+              <br />
+              {/* <input
+                type="submit"
+                value="Confirm"
+                onClick={() => this.handleClickConfirm.bind(this)}
+              /> */}
+              <Link to="/item1/dashboard">
+                <button>Confirm</button>
+              </Link>
+            </form>
+          </div>
         </div>
       </React.Fragment>
     );
