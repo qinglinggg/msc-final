@@ -6,7 +6,6 @@ class Navbar extends React.Component {
   render() {
     return (
       <nav className="navbar">
-        <div>
           <Link to="/" id="app-title">
             MySurveyCompanion
           </Link>
@@ -17,7 +16,6 @@ class Navbar extends React.Component {
             </div>
             <img className="profile-image" src={dummyProfile} />
           </div>
-        </div>
       </nav>
     );
   }

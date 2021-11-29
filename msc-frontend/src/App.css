@@ -29,20 +29,16 @@ html {
   width: 100%;
   min-width: var(--minWidth-size);
   min-height: var(--minHeight-size);
-  /* min-width: fit-content; */
   height: 10vh;
-  display: inline-block;
+  display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  vertical-align: center;
   border: black 1px solid;
-  /* display: inline; */
-  /* flex-wrap: nowrap; */
 }
 
 #app-title {
-  width: 25%;
+  width: 60%;
   height: 100%;
   min-height: var(--minHeight-size);
   color: white;
@@ -50,28 +46,19 @@ html {
   font-style: italic;
   line-height: 10vh;
   text-align: left;
-  vertical-align: center;
-  /* margin-left: 50px; */
   font-style: normal;
   text-decoration: none;
-  justify-content: center;
-  /* text-align: left; */
-  float: left;
+  justify-content: space-between;
   padding-left: 50px;
 }
 
 #profile-container {
   height: 100%;
-  min-height: var(--minHeight-size);
   width: 25%;
-  margin-top: 10px;
-  right: 300px;
   display: flex;
   flex-direction: row;
   align-items: center;
-  vertical-align: center;
   justify-content: right;
-  float: right;
 }
 
 .profile-preview {
@@ -210,7 +197,6 @@ html {
   width: 100%;
   display: flex;
   flex-direction: column;
-  /* margin-top: 10%; */
 }
 
 addNewItem:hover {
@@ -239,8 +225,6 @@ addNewItem:hover {
   z-index: 1;
   width: 100%;
   height: fit-content;
-  /* background-color: rgba(0, 0, 0, 0.25); */
-  /* display: ; */
 }
 
 #popup-addItem {
@@ -300,7 +284,6 @@ addNewItem:hover {
 }
 
 .icon-image {
-  /* padding-left: 3px; */
   padding-top: 15px;
   border-radius: 20rem;
   margin-right: 20px;
@@ -336,14 +319,11 @@ addNewItem:hover {
 .question {
   min-height: 300px;
   height: 300px;
-  /* max-height: 300px; */
   width: 500px;
   margin-left: auto;
   margin-right: auto;
   margin-top: 65px;
   padding: 15px;
-  /* display: flex; */
-  /* display: block; */
   justify-content: center;
   flex-direction: column;
   border: var(--gray-border) 1px solid;
@@ -351,14 +331,12 @@ addNewItem:hover {
 }
 
 #question-title-font {
-  /* text-decoration: italic; */
   font-size: 1.5rem;
   width: 100%;
   margin-top: 3%;
   margin-left: 3%;
   margin-right: 0%;
   cursor: pointer;
-  /* display: inline-block; */
 }
 
 #question-input {
@@ -369,17 +347,14 @@ addNewItem:hover {
   width: 270px;
   max-width: 270px;
   display: inline;
-  /* height: fit-content; */
   resize: none;
   height: 100px;
-  /* max-height: 300px; */
   overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-all;
   overflow: scroll;
   scrollbar-width: none;
   border: var(--border-page);
-  /* white-space: ; */
 }
 
 #question-input::-webkit-scrollbar {
@@ -395,7 +370,6 @@ addNewItem:hover {
   border: var(--gray-border) 1px solid;
   text-decoration: italic;
   border: none;
-  /* border-radius: 10px; */
   width: 260px;
 }
 
