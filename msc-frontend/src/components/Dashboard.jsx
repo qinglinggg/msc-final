@@ -8,6 +8,7 @@ import iconVisibility from "./images/visibility.png";
 import iconSettings from "./images/settings.png";
 // import { TextInput } from "react-native-paper";
 // import { Dropdown } from "react-bootstrap";
+import Select from "react-select";
 
 class Dashboard extends React.Component {
   constructor() {
@@ -23,6 +24,14 @@ class Dashboard extends React.Component {
     isAdd: false,
     typeQuestion: false,
   };
+
+  questionOptions = [
+    { value: "DEFAULT", label: "Question type" },
+    { value: "Short answer", label: "Short answer" },
+    { value: "Multiple choice", label: "Multiple choice" },
+    { value: "Checkbox", label: "Checkbox" },
+    { value: "Linear scale", label: "Linear scale" },
+  ];
 
   handleMenu() {
     this.setState({ openMenu: !this.state.openMenu });
@@ -104,6 +113,13 @@ class Dashboard extends React.Component {
             cols="10"
             wrap="soft"
           />
+          <div id="question-selection">
+            <Select
+              value={this.questionOptions.value}
+              options={this.questionOptions}
+              defaultValue={this.questionOptions[0]}
+            />
+          </div>
         </div>
         <div id="border"></div>
         {/* <div class="dropdown">

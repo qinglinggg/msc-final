@@ -328,7 +328,7 @@ addNewItem:hover {
   height: 450px;
   border: var(--border-page);
   border-radius: 1rem;
-  display: block;
+  display: inline;
   /* width: 80%; */
   /* display: grid;
   grid-template-columns: repeat(4, 0.5fr);
@@ -347,8 +347,8 @@ addNewItem:hover {
   margin-right: auto;
   margin-top: 65px;
   padding: 15px;
-  /* display: inline-block; */
-  display: block;
+  /* display: flex; */
+  /* display: block; */
   justify-content: center;
   flex-direction: column;
   border: var(--gray-border) 1px solid;
@@ -358,11 +358,12 @@ addNewItem:hover {
 #question-title-font {
   text-decoration: italic;
   font-size: 1.5rem;
-
+  width: 100%;
   margin-top: 3%;
   margin-left: 3%;
-
+  margin-right: 0%;
   cursor: pointer;
+  /* display: inline-block; */
 }
 
 #question-input {
@@ -372,7 +373,7 @@ addNewItem:hover {
   outline: none;
   width: 270px;
   max-width: 270px;
-  display: inline-block;
+  display: inline;
   /* height: fit-content; */
   resize: none;
   height: 100px;
@@ -388,6 +389,10 @@ addNewItem:hover {
 
 #question-input::-webkit-scrollbar {
   display: none;
+}
+
+#question-selection {
+  width: 100px;
 }
 
 #border {
