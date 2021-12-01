@@ -134,27 +134,30 @@ class Dashboard extends React.Component {
 
     return (
       <React.Fragment>
-        <div id="question-title-font">
-          <textarea
-            id="question-input"
-            type="textarea"
-            name="inputted-question"
-            placeholder="Please type your question..."
-            multiline={true}
-            rows="14"
-            cols="10"
-            wrap="soft"
-          />
-          <div id="question-selection">
-            <Select
-              value={this.questionOptions.value}
-              options={this.questionOptions}
-              defaultValue={this.questionOptions[0]}
+        <div className="question-area">
+          <div id="question-title-font">
+            <textarea
+              id="question-input"
+              type="textarea"
+              name="inputted-question"
+              placeholder="Please type your question..."
+              multiline={true}
+              rows="14"
+              cols="10"
+              wrap="soft"
             />
+            <div id="border"></div>
+            <br />
+          </div>
+          <div id="question-selection">
+              <Select
+                value={this.questionOptions.value}
+                options={this.questionOptions}
+                defaultValue={this.questionOptions[0]}
+                className="questionSelection"
+              />
           </div>
         </div>
-        <div id="border"></div>
-        <br />
         <div id="answer-selection">
           {/* nilai true untuk pertama kali */}
           {arrayOptions.map((value) => {
@@ -171,7 +174,6 @@ class Dashboard extends React.Component {
                   type="text"
                   placeholder={value}
                   wrap="soft"
-                  // onChange={() => this.handleUserInput()}
                 />
               </div>
             );
@@ -197,6 +199,7 @@ class Dashboard extends React.Component {
           type="text"
           placeholder="Add new option..."
           wrap="soft"
+          readOnly
           onClick={(event) => {
             let count = this.state.optionCounter + 1;
             this.setState({ optionCounter: count });

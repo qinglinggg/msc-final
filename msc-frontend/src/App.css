@@ -16,7 +16,7 @@
   --font-weight: 500;
   --item-name: black;
   --item-desc: #878787;
-  --minWidth-size: 1200px;
+  --minWidth-size: 1400px;
   --minHeight-size: 50px;
 }
 
@@ -32,7 +32,7 @@ html {
   width: 100%;
   min-width: var(--minWidth-size);
   min-height: var(--minHeight-size);
-  height: 10vh;
+  height: 8em;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -42,17 +42,15 @@ html {
 
 #app-title {
   width: 60%;
-  height: 100%;
+  height: fit-content;
   min-height: var(--minHeight-size);
   color: white;
   font-size: 4rem;
   font-family: var(--font-roboto);
   font-style: italic;
-  line-height: 10vh;
   text-align: left;
   font-style: normal;
   text-decoration: none;
-  justify-content: space-between;
   padding-left: 50px;
 }
 
@@ -97,7 +95,7 @@ html {
 
 .container {
   width: 100%;
-  /* min-width: 1200px; */
+  min-width: var(--minWidth-size);
   height: fit-content;
   display: flex;
   flex-direction: column;
@@ -109,9 +107,11 @@ html {
 
 .page-title {
   width: 80%;
+  height: 100px;
   text-align: left;
   font-size: 5rem;
-  margin-top: 50px;
+  display: flex;
+  align-items: center;
 }
 
 #page-content {
@@ -120,7 +120,6 @@ html {
   margin-top: 50px;
   box-shadow: 4px 5px 1px rgba(128, 128, 128, 0.233);
   border-radius: 25px;
-  /* border: rgba(10, 10, 10, 0.233); */
 }
 
 .menu-bar {
@@ -320,12 +319,13 @@ html {
 /* ex: Dashboard */
 
 .title-container {
-  padding-top: 10px;
+  margin-top: 20px;
   margin-left: 10px;
   width: 80%;
-  height: fit-content;
+  height: 12em;
   display: flex;
   flex-direction: row;
+  align-items: center;
   justify-content: space-between;
 }
 
@@ -345,33 +345,36 @@ html {
 
 .dashboard-icon {
   /* float: right; */
-  margin-top: 150px;
-  width: 7%;
-  height: fit-content;
+  width: 10em;
+  height: 100%;
   display: flex;
   justify-content: space-between;
-  /* justify-content: right; */
-  /* padding-left: 900px; */
+  align-items: center;
+}
+
+.icon-image {
+  height: 30px;
+  width: 30px;
+  margin-right: 10px;
 }
 
 .menu-icon {
-  padding-top: 15px;
   padding-right: 15px;
   border-radius: 20rem;
   margin-right: 20px;
-  height: 25px;
-  width: 25px;
+  height: 100%;
+  width: 40px;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
   align-items: center;
 }
 
 #menu-icon {
-  margin-top: 50px;
   margin-left: 5px;
   margin-right: 10px;
   height: 40px;
   width: 40px;
-  justify-content: center;
 }
 
 #other-icon {
@@ -382,12 +385,10 @@ html {
 /* question items */
 
 .questions-container {
-  margin-top: 40px;
-  width: 80%;
+  width: 100%;
   height: 100%;
   border: var(--border-page);
-  /* border-radius: 1rem; */
-  display: inline;
+  border-radius: 25px;
   align-items: center;
   justify-content: center;
 }
@@ -418,12 +419,18 @@ html {
   padding-right: 5px;
 }
 
+.question-area {
+  width: 100%;
+  height: 120px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
 #question-title-font {
   font-size: 1.5rem;
-  width: 100%;
-  margin-top: 3%;
-  margin-left: 3%;
-  margin-right: 0%;
+  width: 70%;
   cursor: pointer;
 }
 
@@ -433,16 +440,14 @@ html {
   border-bottom: 1px solid #fff;
   outline: none;
   width: 270px;
-  max-width: 270px;
   display: inline;
   resize: none;
-  height: 100px;
+  height: 25px;
   overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-all;
+  /* word-wrap: break-word;
+  word-break: break-all; */
   overflow: scroll;
   scrollbar-width: none;
-  border: var(--border-page);
 }
 
 #question-input::-webkit-scrollbar {
@@ -450,7 +455,14 @@ html {
 }
 
 #question-selection {
-  width: 100px;
+  width: 30%;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+}
+
+.questionSelection {
+  width: 100%;
 }
 
 #answer-selection .inputText {
@@ -462,8 +474,6 @@ html {
 }
 
 #border {
-  margin-top: 2.5%;
-  margin-left: 2.5%;
   width: 275px;
   border: var(--border-page);
 }
