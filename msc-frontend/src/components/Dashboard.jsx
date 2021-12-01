@@ -23,7 +23,10 @@ class Dashboard extends React.Component {
     openSettings: false,
     isAdd: false,
     typeQuestion: false,
-    isAnswerFilled: true,
+    isAnswerFilled: false,
+    optionCounter: 1,
+    optionCheck: false,
+    privacyCheck: true,
   };
 
   questionOptions = [
@@ -50,29 +53,38 @@ class Dashboard extends React.Component {
     this.setState({ isAdd: !this.state.isAdd });
   }
 
-  validateInput() {
+  validateInput(event) {
     // if (document.form.question.value == "") return null;
+    if (event.target.value.length > 0) {
+      return true;
+    }
   }
 
-  handleUserInput(event) {
-    this.setState({ value: event.target.value });
+  handleOptionChecked() {
+    this.setState({ optionCheck: !this.state.optionCheck });
   }
 
-  handleTextField() {
-    this.setState({ isAnswerFilled: !this.state.isAnswerFilled });
-  }
+  // handleUserInput(event) {
+  //   this.setState({ value: event.target.value });
+  //   console.log(event.target.value);
+  // }
+
+  // initializingTextField() {
+  //   this.setState({ isAnswerFilled: false });
+  // }
 
   render() {
     return (
       <React.Fragment>
-        <div className="container">
+        <div className="container" id="dashboard-home">
           <div className="title-container">
-            <div className="icon-image" onClick={() => this.handleMenu()}>
+            <div className="menu-icon" onClick={() => this.handleMenu()}>
               <img id="menu-icon" src={iconMenubarGrey} alt="" />
               {/* belum diimplement */}
               {this.state.openMenu ? this.displayMenu() : null}
             </div>
-            <div className="title">Dashboard</div>
+            <div className="page-title">Dashboard</div>
+            {/* <div className="title">Dashboard</div> */}
             <div className="dashboard-icon">
               <img
                 className="icon-image"
@@ -93,14 +105,16 @@ class Dashboard extends React.Component {
           {/* kondisi kalo udah ada question, tampilin question dulu, baru AddQuestion*/}
           {/* kalo belum ada, lgsg tombol Add Question aja */}
           {/* AddQuestion -> tombol dulu baru kalo dipencet muncul menu tambahan */}
-          <div className="questions-container">
-            <div className="question">
-              {/* apakah ada data?
-              insert data here 
-              note: kayanya perlu implement index untuk munculin icon next > dan back < */}
-              {this.state.isAdd
-                ? this.displayNewQuestion()
-                : this.displayAddQuestion()}
+          <div id="page-content">
+            <div className="questions-container">
+              <div className="question">
+                {/* apakah ada data?
+                insert data here 
+                note: kayanya perlu implement index untuk munculin icon next > dan back < */}
+                {this.state.isAdd
+                  ? this.displayNewQuestion()
+                  : this.displayAddQuestion()}
+              </div>
             </div>
           </div>
         </div>
@@ -113,9 +127,11 @@ class Dashboard extends React.Component {
   }
 
   displayNewQuestion() {
-    let answerFilled = this.state.isAnswerFilled;
-    if (answerFilled) {
+    let arrayOptions = [];
+    for (let i = 1; i < this.state.optionCounter; i++) {
+      arrayOptions.push("Option " + i);
     }
+
     return (
       <React.Fragment>
         <div id="question-title-font">
@@ -141,24 +157,52 @@ class Dashboard extends React.Component {
         <br />
         <div id="answer-selection">
           {/* nilai true untuk pertama kali */}
-          {this.state.isAnswerFilled ? this.displayNewOption() : null}
+          {arrayOptions.map((value) => {
+            return (
+              <div>
+                <input
+                  name="answerSelection"
+                  type="radio"
+                  checked={this.state.check}
+                  onClick={() => this.handleChecked()}
+                />
+                <input
+                  className="inputText"
+                  type="text"
+                  placeholder={value}
+                  wrap="soft"
+                  // onChange={() => this.handleUserInput()}
+                />
+              </div>
+            );
+          })}
+          {this.displayNewOption()}
         </div>
       </React.Fragment>
     );
   }
 
   displayNewOption() {
+    // this.initializingTextField();
     return (
       <React.Fragment>
-        <input type="radio" value="{option1}" checked={false} />
+        <input
+          type="radio"
+          checked={this.state.check}
+          onClick={() => this.handleChecked()}
+        />
         {/* ambil value buat nanti ditampilin di question */}
         <input
-          class="inputText"
+          className="inputText"
           type="text"
-          placeholder="Please type answer choices..."
+          placeholder="Add new option..."
           wrap="soft"
-          onChange={() => this.handleUserInput()}
+          onClick={(event) => {
+            let count = this.state.optionCounter + 1;
+            this.setState({ optionCounter: count });
+          }}
         />
+        {/* {this.state.isAnswerFilled ? this.displayNewOption() : null} */}
       </React.Fragment>
     );
   }
@@ -204,15 +248,21 @@ class Dashboard extends React.Component {
                   name="privacy"
                   id="anonymous"
                   value="anonymous"
+                  checked={this.state.privacyCheck ? true : false}
+                  onClick={() => {
+                    this.setState({ privacyCheck: true });
+                  }}
                 />
                 <label for="anonymous">Anonymous</label>
-              </div>
-              <div className="form-alignright">
                 <input
                   type="radio"
                   name="privacy"
                   id="not-anonymous"
                   value="not-anonymous"
+                  checked={this.state.privacyCheck ? false : true}
+                  onClick={() => {
+                    this.setState({ privacyCheck: false });
+                  }}
                 />
                 <label for="not-anonymous">Not Anonymous</label>
                 <br />

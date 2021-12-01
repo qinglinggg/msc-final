@@ -1,3 +1,6 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;1,300&display=swap");
+
 :root {
   --navbar-color: #1dccd1;
   --pagebar-color: white;
@@ -9,7 +12,7 @@
   --gray-email: #8e8e8e;
   --gray-profileimage: #c4c4c4;
   --gray-border: #878787;
-  --font-roboto: "Roboto";
+  --font-roboto: "Roboto", sans-serif;
   --font-weight: 500;
   --item-name: black;
   --item-desc: #878787;
@@ -43,6 +46,7 @@ html {
   min-height: var(--minHeight-size);
   color: white;
   font-size: 4rem;
+  font-family: var(--font-roboto);
   font-style: italic;
   line-height: 10vh;
   text-align: left;
@@ -59,6 +63,7 @@ html {
   flex-direction: row;
   align-items: center;
   justify-content: right;
+  font-family: var(--font-roboto);
 }
 
 .profile-preview {
@@ -92,12 +97,13 @@ html {
 
 .container {
   width: 100%;
-  min-width: 1200px;
+  /* min-width: 1200px; */
   height: fit-content;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
+  font-family: var(--font-roboto);
   /* border: black 1px solid; */
 }
 
@@ -105,7 +111,6 @@ html {
   width: 80%;
   text-align: left;
   font-size: 5rem;
-  font-family: var(--font-roboto);
   margin-top: 50px;
 }
 
@@ -115,6 +120,7 @@ html {
   margin-top: 50px;
   box-shadow: 4px 5px 1px rgba(128, 128, 128, 0.233);
   border-radius: 25px;
+  /* border: rgba(10, 10, 10, 0.233); */
 }
 
 .menu-bar {
@@ -147,12 +153,36 @@ html {
   transition: 0.3s;
 }
 
+#btn-page1 {
+  border-top-left-radius: 25px;
+}
+
 #page-others {
   height: 100%;
   display: inline-flex;
   justify-content: center;
   align-items: center;
   margin-right: 14px;
+}
+
+.page-search {
+  display: flex;
+  align-items: right;
+}
+.react-search-field {
+  border-radius: 10px;
+  height: 40vh;
+  /* border-collapse: separate; */
+}
+
+.react-search-field-input {
+  background: transparent;
+}
+
+.react-search-field-button {
+  margin-right: 0.8vw;
+  border-left: none !important;
+  align-items: center;
 }
 
 .list-container {
@@ -292,41 +322,56 @@ html {
 .title-container {
   padding-top: 10px;
   margin-left: 10px;
+  width: 80%;
   height: fit-content;
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
 }
 
 /* .menu-icon {
 
 } */
 
-.title {
+/* .title {
   padding-left: 10px;
   font-size: 35px;
   width: fit-content;
+} */
+
+#dashboard-home {
+  justify-content: space-between;
 }
 
 .dashboard-icon {
-  float: right;
-  width: fit-content;
-  justify-content: right;
-  padding-left: 900px;
+  /* float: right; */
+  margin-top: 150px;
+  width: 7%;
+  height: fit-content;
+  display: flex;
+  justify-content: space-between;
+  /* justify-content: right; */
+  /* padding-left: 900px; */
 }
 
-.icon-image {
+.menu-icon {
   padding-top: 15px;
+  padding-right: 15px;
   border-radius: 20rem;
   margin-right: 20px;
   height: 25px;
   width: 25px;
   cursor: pointer;
+  align-items: center;
 }
 
 #menu-icon {
-  padding-left: 5px;
-  height: 30px;
-  width: 30px;
+  margin-top: 50px;
+  margin-left: 5px;
+  margin-right: 10px;
+  height: 40px;
+  width: 40px;
+  justify-content: center;
 }
 
 #other-icon {
@@ -338,10 +383,10 @@ html {
 
 .questions-container {
   margin-top: 40px;
-  width: 1200px;
-  height: 450px;
+  width: 80%;
+  height: 100%;
   border: var(--border-page);
-  border-radius: 1rem;
+  /* border-radius: 1rem; */
   display: inline;
   align-items: center;
   justify-content: center;
@@ -349,16 +394,28 @@ html {
 
 .question {
   min-height: 300px;
-  height: 300px;
+  height: 100%;
   width: 500px;
   margin-left: auto;
   margin-right: auto;
   margin-top: 65px;
+  margin-bottom: 65px;
   padding: 15px;
   justify-content: center;
   flex-direction: column;
   border: var(--gray-border) 1px solid;
   border-radius: 10px;
+  overflow: scroll;
+}
+
+.question::-webkit-scrollbar {
+  width: 5px; /* width of the entire scrollbar */
+}
+
+.question::-webkit-scrollbar-thumb {
+  border-radius: 20px; /* roundness of the scroll thumb */
+  border: 3px solid rgba(128, 128, 128, 0.233); /* creates padding around scroll thumb */
+  padding-right: 5px;
 }
 
 #question-title-font {

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Fragment } from "react";
 import Page1Items from "./Page1Items";
 import Dashboard from "./Dashboard";
+import SearchField from "react-search-field";
 
 class Home extends React.Component {
   constructor() {
@@ -62,8 +63,8 @@ class Home extends React.Component {
                 </div>
               </div>
               <div id="page-others">
-                <div id="search-box">
-                  <form className="form-inline">
+                {/* <div id="search-box"> */}
+                {/* <form className="form-inline">
                     <input
                       className="form-control mr-sm-2"
                       type="search"
@@ -76,14 +77,29 @@ class Home extends React.Component {
                     >
                       Search
                     </button>
-                  </form>
+                  </form> */}
+                {/* <SearchField
+                    placeholder="Search..."
+                    // onChange={onChange}
+                    searchText="Search..."
+                    classNames="test-class"
+                  /> */}
+                {/* </div> */}
+                <div id="page-search">
+                  <SearchField
+                    id="page-search"
+                    placeholder="Search..."
+                    // onChange={onChange}
+                    // searchText="Search..."
+                    classNames="test-class"
+                  />
                 </div>
                 <img src="" alt="" id="history-btn" />
               </div>
             </div>
             <div className="list-container">{page}</div>
           </div>
-            {this.state.isAdd ? this.displayPopUp() : null}
+          {this.state.isAdd ? this.displayPopUp() : null}
         </div>
       </React.Fragment>
     );
