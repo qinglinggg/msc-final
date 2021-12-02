@@ -5,10 +5,7 @@
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="A survey system by BCA Corp."
-    />
+    <meta name="description" content="A survey system by BCA Corp." />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -40,16 +37,4 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   </body>
-  <script>
-    const tx = document.getElementsById("question-input");
-    for (let i = 0; i < tx.length; i++) {
-      tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
-      tx[i].addEventListener("input", OnInput, false);
-    }
-
-    function OnInput() {
-      this.style.height = "auto";
-      this.style.height = (this.scrollHeight) + "px";
-    }
-  </script>
 </html>

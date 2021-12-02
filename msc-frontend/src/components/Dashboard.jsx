@@ -1,4 +1,4 @@
-import react from "react";
+import react, { createRef, useEffect } from "react";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
@@ -9,13 +9,41 @@ import iconSettings from "./images/settings.png";
 // import { TextInput } from "react-native-paper";
 // import { Dropdown } from "react-bootstrap";
 import Select from "react-select";
+import autosize from "autosize";
+import AutoHeightTextarea from "./functional-components/AutoheightTextarea";
 
 class Dashboard extends React.Component {
   constructor() {
     super();
     this.handleMenu = this.handleMenu.bind(this);
     this.handleAddItem = this.handleAddItem.bind(this);
+    this.elementRef = createRef();
   }
+
+  componentDidMount() {
+    // this.setState({ textarea: document.getElementById("question-input") });
+    // this.state.textarea.focus();
+    // autosize(this.state.textarea);
+    // useEffect(() => {
+    //   console.log(this);
+    //   const textarea = this.elementRef.current;
+    //   textarea.focus();
+    //   autosize(textarea);
+    // });
+    // console.log(this);
+    // const textarea = this.elementRef.current;
+    // textarea.focus();
+    // autosize(textarea);
+  }
+
+  // TestHook() {
+  //   useEffect(() => {
+  //     console.log(this);
+  //     const textarea = this.elementRef.current;
+  //     textarea.focus();
+  //     autosize(textarea);
+  //   });
+  // }
 
   state = {
     openMenu: false,
@@ -27,6 +55,7 @@ class Dashboard extends React.Component {
     optionCounter: 1,
     optionCheck: false,
     privacyCheck: true,
+    // textarea: undefined,
   };
 
   questionOptions = [
@@ -136,26 +165,29 @@ class Dashboard extends React.Component {
       <React.Fragment>
         <div className="question-area">
           <div id="question-title-font">
-            <textarea
+            <AutoHeightTextarea
               id="question-input"
-              type="textarea"
+              // style={style}
+              // ref={textarea}
+              // type="textarea"
               name="inputted-question"
               placeholder="Please type your question..."
               multiline={true}
               rows="14"
               cols="10"
               wrap="soft"
+              defaultValue=""
             />
             <div id="border"></div>
             <br />
           </div>
           <div id="question-selection">
-              <Select
-                value={this.questionOptions.value}
-                options={this.questionOptions}
-                defaultValue={this.questionOptions[0]}
-                className="questionSelection"
-              />
+            <Select
+              value={this.questionOptions.value}
+              options={this.questionOptions}
+              defaultValue={this.questionOptions[0]}
+              className="questionSelection"
+            />
           </div>
         </div>
         <div id="answer-selection">

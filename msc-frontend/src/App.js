@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import axios from "axios";
 // import "bootstrap/dist/css/bootstrap.css";
 // import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import autosize from "autosize";
 
 class App extends React.Component {
   state = {

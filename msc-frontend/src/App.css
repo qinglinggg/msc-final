@@ -431,6 +431,7 @@ html {
 #question-title-font {
   font-size: 1.5rem;
   width: 70%;
+  max-height: 100%;
   cursor: pointer;
 }
 
