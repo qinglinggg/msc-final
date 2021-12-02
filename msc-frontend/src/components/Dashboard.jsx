@@ -2,69 +2,30 @@ import react, { createRef, useEffect } from "react";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
+import Question from "./Question";
 import iconMenubarGrey from "./images/menubarGrey.png";
 import iconMenubarWhite from "./images/menubarWhite.png";
 import iconVisibility from "./images/visibility.png";
 import iconSettings from "./images/settings.png";
 // import { TextInput } from "react-native-paper";
 // import { Dropdown } from "react-bootstrap";
-import Select from "react-select";
-import autosize from "autosize";
-import AutoHeightTextarea from "./functional-components/AutoheightTextarea";
 
 class Dashboard extends React.Component {
   constructor() {
     super();
     this.handleMenu = this.handleMenu.bind(this);
-    this.handleAddItem = this.handleAddItem.bind(this);
     this.elementRef = createRef();
   }
-
-  componentDidMount() {
-    // this.setState({ textarea: document.getElementById("question-input") });
-    // this.state.textarea.focus();
-    // autosize(this.state.textarea);
-    // useEffect(() => {
-    //   console.log(this);
-    //   const textarea = this.elementRef.current;
-    //   textarea.focus();
-    //   autosize(textarea);
-    // });
-    // console.log(this);
-    // const textarea = this.elementRef.current;
-    // textarea.focus();
-    // autosize(textarea);
-  }
-
-  // TestHook() {
-  //   useEffect(() => {
-  //     console.log(this);
-  //     const textarea = this.elementRef.current;
-  //     textarea.focus();
-  //     autosize(textarea);
-  //   });
-  // }
 
   state = {
     openMenu: false,
     openVisibility: false,
     openSettings: false,
     isAdd: false,
-    typeQuestion: false,
-    isAnswerFilled: false,
     optionCounter: 1,
     optionCheck: false,
     privacyCheck: true,
-    // textarea: undefined,
   };
-
-  questionOptions = [
-    { value: "DEFAULT", label: "Question type" },
-    { value: "Short answer", label: "Short answer" },
-    { value: "Multiple choice", label: "Multiple choice" },
-    { value: "Checkbox", label: "Checkbox" },
-    { value: "Linear scale", label: "Linear scale" },
-  ];
 
   handleMenu() {
     this.setState({ openMenu: !this.state.openMenu });
@@ -78,10 +39,6 @@ class Dashboard extends React.Component {
     this.setState({ openSettings: !this.state.openSettings });
   }
 
-  handleAddItem() {
-    this.setState({ isAdd: !this.state.isAdd });
-  }
-
   validateInput(event) {
     // if (document.form.question.value == "") return null;
     if (event.target.value.length > 0) {
@@ -93,16 +50,8 @@ class Dashboard extends React.Component {
     this.setState({ optionCheck: !this.state.optionCheck });
   }
 
-  // handleUserInput(event) {
-  //   this.setState({ value: event.target.value });
-  //   console.log(event.target.value);
-  // }
-
-  // initializingTextField() {
-  //   this.setState({ isAnswerFilled: false });
-  // }
-
   render() {
+    let mode = true;
     return (
       <React.Fragment>
         <div className="container" id="dashboard-home">
@@ -136,14 +85,11 @@ class Dashboard extends React.Component {
           {/* AddQuestion -> tombol dulu baru kalo dipencet muncul menu tambahan */}
           <div id="page-content">
             <div className="questions-container">
+              <div className="separator"/>
               <div className="question">
-                {/* apakah ada data?
-                insert data here 
-                note: kayanya perlu implement index untuk munculin icon next > dan back < */}
-                {this.state.isAdd
-                  ? this.displayNewQuestion()
-                  : this.displayAddQuestion()}
+                <Question data={mode}></Question>
               </div>
+              <div className="separator"/>
             </div>
           </div>
         </div>
@@ -153,104 +99,6 @@ class Dashboard extends React.Component {
 
   displayMenu() {
     return <React.Fragment></React.Fragment>;
-  }
-
-  displayNewQuestion() {
-    let arrayOptions = [];
-    for (let i = 1; i < this.state.optionCounter; i++) {
-      arrayOptions.push("Option " + i);
-    }
-
-    return (
-      <React.Fragment>
-        <div className="question-area">
-          <div id="question-title-font">
-            <AutoHeightTextarea
-              id="question-input"
-              // style={style}
-              // ref={textarea}
-              // type="textarea"
-              name="inputted-question"
-              placeholder="Please type your question..."
-              multiline={true}
-              rows="14"
-              cols="10"
-              wrap="soft"
-              defaultValue=""
-            />
-            <div id="border"></div>
-            <br />
-          </div>
-          <div id="question-selection">
-            <Select
-              value={this.questionOptions.value}
-              options={this.questionOptions}
-              defaultValue={this.questionOptions[0]}
-              className="questionSelection"
-            />
-          </div>
-        </div>
-        <div id="answer-selection">
-          {/* nilai true untuk pertama kali */}
-          {arrayOptions.map((value) => {
-            return (
-              <div>
-                <input
-                  name="answerSelection"
-                  type="radio"
-                  checked={this.state.check}
-                  onClick={() => this.handleChecked()}
-                />
-                <input
-                  className="inputText"
-                  type="text"
-                  placeholder={value}
-                  wrap="soft"
-                />
-              </div>
-            );
-          })}
-          {this.displayNewOption()}
-        </div>
-      </React.Fragment>
-    );
-  }
-
-  displayNewOption() {
-    // this.initializingTextField();
-    return (
-      <React.Fragment>
-        <input
-          type="radio"
-          checked={this.state.check}
-          onClick={() => this.handleChecked()}
-        />
-        {/* ambil value buat nanti ditampilin di question */}
-        <input
-          className="inputText"
-          type="text"
-          placeholder="Add new option..."
-          wrap="soft"
-          readOnly
-          onClick={(event) => {
-            let count = this.state.optionCounter + 1;
-            this.setState({ optionCounter: count });
-          }}
-        />
-        {/* {this.state.isAnswerFilled ? this.displayNewOption() : null} */}
-      </React.Fragment>
-    );
-  }
-
-  displayAddQuestion() {
-    return (
-      <React.Fragment>
-        <div className="addNewItem" onClick={() => this.handleAddItem()}>
-          <div id="btn-addItem">+</div>
-          <div id="btn-addItem2">Add Question</div>
-        </div>
-      </React.Fragment>
-    );
   }
 
   displaySettings() {

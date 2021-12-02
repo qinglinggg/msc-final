@@ -1,14 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
 const defaultStyle = {
-  //   display: "block",
-  //   overflow: "hidden",
-  //   resize: "none",
-  //   width: "100%",
-  //   backgroundColor: "mediumSpringGreen",
-
-  maxHeight: "100%",
-  minHeight: "38px",
   resize: "none",
   padding: "9px",
   boxSizing: "border-box",
@@ -34,7 +26,6 @@ const AutoHeightTextarea = ({ style = defaultStyle, ...etc }) => {
       value={currentValue}
       onChange={(e) => {
         setCurrentValue(e.target.value);
-        //to do something with value, maybe callback?
       }}
     />
   );
