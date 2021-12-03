@@ -2,61 +2,95 @@ import React, { Component } from "react";
 import Select from "react-select";
 import AutoHeightTextarea from "./functional-components/AutoheightTextarea";
 
-class QuestionItems extends React.Component {
+class Question extends React.Component {
   state = {
     optionCounter: 0,
-    isAdd: false,
+    selectedOption: "DEFAULT",
   }
 
   questionOptions = [
-    { value: "DEFAULT", label: "Question type" },
-    { value: "Short answer", label: "Short answer" },
-    { value: "Multiple choice", label: "Multiple choice" },
-    { value: "Checkbox", label: "Checkbox" },
-    { value: "Linear scale", label: "Linear scale" },
+    { value: "DEFAULT", label: "Multiple choice" },
+    { value: "SA", label: "Short answer" },
+    { value: "CB", label: "Checkbox" },
+    { value: "LS", label: "Linear scale" },
   ];
+
+  arrayOptions = [];
 
   render() {
     return (
       <React.Fragment>
-        {this.props.data ? this.displayQuestion() : this.displayAdd()}
+        {this.props.mode ? this.displayQuestion() : this.displayAdd()}
       </React.Fragment>
     )
   }
 
   displayQuestion() {
-    let arrayOptions = [];
+    this.arrayOptions = []
     for (let i = 1; i < this.state.optionCounter; i++) {
-      arrayOptions.push("Option " + i);
+      this.arrayOptions.push("Option " + i);
     }
     return (
       <React.Fragment>
-      <div className="question-area">
-        <div id="question-title-font">
-          <AutoHeightTextarea
-            id="question-input"
-            name="inputted-question"
-            placeholder="Please type your question..."
-            multiline={true}
-            rows="14"
-            cols="10"
-            wrap="soft"
-          />
-          <div id="border"></div>
-          <br />
+        <div className="question-area">
+          <div id="question-title-font">
+            <AutoHeightTextarea
+              id="question-input"
+              name="inputted-question"
+              placeholder="Please type your question..."
+              multiline={true}
+              rows="14"
+              cols="10"
+              wrap="soft"
+            />
+            <div id="border"></div>
+            <br />
+          </div>
+          <div id="question-selection">
+            <Select
+              value={this.questionOptions.value}
+              options={this.questionOptions}
+              defaultValue={this.questionOptions[0]}
+              id="questionSelection"
+              onChange={(data) => this.handleSelectionChange(data)}
+            />
+          </div>
         </div>
-        <div id="question-selection">
-          <Select
-            value={this.questionOptions.value}
-            options={this.questionOptions}
-            defaultValue={this.questionOptions[0]}
-            id="questionSelection"
-          />
-        </div>
+        {this.state.selectedOption == "DEFAULT" &&
+          this.multipleChoiceOption()
+        }
+        {this.state.selectedOption == "SA" &&
+          this.shortAnswerOption()
+        }
+        {this.state.selectedOption == "CB" &&
+          this.checkBoxOption()
+        }
+        {this.state.selectedOption == "LS" &&
+          this.linearScaleOption()
+        }
+      </React.Fragment>
+    );
+  }
+
+  handleSelectionChange(data) {
+    this.setState({selectedOption: data.value});
+  }
+
+  shortAnswerOption() {
+    return (
+      <div id="shortanswer-container">
+        <input type="text" className="inputText" name="shortanswer-field"
+        placeholder="Input your answer..."/>
       </div>
+    );
+  }
+
+  multipleChoiceOption() {
+    return (
+      <React.Fragment>
       <div id="answer-selection-container">
         {/* nilai true untuk pertama kali */}
-        {arrayOptions.map((value) => {
+        {this.arrayOptions.map((value) => {
           return (
             <div className="answer-selection">
               <input
@@ -79,6 +113,18 @@ class QuestionItems extends React.Component {
       </div>
       <div className="question-padding"/>
     </React.Fragment>
+    );
+  }
+
+  checkBoxOption() {
+    return (
+      <div>Hiyaaa</div>
+    );
+  }
+
+  linearScaleOption() {
+    return (
+      <div>Hiyaaa</div>
     );
   }
 
@@ -106,14 +152,10 @@ class QuestionItems extends React.Component {
     );
   }
 
-  handleAddItem() {
-    this.setState({ isAdd: !this.state.isAdd });
-  }
-
   displayAdd() {
     return (
       <React.Fragment>
-        <div className="addNewItem" onClick={() => this.handleAddItem()}>
+        <div className="addNewItem">
           <div id="btn-addItem">+</div>
           <div id="btn-addItem2">Add Question</div>
         </div>
@@ -123,4 +165,4 @@ class QuestionItems extends React.Component {
   }
 }
 
-export default QuestionItems;
+export default Question;

@@ -1,4 +1,4 @@
-import react, { createRef, useEffect } from "react";
+import react, { createRef, Fragment, useEffect } from "react";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
@@ -7,6 +7,7 @@ import iconMenubarGrey from "./images/menubarGrey.png";
 import iconMenubarWhite from "./images/menubarWhite.png";
 import iconVisibility from "./images/visibility.png";
 import iconSettings from "./images/settings.png";
+import axios from "axios";
 // import { TextInput } from "react-native-paper";
 // import { Dropdown } from "react-bootstrap";
 
@@ -14,18 +15,22 @@ class Dashboard extends React.Component {
   constructor() {
     super();
     this.handleMenu = this.handleMenu.bind(this);
-    this.elementRef = createRef();
+    this.handleAddItem = this.handleAddItem.bind(this);
   }
 
   state = {
     openMenu: false,
     openVisibility: false,
     openSettings: false,
-    isAdd: false,
     optionCounter: 1,
     optionCheck: false,
     privacyCheck: true,
+    formItems: [],
   };
+
+  componentDidMount() {
+    this.setState({ formItems : this.props.formItems_data });
+  }
 
   handleMenu() {
     this.setState({ openMenu: !this.state.openMenu });
@@ -50,8 +55,20 @@ class Dashboard extends React.Component {
     this.setState({ optionCheck: !this.state.optionCheck });
   }
 
+  handleAddItem(){
+    // axios.post()
+    console.log("TESTT");
+    let currentStateData = this.state.formItems;
+    let newItem = {
+      question: "",
+      questionType: "",
+      options: [],
+    };
+    currentStateData.push(newItem);
+    this.setState({formItems : currentStateData});
+  }
+
   render() {
-    let mode = true;
     return (
       <React.Fragment>
         <div className="container" id="dashboard-home">
@@ -85,11 +102,20 @@ class Dashboard extends React.Component {
           {/* AddQuestion -> tombol dulu baru kalo dipencet muncul menu tambahan */}
           <div id="page-content">
             <div className="questions-container">
+              {this.state.formItems.map((res) => {
+                return (
+                  <React.Fragment>
+                    <div className="separator"/>
+                    <div className="question">
+                      <Question mode={true}/>
+                    </div>
+                  </React.Fragment>
+                );
+              })}
               <div className="separator"/>
-              <div className="question">
-                <Question data={mode}></Question>
+              <div className="question" id="addQuestion" onClick={() => this.handleAddItem()}>
+                <Question mode={false}/>
               </div>
-              <div className="separator"/>
             </div>
           </div>
         </div>

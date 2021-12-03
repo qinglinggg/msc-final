@@ -14,6 +14,7 @@ class App extends React.Component {
   state = {
     userProfiles: [],
     forms: [],
+    formItems: []
   };
 
   componentDidMount() {
@@ -27,6 +28,11 @@ class App extends React.Component {
       this.setState({ forms });
       console.log(this.state);
     });
+    // axios.get(`http://localhost:8080/api/v1/formItems`).then((res) => {
+    //   const formItems = res.data;
+    //   this.setState({ formItems });
+    //   console.log(this.state);
+    // });
   }
 
   render() {
@@ -44,7 +50,7 @@ class App extends React.Component {
           <Route path="/" element={<Home page1_data={this.state.forms} />} />
           <Route
             path="/item1/dashboard"
-            element={<Dashboard />} // data dari item1
+            element={<Dashboard formItems_data={this.state.formItems} />} // data dari item1
           />
         </Routes>
       </Router>
