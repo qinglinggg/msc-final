@@ -409,7 +409,7 @@ html {
   padding-bottom: 130px;
 }
 
-.addquestion-padding{
+.addquestion-padding {
   padding-bottom: 100px;
 }
 
@@ -444,12 +444,12 @@ html {
   border: 3px solid rgba(128, 128, 128, 0.233); /* creates padding around scroll thumb */
 }
 
-.question::-webkit-scrollbar-track-piece:start{
+.question::-webkit-scrollbar-track-piece:start {
   background: transparent;
   margin-top: 15px;
 }
 
-.question::-webkit-scrollbar-track-piece:end{
+.question::-webkit-scrollbar-track-piece:end {
   background: transparent;
   margin-bottom: 15px;
 }
@@ -502,6 +502,7 @@ html {
 #questionSelection {
   width: 100%;
   height: fit-content;
+  font-size: medium;
 }
 
 /* Multiple Choice */
@@ -512,7 +513,7 @@ html {
   width: fit-content;
 }
 
-#answer-selection-container .answerSelection {
+#answer-selection-container .answerSelectionRadio {
   width: 20px;
   height: 20px;
 }
@@ -558,4 +559,121 @@ html {
 
 #shortanswer-container .inputText {
   border: none;
+  width: 100%;
+}
+
+/* Checkbox */
+
+#answer-selection-container .answerSelectionCheckbox {
+  width: 15px;
+  height: 30px;
+}
+
+/* Linear scale */
+
+.linear-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.linear-input-container {
+  width: 75%;
+  height: fit-content;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.linear-title {
+  font-family: var(--font-roboto);
+  color: rgb(105, 105, 105);
+  font-size: 1.45em;
+  margin-left: 10px;
+  margin-right: 15px;
+  width: fit-content;
+  align-self: flex-start;
+}
+
+#linear-title-input {
+  margin-top: 12px;
+}
+
+#linear-input-box {
+  padding-left: 20px;
+  width: 20%;
+}
+
+.linear-label-container {
+  width: 75%;
+  height: fit-content;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#linear-title-label {
+  margin-top: 19px;
+}
+
+.linear-label-loop {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.linear-label-row {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.linear-label-userinput {
+  width: auto;
+  height: fit-content;
+  display: flex;
+  /* flex-direction: row; */
+  align-items: flex-start;
+  padding: 5px;
+  margin-top: 5px;
+}
+
+.linear-label-userinput .inputText {
+  width: 200px;
+  height: fit-content;
+  margin-left: 5px;
+  border: none;
+  font-size: 1.55em;
+  font-family: var(--font-roboto);
+  scrollbar-width: none;
+}
+
+#linear-label-select {
+  width: 22%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  font-size: medium;
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
+#linear-label-select-box {
+  width: 50%;
+  height: 75%;
+  border: var(--border-page);
+  border-radius: 5px;
+  font-size: medium;
+  align-self: center;
+  display: flex;
+}
+
+#linear-label-select-value {
+  width: 92%;
+  height: 50%;
+  /* display: flex; */
+  align-self: center;
+  text-align: center;
 }

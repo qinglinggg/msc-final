@@ -29,7 +29,7 @@ class Dashboard extends React.Component {
   };
 
   componentDidMount() {
-    this.setState({ formItems : this.props.formItems_data });
+    this.setState({ formItems: this.props.formItems_data });
   }
 
   handleMenu() {
@@ -55,9 +55,9 @@ class Dashboard extends React.Component {
     this.setState({ optionCheck: !this.state.optionCheck });
   }
 
-  handleAddItem(){
+  handleAddItem() {
     // axios.post()
-    console.log("TESTT");
+    // console.log("TESTT");
     let currentStateData = this.state.formItems;
     let newItem = {
       question: "",
@@ -65,7 +65,7 @@ class Dashboard extends React.Component {
       options: [],
     };
     currentStateData.push(newItem);
-    this.setState({formItems : currentStateData});
+    this.setState({ formItems: currentStateData });
   }
 
   render() {
@@ -105,16 +105,20 @@ class Dashboard extends React.Component {
               {this.state.formItems.map((res) => {
                 return (
                   <React.Fragment>
-                    <div className="separator"/>
+                    <div className="separator" />
                     <div className="question">
-                      <Question mode={true}/>
+                      <Question mode={true} />
                     </div>
                   </React.Fragment>
                 );
               })}
-              <div className="separator"/>
-              <div className="question" id="addQuestion" onClick={() => this.handleAddItem()}>
-                <Question mode={false}/>
+              <div className="separator" />
+              <div
+                className="question"
+                id="addQuestion"
+                onClick={() => this.handleAddItem()}
+              >
+                <Question mode={false} />
               </div>
             </div>
           </div>
