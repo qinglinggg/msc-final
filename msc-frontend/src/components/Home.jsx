@@ -43,63 +43,65 @@ class Home extends React.Component {
     return (
       <React.Fragment>
         <div className="container">
-          <div className="page-title">Home</div>
-          <div id="page-content">
-            <div className="menu-bar">
-              <div id="page-selection">
-                <div
-                  onClick={() => this.handleClickPage1()}
-                  className="page-button clicked"
-                  id="btn-page1"
-                >
-                  Your Recent Questionnaire
+          <div className="page-container">
+            <div className="page-title">Home</div>
+            <div id="page-content">
+              <div className="menu-bar">
+                <div id="page-selection">
+                  <div
+                    onClick={() => this.handleClickPage1()}
+                    className="page-button clicked"
+                    id="btn-page1"
+                  >
+                    Your Recent Questionnaire
+                  </div>
+                  <div
+                    onClick={() => this.handleClickPage2()}
+                    className="page-button"
+                    id="btn-page2"
+                  >
+                    Waiting to be Filled
+                  </div>
                 </div>
-                <div
-                  onClick={() => this.handleClickPage2()}
-                  className="page-button"
-                  id="btn-page2"
-                >
-                  Waiting to be Filled
-                </div>
-              </div>
-              <div id="page-others">
-                {/* <div id="search-box"> */}
-                {/* <form className="form-inline">
-                    <input
-                      className="form-control mr-sm-2"
-                      type="search"
-                      placeholder="Search"
-                      aria-label="Search"
+                <div id="page-others">
+                  {/* <div id="search-box"> */}
+                  {/* <form className="form-inline">
+                      <input
+                        className="form-control mr-sm-2"
+                        type="search"
+                        placeholder="Search"
+                        aria-label="Search"
+                      />
+                      <button
+                        className="btn btn-outline-success my-2 my-sm-0"
+                        type="submit"
+                      >
+                        Search
+                      </button>
+                    </form> */}
+                  {/* <SearchField
+                      placeholder="Search..."
+                      // onChange={onChange}
+                      searchText="Search..."
+                      classNames="test-class"
+                    /> */}
+                  {/* </div> */}
+                  <div id="page-search">
+                    <SearchField
+                      id="page-search"
+                      placeholder="Search..."
+                      // onChange={onChange}
+                      // searchText="Search..."
+                      classNames="test-class"
                     />
-                    <button
-                      className="btn btn-outline-success my-2 my-sm-0"
-                      type="submit"
-                    >
-                      Search
-                    </button>
-                  </form> */}
-                {/* <SearchField
-                    placeholder="Search..."
-                    // onChange={onChange}
-                    searchText="Search..."
-                    classNames="test-class"
-                  /> */}
-                {/* </div> */}
-                <div id="page-search">
-                  <SearchField
-                    id="page-search"
-                    placeholder="Search..."
-                    // onChange={onChange}
-                    // searchText="Search..."
-                    classNames="test-class"
-                  />
+                  </div>
+                  <img src="" alt="" id="history-btn" />
                 </div>
-                <img src="" alt="" id="history-btn" />
               </div>
+              <div className="list-container">{page}</div>
             </div>
-            <div className="list-container">{page}</div>
+            {this.state.isAdd ? this.displayPopUp() : null}
           </div>
-          {this.state.isAdd ? this.displayPopUp() : null}
         </div>
       </React.Fragment>
     );

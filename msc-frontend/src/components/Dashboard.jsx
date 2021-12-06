@@ -3,8 +3,8 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import Question from "./Question";
+import Menu from "./Menu"
 import iconMenubarGrey from "./images/menubarGrey.png";
-import iconMenubarWhite from "./images/menubarWhite.png";
 import iconVisibility from "./images/visibility.png";
 import iconSettings from "./images/settings.png";
 import axios from "axios";
@@ -30,6 +30,11 @@ class Dashboard extends React.Component {
 
   componentDidMount() {
     this.setState({ formItems: this.props.formItems_data });
+    let menuBtn = document.getElementById("menu-icon");
+    menuBtn.addEventListener("click", () => {
+      let pageContainer = document.getElementById("page-container");
+      pageContainer.classList.toggle("openMenu");
+    })
   }
 
   handleMenu() {
@@ -72,53 +77,54 @@ class Dashboard extends React.Component {
     return (
       <React.Fragment>
         <div className="container" id="dashboard-home">
-          <div className="title-container">
-            <div className="menu-icon" onClick={() => this.handleMenu()}>
-              <img id="menu-icon" src={iconMenubarGrey} alt="" />
-              {/* belum diimplement */}
-              {this.state.openMenu ? this.displayMenu() : null}
+          {this.state.openMenu ? this.displayMenu() : null}
+          <div className="page-container" id="page-container">
+            <div className="title-container">
+              {this.state.openMenu ? null : (<div className="menu-icon" id="menu-icon" onClick={() => this.handleMenu()}>
+                <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
+              </div>)}
+              <div className="page-title">Dashboard</div>
+              {/* <div className="title">Dashboard</div> */}
+              <div className="dashboard-icon">
+                <img
+                  className="icon-image"
+                  onClick={() => this.handleVisibility()}
+                  src={iconVisibility}
+                  alt=""
+                />
+                <img
+                  className="icon-image"
+                  onClick={() => this.handleSettings()}
+                  src={iconSettings}
+                  alt=""
+                />
+                {this.state.openSettings ? this.displaySettings() : null}
+              </div>
             </div>
-            <div className="page-title">Dashboard</div>
-            {/* <div className="title">Dashboard</div> */}
-            <div className="dashboard-icon">
-              <img
-                className="icon-image"
-                onClick={() => this.handleVisibility()}
-                src={iconVisibility}
-                alt=""
-              />
-              <img
-                className="icon-image"
-                onClick={() => this.handleSettings()}
-                src={iconSettings}
-                alt=""
-              />
-              {this.state.openSettings ? this.displaySettings() : null}
-            </div>
-          </div>
 
-          {/* kondisi kalo udah ada question, tampilin question dulu, baru AddQuestion*/}
-          {/* kalo belum ada, lgsg tombol Add Question aja */}
-          {/* AddQuestion -> tombol dulu baru kalo dipencet muncul menu tambahan */}
-          <div id="page-content">
-            <div className="questions-container">
-              {this.state.formItems.map((res) => {
-                return (
-                  <React.Fragment>
-                    <div className="separator" />
-                    <div className="question">
-                      <Question mode={true} />
-                    </div>
-                  </React.Fragment>
-                );
-              })}
-              <div className="separator" />
-              <div
-                className="question"
-                id="addQuestion"
-                onClick={() => this.handleAddItem()}
-              >
-                <Question mode={false} />
+            {/* kondisi kalo udah ada question, tampilin question dulu, baru AddQuestion*/}
+            {/* kalo belum ada, lgsg tombol Add Question aja */}
+            {/* AddQuestion -> tombol dulu baru kalo dipencet muncul menu tambahan */}
+            <div id="page-content">
+              <div className="questions-container">
+                {this.state.formItems.map((res) => {
+                  return (
+                    <React.Fragment>
+                      <div className="separator" />
+                      <div className="question">
+                        <Question mode={true} />
+                      </div>
+                    </React.Fragment>
+                  );
+                })}
+                <div className="separator" />
+                <div
+                  className="question"
+                  id="addQuestion"
+                  onClick={() => this.handleAddItem()}
+                >
+                  <Question mode={false} />
+                </div>
               </div>
             </div>
           </div>
@@ -128,7 +134,11 @@ class Dashboard extends React.Component {
   }
 
   displayMenu() {
-    return <React.Fragment></React.Fragment>;
+    return (
+    <React.Fragment>
+      <Menu/>
+    </React.Fragment>
+    );
   }
 
   displaySettings() {
