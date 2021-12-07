@@ -144,7 +144,7 @@ html {
   padding-bottom: 50px;
 }
 
-.openMenu{
+.openMenu {
   width: 75%;
 }
 
@@ -721,4 +721,127 @@ html {
   /* display: flex; */
   align-self: center;
   text-align: center;
+}
+
+/* INVITATION PAGE */
+
+#invitation-share-container {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+}
+
+#invitation-share-publicly-box {
+  margin-top: 30px;
+  width: 75%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  border: var(--border-page);
+  border-radius: 10px;
+  align-self: center;
+}
+
+#invitation-share-publicly-innerbox {
+  padding-left: 5%;
+  padding-top: 2.5%;
+  padding-bottom: 2.5%;
+  display: flex;
+  flex-direction: column;
+}
+
+#invitation-share-publicly-innerbox-text {
+  font-family: var(--font-roboto);
+  font-size: 1.5em;
+  font-display: medium;
+  align-self: left;
+  margin-bottom: 2%;
+}
+
+#invitation-share-publicly-innerbox-linkcontainer {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+#invitation-share-publicly-innerbox-linkbox {
+  border: var(--border-page);
+  border-radius: 5px;
+  width: 75%;
+  height: 25px;
+  align-self: center;
+  margin-left: 15px;
+}
+
+#invitation-share-publicly-innerbox-iconcontainer {
+  display: flex;
+  flex-direction: row;
+  padding-left: 35px;
+  margin-top: 10px;
+}
+
+.invitation-share-publicly-innerbox-icon {
+  width: 30px;
+  height: 30px;
+  margin-left: 10px;
+}
+
+#invitation-share-divider {
+  margin-top: 25px;
+  margin-bottom: 25px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+#invitation-share-divider-line {
+  width: 5%;
+  border: var(--border-page);
+  align-self: center;
+}
+
+#invitation-share-divider-text {
+  padding-left: 0.5%;
+  padding-right: 0.5%;
+  color: rgb(204, 204, 204);
+  font-style: bold;
+}
+
+#invitation-share-privately-box {
+  width: 75%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+}
+
+#invitation-share-privately-innerbox {
+  font-family: var(--font-roboto);
+  font-size: 1.5em;
+  font-display: medium;
+  align-self: left;
+  padding-left: 5%;
+  padding-top: 2.5%;
+  padding-bottom: 2.5%;
+}
+
+#invitation-share-privately-button {
+  font-weight: bold;
+  font-family: var(--font-roboto);
+  font-size: small;
+  color: white;
+  background-color: black;
+  align-self: left;
+  margin-left: 25px;
+  margin-bottom: 30px;
+  padding-left: 2.5%;
+  padding-right: 2.5%;
+  padding-top: 1%;
+  padding-bottom: 1%;
+  border-radius: 10px;
+  width: fit-content;
 }

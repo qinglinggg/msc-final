@@ -9,12 +9,13 @@ import axios from "axios";
 // import "bootstrap/dist/css/bootstrap.css";
 // import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import autosize from "autosize";
+import Invitation from "./components/Invitation";
 
 class App extends React.Component {
   state = {
     userProfiles: [],
     forms: [],
-    formItems: []
+    formItems: [],
   };
 
   componentDidMount() {
@@ -51,6 +52,10 @@ class App extends React.Component {
           <Route
             path="/item1/dashboard"
             element={<Dashboard formItems_data={this.state.formItems} />} // data dari item1
+          />
+          <Route
+            path="/item1/invitation"
+            element={<Invitation formItems_data={this.state.formItems} />} // data dari item1
           />
         </Routes>
       </Router>
