@@ -5,7 +5,7 @@ import dummyProfile from "./images/woman.jpg";
 class Navbar extends React.Component {
   render() {
     return (
-      <nav className="navbar">
+      <nav className="navbar" id="navbar">
         <Link to="/" id="app-title">
           MySurveyCompanion
         </Link>

@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import iconMenubarWhite from "./images/menubarWhite.png";
+import iconMenubarClose from "./images/menubarClose.png";
 
 class Menu extends React.Component {
   render() {
     return (
-      <div className="menu-container">
-        <div className="menu-title">
-          <img src={iconMenubarWhite} alt="" />
+      <div className="menu-container" id="menu-container">
+        <div className="menu-title" id="menu-title">
+          <img src={iconMenubarClose} alt="" />
         </div>
         <div className="sub-menu">
           <Link to="/item1/dashboard">Dashboard</Link>
@@ -19,6 +19,7 @@ class Menu extends React.Component {
         <div className="sub-menu">Data Visualization</div>
         <div className="sub-menu">Feedback</div>
         <div className="sub-menu">Back to Home</div>
+        <div className="indicator"></div>
       </div>
     );
   }

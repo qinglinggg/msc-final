@@ -19,7 +19,6 @@ class Dashboard extends React.Component {
   }
 
   state = {
-    openMenu: false,
     openVisibility: false,
     openSettings: false,
     optionCounter: 1,
@@ -31,10 +30,21 @@ class Dashboard extends React.Component {
   componentDidMount() {
     this.setState({ formItems: this.props.formItems_data });
     let menuBtn = document.getElementById("menu-icon");
+    let body = document.getElementById("body");
     menuBtn.addEventListener("click", () => {
-      let pageContainer = document.getElementById("page-container");
-      pageContainer.classList.toggle("openMenu");
-    })
+      body.classList.toggle("openMenu");
+    });
+    let menuClose = document.getElementById("menu-title");
+    menuClose.addEventListener("click", () => {
+      body.classList.toggle("openMenu");
+    });
+    let sideMenu = document.getElementById("menu-container");
+    let container = document.getElementById("container");
+    let newValue = container.clientHeight - 120;
+    let navbar = document.getElementById("navbar");
+    sideMenu.style.height = newValue + "px";
+    sideMenu.style.left = "0";
+    sideMenu.style.top = (navbar.clientHeight - 40) + "px";
   }
 
   handleMenu() {
@@ -76,13 +86,14 @@ class Dashboard extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <div className="container" id="dashboard-home">
-          {this.state.openMenu ? this.displayMenu() : null}
+        <div className="background"></div>
+        <div className="container" id="container">
+          <Menu/>
           <div className="page-container" id="page-container">
             <div className="title-container">
-              {this.state.openMenu ? null : (<div className="menu-icon" id="menu-icon" onClick={() => this.handleMenu()}>
+              <div className="menu-icon" id="menu-icon" onClick={() => this.handleMenu()}>
                 <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
-              </div>)}
+              </div>
               <div className="page-title">Dashboard</div>
               {/* <div className="title">Dashboard</div> */}
               <div className="dashboard-icon">
@@ -130,14 +141,6 @@ class Dashboard extends React.Component {
           </div>
         </div>
       </React.Fragment>
-    );
-  }
-
-  displayMenu() {
-    return (
-    <React.Fragment>
-      <Menu/>
-    </React.Fragment>
     );
   }
 
