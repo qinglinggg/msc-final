@@ -69,12 +69,6 @@ class App extends React.Component {
 
   render() {
     return (
-      // <div className="App">
-      //   <Navbar />
-      //   <main className="container">
-      //     <Home page1_data={this.state.page1_data} />
-      //   </main>
-      // </div>
       <Router>
         <Navbar user_data={this.state.userProfiles} />
         <div className="background"></div>

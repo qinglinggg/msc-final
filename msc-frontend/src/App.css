@@ -16,8 +16,8 @@
   --item-name: black;
   --item-desc: #878787;
   --minWidth-size: 1400px;
-  --minHeightNB-size: 50px;
-  --minHeight-size: 100vh;
+  --minHeightNB-size: 100px;
+  --minHeight-size: 600px;
 }
 
 html {
@@ -192,7 +192,7 @@ html {
   width: 100%;
   min-width: var(--minWidth-size);
   min-height: var(--minHeightNB-size);
-  height: 10em;
+  height: 11vh;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -215,6 +215,8 @@ html {
   font-style: normal;
   text-decoration: none;
   padding-left: 50px;
+  display: flex;
+  align-items: center;
 }
 
 #profile-container {
