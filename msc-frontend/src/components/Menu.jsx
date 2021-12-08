@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import iconMenubarClose from "./images/menubarClose.png";
 
 class Menu extends React.Component {
+
   render() {
     return (
       <div className="menu-container" id="menu-container">

@@ -3,7 +3,6 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import Question from "./Question";
-import Menu from "./Menu"
 import iconMenubarGrey from "./images/menubarGrey.png";
 import iconVisibility from "./images/visibility.png";
 import iconSettings from "./images/settings.png";
@@ -29,22 +28,11 @@ class Dashboard extends React.Component {
 
   componentDidMount() {
     this.setState({ formItems: this.props.formItems_data });
-    let menuBtn = document.getElementById("menu-icon");
     let body = document.getElementById("body");
+    let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
-    let menuClose = document.getElementById("menu-title");
-    menuClose.addEventListener("click", () => {
-      body.classList.toggle("openMenu");
-    });
-    let sideMenu = document.getElementById("menu-container");
-    let container = document.getElementById("container");
-    let newValue = container.clientHeight - 120;
-    let navbar = document.getElementById("navbar");
-    sideMenu.style.height = newValue + "px";
-    sideMenu.style.left = "0";
-    sideMenu.style.top = (navbar.clientHeight - 40) + "px";
   }
 
   handleMenu() {
@@ -86,57 +74,51 @@ class Dashboard extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <div className="background"></div>
-        <div className="container" id="container">
-          <Menu/>
-          <div className="page-container" id="page-container">
-            <div className="title-container">
-              <div className="menu-icon" id="menu-icon" onClick={() => this.handleMenu()}>
-                <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
-              </div>
-              <div className="page-title">Dashboard</div>
-              {/* <div className="title">Dashboard</div> */}
-              <div className="dashboard-icon">
-                <img
-                  className="icon-image"
-                  onClick={() => this.handleVisibility()}
-                  src={iconVisibility}
-                  alt=""
-                />
-                <img
-                  className="icon-image"
-                  onClick={() => this.handleSettings()}
-                  src={iconSettings}
-                  alt=""
-                />
-                {this.state.openSettings ? this.displaySettings() : null}
-              </div>
-            </div>
+        <div className="title-container">
+          <div className="menu-icon" id="menu-icon" onClick={() => this.handleMenu()}>
+            <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
+          </div>
+          <div className="page-title">Dashboard</div>
+          {/* <div className="title">Dashboard</div> */}
+          <div className="dashboard-icon">
+            <img
+              className="icon-image"
+              onClick={() => this.handleVisibility()}
+              src={iconVisibility}
+              alt=""
+            />
+            <img
+              className="icon-image"
+              onClick={() => this.handleSettings()}
+              src={iconSettings}
+              alt=""
+            />
+            {this.state.openSettings ? this.displaySettings() : null}
+          </div>
+        </div>
 
-            {/* kondisi kalo udah ada question, tampilin question dulu, baru AddQuestion*/}
-            {/* kalo belum ada, lgsg tombol Add Question aja */}
-            {/* AddQuestion -> tombol dulu baru kalo dipencet muncul menu tambahan */}
-            <div id="page-content">
-              <div className="questions-container">
-                {this.state.formItems.map((res) => {
-                  return (
-                    <React.Fragment>
-                      <div className="separator" />
-                      <div className="question">
-                        <Question mode={true} />
-                      </div>
-                    </React.Fragment>
-                  );
-                })}
-                <div className="separator" />
-                <div
-                  className="question"
-                  id="addQuestion"
-                  onClick={() => this.handleAddItem()}
-                >
-                  <Question mode={false} />
-                </div>
-              </div>
+        {/* kondisi kalo udah ada question, tampilin question dulu, baru AddQuestion*/}
+        {/* kalo belum ada, lgsg tombol Add Question aja */}
+        {/* AddQuestion -> tombol dulu baru kalo dipencet muncul menu tambahan */}
+        <div id="page-content">
+          <div className="questions-container">
+            {this.state.formItems.map((res) => {
+              return (
+                <React.Fragment>
+                  <div className="separator" />
+                  <div className="question">
+                    <Question mode={true} />
+                  </div>
+                </React.Fragment>
+              );
+            })}
+            <div className="separator" />
+            <div
+              className="question"
+              id="addQuestion"
+              onClick={() => this.handleAddItem()}
+            >
+              <Question mode={false} />
             </div>
           </div>
         </div>

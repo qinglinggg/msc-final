@@ -10,6 +10,7 @@ class Home extends React.Component {
   constructor() {
     super();
     this.handleAddItem = this.handleAddItem.bind(this);
+    this.handleButton = this.handleButton.bind(this);
   }
 
   state = {
@@ -30,6 +31,11 @@ class Home extends React.Component {
     // console.log(this.state.isAdd);
   }
 
+  handleButton(){
+    let body = document.getElementById("body");
+    body.classList.toggle("openPopup");
+  }
+
   render() {
     const isPage1 = this.state.isPage1;
     let page;
@@ -44,7 +50,9 @@ class Home extends React.Component {
       <React.Fragment>
         <div className="container">
           <div className="page-container">
-            <div className="page-title">Home</div>
+            <div className="title-container">
+              <div className="page-title">Home</div>
+            </div>
             <div id="page-content">
               <div className="menu-bar">
                 <div id="page-selection">
@@ -139,50 +147,57 @@ class Home extends React.Component {
   }
 
   displayPopUp() {
+    let body = document.getElementById("body");
+    body.classList.toggle("openPopup");
     return (
       <React.Fragment>
-        <div className="popup-background">
-          <div className="popup" id="popup-addItem">
-            <span className="closePopup" onClick={() => this.handleAddItem()}>
+        <div className="popup">
+          <div className="popup-container" id="popup-addItem">
+            <span className="closePopup" onClick={() => {
+              this.handleAddItem();
+              body.classList.toggle("openPopup");
+            }}>
               &times;
             </span>
             <form className="form-components">
               <h1>Make A New Questionnaire</h1>
               <br />
               <label>
-                Name
-                <input className="form-alignright" type="text" name="name" />
+                <span>Name</span>
+                <input type="text" name="name" />
               </label>
               <br />
               <br />
               <label>
-                Description
-                <input className="form-alignright" type="text" name="desc" />
+                <span>Description</span>
+                <input type="text" name="desc" />
               </label>
               <br />
               <br />
               <label>
-                Respondent Privacy
-                <div className="form-alignright">
-                  <input
-                    type="radio"
-                    name="privacy"
-                    id="anonymous"
-                    value="anonymous"
-                  />
-                  <label for="anonymous">Anonymous</label>
-                </div>
-                <div className="form-alignright">
-                  <input
-                    type="radio"
-                    name="privacy"
-                    id="not-anonymous"
-                    value="not-anonymous"
-                  />
-                  <label for="not-anonymous">Not Anonymous</label>
+                <span>Respondent Privacy</span>
+                <div className="form-options">
+                  <div>
+                    <input
+                      type="radio"
+                      name="privacy"
+                      id="anonymous"
+                      value="anonymous"
+                    />
+                    <label for="anonymous">Anonymous</label>
+                  </div>
+                  <div >
+                    <input
+                      type="radio"
+                      name="privacy"
+                      id="not-anonymous"
+                      value="not-anonymous"
+                    />
+                    <label for="not-anonymous">Not Anonymous</label>
+                    <br />
+                  </div>
                   <br />
                 </div>
-                <br />
               </label>
               <br />
               <br />
@@ -192,7 +207,7 @@ class Home extends React.Component {
                 onClick={() => this.handleClickConfirm.bind(this)}
               /> */}
               <Link to="/item1/dashboard">
-                <button>Confirm</button>
+                <button onClick={this.handleButton}>Confirm</button>
               </Link>
             </form>
           </div>

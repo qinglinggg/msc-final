@@ -7,26 +7,17 @@ import iconWhatsApp from "./images/iconWhatsApp.png";
 import iconLink from "./images/iconLink.png";
 
 class Invitation extends React.Component {
-  constructor() {
-    super();
-    this.handleMenu = this.handleMenu.bind(this);
-  }
 
   state = {
-    openMenu: false,
     pageSelection: true,
   };
 
-  handleMenu() {
-    this.setState({ openMenu: !this.state.openMenu });
-  }
-
-  displayMenu() {
-    return (
-      <React.Fragment>
-        <Menu />
-      </React.Fragment>
-    );
+  componentDidMount() {
+    let body = document.getElementById("body");
+    let menuBtn = document.getElementById("menu-icon");
+    menuBtn.addEventListener("click", () => {
+      body.classList.toggle("openMenu");
+    });
   }
 
   handleOpenSharePage() {
@@ -106,18 +97,12 @@ class Invitation extends React.Component {
     return (
       <React.Fragment>
         <div className="container" id="dashboard-home">
-          {this.state.openMenu ? this.displayMenu() : null}
+          {this.state.openMenu ? (<Menu/>) : null}
           <div className="page-container" id="page-container">
             <div className="title-container">
-              {this.state.openMenu ? null : (
-                <div
-                  className="menu-icon"
-                  id="menu-icon"
-                  onClick={() => this.handleMenu()}
-                >
+                <div className="menu-icon" id="menu-icon">
                   <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
                 </div>
-              )}
               <div className="page-title">Invitation</div>
               {/* <div className="title">Dashboard</div> */}
             </div>
