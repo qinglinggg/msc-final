@@ -3,7 +3,7 @@ import "./App.css";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
 import Dashboard from "./components/Dashboard";
-import Menu from "./components/Menu"
+import Menu from "./components/Menu";
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import axios from "axios";
@@ -35,6 +35,9 @@ class App extends React.Component {
     //   this.setState({ formItems });
     //   console.log(this.state);
     // });
+
+    // MENU
+
     let container = document.getElementById("container");
     let background = document.querySelector(".background");
     let navBar = document.getElementById("navbar");
@@ -44,23 +47,24 @@ class App extends React.Component {
     menuClose.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
-    let subMenus = document.querySelectorAll('.sub-menu');
+    let subMenus = document.querySelectorAll(".sub-menu");
     function activateButton() {
       subMenus.forEach((item) => {
-        item.classList.remove('active');
+        item.classList.remove("active");
       });
-      this.classList.add('active');
+      this.classList.add("active");
     }
-    function disableOpenMenu(){
-      body.classList.toggle('openMenu');
+    function disableOpenMenu() {
+      body.classList.toggle("openMenu");
     }
     subMenus.forEach((item) => {
-      item.addEventListener('mouseover', activateButton);
-      item.addEventListener('click', disableOpenMenu);
+      item.addEventListener("mouseover", activateButton);
+      item.addEventListener("click", disableOpenMenu);
     });
     container.style.top = navBar.clientHeight + "px";
-    container.style.height = (window.innerHeight - navBar.clientHeight) + "px";
-    background.style.height = (navBar.clientHeight + container.clientHeight) + "px";
+    container.style.height = window.innerHeight - navBar.clientHeight + "px";
+    background.style.height =
+      navBar.clientHeight + container.clientHeight + "px";
     let newValue = container.clientHeight - 100;
     sideMenu.style.height = newValue + "px";
     sideMenu.style.left = "0";
@@ -73,10 +77,13 @@ class App extends React.Component {
         <Navbar user_data={this.state.userProfiles} />
         <div className="background"></div>
         <div className="container" id="container">
-          <Menu/>
+          <Menu />
           <div className="page-container" id="page-container">
             <Routes>
-              <Route path="/" element={<Home page1_data={this.state.forms} />} />
+              <Route
+                path="/"
+                element={<Home page1_data={this.state.forms} />}
+              />
               <Route
                 path="/item1/dashboard"
                 element={<Dashboard formItems_data={this.state.formItems} />} // data dari item1

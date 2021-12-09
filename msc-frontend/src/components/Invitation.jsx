@@ -5,19 +5,49 @@ import iconLINE from "./images/iconLINE.png";
 import iconTelegram from "./images/iconTelegram.png";
 import iconWhatsApp from "./images/iconWhatsApp.png";
 import iconLink from "./images/iconLink.png";
+import AutoHeightTextarea from "./functional-components/AutoheightTextarea";
+import TargetedUserEmail from "./functional-components/TargetedUserEmail";
 
 class Invitation extends React.Component {
+  constructor() {
+    super();
+    this.handleMenu = this.handleMenu.bind(this);
+    this.handleTargetedUserEmail = this.handleTargetedUserEmail.bind(this);
+    // this.handleTags = this.handleTags.bind(this);
+  }
 
   state = {
+    openMenu: false,
     pageSelection: true,
+    userInvited: [
+      {
+        number: 1,
+        name: "Albert Cony Pramudita",
+        email: "albert_pramudita@bca.co.id",
+        status: "Completed",
+        datetime: "Submitted at 08/12/2021 09:30PM",
+      },
+      {
+        number: 2,
+        name: "Dian Fransiska Handayani",
+        email: "dian_fransiska@bca.co.id",
+        status: "Completed",
+        datetime: "Submitted at 08/12/2021 09:30PM",
+      },
+    ],
+    openTargetedUserEmail: false,
   };
 
-  componentDidMount() {
-    let body = document.getElementById("body");
-    let menuBtn = document.getElementById("menu-icon");
-    menuBtn.addEventListener("click", () => {
-      body.classList.toggle("openMenu");
-    });
+  handleMenu() {
+    this.setState({ openMenu: !this.state.openMenu });
+  }
+
+  displayMenu() {
+    return (
+      <React.Fragment>
+        <Menu />
+      </React.Fragment>
+    );
   }
 
   handleOpenSharePage() {
@@ -62,14 +92,63 @@ class Invitation extends React.Component {
             <div id="invitation-share-divider-line"></div>
           </div>
           <div id="invitation-share-privately-box">
-            <div id="invitation-share-privately-innerbox">
+            <div className="invitation-share-privately-innerbox">
               Share it privately.
             </div>
-            <div id="invitation-share-privately-button">
-              Type your targeted user email
+            <div
+              id="invitation-share-privately-render"
+              onClick={() => this.handleTargetedUserEmail()}
+            >
+              {this.state.openTargetedUserEmail ? (
+                this.displayTargetedUserEmailBox()
+              ) : (
+                <div id="invitation-share-privately-button">
+                  Type your targeted user email
+                </div>
+              )}
             </div>
           </div>
         </div>
+      </React.Fragment>
+    );
+  }
+
+  // handleTags() {
+  //   let ul = document.querySelector("ul");
+  //   // input = ul.querySelector("#invitation-share-privately-email-input");
+
+  //   console.log(ul);
+
+  //   let tags = [];
+  //   // function addTag(e) {
+  //   //   if (e.key == "Enter") {
+  //   //     let tag = e.target.value.replace(/\s+/g, " ");
+  //   //     if (tag.length > 1 && !tags.includes(tag)) {
+  //   //       tag.split(",").forEach((tag) => {
+  //   //         tags.push(tag);
+  //   //         console.log(tags);
+  //   //       });
+  //   //     }
+  //   //   }
+  //   // }
+
+  //   // input.addEventListener("keyup", addTag);
+  // }
+
+  handleTargetedUserEmail() {
+    this.setState({ openTargetedUserEmail: true });
+  }
+
+  displayTargetedUserEmailBox() {
+    return (
+      <React.Fragment>
+        <div
+          className="invitation-share-privately-innerbox"
+          id="invitation-share-privately-innerbox-desc"
+        >
+          Enter your targeted user email.
+        </div>
+        <TargetedUserEmail></TargetedUserEmail>
       </React.Fragment>
     );
   }
@@ -79,9 +158,53 @@ class Invitation extends React.Component {
   }
 
   displayTrackPage() {
+    // for (let i = 0; i < 4; i++) {
+    //   // push data asli disini
+    //   this.state.userInvited.push(i);
+    // }
+
     return (
       <React.Fragment>
-        <div></div>
+        <div id="invitation-track-container">
+          {this.state.userInvited.map((value) => {
+            return (
+              <React.Fragment>
+                <div id="invitation-track-box">
+                  <div
+                    className="invitation-track-innerbox"
+                    id="invitation-track-innerbox-number"
+                  >
+                    {value.number}.
+                  </div>
+                  <div
+                    className="invitation-track-innerbox"
+                    id="invitation-track-innerbox-name"
+                  >
+                    {value.name}
+                  </div>
+                  <div
+                    className="invitation-track-innerbox"
+                    id="invitation-track-innerbox-email"
+                  >
+                    {value.email}
+                  </div>
+                  <div
+                    className="invitation-track-innerbox"
+                    id="invitation-track-innerbox-status"
+                  >
+                    {value.status}
+                  </div>
+                  <div
+                    className="invitation-track-innerbox"
+                    id="invitation-track-innerbox-datetime"
+                  >
+                    {value.datetime}
+                  </div>
+                </div>
+              </React.Fragment>
+            );
+          })}
+        </div>
       </React.Fragment>
     );
   }
@@ -93,16 +216,25 @@ class Invitation extends React.Component {
     } else {
       page = this.displayTrackPage();
     }
+    // if (this.state.openTargetedUserEmail) {
+    //   this.handleTags();
+    // }
 
     return (
       <React.Fragment>
         <div className="container" id="dashboard-home">
-          {this.state.openMenu ? (<Menu/>) : null}
+          {this.state.openMenu ? this.displayMenu() : null}
           <div className="page-container" id="page-container">
             <div className="title-container">
-                <div className="menu-icon" id="menu-icon">
+              {this.state.openMenu ? null : (
+                <div
+                  className="menu-icon"
+                  id="menu-icon"
+                  onClick={() => this.handleMenu()}
+                >
                   <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
                 </div>
+              )}
               <div className="page-title">Invitation</div>
               {/* <div className="title">Dashboard</div> */}
             </div>
