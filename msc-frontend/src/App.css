@@ -312,7 +312,7 @@ html {
 }
 
 .page-title {
-  width: 80%;
+  width: 90%;
   height: 100px;
   text-align: left;
   font-size: 5rem;
@@ -571,12 +571,12 @@ html {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
   margin-bottom: 50px;
 }
 
-#dashboard-home {
-  justify-content: space-between;
+#page-title-home {
+  padding-left: 30px;
 }
 
 .dashboard-icon {
@@ -1117,10 +1117,10 @@ html {
 }
 
 #invitation-share-privately-email-remove {
-  margin-left: 8px;
-  height: 15px;
-  width: 15px;
-  /* color: white; */
+  margin-left: 5px;
+  height: 20px;
+  width: 20px;
+  color: grey;
   cursor: pointer;
   border-radius: 50%;
   /* background: #dfdfdf; */
@@ -1195,4 +1195,51 @@ html {
 #invitation-track-innerbox-datetime {
   min-width: 200px;
   font-style: italic;
+}
+
+/* DESIGN */
+
+#design-background-container {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  flex-direction: space-around;
+  padding-left: 50px;
+}
+
+#design-background-title {
+  width: 15%;
+  height: 100%;
+  font-display: var(--font-roboto);
+  font-size: medium;
+  font-style: italic;
+  margin: 0px 5px 0px 20px;
+  align-self: center;
+}
+
+#design-color-container {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  padding-left: 50px;
+}
+
+#design-color-title {
+  width: 15%;
+  height: 100%;
+  font-display: var(--font-roboto);
+  font-size: medium;
+  font-style: italic;
+  margin: 0px 5px 0px 20px;
+  align-self: center;
+}
+
+.design-selection {
+  width: 50vh;
+  height: fit-content;
+  font-size: medium;
 }

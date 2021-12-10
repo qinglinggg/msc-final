@@ -75,10 +75,16 @@ class Dashboard extends React.Component {
     return (
       <React.Fragment>
         <div className="title-container">
-          <div className="menu-icon" id="menu-icon" onClick={() => this.handleMenu()}>
+          <div
+            className="menu-icon"
+            id="menu-icon"
+            onClick={() => this.handleMenu()}
+          >
             <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
           </div>
-          <div className="page-title">Dashboard</div>
+          <div className="page-title" id="page-title-home">
+            Dashboard
+          </div>
           {/* <div className="title">Dashboard</div> */}
           <div className="dashboard-icon">
             <img

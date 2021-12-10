@@ -38,6 +38,14 @@ class Invitation extends React.Component {
     openTargetedUserEmail: false,
   };
 
+  componentDidMount() {
+    let body = document.getElementById("body");
+    let menuBtn = document.getElementById("menu-icon");
+    menuBtn.addEventListener("click", () => {
+      body.classList.toggle("openMenu");
+    });
+  }
+
   handleMenu() {
     this.setState({ openMenu: !this.state.openMenu });
   }
@@ -222,44 +230,37 @@ class Invitation extends React.Component {
 
     return (
       <React.Fragment>
-        <div className="container" id="dashboard-home">
-          {this.state.openMenu ? this.displayMenu() : null}
-          <div className="page-container" id="page-container">
-            <div className="title-container">
-              {this.state.openMenu ? null : (
-                <div
-                  className="menu-icon"
-                  id="menu-icon"
-                  onClick={() => this.handleMenu()}
-                >
-                  <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
-                </div>
-              )}
-              <div className="page-title">Invitation</div>
-              {/* <div className="title">Dashboard</div> */}
-            </div>
-            <div id="page-content">
-              <div className="menu-bar">
-                <div id="page-selection">
-                  <div
-                    onClick={() => this.handleOpenSharePage()}
-                    className="page-button clicked"
-                    id="btn-page1"
-                  >
-                    Share
-                  </div>
-                  <div
-                    onClick={() => this.handleOpenTrackPage()}
-                    className="page-button"
-                    id="btn-page2"
-                  >
-                    Track
-                  </div>
-                </div>
+        <div className="title-container" id="title-invitation">
+          <div
+            className="menu-icon"
+            id="menu-icon"
+            onClick={() => this.handleMenu()}
+          >
+            <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
+          </div>
+          <div className="page-title">Invitation</div>
+          {/* <div className="title">Dashboard</div> */}
+        </div>
+        <div id="page-content">
+          <div className="menu-bar">
+            <div id="page-selection">
+              <div
+                onClick={() => this.handleOpenSharePage()}
+                className="page-button clicked"
+                id="btn-page1"
+              >
+                Share
               </div>
-              {page}
+              <div
+                onClick={() => this.handleOpenTrackPage()}
+                className="page-button"
+                id="btn-page2"
+              >
+                Track
+              </div>
             </div>
           </div>
+          {page}
         </div>
       </React.Fragment>
     );

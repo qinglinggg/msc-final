@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import iconMenubarClose from "./images/menubarClose.png";
 
 class Menu extends React.Component {
-
   render() {
     return (
       <div className="menu-container" id="menu-container">
@@ -13,7 +12,9 @@ class Menu extends React.Component {
         <div className="sub-menu">
           <Link to="/item1/dashboard">Dashboard</Link>
         </div>
-        <div className="sub-menu">Design</div>
+        <div className="sub-menu">
+          <Link to="/item1/design">Design</Link>
+        </div>
         <div className="sub-menu">
           <Link to="/item1/invitation">Invitation</Link>
         </div>

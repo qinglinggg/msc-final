@@ -20,11 +20,7 @@ class TargetedUserEmail extends React.Component {
         .forEach((tag) => {
           let inputTag = `<li id="invitation-share-privately-email">
             ${tag} 
-            <img
-            id="invitation-share-privately-email-remove"
-            src={menubarClose}
-            alt=""
-          />
+            <i class="uit uit-multiply" id="invitation-share-privately-email-remove" onClick="remove(this, '${tag}')"></i>
           </li>`;
           ul.insertAdjacentHTML("afterbegin", inputTag);
         });

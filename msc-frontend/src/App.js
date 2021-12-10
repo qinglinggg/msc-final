@@ -1,16 +1,16 @@
 import logo from "./logo.svg";
 import "./App.css";
-import Navbar from "./components/Navbar";
-import Home from "./components/Home";
-import Dashboard from "./components/Dashboard";
-import Menu from "./components/Menu";
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import axios from "axios";
 // import "bootstrap/dist/css/bootstrap.css";
 // import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
-import autosize from "autosize";
+import Navbar from "./components/Navbar";
+import Home from "./components/Home";
+import Dashboard from "./components/Dashboard";
+import Menu from "./components/Menu";
 import Invitation from "./components/Invitation";
+import Design from "./components/Design";
 
 class App extends React.Component {
   state = {
@@ -91,6 +91,10 @@ class App extends React.Component {
               <Route
                 path="/item1/invitation"
                 element={<Invitation formItems_data={this.state.formItems} />} // data dari item1
+              />
+              <Route
+                path="/item1/design"
+                element={<Design formItems_data={this.state.formItems} />} // data dari item1
               />
             </Routes>
           </div>
