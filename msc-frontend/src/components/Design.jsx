@@ -53,6 +53,8 @@ class Design extends React.Component {
     this.setState({ selectedColorOption: data.value });
   }
 
+  handleUploadImage() {}
+
   render() {
     return (
       <React.Fragment>
