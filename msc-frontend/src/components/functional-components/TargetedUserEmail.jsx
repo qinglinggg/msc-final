@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import AutoHeightTextarea from "./AutoheightTextarea";
-import menubarClose from "../images/menubarClose.png";
 
 class TargetedUserEmail extends React.Component {
   componentDidMount() {
@@ -9,9 +7,13 @@ class TargetedUserEmail extends React.Component {
       "#invitation-share-privately-email-input"
     );
 
-    console.log(input);
-
     let tags = [];
+
+    function remove(element, tag) {
+      let index = tags.indexOf(tag);
+      tags = [...tags.slice(0, index), ...tags.slice(index + 1)];
+      // element.parentElement.remove();
+    }
 
     function createTag() {
       tags
@@ -20,32 +22,40 @@ class TargetedUserEmail extends React.Component {
         .forEach((tag) => {
           let inputTag = `<li id="invitation-share-privately-email">
             ${tag} 
-            <i class="uit uit-multiply" id="invitation-share-privately-email-remove" onClick="remove(this, '${tag}')"></i>
+            <i class="uit uit-multiply" id="invitation-share-privately-email-remove"></i>
           </li>`;
           ul.insertAdjacentHTML("afterbegin", inputTag);
+          document
+            .getElementById("invitation-share-privately-email-remove")
+            .addEventListener(
+              "click",
+              function () {
+                remove(this, tag);
+                // createTag();
+              },
+              false
+            );
         });
-      //   console.log(tags);
-    }
-
-    function remove(element, tag) {
-      let index = tags.indexOf(tag);
-      tags = [...tags.slice(0, index), ...tags.slice(index + 1)];
     }
 
     function addTag(e) {
-      if (e.code == "Space") {
-        let tag = e.target.value.replace(/\s+/g, " ");
-        if (tag.length > 1 && !tags.includes(tag)) {
+      if (e.code == "Space" || e.key == ",") {
+        // cleaned input tag
+        let tag = e.target.value.replace(/\s+/g, "").replace(",", "");
+        if (
+          tag.length > 1 &&
+          tag.endsWith("@bca.co.id") &&
+          !tags.includes(tag)
+        ) {
           if (tags) {
             document
               .querySelectorAll("#invitation-share-privately-email")
               .forEach((tag) => tag.remove());
           }
-          tag.split(",").forEach((tag) => {
-            tags.push(tag);
-            createTag();
-            // console.log(document.querySelector("i"));
-          });
+          tags.push(tag);
+          createTag();
+        } else {
+          // munculin warning
         }
         e.target.value = "";
       }
