@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import iconMenubarGrey from "./images/menubarGrey.png";
 import Select from "react-select";
 import UploadImage from "./functional-components/UploadImage";
+import UploadImageReact from "./functional-components/UploadImageWithProgressBar-React";
 
 class Design extends React.Component {
   constructor() {

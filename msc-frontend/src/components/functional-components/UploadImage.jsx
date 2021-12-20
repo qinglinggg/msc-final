@@ -1,171 +1,158 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
+import imgWoman from "../images/woman.jpg";
+import axios from "axios";
 
 class UploadImage extends React.Component {
+  constructor() {
+    super();
+    this.handleUploadFile = this.handleUploadFile.bind(this);
+  }
+
   state = {
     isImageUploaded: false,
+    selectedImage: null,
   };
 
-  componentDidMount() {
-    let file;
-    let originalImageArea;
+  handleUploadFile(file) {
+    console.log("Enter handle file");
+    console.log(file);
 
-    const dropArea = document.querySelector(
-      "#design-background-uploadimage-area"
-    );
+    // image validation
 
-    const imageArea = dropArea.querySelector(
-      "#design-background-uploadimage-forimage"
-    );
+    let validExtensions = ["image/jpeg", "image/png", "image/jpg"];
+    if (validExtensions.includes(file.type)) {
+      console.log(file);
+      let formData = new FormData();
+      formData.append("image", file);
 
-    const dragText = dropArea.querySelector(
-      "#design-background-uploadimage-text-header"
-    );
+      axios({
+        url: "http://localhost:8080/api/v1/forms/background",
+        method: "POST",
+        data: { formData },
+      }).then(
+        (res) => {
+          // console.log("successfully uploaded");
+        },
+        (err) => {
+          // error
+        }
+      );
 
-    const browseBtn = dropArea.querySelector(
-      ".design-background-uploadimage-button"
-    );
+      this.setState({ isImageUploaded: true });
 
-    const input = dropArea.parentElement.querySelector("input");
+      let fileReader = new FileReader();
+      let fileURL;
+      fileReader.onload = () => {
+        fileURL = fileReader.result;
 
-    const filename = dropArea.querySelector(
-      "#design-background-uploadimage-filename"
-    );
+        let imageContainer = document.querySelector(
+          "#design-background-uploadimage-image"
+        );
+        let image = `<img src=${fileURL} alt="" />`;
+        imageContainer.insertAdjacentHTML("afterbegin", image);
+      };
 
-    // 1. BROWSE FILE
-    browseBtn.onclick = () => {
-      input.click();
-    };
+      fileReader.readAsDataURL(file);
+      // console.log(this.state.selectedImage);
 
-    input.addEventListener("change", function () {
-      file = this.files[0];
-      dropArea.classList.add("active");
-      showFile();
-    });
+      // animation
+      const dropArea = document.querySelector(
+          "#design-background-uploadimage-area"
+        ),
+        filename = dropArea.querySelector(
+          "#design-background-uploadimage-filename"
+        );
 
-    // 2. DRAG & DROP
-    // file is dragged on drag area
-    dropArea.addEventListener("dragover", (e) => {
-      console.log("File is dragged");
-      e.preventDefault();
-      //   e.dataTransfer.dropEffect = "copy";
-      dropArea.classList.add("active");
-      dragText.textContent = "Release to Upload File";
-    });
-
-    // file is dragged over drag area
-    dropArea.addEventListener("dragleave", () => {
-      console.log("File is dragged outside from drag area");
-      dropArea.classList.remove("active");
-      dragText.textContent = "Drag & Drop to Upload File";
-    });
-
-    // file is dropped on drag area
-    dropArea.addEventListener("drop", (e) => {
-      console.log("File is dropped on drag area");
-      e.preventDefault();
-      file = e.dataTransfer.files[0];
-      showFile();
-    });
-
-    // FILE
-
-    function removeFile() {
-      dropArea.classList.remove("active");
-      filename.classList.remove("active");
-      file = "";
-      // pleaseRerender = true;
-      // console.log(pleaseRerender);
-      // imageArea.innerHTML = "";
-      // imageArea.innerHTML = originalImageArea;
-      // console.log(file);
-      // ReactDOM.render(<UploadImage />, dropArea.parentElement);
-      // this.setState({ startRender: true });
-    }
-
-    function showFile() {
-      let fileType = file.type;
-
-      // image file validation
-      let validExtensions = ["image/jpeg", "image/png", "image/jpg"];
-
-      if (validExtensions.includes(fileType)) {
-        let fileReader = new FileReader();
-        fileReader.onload = () => {
-          // load & show image
-          originalImageArea = imageArea.innerHTML;
-          let fileURL = fileReader.result; // passing image file source
-          let image = `
-          <div id="remove-image-button">
-            <i class="fas fa-times"></i>
-          </div>
-          <img src="${fileURL}" alt="">
-          `;
-          imageArea.innerHTML = image;
-
-          const removeBtn = imageArea.querySelector("#remove-image-button");
-          removeBtn.addEventListener("click", function () {
-            removeFile();
-          });
-        };
-
-        fileReader.readAsDataURL(file);
-
-        // show filename
-        filename.classList.add("active");
-        filename.textContent = file.name;
-      } else {
-        alert("Please upload an image file!");
-        dropArea.classList.remove("active");
-        dragText.textContent = "Drag & Drop to Upload File";
-      }
+      filename.classList.add("active");
+      filename.textContent = file.name;
     }
   }
 
-  // displayBrowseBtn() {
-  //   return (
-  //     <React.Fragment>
-  //       <div
-  //         className="design-background-uploadimage-button"
-  //         id="uploadimage-browse-button"
-  //       >
-  //         <div className="design-background-uploadimage-text">Browse File</div>
-  //       </div>
-  //       <input type="file" hidden />
-  //     </React.Fragment>
-  //   );
-  // }
+  handleRemoveFile() {
+    const dropArea = document.querySelector(
+        "#design-background-uploadimage-area"
+      ),
+      filename = dropArea.querySelector(
+        "#design-background-uploadimage-filename"
+      );
 
-  // handleRemoveBtn() {
-  //   this.setState({ isImageUploaded: true });
-  // }
+    dropArea.classList.remove("active");
+    filename.classList.remove("active");
 
-  // displayRemoveBtn() {
-  //   return (
-  //     <React.Fragment>
-  //       <div
-  //         className="design-background-uploadimage-button"
-  //         id="uploadimage-remove-button"
-  //         onClick={this.handleRemoveBtn()}
-  //       >
-  //         <div className="design-background-uploadimage-text">Remove File</div>
-  //       </div>
-  //       <input type="file" hidden />
-  //     </React.Fragment>
-  //   );
-  // }
+    axios.get("http://localhost:8080/api/v1/forms/background").then((res) => {
+      axios.delete("http://localhost:8080/api/v1/forms/background");
+    });
+
+    this.setState({ isImageUploaded: false });
+  }
+
+  handleAreaDragOver(e) {
+    const dropArea = document.querySelector(
+        "#design-background-uploadimage-area"
+      ),
+      dragText = dropArea.querySelector(
+        "#design-background-uploadimage-text-header"
+      );
+
+    // file is dragged on drag area
+    console.log("File is dragged");
+    e.preventDefault();
+    dropArea.classList.add("active");
+    dragText.textContent = "Release to Upload File";
+  }
+
+  handleAreaDragLeave() {
+    const dropArea = document.querySelector(
+        "#design-background-uploadimage-area"
+      ),
+      dragText = dropArea.querySelector(
+        "#design-background-uploadimage-text-header"
+      );
+
+    // file is dragged over drag area
+    console.log("File is dragged outside from drag area");
+    dropArea.classList.remove("active");
+    dragText.textContent = "Drag & Drop to Upload File";
+  }
+
+  handleAreaDrop(e) {
+    // file is dropped on drag area
+    console.log("File is dropped on drag area");
+    e.preventDefault();
+    let file = e.dataTransfer.files[0];
+    this.handleUploadFile(file);
+  }
 
   render() {
     return (
       <React.Fragment>
-        <div id="design-background-uploadimage-area">
-          {/* <div id="remove-image-button">
-          <i class="fas fa-times"></i>
-          </div> */}
+        <div
+          id="design-background-uploadimage-area"
+          // animation
+          onDragOver={(e) => {
+            this.handleAreaDragOver(e);
+          }}
+          onDragLeave={() => {
+            this.handleAreaDragLeave();
+          }}
+          // file upload
+          onDrop={(e) => {
+            this.handleAreaDrop(e);
+          }}
+        >
           {/* <div id="design-background-uploadimage-forimage"> */}
-          <div id="design-background-uploadimage-image">
-            <img src="" alt="" />
-          </div>
+          {this.state.isImageUploaded ? (
+            <React.Fragment>
+              <div
+                id="remove-image-button"
+                onClick={() => this.handleRemoveFile()}
+              >
+                <i className="fas fa-times"></i>
+              </div>
+              <div id="design-background-uploadimage-image"></div>
+            </React.Fragment>
+          ) : null}
           <div
             className="design-background-uploadimage-text"
             id="design-background-uploadimage-text-header"
@@ -178,20 +165,38 @@ class UploadImage extends React.Component {
           >
             OR
           </div>
-          <div className="design-background-uploadimage-button">
+          <div
+            className="design-background-uploadimage-button"
+            onClick={() => {
+              let area = document.querySelector(
+                "#design-background-uploadimage-area"
+              );
+              let input = area.querySelector("input");
+              input.click();
+            }}
+          >
             <div className="design-background-uploadimage-text">
               Browse File
             </div>
           </div>
-          <input type="file" hidden />
+          <input
+            type="file"
+            onChange={(e) => {
+              let file = e.target.files[0];
+              this.setState({ selectedImage: file });
+              this.handleUploadFile(file);
+
+              // animation
+              let dropArea = document.querySelector(
+                "#design-background-uploadimage-area"
+              );
+              dropArea.classList.add("active");
+            }}
+            hidden
+          />
           {/* </div> */}
           <div id="design-background-uploadimage-filename">File name here</div>
         </div>
-        {/* <div id="design-background-uploadimage-button-container">
-          {this.state.isImageUploaded
-            ? this.displayRemoveBtn()
-            : this.displayBrowseBtn()}
-        </div> */}
       </React.Fragment>
     );
   }

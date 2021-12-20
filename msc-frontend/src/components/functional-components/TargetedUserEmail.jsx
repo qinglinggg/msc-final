@@ -1,85 +1,99 @@
 import React, { Component } from "react";
 
 class TargetedUserEmail extends React.Component {
-  componentDidMount() {
-    let ul = document.querySelector("ul");
-    let input = document.querySelector(
-      "#invitation-share-privately-email-input"
-    );
+  state = {
+    tags: [],
+    tagsElement: [],
+  };
 
-    let tags = [];
+  handleAddTag(e) {
+    console.log("Entering handle add tag");
 
-    function remove(element, tag) {
-      let index = tags.indexOf(tag);
-      tags = [...tags.slice(0, index), ...tags.slice(index + 1)];
-      // element.parentElement.remove();
-    }
+    if (e.code == "Space" || e.key == ",") {
+      // cleaned input tag
 
-    function createTag() {
-      tags
-        .slice()
-        .reverse()
-        .forEach((tag) => {
-          let inputTag = `<li id="invitation-share-privately-email">
-            ${tag} 
-            <i class="uit uit-multiply" id="invitation-share-privately-email-remove"></i>
-          </li>`;
-          ul.insertAdjacentHTML("afterbegin", inputTag);
-          document
-            .getElementById("invitation-share-privately-email-remove")
-            .addEventListener(
-              "click",
-              function () {
-                remove(this, tag);
-                // createTag();
-              },
-              false
-            );
-        });
-    }
+      // tag -> inputan baru dari user
+      // tags -> inputan user yang sudah disimpan, terdiri dari banyak tag
 
-    function addTag(e) {
-      if (e.code == "Space" || e.key == ",") {
-        // cleaned input tag
-        let tag = e.target.value.replace(/\s+/g, "").replace(",", "");
-        if (
-          tag.length > 1 &&
-          tag.endsWith("@bca.co.id") &&
-          !tags.includes(tag)
-        ) {
-          if (tags) {
-            document
-              .querySelectorAll("#invitation-share-privately-email")
-              .forEach((tag) => tag.remove());
-          }
-          tags.push(tag);
-          createTag();
-        } else {
-          // munculin warning
-        }
-        e.target.value = "";
+      let tag = e.target.value.replace(/\s+/g, "").replace(",", "");
+      let tags = this.state.tags;
+
+      if (tag.length > 1 && tag.endsWith("@bca.co.id") && !tags.includes(tag)) {
+        tags.push(tag);
+        this.setState({ tags });
+
+        this.handleRenderTag();
+      } else {
+        // munculin warning
       }
+      e.target.value = "";
     }
+  }
 
-    input.addEventListener("keyup", addTag);
+  handleRenderTag() {
+    console.log("Entering HANDLE RENDER TAG BOX");
+
+    let tags = this.state.tags;
+    let newTagElement = [];
+
+    console.log("Tag(s) : " + tags);
+
+    // setiap ada perubahan, state tagsElement selalu dikosongkan lalu dipush ulang mengikuti updatean dari state tags
+
+    this.setState({ tagsElement: [] }, () => {
+      tags.forEach((tag, index) => {
+        console.log("ITERATION " + index);
+        console.log("Tag : " + tag);
+
+        newTagElement.push(
+          <li id="invitation-share-privately-email" key={index}>
+            {tag}
+            <i
+              className="uit uit-multiply"
+              id="invitation-share-privately-email-remove"
+              onClick={() => {
+                this.handleRemoveTag(tag);
+              }}
+            ></i>
+          </li>
+        );
+      });
+
+      this.setState({
+        tagsElement: newTagElement,
+      });
+    });
+  }
+
+  handleRemoveTag(tag) {
+    console.log("Tag wanted to be removed: " + tag);
+    console.log("Tag(s) before removed: " + this.state.tags);
+
+    this.setState(
+      {
+        tags: this.state.tags.filter((element) => {
+          return element != tag;
+        }),
+      },
+      () => {
+        console.log("Current tags, after removed: " + this.state.tags);
+        this.handleRenderTag();
+      }
+    );
   }
 
   render() {
     return (
       <div id="invitation-share-privately-emailbox">
         <ul id="invitation-share-privately-emails">
-          {/* <h3 id="invitation-share-privately-email">
-            Test
-            <i className="uit uit-multiply"></i>
-          </h3>
-          <h3 id="invitation-share-privately-email">
-            Test
-            <i className="uit uit-multiply"></i>
-          </h3> */}
+          {this.state.tagsElement}
           <input
             type="text"
             className="inputText"
             id="invitation-share-privately-email-input"
+            onKeyUp={(event) => {
+              this.handleAddTag(event);
+            }}
           ></input>
         </ul>
       </div>

@@ -121,28 +121,6 @@ class Invitation extends React.Component {
     );
   }
 
-  // handleTags() {
-  //   let ul = document.querySelector("ul");
-  //   // input = ul.querySelector("#invitation-share-privately-email-input");
-
-  //   console.log(ul);
-
-  //   let tags = [];
-  //   // function addTag(e) {
-  //   //   if (e.key == "Enter") {
-  //   //     let tag = e.target.value.replace(/\s+/g, " ");
-  //   //     if (tag.length > 1 && !tags.includes(tag)) {
-  //   //       tag.split(",").forEach((tag) => {
-  //   //         tags.push(tag);
-  //   //         console.log(tags);
-  //   //       });
-  //   //     }
-  //   //   }
-  //   // }
-
-  //   // input.addEventListener("keyup", addTag);
-  // }
-
   handleTargetedUserEmail() {
     this.setState({ openTargetedUserEmail: true });
   }
