@@ -1,27 +1,22 @@
 import react, { createRef, Fragment, useEffect } from "react";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import Navbar from "./Navbar";
 import Question from "./Question";
 import iconMenubarGrey from "./images/menubarGrey.png";
 import iconVisibility from "./images/visibility.png";
 import iconSettings from "./images/settings.png";
-import axios from "axios";
 // import { TextInput } from "react-native-paper";
 // import { Dropdown } from "react-bootstrap";
 
 class Dashboard extends React.Component {
   constructor() {
     super();
-    this.handleMenu = this.handleMenu.bind(this);
     this.handleAddItem = this.handleAddItem.bind(this);
   }
 
   state = {
     openVisibility: false,
     openSettings: false,
-    optionCounter: 1,
-    optionCheck: false,
     privacyCheck: true,
     formItems: [],
   };
@@ -33,10 +28,6 @@ class Dashboard extends React.Component {
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
-  }
-
-  handleMenu() {
-    this.setState({ openMenu: !this.state.openMenu });
   }
 
   handleVisibility() {
@@ -59,8 +50,6 @@ class Dashboard extends React.Component {
   }
 
   handleAddItem() {
-    // axios.post()
-    // console.log("TESTT");
     let currentStateData = this.state.formItems;
     let newItem = {
       question: "",
@@ -77,9 +66,7 @@ class Dashboard extends React.Component {
         <div className="title-container">
           <div
             className="menu-icon"
-            id="menu-icon"
-            onClick={() => this.handleMenu()}
-          >
+            id="menu-icon" >
             <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
           </div>
           <div className="page-title" id="page-title-home">

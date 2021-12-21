@@ -49,6 +49,7 @@ html {
   z-index: 2;
   border-radius: 0px 25px 25px 0px;
   animation: slide-in 0.3s forwards;
+  align-self: center;
 }
 
 .openMenu .menu-container::before {
@@ -297,7 +298,7 @@ html {
   width: 100%;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   min-width: var(--minWidth-size);
 }
 
@@ -309,6 +310,7 @@ html {
   flex-direction: column;
   align-items: center;
   font-family: var(--font-roboto);
+  margin-top: 50px;
 }
 
 .page-title {
@@ -1242,4 +1244,74 @@ html {
   width: 50vh;
   height: fit-content;
   font-size: medium;
+}
+
+/* Data Visualization */
+
+.data-visualization-container {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+}
+
+.data-visualization-container > .page-selection {
+  width: 80%;
+}
+
+.data-visualization-container > .page-selection ul {
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.data-visualization-container > .page-selection ul li {
+  width: 150px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: large;
+  color: #c4c4c4;
+
+}
+
+.data-visualization-container > .page-selection ul li:hover {
+  border-bottom: 1px solid #878787;
+}
+
+.data-visualization-container > .result-container {
+  width: 80%;
+  height: fit-content;
+  padding: 15px;
+  border-radius: 15px;
+  border: 1px solid #c4c4c4;
+  display: flex;
+  flex-direction: column;
+  margin-top: 50px;
+  box-shadow: 0px 0px 5px 0 #c4c4c4;
+}
+
+.result-container > .question-field {
+  text-align: left;
+  color: #878787;
+  font-size: x-large;
+  display: block;
+  width: 100%;
+  height: fit-content;
+  margin: 15px;
+}
+
+.result-container > .graph-section {
+  width: 100%;
+  height: fit-content;
+  margin: 15px;
+}
+
+.graph-section > .graph {
+  width: 50%;
+  height: fit-content;
 }

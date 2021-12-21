@@ -47,9 +47,28 @@ public class FormController {
         return formService.removeForm(id);
     }
 
-    @PutMapping(path="/{id}")
+    @PutMapping(path="/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public int updateForm(@PathVariable("id") String id, @RequestBody Form toBeUpdated){
         return formService.updateForm(id, toBeUpdated);
     }
 
+    @PostMapping(path="/add-form-items/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public int addFormItem(@PathVariable("id") String id, @RequestBody FormItems item){
+        return formService.addFormItems(id, item);
+    }
+
+    @GetMapping(path="/get-form-items/{id}")
+    public List<FormItems> getFormItems(String formId){
+        return formService.getFormItems(formId);
+    }
+    
+    @PostMapping(path="/add-answer-selection/{formItems-id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public int addAnswerSelection(String formItemsId, @RequestBody FormAnswerSelection answerSelection){
+        return formService.addAnswerSelection(formItemsId, answerSelection);
+    }
+
+    @GetMapping(path="/get-answer-selection/{formItems-id}")
+    public List<FormAnswerSelection> getAnswerSelections(String formItemsId){
+        return formService.getAnswerSelection(formItemsId);
+    }
 }

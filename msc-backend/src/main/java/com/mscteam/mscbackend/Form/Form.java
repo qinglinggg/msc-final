@@ -11,6 +11,8 @@ public class Form {
     private String privacySetting;
     private Date createDate;
     private Date modifyDate;
+    private String backgroundLink;
+    private String backgroundColor;
 
     // Get Forms
     public Form(String formId, String title, String description, String privacySetting, Date createDate, Date modifyDate) {
@@ -20,16 +22,21 @@ public class Form {
         this.privacySetting = privacySetting;
         this.createDate = createDate;
         this.modifyDate = modifyDate;
+        this.backgroundLink = "";
+        this.backgroundColor = "";
     }
 
     // Create and Insert mode
-    public Form(@JsonProperty("title") String title, @JsonProperty("description") String description, @JsonProperty("privacySetting") String privacySetting){
+    public Form(@JsonProperty("title") String title, @JsonProperty("description") String description, @JsonProperty("privacySetting") String privacySetting,
+    @JsonProperty("backgroundLink") String backgroundLink, @JsonProperty("backgroundColor") String backgroundColor){
         this.formId = UUID.randomUUID();
         this.title = title;
         this.description = description;
         this.privacySetting = privacySetting;
         this.setCreateDate();
         this.modifyDate = null;
+        this.backgroundLink = backgroundLink;
+        this.backgroundColor = backgroundColor;
     }
 
     public UUID getFormId(){
@@ -78,4 +85,19 @@ public class Form {
         this.modifyDate = date;
     }
 
+    public String getBackgroundLink(){
+        return this.backgroundLink;
+    }
+
+    public void setBackgroundLink(String backgroundLink){
+        this.backgroundLink = backgroundLink;
+    }
+
+    public String getBackgroundColor(){
+        return this.backgroundColor;
+    }
+
+    public void setBackgroundColor(String color){
+        this.backgroundColor = color;
+    }
 }

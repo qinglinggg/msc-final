@@ -11,12 +11,13 @@ import Dashboard from "./components/Dashboard";
 import Menu from "./components/Menu";
 import Invitation from "./components/Invitation";
 import Design from "./components/Design";
+import DataVisualization from "./components/Data-visualization";
 
 class App extends React.Component {
   state = {
     userProfiles: [],
     forms: [],
-    formItems: [],
+    formItems: ["Test", "Test2"],
   };
 
   componentDidMount() {
@@ -40,6 +41,7 @@ class App extends React.Component {
 
     let container = document.getElementById("container");
     let background = document.querySelector(".background");
+    // let pageContainer = document.querySelector(".page-container");
     let navBar = document.getElementById("navbar");
     let body = document.getElementById("body");
     let menuClose = document.getElementById("menu-title");
@@ -63,8 +65,7 @@ class App extends React.Component {
     });
     container.style.top = navBar.clientHeight + "px";
     container.style.height = window.innerHeight - navBar.clientHeight + "px";
-    background.style.height =
-      navBar.clientHeight + container.clientHeight + "px";
+    background.style.height = navBar.clientHeight + container.clientHeight + "px";
     let newValue = container.clientHeight - 100;
     sideMenu.style.height = newValue + "px";
     sideMenu.style.left = "0";
@@ -96,6 +97,9 @@ class App extends React.Component {
                 path="/item1/design"
                 element={<Design formItems_data={this.state.formItems} />} // data dari item1
               />
+              <Route
+              path="/item1/show-results"
+              element={<DataVisualization formItems_data={this.state.formItems}/>}/>
             </Routes>
           </div>
         </div>
