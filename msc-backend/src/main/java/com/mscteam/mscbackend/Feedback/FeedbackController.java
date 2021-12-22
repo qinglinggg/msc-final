@@ -31,7 +31,7 @@ public class FeedbackController {
         return feedbackService.getAllFeedback();
     }
 
-    @GetMapping(path="/form/{id}")
+    @GetMapping(path="/by-form/{id}")
     public List<Feedback> getFeedbackByFormId(@PathVariable("id") String id){
         return feedbackService.getFeedbackByFormId(id);
     }
@@ -41,17 +41,17 @@ public class FeedbackController {
         return feedbackService.getFeedbackById(id);
     }
 
-    @GetMapping(path="/feedback/{id}")
+    @GetMapping(path="/by-feedback/{id}")
     public List<FeedbackMessage> getFeedbackMessageByFeedbackId(String id){
         return feedbackService.getFeedbackMessageByFeedbackId(id);
     }
 
-    @PostMapping(path="/feedback/insert", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path="/by-feedback/insert", consumes = MediaType.APPLICATION_JSON_VALUE)
     public int insertFeedback(@RequestBody Feedback feedback){
         return feedbackService.insertFeedback(feedback);
     }
 
-    @PostMapping(path="/feedback-message/insert", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path="/by-feedback-message/insert", consumes = MediaType.APPLICATION_JSON_VALUE)
     public int insertFeedbackMessage(@RequestBody FeedbackMessage feedbackMessage){
         return feedbackService.insertFeedbackMessage(feedbackMessage);
     }
@@ -61,7 +61,7 @@ public class FeedbackController {
         return feedbackService.removeFeedback(id);
     }
 
-    @DeleteMapping(path="/feedback-message/{id}")
+    @DeleteMapping(path="/by-feedback-message/{id}")
     public int removeFeedbackMessage(@PathVariable("id") String id){
         return feedbackService.removeFeedbackMessage(id);
     }

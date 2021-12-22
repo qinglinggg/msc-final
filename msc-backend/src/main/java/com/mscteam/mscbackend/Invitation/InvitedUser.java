@@ -13,7 +13,7 @@ public class InvitedUser {
     public InvitedUser(UUID invitationId, UUID userId){
         this.invitationId = invitationId;
         this.userId = userId;
-        this.expirationDate = new Date();
+        setExpirationDate(1);
     }
 
     public UUID getInvitationId() {

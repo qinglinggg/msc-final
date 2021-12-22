@@ -26,8 +26,8 @@ public class FeedbackDAO {
         List<Feedback> feedbackList = jdbcTemplate.query(query, (resultSet, i) -> {
             String formId = resultSet.getString("formId");
             String feedbackId = resultSet.getString("feedbackId");
-            String userProfileId = resultSet.getString("userProfileId");
-            return new Feedback(UUID.fromString(formId), UUID.fromString(feedbackId), UUID.fromString(userProfileId));
+            String userId = resultSet.getString("userId");
+            return new Feedback(UUID.fromString(formId), UUID.fromString(feedbackId), UUID.fromString(userId));
         }, id);
         return feedbackList; 
     }
@@ -35,10 +35,11 @@ public class FeedbackDAO {
     public List<Feedback> getAllFeedback() {
         final String query = "SELECT * FROM Feedback";
         List<Feedback> feedbackList = jdbcTemplate.query(query, (resultSet, i) -> {
+            System.out.println(resultSet.getMetaData());
             String formId = resultSet.getString("formId");
             String feedbackId = resultSet.getString("feedbackId");
-            String userProfileId = resultSet.getString("userProfileId");
-            return new Feedback(UUID.fromString(formId), UUID.fromString(feedbackId), UUID.fromString(userProfileId));
+            String userId = resultSet.getString("userId");
+            return new Feedback(UUID.fromString(formId), UUID.fromString(feedbackId), UUID.fromString(userId));
         });
         return feedbackList;
     }
@@ -48,8 +49,8 @@ public class FeedbackDAO {
         Feedback tempFeedback = jdbcTemplate.queryForObject(query, (resultSet, i) -> {
             String formId = resultSet.getString("formId");
             String feedbackId = resultSet.getString("feedbackId");
-            String userProfileId = resultSet.getString("userProfileId");
-            return new Feedback(UUID.fromString(formId), UUID.fromString(feedbackId), UUID.fromString(userProfileId));
+            String userId = resultSet.getString("userId");
+            return new Feedback(UUID.fromString(formId), UUID.fromString(feedbackId), UUID.fromString(userId));
         }, id);
         return Optional.ofNullable(tempFeedback);
     }
@@ -73,7 +74,7 @@ public class FeedbackDAO {
 
     public int insertFeedback(Feedback feedback){
         final String query = "INSERT INTO Feedback VALUES (?,?,?)";
-        int res = jdbcTemplate.update(query, feedback.getFormId(), feedback.getFeedbackId(), feedback.getUserProfileId());
+        int res = jdbcTemplate.update(query, feedback.getFormId().toString(), feedback.getFeedbackId().toString(), feedback.getUserId().toString());
         return res;
     }
 

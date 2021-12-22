@@ -7,20 +7,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Feedback {
     private UUID formId;
     private UUID feedbackId;
-    private UUID userProfileId;
+    private UUID userId;
     
     // Get Items
-    public Feedback(UUID formId, UUID feedbackId, UUID userProfileId){
+    public Feedback(UUID formId, UUID feedbackId, UUID userId){
         this.formId = formId;
         this.feedbackId = feedbackId;
-        this.userProfileId = userProfileId;
+        this.userId = userId;
     }
 
     // Create, Insert Items
-    public Feedback(@JsonProperty("formId") UUID formId, @JsonProperty("userProfileId") UUID userProfileId) {
+    public Feedback(@JsonProperty("formId") UUID formId, @JsonProperty("userId") UUID userId) {
         this.formId = formId;
         this.feedbackId = UUID.randomUUID();
-        this.userProfileId = userProfileId;
+        this.userId = userId;
     }
 
     public UUID getFormId() {
@@ -31,8 +31,8 @@ public class Feedback {
         return this.feedbackId;
     }
 
-    public UUID getUserProfileId() {
-        return this.userProfileId;
+    public UUID getUserId() {
+        return this.userId;
     }
 
 }
