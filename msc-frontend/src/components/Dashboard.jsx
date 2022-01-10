@@ -12,6 +12,8 @@ class Dashboard extends React.Component {
   constructor() {
     super();
     this.handleAddItem = this.handleAddItem.bind(this);
+    this.handleRemoveItem = this.handleRemoveItem.bind(this);
+    this.handleQuestion = this.handleQuestion.bind(this);
   }
 
   state = {
@@ -19,6 +21,7 @@ class Dashboard extends React.Component {
     openSettings: false,
     privacyCheck: true,
     formItems: [],
+    formCounter: 0,
   };
 
   componentDidMount() {
@@ -51,13 +54,83 @@ class Dashboard extends React.Component {
 
   handleAddItem() {
     let currentStateData = this.state.formItems;
-    let newItem = {
-      question: "",
-      questionType: "",
-      options: [],
-    };
-    currentStateData.push(newItem);
-    this.setState({ formItems: currentStateData });
+    this.setState({ formCounter: this.state.formCounter + 1 }, () => {
+      // let id = "question-" + this.state.formCounter;
+      let newItem = {
+        id: this.state.formCounter,
+        question: "",
+        questionType: "",
+        options: [],
+      };
+      currentStateData.push(newItem);
+      this.setState({ formItems: currentStateData }, () => {
+        // this.state.formItems.map((obj) => {
+        //   this.handleUpdateQuestionTextarea(obj);
+        // });
+      });
+    });
+  }
+
+  handleRemoveItem(deletedQuestionId) {
+    console.log("Enter handle remove item " + deletedQuestionId);
+
+    let newFormItems = this.state.formItems.filter((element) => {
+      return element.id != deletedQuestionId;
+    });
+
+    this.setState(
+      {
+        formItems: newFormItems,
+      },
+      () => {
+        this.state.formItems.map((obj) => {
+          this.handleUpdateQuestionTextarea(obj);
+        });
+        console.log(this.state.formItems);
+      }
+    );
+  }
+
+  handleQuestion(id, value, isQuestionContentChanged, isQuestionTypeChanged) {
+    let changedFormItem = this.state.formItems;
+    let index = changedFormItem.findIndex((element) => element.id === id);
+    let obj = { ...changedFormItem[index] };
+
+    if (isQuestionContentChanged) {
+      obj.question = value;
+    } else if (isQuestionTypeChanged) {
+      obj.questionType = value;
+    }
+    changedFormItem[index] = obj;
+
+    this.setState({ formItems: changedFormItem }, () => {
+      this.state.formItems.map((obj) => {
+        this.handleUpdateQuestionTextarea(obj);
+      });
+      console.log(this.state.formItems);
+    });
+  }
+
+  handleUpdateQuestionTextarea(obj) {
+    // this.state.arrayOptions.map((obj) => {
+    let id = "question-input-" + obj.id;
+    console.log("Enter handle update question textarea");
+    let textarea = document.getElementById(id);
+    // console.log(textarea);
+    if (textarea) {
+      if (obj.question != "") {
+        textarea.value = obj.question;
+        // console.log("Masuk sini");
+      } else {
+        console.log("obj.value is null");
+        textarea.value = "";
+      }
+    }
+
+    if (obj.options) {
+    }
+
+    // });
   }
 
   render() {
@@ -94,26 +167,39 @@ class Dashboard extends React.Component {
         {/* kalo belum ada, lgsg tombol Add Question aja */}
         {/* AddQuestion -> tombol dulu baru kalo dipencet muncul menu tambahan */}
         <div id="page-content">
-          <div className="questions-container">
-            {this.state.formItems.map((res) => {
-              return (
-                <React.Fragment>
-                  <div className="separator" />
-                  <div className="question">
-                    <Question mode={true} />
-                  </div>
-                </React.Fragment>
-              );
-            })}
-            <div className="separator" />
-            <div
-              className="question"
-              id="addQuestion"
-              onClick={() => this.handleAddItem()}
-            >
-              <Question mode={false} />
-            </div>
-          </div>
+          <div className="questions-container">{this.displayQuestion()}</div>
+        </div>
+      </React.Fragment>
+    );
+  }
+
+  displayQuestion() {
+    return (
+      <React.Fragment>
+        {this.state.formItems.map((res) => {
+          return (
+            <React.Fragment>
+              <div className="separator" />
+              <div className="question">
+                <Question
+                  id={res.id}
+                  mode={true}
+                  QuestionContent={this.handleQuestion}
+                  QuestionType={this.handleQuestion}
+                  onRemove={this.handleRemoveItem}
+                />
+                {console.log("Already rendered")}
+              </div>
+            </React.Fragment>
+          );
+        })}
+        <div className="separator" />
+        <div
+          className="question"
+          id="addQuestion"
+          onClick={() => this.handleAddItem()}
+        >
+          <Question mode={false} />
         </div>
       </React.Fragment>
     );
