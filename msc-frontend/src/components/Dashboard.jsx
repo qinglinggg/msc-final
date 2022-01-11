@@ -14,9 +14,11 @@ class Dashboard extends React.Component {
     this.handleAddItem = this.handleAddItem.bind(this);
     this.handleRemoveItem = this.handleRemoveItem.bind(this);
     this.handleQuestion = this.handleQuestion.bind(this);
+    // this.handleOptions = this.handleOptions.bind(this);
   }
 
   state = {
+    testing: false,
     openVisibility: false,
     openSettings: false,
     privacyCheck: true,
@@ -72,11 +74,25 @@ class Dashboard extends React.Component {
   }
 
   handleRemoveItem(deletedQuestionId) {
-    console.log("Enter handle remove item " + deletedQuestionId);
+    // console.log("Enter handle remove item " + deletedQuestionId);
 
-    let newFormItems = this.state.formItems.filter((element) => {
+    let newFormItems = this.state.formItems.map((element) =>
+      element.id == deletedQuestionId && element.options != null
+        ? element.options.filter((opt) => opt != null)
+        : null
+    );
+
+    // console.log("handleRemoveItem, new form items:");
+    // console.log(newFormItems);
+
+    newFormItems = this.state.formItems.filter((element) => {
       return element.id != deletedQuestionId;
     });
+
+    // console.log("formItems:");
+    // console.log(this.state.formItems);
+    // console.log("newFormItems:");
+    // console.log(newFormItems);
 
     this.setState(
       {
@@ -86,7 +102,6 @@ class Dashboard extends React.Component {
         this.state.formItems.map((obj) => {
           this.handleUpdateQuestionTextarea(obj);
         });
-        console.log(this.state.formItems);
       }
     );
   }
@@ -107,31 +122,91 @@ class Dashboard extends React.Component {
       this.state.formItems.map((obj) => {
         this.handleUpdateQuestionTextarea(obj);
       });
-      console.log(this.state.formItems);
+      // console.log(this.state.formItems);
     });
   }
 
   handleUpdateQuestionTextarea(obj) {
     // this.state.arrayOptions.map((obj) => {
-    let id = "question-input-" + obj.id;
-    console.log("Enter handle update question textarea");
-    let textarea = document.getElementById(id);
+
+    // Question
+    let questionId = "question-input-" + obj.id;
+    // console.log("Enter handle update question textarea");
+    let questionTextarea = document.getElementById(questionId);
     // console.log(textarea);
-    if (textarea) {
-      if (obj.question != "") {
-        textarea.value = obj.question;
-        // console.log("Masuk sini");
+    if (questionTextarea) {
+      if (obj.question != "" && obj.question != null) {
+        questionTextarea.value = obj.question;
       } else {
-        console.log("obj.value is null");
-        textarea.value = "";
+        questionTextarea.value = "";
       }
     }
 
+    // Options
     if (obj.options) {
+      // console.log("The object has options");
+      // console.log(obj.options);
+      obj.options.map((opt) => {
+        let optionId = "question-" + obj.id + "-options-" + opt.id;
+        let textarea = document.getElementById(optionId);
+        if (textarea) {
+          // console.log(obj);
+          if (opt.value != "" && opt.value != null) {
+            // console.log("The object has value of " + opt.value);
+            textarea.value = opt.value;
+          } else {
+            // console.log("obj.value is null");
+            // console.log("NULL");
+            textarea.value = "";
+          }
+        }
+      });
     }
-
-    // });
   }
+
+  // handleOptions(questionId, optionId, flag, value) {
+  //   // 1 -> Add Option
+  //   if (flag == 1) {
+  //     // optionCounter = optionId
+  //     let newOption = {};
+  //     newOption["id"] = optionId;
+  //     newOption["label"] = "Option " + optionId;
+  //     newOption["value"] = "";
+
+  //     this.setState((prevState) => ({
+  //       formItems: prevState.formItems.map((el) =>
+  //         // el.id == questionId
+  //         //   ? { options: [...prevState.options, newOption] }
+  //         //   : null,
+  //         console.log("PrevState" + prevState)
+  //       ),
+  //     }));
+  //   } else if (flag == 2) {
+  //     // 2 -> Remove Option
+  //     this.setState((prevState) => ({
+  //       formItems: prevState.formItems.map((el) =>
+  //         el.id == questionId
+  //           ? {
+  //               options: prevState.options.filter((element) => {
+  //                 return element.id != optionId;
+  //               }),
+  //             }
+  //           : null
+  //       ),
+  //     }));
+  //   } else {
+  //     // 3 -> Handle Option Value
+  //     this.setState((prevState) => ({
+  //       formItems: prevState.formItems.map((el) =>
+  //         el.id === questionId
+  //           ? prevState.options.map((element) =>
+  //               element.id == optionId ? { ...prevState.option, value } : null
+  //             )
+  //           : null
+  //       ),
+  //     }));
+  //   }
+  // }
 
   render() {
     return (
@@ -177,18 +252,23 @@ class Dashboard extends React.Component {
     return (
       <React.Fragment>
         {this.state.formItems.map((res) => {
+          console.log(res);
           return (
             <React.Fragment>
               <div className="separator" />
               <div className="question">
                 <Question
-                  id={res.id}
+                  QuestionId={res.id}
+                  // FormItems={this.state.formItems}
+                  Parent={this}
                   mode={true}
                   QuestionContent={this.handleQuestion}
                   QuestionType={this.handleQuestion}
                   onRemove={this.handleRemoveItem}
+                  // onUpdateOptions={this.handleOptions}
                 />
-                {console.log("Already rendered")}
+                {/* {console.log("from Dashboard")} */}
+                {/* {console.log(this.state.formItems)} */}
               </div>
             </React.Fragment>
           );

@@ -60,7 +60,7 @@ class Question extends React.Component {
     //   console.log(this.arrayOptions);
     //   // this.arrayOptions.push("Option " + i);
     // }
-    let textareaId = "question-input-" + this.props.id;
+    let textareaId = "question-input-" + this.props.QuestionId;
     return (
       <React.Fragment>
         <div className="question-area">
@@ -76,7 +76,7 @@ class Question extends React.Component {
               wrap="soft"
               onKeyUp={(event) => {
                 this.props.QuestionContent(
-                  this.props.id,
+                  this.props.QuestionId,
                   event.target.value,
                   true,
                   false
@@ -136,8 +136,10 @@ class Question extends React.Component {
                 <div
                   className="popup-content"
                   onClick={() => {
-                    console.log("on the way to remove id: " + this.props.id);
-                    this.props.onRemove(this.props.id);
+                    // console.log(
+                    //   "on the way to remove id: " + this.props.QuestionId
+                    // );
+                    this.props.onRemove(this.props.QuestionId);
                   }}
                 >
                   Remove Card
@@ -165,22 +167,34 @@ class Question extends React.Component {
 
   handleAddOption() {
     this.setState({ optionCounter: this.state.optionCounter + 1 }, () => {
-      let obj = [];
+      let obj = {};
       obj["id"] = this.state.optionCounter;
       obj["label"] = "Option " + this.state.optionCounter;
       obj["value"] = "";
       // this.arrayOptions.push(obj);
       this.setState({ arrayOptions: [...this.state.arrayOptions, obj] }, () => {
-        console.log(this.state.arrayOptions);
-        this.state.arrayOptions.map((obj) => {
-          this.handleUpdateTextarea(obj);
-        });
+        let array = this.state.arrayOptions;
+        this.props.Parent.setState(
+          (prevState) => {
+            prevState.formItems.map((item) => {
+              let currentForm = prevState.formItems.filter((el) => {
+                return el.id == item.id;
+              });
+              return item.id == this.props.QuestionId
+                ? (currentForm[0].options = array)
+                : { ...item.options };
+            });
+          },
+          () => {
+            // console.log(this.props.Parent.state.formItems);
+          }
+        );
       });
     });
   }
 
   handleRemoveOption(id) {
-    console.log("Enter remove option...");
+    // console.log("Enter remove option...");
     let deletedId = id;
     this.setState(
       {
@@ -189,10 +203,35 @@ class Question extends React.Component {
         }),
       },
       () => {
-        console.log(this.state.arrayOptions);
-        this.state.arrayOptions.map((obj) => {
-          this.handleUpdateTextarea(obj);
-        });
+        // console.log(this.state.arrayOptions);
+        let array = this.state.arrayOptions;
+        this.props.Parent.setState(
+          (prevState) => {
+            // prevState.formItems.map((obj) =>
+            //   obj.id == this.props.QuestionId &&
+            //   prevState.formItems[obj.id - 1].options != null
+            //     ? (prevState.formItems[obj.id - 1].options = array)
+            //     : null
+            // );
+
+            prevState.formItems.map((item) => {
+              let currentForm = prevState.formItems.filter((el) => {
+                return el.id == item.id;
+              });
+              return item.id == this.props.QuestionId
+                ? (currentForm[0].options = array)
+                : { ...item.options };
+            });
+          },
+          () => {
+            this.state.arrayOptions.map((obj) => {
+              // console.log(obj);
+              this.handleUpdateTextarea(obj);
+            });
+          }
+          // { testing: true }
+          // console.log(prevState)
+        );
       }
     );
     // this.setState({ optionCounter: this.state.optionCounter - 1 });
@@ -204,24 +243,43 @@ class Question extends React.Component {
     // console.log("the index is " + idx);
     let changedArrayValue = this.state.arrayOptions;
     changedArrayValue[idx].value = event.target.value;
-    console.log(changedArrayValue);
+    // console.log(changedArrayValue);
     this.setState({ arrayOptions: changedArrayValue }, () => {
-      this.state.arrayOptions.map((obj) => {
-        this.handleUpdateTextarea(obj);
-      });
+      let array = this.state.arrayOptions;
+      this.props.Parent.setState(
+        (prevState) => {
+          prevState.formItems.map((item) => {
+            let currentForm = prevState.formItems.filter((el) => {
+              return el.id == item.id;
+            });
+            return item.id == this.props.QuestionId
+              ? (currentForm[0].options = array)
+              : { ...item.options };
+          });
+          // this.props.Parent.state.formItems.map((obj) => {
+          //   this.handleUpdateTextarea(obj);
+          // });
+        }
+        // { testing: true }
+        // console.log(prevState)
+      );
     });
     // event.target.value = "";
   }
 
   handleUpdateTextarea(obj) {
     // this.state.arrayOptions.map((obj) => {
-    let optionId = "dashboard-options-" + obj.id;
+    // console.log("Entering update textarea");
+    let optionId = "question-" + this.props.QuestionId + "-options-" + obj.id;
     let textarea = document.getElementById(optionId);
     if (textarea) {
-      if (obj.value != "") {
+      // console.log(obj);
+      if (obj.value != "" && obj.value != null) {
+        // console.log("The object has value of " + obj.value);
         textarea.value = obj.value;
       } else {
         // console.log("obj.value is null");
+        // console.log("NULL");
         textarea.value = "";
       }
     }
@@ -232,42 +290,68 @@ class Question extends React.Component {
     return (
       <React.Fragment>
         <div id="answer-selection-container">
-          {this.state.arrayOptions
-            ? this.state.arrayOptions.map((obj) => {
-                let optionId = "dashboard-options-" + obj.id;
-                console.log(obj);
-                // if (obj.value != undefined) this.handleUpdateTextarea();
-                this.handleUpdateTextarea(obj);
-                // console.log(optionId);
-                return (
-                  <div className="answer-selection">
-                    <input
-                      className="answerSelectionRadio"
-                      type="radio"
-                      disabled
-                    />
-                    <AutoHeightTextarea
-                      className="inputText"
-                      id={optionId}
-                      type="text"
-                      placeholder={obj.label}
-                      wrap="soft"
-                      onKeyUp={(e) => this.handleOptionValue(e, obj)}
-                    />
-                    {/* {obj.value
+          {
+            // this.props.Parent.state.formItems[this.props.QuestionId - 1].options
+            //   ? this.props.Parent.state.formItems[
+            //       this.props.QuestionId - 1
+            //     ].options.
+            this.state.arrayOptions
+              ? this.state.arrayOptions.map((obj) => {
+                  let optionId =
+                    "question-" + this.props.QuestionId + "-options-" + obj.id;
+                  // console.log(obj);
+                  // if (obj.value != undefined) this.handleUpdateTextarea();
+                  this.handleUpdateTextarea(obj);
+                  // console.log("CHECK arrayOptions: ");
+                  // console.log(this.state.arrayOptions);
+                  // console.log(optionId);
+                  return (
+                    <div className="answer-selection">
+                      <input
+                        className="answerSelectionRadio"
+                        type="radio"
+                        disabled
+                      />
+                      <AutoHeightTextarea
+                        className="inputText"
+                        id={optionId}
+                        type="text"
+                        placeholder={obj.label}
+                        wrap="soft"
+                        onKeyUp={(e) => {
+                          this.handleOptionValue(e, obj);
+                          // let value = e.target.value;
+                          // this.props.onUpdateOptions(
+                          //   this.props.QuestionId,
+                          //   obj.id,
+                          //   3,
+                          //   value
+                          // );
+                        }}
+                      />
+                      {/* {obj.value
                       ? (document.getElementById({ optionId }).value =
                           obj.value)
                       : null} */}
-                    <div
-                      className="dashboard-remove-options-button"
-                      onClick={() => this.handleRemoveOption(obj.id)}
-                    >
-                      <i className="fas fa-times"></i>
+                      <div
+                        className="dashboard-remove-options-button"
+                        onClick={() => {
+                          this.handleRemoveOption(obj.id);
+                          // this.props.onUpdateOptions(
+                          //   this.props.QuestionId,
+                          //   obj.id,
+                          //   2,
+                          //   null
+                          // );
+                        }}
+                      >
+                        <i className="fas fa-times"></i>
+                      </div>
                     </div>
-                  </div>
-                );
-              })
-            : null}
+                  );
+                })
+              : null
+          }
           <div className="answer-selection">
             {this.displayNewOptionMultipleChoice()}
           </div>
@@ -278,6 +362,7 @@ class Question extends React.Component {
   }
 
   displayNewOptionMultipleChoice() {
+    // console.log(this.state.optionCounter);
     return (
       <React.Fragment>
         <input type="radio" className="answerSelection" disabled />
@@ -289,6 +374,17 @@ class Question extends React.Component {
           readOnly
           onClick={() => {
             this.handleAddOption();
+            // this.setState(
+            //   { optionCounter: this.state.optionCounter + 1 },
+            //   () => {
+            //     this.props.onUpdateOptions(
+            //       this.props.QuestionId,
+            //       this.state.optionCounter,
+            //       1,
+            //       null
+            //     );
+            //   }
+            // );
           }}
         />
       </React.Fragment>
@@ -300,9 +396,10 @@ class Question extends React.Component {
       <React.Fragment>
         <div id="answer-selection-container">
           {/* nilai true untuk pertama kali */}
-          {this.state.arrayOptions
-            ? this.state.arrayOptions.map((obj) => {
-                let optionId = "dashboard-options-" + obj.id;
+          {this.props.Options
+            ? this.props.Options.map((obj) => {
+                let optionId =
+                  "question-" + this.props.QuestionId + "-options-" + obj.id;
                 console.log(obj);
                 this.handleUpdateTextarea(obj);
                 // if (obj.value != undefined) this.handleUpdateTextarea();
@@ -319,11 +416,28 @@ class Question extends React.Component {
                       type="text"
                       placeholder={obj.label}
                       wrap="soft"
-                      onKeyUp={(e) => this.handleOptionValue(e, obj)}
+                      onKeyUp={(e) => {
+                        this.handleOptionValue(e, obj);
+                        // let value = e.target.value;
+                        // this.props.onUpdateOptions(
+                        //   this.props.QuestionId,
+                        //   obj.id,
+                        //   3,
+                        //   value
+                        // );
+                      }}
                     />
                     <div
                       className="dashboard-remove-options-button"
-                      onClick={() => this.handleRemoveOption(obj.id)}
+                      onClick={() => {
+                        this.handleRemoveOption(obj.id);
+                        // this.props.onUpdateOptions(
+                        //   this.props.QuestionId,
+                        //   obj.id,
+                        //   2,
+                        //   null
+                        // );
+                      }}
                     >
                       <i className="fas fa-times"></i>
                     </div>
@@ -350,7 +464,17 @@ class Question extends React.Component {
           wrap="soft"
           readOnly
           onClick={() => {
-            this.handleAddOption();
+            this.setState(
+              { optionCounter: this.state.optionCounter + 1 },
+              () => {
+                this.props.onUpdateOptions(
+                  this.props.QuestionId,
+                  this.state.optionCounter,
+                  1,
+                  null
+                );
+              }
+            );
           }}
         />
       </React.Fragment>
