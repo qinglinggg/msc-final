@@ -1,67 +1,93 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import iconMenubarGrey from "./images/menubarGrey.png";
 import iconVisibility from "./images/visibility.png";
 import iconSettings from "./images/settings.png";
+import Select from "react-select";
 import Graph from "./functional-components/Graph";
 
 class DataVisualization extends React.Component {
+  state = {
+    openVisibility: false,
+    openSettings: false,
+    activePage: 1,
+    selectedExportOptions: "DEFAULT",
+  };
 
-    state = {
-        openVisibility: false,
-        openSettings: false,
-        activePage: 1
+  exportOptions = [
+    { value: "pdf", label: ".pdf" },
+    { value: "csv", label: ".csv" },
+    { value: "xls", label: ".xls" },
+  ];
+
+  handlePageSelection(pageNumber) {
+    this.setState({ activePage: pageNumber });
+  }
+
+  handleExportSelection(data) {
+    this.setState({ selectedExportOptions: data.value });
+  }
+  render() {
+    let loadPage = null;
+    if (this.state.activePage == 1) {
+      loadPage = this.displaySummaryPage();
+    } else if (this.state.activePage == 2) {
+      loadPage = this.displayResponsePage();
+    } else if (this.state.activePage == 3) {
+      loadPage = this.displayExportPage();
     }
-
-    handlePageSelection(pageNumber) {
-      this.setState({activePage : pageNumber});
-    }
-
-    render() {
-      let loadPage = null;
-      if (this.state.activePage == 1) {
-        loadPage = this.displaySummaryPage();
-      } else if (this.state.activePage == 2) {
-        loadPage = this.displayResponsePage();
-      } else if (this.state.activePage == 3) {
-        loadPage = this.displayExportPage();
-      }
-      return (
-        <React.Fragment>
+    return (
+      <React.Fragment>
         <div className="title-container">
-            <div
-                className="menu-icon"
-                id="menu-icon">
-                <img src={iconMenubarGrey} alt="" />
-            </div>
-            <div className="page-title" id="page-title-home">
-                Data Visualization
-            </div>
+          <div className="menu-icon" id="menu-icon">
+            <img src={iconMenubarGrey} alt="" />
+          </div>
+          <div className="page-title" id="page-title-home">
+            Data Visualization
+          </div>
           <div className="dashboard-icon">
-              <img src={iconVisibility} alt="" className="icon-image"/>
-              <img src={iconSettings} alt="" className="icon-image"/>
-              {this.state.openSettings ? this.displaySettings() : null}
+            <img src={iconVisibility} alt="" className="icon-image" />
+            <img src={iconSettings} alt="" className="icon-image" />
+            {this.state.openSettings ? this.displaySettings() : null}
           </div>
         </div>
-  
+
         <div className="data-visualization-container">
-            <div className="page-selection">
-                <ul>
-                    <li onClick={() => {this.handlePageSelection(1)}}>SUMMARY</li>
-                    <li onClick={() => {this.handlePageSelection(2)}}>RESPONSES</li>
-                    <li onClick={() => {this.handlePageSelection(3)}}>EXPORT</li>
-                </ul>
-            </div>
-            {loadPage}
+          <div className="page-selection">
+            <ul>
+              <li
+                onClick={() => {
+                  this.handlePageSelection(1);
+                }}
+              >
+                SUMMARY
+              </li>
+              <li
+                onClick={() => {
+                  this.handlePageSelection(2);
+                }}
+              >
+                RESPONSES
+              </li>
+              <li
+                onClick={() => {
+                  this.handlePageSelection(3);
+                }}
+              >
+                EXPORT
+              </li>
+            </ul>
+          </div>
+          {loadPage}
         </div>
-        </React.Fragment>
-      );
-    }
-  
+      </React.Fragment>
+    );
+  }
+
   displaySummaryPage() {
     return (
       <React.Fragment>
-      {this.props.formItems_data.map((data) => {
+        {/* {this.props.formItems_data.map((data) => {
         return (
         <div className="result-container">
           <div className="question-field">
@@ -75,19 +101,37 @@ class DataVisualization extends React.Component {
             </div>
           </div>
         );
-      })}
+      })} */}
       </React.Fragment>
     );
   }
 
-  displayResponsePage() {
-  
-  }
+  displayResponsePage() {}
 
   displayExportPage() {
-
+    return (
+      <React.Fragment>
+        <div id="export-container">
+          <div id="export-selection-container">
+            <div id="export-selection-text">Export your results in:</div>
+            <div id="export-selection-dropdown">
+              <Select
+                value={this.exportOptions.value}
+                options={this.exportOptions}
+                defaultValue={this.exportOptions[0]}
+                id="questionSelection"
+                onChange={(data) => this.handleExportSelection(data)}
+              />
+            </div>
+          </div>
+          <div id="export-save-box">
+            <div id="export-save-button">SAVE</div>
+          </div>
+        </div>
+      </React.Fragment>
+    );
   }
-    
+
   displaySettings() {
     return (
       <React.Fragment>
@@ -155,5 +199,5 @@ class DataVisualization extends React.Component {
     );
   }
 }
- 
+
 export default DataVisualization;
