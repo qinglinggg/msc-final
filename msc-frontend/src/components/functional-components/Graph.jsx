@@ -55,9 +55,7 @@ class Graph extends React.Component {
 
     let graphs = [];
     graphs.push(document.getElementById("graph1").getContext("2d"));
-
     let charts = [];
-
     for (let i = 0; i < graphs.length; i++) {
       charts.push(
         new window.Chart(graphs[i], {
