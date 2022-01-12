@@ -27,7 +27,7 @@ services:
       - '8070'
     container_name: jenkins-service
     volumes:
-      - C:/Users/jsury/OneDrive/Desktop/jenkins_home:/var/jenkins_home
+      - /Users/jsuryadharma/Desktop/jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - msc-network

@@ -53,15 +53,12 @@ class Graph extends React.Component {
             }
           }
         };
-        if (graph1_chart != null) {
-            graph1_chart.destroy();
-        }
-        try {
-            
-        let graph1 = document.getElementById('graph1').getContext('2d');
-        let graph1_chart = new window.Chart(graph1, {type: 'bar', data: dummyData, options: optionsData});
-        } catch (e) {
-
+        
+        let graphs = []
+        graphs.push(document.getElementById('graph1').getContext('2d'))
+        let charts = []
+        for(let i=0; i<graphs.length; i++) {
+          charts.push(new window.Chart(graphs[i], {type: 'bar', data: dummyData, options: optionsData}));
         }
     }
 
