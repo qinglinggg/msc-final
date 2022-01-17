@@ -17,6 +17,12 @@ class App extends React.Component {
   state = {
     userProfiles: [],
     forms: [],
+    waitingForms: [
+      {
+        title: "Survey 1",
+        description: "Mengisi survey 1",
+      },
+    ],
     formItems: ["Test", "Test2"],
   };
 
@@ -29,6 +35,11 @@ class App extends React.Component {
     axios.get(`http://localhost:8080/api/v1/forms`).then((res) => {
       const forms = res.data;
       this.setState({ forms });
+      console.log(this.state);
+    });
+    axios.get(`http://localhost:8080/api/v1/waitingForms`).then((res) => {
+      const waitingForms = res.data;
+      this.setState({ waitingForms });
       console.log(this.state);
     });
     // axios.get(`http://localhost:8080/api/v1/formItems`).then((res) => {
@@ -65,11 +76,20 @@ class App extends React.Component {
     });
     container.style.top = navBar.clientHeight + "px";
     container.style.height = window.innerHeight - navBar.clientHeight + "px";
-    background.style.height = navBar.clientHeight + container.clientHeight + "px";
+    background.style.height =
+      navBar.clientHeight + container.clientHeight + "px";
     let newValue = container.clientHeight - 100;
     sideMenu.style.height = newValue + "px";
     sideMenu.style.left = "0";
     sideMenu.style.top = container.style.top + "px";
+  }
+
+  createNewForm(obj) {
+    console.log("masuk createNewForm");
+
+    axios.post(`http://localhost:8080/api/v1/forms`, obj).then((res) => {
+      console.log(this.state);
+    });
   }
 
   render() {
@@ -83,23 +103,39 @@ class App extends React.Component {
             <Routes>
               <Route
                 path="/"
-                element={<Home page1_data={this.state.forms} />}
+                element={
+                  <Home
+                    page1_data={this.state.forms}
+                    waitingForms={this.state.waitingForms}
+                    Parent={this}
+                    createNewForm={this.createNewForm}
+                  />
+                }
               />
               <Route
                 path="/item1/dashboard"
-                element={<Dashboard formItems_data={this.state.formItems} />} // data dari item1
+                element={
+                  // <Dashboard formItems_data={this.state.forms.formItems} />
+                  <Dashboard formItems_data={this.state.formItems} />
+                } // data dari item1
               />
               <Route
                 path="/item1/invitation"
-                element={<Invitation formItems_data={this.state.formItems} />} // data dari item1
+                element={
+                  // <Invitation formItems_data={this.state.forms.formItems} />
+                  <Invitation formItems_data={this.state.formItems} />
+                } // data dari item1
               />
               <Route
                 path="/item1/design"
                 element={<Design formItems_data={this.state.formItems} />} // data dari item1
               />
               <Route
-              path="/item1/show-results"
-              element={<DataVisualization formItems_data={this.state.formItems}/>}/>
+                path="/item1/show-results"
+                element={
+                  <DataVisualization formItems_data={this.state.formItems} />
+                }
+              />
             </Routes>
           </div>
         </div>

@@ -9,8 +9,8 @@ import iconSettings from "./images/settings.png";
 // import { Dropdown } from "react-bootstrap";
 
 class Dashboard extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.handleAddItem = this.handleAddItem.bind(this);
   }
 
@@ -64,9 +64,7 @@ class Dashboard extends React.Component {
     return (
       <React.Fragment>
         <div className="title-container">
-          <div
-            className="menu-icon"
-            id="menu-icon" >
+          <div className="menu-icon" id="menu-icon">
             <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
           </div>
           <div className="page-title" id="page-title-home">
