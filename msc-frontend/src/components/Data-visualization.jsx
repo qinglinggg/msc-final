@@ -4,14 +4,26 @@ import iconMenubarGrey from "./images/menubarGrey.png";
 import iconVisibility from "./images/visibility.png";
 import iconSettings from "./images/settings.png";
 import Select from "react-select";
-import Graph from "./functional-components/Graph";
+import Summary from "./Summary.jsx";
+import Responses from "./Responses.jsx";
+import ReactToPrint from "react-to-print";
 
 class DataVisualization extends React.Component {
+  constructor() {
+    super();
+    this.handleMenu = this.handleMenu.bind(this);
+    this.handlePageSelection = this.handlePageSelection.bind(this);
+    this.handleExportSelection = this.handleExportSelection.bind(this);
+    this.displayExportToPdf = this.displayExportToPdf.bind(this);
+  }
   state = {
+    openMenu: false,
     openVisibility: false,
     openSettings: false,
     activePage: 1,
-    selectedExportOptions: "DEFAULT",
+    selectedExportOptions: "pdf",
+    summaryRef: null,
+    summaryPage: null,
   };
 
   exportOptions = [
@@ -20,6 +32,19 @@ class DataVisualization extends React.Component {
     { value: "xls", label: ".xls" },
   ];
 
+  componentDidMount() {
+    this.setState({ formItems: this.props.formItems_data });
+    let body = document.getElementById("body");
+    let menuBtn = document.getElementById("menu-icon");
+    menuBtn.addEventListener("click", () => {
+      body.classList.toggle("openMenu");
+    });
+  }
+
+  handleMenu() {
+    this.setState({ openMenu: !this.state.openMenu });
+  }
+
   handlePageSelection(pageNumber) {
     this.setState({ activePage: pageNumber });
   }
@@ -27,6 +52,7 @@ class DataVisualization extends React.Component {
   handleExportSelection(data) {
     this.setState({ selectedExportOptions: data.value });
   }
+
   render() {
     let loadPage = null;
     if (this.state.activePage == 1) {
@@ -39,7 +65,11 @@ class DataVisualization extends React.Component {
     return (
       <React.Fragment>
         <div className="title-container">
-          <div className="menu-icon" id="menu-icon">
+          <div
+            className="menu-icon"
+            id="menu-icon"
+            onClick={() => this.handleMenu()}
+          >
             <img src={iconMenubarGrey} alt="" />
           </div>
           <div className="page-title" id="page-title-home">
@@ -51,7 +81,6 @@ class DataVisualization extends React.Component {
             {this.state.openSettings ? this.displaySettings() : null}
           </div>
         </div>
-
         <div className="data-visualization-container">
           <div className="page-selection">
             <ul>
@@ -85,30 +114,26 @@ class DataVisualization extends React.Component {
   }
 
   displaySummaryPage() {
+    console.log(this.props.formItems_data);
     return (
       <React.Fragment>
-        {/* {this.props.formItems_data.map((data) => {
-        return (
-        <div className="result-container">
-          <div className="question-field">
-            {data}
-          </div>
-          <div className="graph-section">
-            <div className="graph">
-              <Graph />
-            </div>
-            <div className="sub-graph"></div>
-            </div>
-          </div>
-        );
-      })} */}
+        <Summary
+          ref={(ref) => (this.componentRef = ref)}
+          formItems_data={this.props.formItems_data}
+        />
       </React.Fragment>
     );
   }
 
-  displayResponsePage() {}
+  displayResponsePage() {
+    return <Responses formItems_data={this.props.formItems_data} />;
+  }
 
   displayExportPage() {
+    let button;
+    if (this.state.selectedExportOptions == "pdf") {
+      button = this.displayExportToPdf();
+    }
     return (
       <React.Fragment>
         <div id="export-container">
@@ -119,15 +144,33 @@ class DataVisualization extends React.Component {
                 value={this.exportOptions.value}
                 options={this.exportOptions}
                 defaultValue={this.exportOptions[0]}
-                id="questionSelection"
+                id="exportSelection"
                 onChange={(data) => this.handleExportSelection(data)}
               />
             </div>
           </div>
-          <div id="export-save-box">
-            <div id="export-save-button">SAVE</div>
+          {button}
+        </div>
+      </React.Fragment>
+    );
+  }
+
+  displayExportToPdf() {
+    return (
+      <React.Fragment>
+        <div className="preview-box">
+          <div className="preview" ref={(ref) => (this.componentRef = ref)}>
+            <Summary formItems_data={this.props.formItems_data} />
           </div>
         </div>
+        <ReactToPrint
+          content={() => this.componentRef}
+          trigger={() => (
+            <div id="export-save-box">
+              <div id="export-save-button">SAVE</div>
+            </div>
+          )}
+        />
       </React.Fragment>
     );
   }

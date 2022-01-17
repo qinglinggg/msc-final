@@ -563,6 +563,14 @@ html {
   font-size: 1.5em;
 }
 
+#form-warning {
+  font-family: var(--font-roboto);
+  font-size: medium;
+  color: red;
+  font-weight: bold;
+  font-style: italic;
+}
+
 /* Title */
 /* ex: Dashboard */
 
@@ -1446,8 +1454,7 @@ html {
 
 .data-visualization-container {
   width: 100%;
-  min-height: 50%;
-  height: fit-content;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1494,11 +1501,12 @@ html {
 .result-container > .question-field {
   text-align: left;
   color: #878787;
-  font-size: x-large;
+  font-size: large;
   display: block;
   width: 100%;
   height: fit-content;
-  margin: 15px;
+  margin: 30px 15px 15px 15px;
+  padding-left: 20px;
 }
 
 .result-container > .graph-section {
@@ -1510,11 +1518,16 @@ html {
 .graph-section > .graph {
   width: 50%;
   height: fit-content;
+  margin: 15px 0px 0px 0px;
+}
+
+.graph-section > .sub-graph {
+  margin-bottom: 30px;
 }
 
 #export-container {
   width: 80%;
-  height: 100%;
+  height: fit-content;
   min-height: 70%;
   display: flex;
   flex-direction: column;
@@ -1565,15 +1578,31 @@ html {
   padding-right: 10%;
 }
 
+#export-save-box {
+  width: 8%;
+  height: fit-content;
+  padding: 8px;
+  /* align-self: center; */
+  background-color: black;
+  border-radius: 10px;
+  /* margin-top: 50px; */
+}
+
+#export-save-box:hover {
+  cursor: pointer;
+}
+
 #export-save-button {
   font-family: var(--font-roboto);
   font-size: large;
   font-weight: bold;
   color: white;
+  text-align: center;
 }
 
 #export-selection-dropdown {
   width: 15%;
+  height: 100%;
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -1588,4 +1617,22 @@ html {
   justify-content: center;
   border-bottom: 0.2px solid rgb(105, 105, 105);
   align-self: center;
+}
+
+.preview-box {
+  width: 595px;
+  height: 842px;
+  -webkit-transform: scale(0.25);
+  -ms-transform: scale(0.5);
+  transform: scale(0.5);
+  -webkit-transform-origin: 0 0;
+  -ms-transform-origin: 0 0;
+  transform-origin: 0 0;
+  border: 4px solid blue;
+  margin: 0 0 -400px 0;
+}
+
+.preview {
+  width: 100%;
+  height: 100%;
 }

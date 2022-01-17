@@ -7,15 +7,20 @@ import Dashboard from "./Dashboard";
 import SearchField from "react-search-field";
 
 class Home extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.handleAddItem = this.handleAddItem.bind(this);
     this.handleButton = this.handleButton.bind(this);
+    this.searchOnChange = this.searchOnChange.bind(this);
   }
 
   state = {
     isPage1: true,
     isAdd: false,
+    isRequired: false,
+
+    formCounter: 0,
+    searchValue: null,
   };
 
   handleClickPage1() {
@@ -31,9 +36,17 @@ class Home extends React.Component {
     // console.log(this.state.isAdd);
   }
 
-  handleButton(){
-    let body = document.getElementById("body");
-    body.classList.toggle("openPopup");
+  handleButton(obj) {
+    // console.log("msuk");
+    // obj.id = formCounter;
+    // obj.formItems = [];
+    // let currentForms = [];
+    // if (this.props.Parent.state.forms)
+    //   currentForms = this.props.Parent.state.forms;
+    // currentForms.push(obj);
+    // this.props.Parent.setState({ forms: currentForms }, () => {
+    //   console.log(this.props.Parent.state);
+    // });
   }
 
   render() {
@@ -72,33 +85,15 @@ class Home extends React.Component {
                   </div>
                 </div>
                 <div id="page-others">
-                  {/* <div id="search-box"> */}
-                  {/* <form className="form-inline">
-                      <input
-                        className="form-control mr-sm-2"
-                        type="search"
-                        placeholder="Search"
-                        aria-label="Search"
-                      />
-                      <button
-                        className="btn btn-outline-success my-2 my-sm-0"
-                        type="submit"
-                      >
-                        Search
-                      </button>
-                    </form> */}
-                  {/* <SearchField
-                      placeholder="Search..."
-                      // onChange={onChange}
-                      searchText="Search..."
-                      classNames="test-class"
-                    /> */}
-                  {/* </div> */}
                   <div id="page-search">
                     <SearchField
                       id="page-search"
                       placeholder="Search..."
-                      // onChange={onChange}
+                      value=""
+                      onChange={(value) => {
+                        console.log(value);
+                        this.searchOnChange(value);
+                      }}
                       // searchText="Search..."
                       classNames="test-class"
                     />
@@ -115,17 +110,29 @@ class Home extends React.Component {
     );
   }
 
-  displayPage1() {
-    // const isAdd = this.state.isAdd;
-    // let popup;
+  filterData(data) {
+    if (!this.state.searchValue) {
+      return data;
+    }
 
-    // if (isAdd) {
-    //   popup = this.displayPopUp();
-    // }
+    return data.filter((d) => {
+      const dataName = d.title.toLowerCase();
+      return dataName.includes(this.state.searchValue);
+    });
+  }
+
+  searchOnChange(value) {
+    this.setState((prevState) => {
+      return { searchValue: value };
+    });
+  }
+
+  displayPage1() {
+    let dataShowed = this.filterData(this.props.page1_data);
 
     return (
       <React.Fragment>
-        {this.props.page1_data.map((data) => (
+        {dataShowed.map((data) => (
           <Page1Items key={data.formId} data={data} />
         ))}
         <div className="item-container">
@@ -139,9 +146,13 @@ class Home extends React.Component {
   }
 
   displayPage2() {
+    let dataShowed = this.filterData(this.props.waitingForms);
+
     return (
       <React.Fragment>
-        <span>This is page 2.</span>
+        {dataShowed.map((data) => (
+          <Page1Items key={data.formId} data={data} />
+        ))}
       </React.Fragment>
     );
   }
@@ -149,14 +160,40 @@ class Home extends React.Component {
   displayPopUp() {
     let body = document.getElementById("body");
     body.classList.toggle("openPopup");
+
+    let obj = {};
+    obj.name = "";
+    obj.desc = "";
+    obj.privacy = "";
+    obj.formItems = [];
+
+    let nameTextarea = document.getElementById("nameInput");
+    if (nameTextarea && nameTextarea.value) obj.name = nameTextarea.value;
+
+    let descTextarea = document.getElementById("descInput");
+    if (descTextarea && descTextarea.value) obj.desc = descTextarea.value;
+
+    let privacyTextarea = document.getElementById("privacyInput");
+    if (privacyTextarea && privacyTextarea.value)
+      obj.privacy = privacyTextarea.value;
+
+    let warningElement = (
+      <React.Fragment>
+        <div id="form-warning">Please fill out the field!</div>
+      </React.Fragment>
+    );
+
     return (
       <React.Fragment>
         <div className="popup">
           <div className="popup-container" id="popup-addItem">
-            <span className="closePopup" onClick={() => {
-              this.handleAddItem();
-              body.classList.toggle("openPopup");
-            }}>
+            <span
+              className="closePopup"
+              onClick={() => {
+                this.handleAddItem();
+                body.classList.toggle("openPopup");
+              }}
+            >
               &times;
             </span>
             <form className="form-components">
@@ -164,34 +201,73 @@ class Home extends React.Component {
               <br />
               <label>
                 <span>Name</span>
-                <input type="text" name="name" />
+                <input
+                  id="nameInput"
+                  type="text"
+                  name="name"
+                  onChange={(e) => {
+                    if (e.target.value != "") obj.name = e.target.value;
+                    {
+                      console.log(obj);
+                    }
+                  }}
+                />
               </label>
+              <br />
+              {this.state.isRequired && obj.name == "" ? warningElement : null}
               <br />
               <br />
               <label>
                 <span>Description</span>
-                <input type="text" name="desc" />
+                <input
+                  id="descInput"
+                  type="text"
+                  name="desc"
+                  onChange={(e) => {
+                    if (e.target.value != "") obj.desc = e.target.value;
+                    {
+                      console.log(obj);
+                    }
+                  }}
+                />
               </label>
+              <br />
+              {this.state.isRequired && obj.desc == "" ? warningElement : null}
               <br />
               <br />
               <label>
                 <span>Respondent Privacy</span>
+                <br />
                 <div className="form-options">
                   <div>
                     <input
+                      id="privacyInput"
                       type="radio"
                       name="privacy"
                       id="anonymous"
                       value="anonymous"
+                      onClick={() => {
+                        obj.privacy = "anonymous";
+                        {
+                          console.log(obj);
+                        }
+                      }}
                     />
                     <label for="anonymous">Anonymous</label>
                   </div>
-                  <div >
+                  <div>
                     <input
+                      id="privacyInput"
                       type="radio"
                       name="privacy"
                       id="not-anonymous"
                       value="not-anonymous"
+                      onClick={() => {
+                        obj.privacy = "not anonymous";
+                        {
+                          console.log(obj);
+                        }
+                      }}
                     />
                     <label for="not-anonymous">Not Anonymous</label>
                     <br />
@@ -199,15 +275,31 @@ class Home extends React.Component {
                   <br />
                 </div>
               </label>
+              {this.state.isRequired && obj.privacy == ""
+                ? warningElement
+                : null}
               <br />
               <br />
-              {/* <input
-                type="submit"
-                value="Confirm"
-                onClick={() => this.handleClickConfirm.bind(this)}
-              /> */}
               <Link to="/item1/dashboard">
-                <button onClick={this.handleButton}>Confirm</button>
+                <button
+                  // onClick={() => {
+                  //   this.handleButton(obj);
+                  // }}
+                  onClick={(e) => {
+                    body.classList.toggle("openPopup");
+                    // validation
+                    console.log(obj);
+                    if (obj.name == "" || obj.desc == "" || obj.privacy == "") {
+                      this.setState({ isRequired: true });
+                      e.preventDefault();
+                    } else {
+                      this.setState({ isRequired: false });
+                      this.props.createNewForm(obj);
+                    }
+                  }}
+                >
+                  Confirm
+                </button>
               </Link>
             </form>
           </div>

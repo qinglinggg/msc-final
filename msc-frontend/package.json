@@ -18,6 +18,7 @@
     "react-select": "^5.2.1",
     "react-textarea-autosize": "^8.3.3",
     "reactjs-popup": "^2.0.5",
+    "react-to-print": "^2.14.3",
     "web-vitals": "^1.1.2"
   },
   "scripts": {

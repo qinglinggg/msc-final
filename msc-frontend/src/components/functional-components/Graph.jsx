@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+var charts = {};
 
 class Graph extends React.Component {
   componentDidMount() {
@@ -52,25 +53,41 @@ class Graph extends React.Component {
         },
       },
     };
-
-    let graphs = [];
-    graphs.push(document.getElementById("graph1").getContext("2d"));
-    let charts = [];
-    for (let i = 0; i < graphs.length; i++) {
-      charts.push(
-        new window.Chart(graphs[i], {
-          type: "bar",
-          data: dummyData,
-          options: optionsData,
-        })
-      );
+    // let chartTopics = ["question1"];
+    // chartTopics.forEach((topic) => {
+    //   let canvas = document.getElementById("graph1").getContext("2d");
+    //   if (typeof charts[topic] != "undefined") {
+    //     charts[topic].destroy();
+    //   }
+    //   charts[topic] = new window.Chart(canvas, {
+    //     type: "bar",
+    //     data: dummyData,
+    //     options: optionsData,
+    //   });
+    // });
+    let count = this.props.count;
+    // console.log("graph" + count);
+    let canvas = document.getElementById("graph" + count);
+    if (canvas != null) {
+      // console.log(canvas);
+      canvas = canvas.getContext("2d");
+    } else {
+      // console.log(canvas);
     }
+    if (typeof charts[count] != "undefined") {
+      charts[count].destroy();
+    }
+    charts[count] = new window.Chart(canvas, {
+      type: "bar",
+      data: dummyData,
+      options: optionsData,
+    });
   }
 
   render() {
     return (
       <React.Fragment>
-        <canvas id="graph1"></canvas>
+        <canvas id={"graph" + this.props.count}></canvas>
       </React.Fragment>
     );
   }
