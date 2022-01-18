@@ -13,14 +13,23 @@ class Dashboard extends React.Component {
     super();
     this.handleAddItem = this.handleAddItem.bind(this);
     this.handleRemoveItem = this.handleRemoveItem.bind(this);
-    this.handleQuestion = this.handleQuestion.bind(this);
-    // this.handleOptions = this.handleOptions.bind(this);
+    this.handleUpdateQuestionType = this.handleUpdateQuestionType.bind(this);
+    this.handleResetOption = this.handleResetOption.bind(this);
+    this.handleAddOption = this.handleAddOption.bind(this);
+    this.handleRemoveOption = this.handleRemoveOption.bind(this);
+    this.handleOptionValue = this.handleOptionValue.bind(this);
+    this.handleUpdateQuestionInput = this.handleUpdateQuestionInput.bind(this);
+    this.handleOptionCount = this.handleOptionCount.bind(this);
   }
 
   state = {
     testing: false,
     openVisibility: false,
     openSettings: false,
+<<<<<<< HEAD
+=======
+    optionCheck: false,
+>>>>>>> 50e987a (Fixed major issues and bugs on Dashboard temporary input handlers, autoheight text still not been fixed.)
     privacyCheck: true,
     formItems: [],
     formCounter: 0,
@@ -59,154 +68,163 @@ class Dashboard extends React.Component {
     this.setState({ formCounter: this.state.formCounter + 1 }, () => {
       // let id = "question-" + this.state.formCounter;
       let newItem = {
-        id: this.state.formCounter,
-        question: "",
-        questionType: "",
-        options: [],
+        "id": formCounter,
+        "question": "",
+        "questionType": "",
+        "arrayOptions": [],
+        "optionCounter": 0,
       };
       currentStateData.push(newItem);
-      this.setState({ formItems: currentStateData }, () => {
-        // this.state.formItems.map((obj) => {
-        //   this.handleUpdateQuestionTextarea(obj);
-        // });
-      });
+      this.setState({ formItems: currentStateData });
+      // console.log(currentStateData);
     });
   }
 
   handleRemoveItem(deletedQuestionId) {
-    // console.log("Enter handle remove item " + deletedQuestionId);
-
-    let newFormItems = this.state.formItems.map((element) =>
-      element.id == deletedQuestionId && element.options != null
-        ? element.options.filter((opt) => opt != null)
-        : null
-    );
-
-    // console.log("handleRemoveItem, new form items:");
-    // console.log(newFormItems);
-
-    newFormItems = this.state.formItems.filter((element) => {
+    let formItems = [ ...this.state.formItems ];
+    let newFormItems = formItems.filter((element) => {
       return element.id != deletedQuestionId;
     });
-
-    // console.log("formItems:");
-    // console.log(this.state.formItems);
-    // console.log("newFormItems:");
-    // console.log(newFormItems);
-
     this.setState(
       {
         formItems: newFormItems,
-      },
-      () => {
-        this.state.formItems.map((obj) => {
-          this.handleUpdateQuestionTextarea(obj);
-        });
       }
     );
   }
 
-  handleQuestion(id, value, isQuestionContentChanged, isQuestionTypeChanged) {
-    let changedFormItem = this.state.formItems;
-    let index = changedFormItem.findIndex((element) => element.id === id);
-    let obj = { ...changedFormItem[index] };
-
-    if (isQuestionContentChanged) {
-      obj.question = value;
-    } else if (isQuestionTypeChanged) {
-      obj.questionType = value;
-    }
-    changedFormItem[index] = obj;
-
-    this.setState({ formItems: changedFormItem }, () => {
-      this.state.formItems.map((obj) => {
-        this.handleUpdateQuestionTextarea(obj);
-      });
-      // console.log(this.state.formItems);
+  handleUpdateQuestionInput(questionId, event) {
+    let formItems = [...this.state.formItems];
+    let currentForm = formItems.filter((elem) => {
+      return elem.id == questionId;
     });
-  }
-
-  handleUpdateQuestionTextarea(obj) {
-    // this.state.arrayOptions.map((obj) => {
-
-    // Question
-    let questionId = "question-input-" + obj.id;
-    // console.log("Enter handle update question textarea");
-    let questionTextarea = document.getElementById(questionId);
-    // console.log(textarea);
-    if (questionTextarea) {
-      if (obj.question != "" && obj.question != null) {
-        questionTextarea.value = obj.question;
-      } else {
-        questionTextarea.value = "";
+    currentForm = currentForm[0];
+    currentForm["question"] = event.target.value;
+    formItems = formItems.map((elem) => {
+      if(questionId == elem.id){
+        return currentForm;
       }
-    }
-
-    // Options
-    if (obj.options) {
-      // console.log("The object has options");
-      // console.log(obj.options);
-      obj.options.map((opt) => {
-        let optionId = "question-" + obj.id + "-options-" + opt.id;
-        let textarea = document.getElementById(optionId);
-        if (textarea) {
-          // console.log(obj);
-          if (opt.value != "" && opt.value != null) {
-            // console.log("The object has value of " + opt.value);
-            textarea.value = opt.value;
-          } else {
-            // console.log("obj.value is null");
-            // console.log("NULL");
-            textarea.value = "";
-          }
-        }
-      });
-    }
+      return elem;
+    });
+    this.setState({formItems});
   }
 
-  // handleOptions(questionId, optionId, flag, value) {
-  //   // 1 -> Add Option
-  //   if (flag == 1) {
-  //     // optionCounter = optionId
-  //     let newOption = {};
-  //     newOption["id"] = optionId;
-  //     newOption["label"] = "Option " + optionId;
-  //     newOption["value"] = "";
+  handleUpdateQuestionType(questionId, event){
+    let formItems = [...this.state.formItems];
+    let currentForm = formItems.filter((elem) => {
+      return elem.id == questionId;
+    });
+    currentForm = currentForm[0];
+    currentForm["questionType"] = event.value;
+    // console.log(event.value);
+    formItems = formItems.map((elem) => {
+      if(questionId == elem.id){
+        return currentForm;
+      }
+      return elem;
+    });
+    this.setState({ formItems });
+    console.log("update type:");
+    console.log(formItems);
+  }
 
-  //     this.setState((prevState) => ({
-  //       formItems: prevState.formItems.map((el) =>
-  //         // el.id == questionId
-  //         //   ? { options: [...prevState.options, newOption] }
-  //         //   : null,
-  //         console.log("PrevState" + prevState)
-  //       ),
-  //     }));
-  //   } else if (flag == 2) {
-  //     // 2 -> Remove Option
-  //     this.setState((prevState) => ({
-  //       formItems: prevState.formItems.map((el) =>
-  //         el.id == questionId
-  //           ? {
-  //               options: prevState.options.filter((element) => {
-  //                 return element.id != optionId;
-  //               }),
-  //             }
-  //           : null
-  //       ),
-  //     }));
-  //   } else {
-  //     // 3 -> Handle Option Value
-  //     this.setState((prevState) => ({
-  //       formItems: prevState.formItems.map((el) =>
-  //         el.id === questionId
-  //           ? prevState.options.map((element) =>
-  //               element.id == optionId ? { ...prevState.option, value } : null
-  //             )
-  //           : null
-  //       ),
-  //     }));
-  //   }
-  // }
+  handleResetOption(id) {
+    let formItems = [...this.state.formItems];
+    let currentForm = formItems.filter((elem) => {
+      return elem.id == id;
+    });
+    currentForm = currentForm[0];
+    currentForm["optionCounter"] = 0;
+    currentForm["arrayOptions"] = [];
+    formItems = formItems.map((elem) => {
+      if(elem.id == id) {
+        return currentForm;
+      }
+      return elem;
+    });
+    this.setState({ formItems });
+  }
+
+  handleAddOption(id) {
+    // console.log("Handle Add Option: " + id);
+    let formItems = [...this.state.formItems];
+    let currentForm = formItems.filter((elem) => {
+      return elem.id == id;
+    });
+    console.log(currentForm);
+    currentForm = currentForm[0];
+    currentForm["optionCounter"] += 1;
+    let obj = {};
+    obj["id"] = currentForm["optionCounter"];
+    obj["label"] = "Option " + currentForm["optionCounter"];
+    obj["value"] = "";
+    currentForm["arrayOptions"].push(obj);
+    formItems = formItems.map((elem) => {
+      if(elem.id == id) {
+        return currentForm;
+      }
+      return elem;
+    });
+    // console.log("Final: ");
+    // console.log(formItems);
+    this.setState({ formItems })
+  }
+
+  handleRemoveOption(questionId, objId, obj) {
+    let formItems = [ ...this.state.formItems ];
+    let currentForm = formItems.filter((elem) => {
+      return elem.id == questionId;
+    });
+    currentForm = currentForm[0];
+    let arrayOptions = currentForm["arrayOptions"];
+    arrayOptions = arrayOptions.filter((elem) => {
+      return elem.id != objId;
+    })
+    currentForm["arrayOptions"] = arrayOptions;
+    formItems = formItems.map((elem) => {
+      if(elem.id == questionId){
+        return currentForm;
+      }
+      return elem;
+    })
+    this.setState({ formItems });
+  }
+
+  handleOptionValue(questionId, event, object) {
+    let formItems = [ ...this.state.formItems ];
+    let currentForm = formItems.filter((elem) => {
+      return elem.id == questionId;
+    });
+    currentForm = currentForm[0];
+    let arrayOptions = currentForm["arrayOptions"];
+    arrayOptions.map((elem) => {
+      if (elem.id == object.id){
+        elem.value = event.target.value;
+      }
+    });
+    formItems = formItems.map((elem) => {
+      if(elem.id == questionId){
+        return currentForm;
+      }
+      return elem;
+    })
+    this.setState({ formItems });
+  }
+
+  handleOptionCount(questionId, event){
+    let formItems = [ ...this.state.formItems ];
+    let currentForm = formItems.filter((elem) => {
+      return elem.id == questionId;
+    });
+    currentForm = currentForm[0];
+    currentForm["optionCounter"] = event.value;
+    formItems = formItems.map((elem) => {
+      if(elem.id == questionId){
+        return currentForm;
+      }
+      return elem;
+    });
+    this.setState({ formItems });
+  }
 
   render() {
     return (
@@ -252,23 +270,25 @@ class Dashboard extends React.Component {
     return (
       <React.Fragment>
         {this.state.formItems.map((res) => {
-          console.log(res);
+          // console.log(res);
           return (
             <React.Fragment>
               <div className="separator" />
               <div className="question">
                 <Question
-                  QuestionId={res.id}
-                  // FormItems={this.state.formItems}
-                  Parent={this}
+                  key={"question-"+res.id}
+                  questionData={res}
                   mode={true}
-                  QuestionContent={this.handleQuestion}
-                  QuestionType={this.handleQuestion}
+                  arrayOptions={res["arrayOptions"]}
                   onRemove={this.handleRemoveItem}
-                  // onUpdateOptions={this.handleOptions}
+                  handleAddOption={this.handleAddOption}
+                  handleRemoveOption={this.handleRemoveOption}
+                  handleOptionValue={this.handleOptionValue}
+                  handleUpdateQuestionInput={this.handleUpdateQuestionInput}
+                  handleUpdateQuestionType={this.handleUpdateQuestionType}
+                  handleResetOption = {this.handleResetOption}
+                  handleOptionCount = {this.handleOptionCount}
                 />
-                {/* {console.log("from Dashboard")} */}
-                {/* {console.log(this.state.formItems)} */}
               </div>
             </React.Fragment>
           );

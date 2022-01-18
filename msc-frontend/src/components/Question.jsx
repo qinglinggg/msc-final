@@ -6,17 +6,13 @@ import Popup from "reactjs-popup";
 class Question extends React.Component {
   constructor(props) {
     super(props);
-    // this.handleRemoveQuestion = this.handleRemoveQuestion.bind(this);
+    this.displayQuestion = this.displayQuestion.bind(this);
   }
 
   state = {
-    selectedQuestionOption: "MC",
+    selectedQuestionOption: "",
     selectedInputOption: 2,
-    selectedIsOptional: false,
-
-    // multiple choice & checkbox
-    optionCounter: 0,
-    arrayOptions: [],
+    selectedIsOptional: false
   };
 
   questionOptions = [
@@ -25,6 +21,19 @@ class Question extends React.Component {
     { value: "CB", label: "Checkbox" },
     { value: "LS", label: "Linear scale" },
   ];
+
+  componentDidMount() {
+    if (this.props.questionData) {
+      if(this.props.questionData.questionType != ""){
+        console.log("in 1");
+        this.setState({ selectedQuestionOption : this.props.questionData.questionType });
+      } else {
+        console.log("in 2");
+        this.setState({ selectedQuestionOption : "MC" });
+      }
+    }
+    console.log(this.state);
+  }
 
   // linear scale
 
@@ -51,16 +60,7 @@ class Question extends React.Component {
   }
 
   displayQuestion() {
-    // this.arrayOptions = [];
-    // for (let i = 1; i < this.state.optionCounter; i++) {
-    //   let obj = [];
-    //   obj["id"] = i;
-    //   obj["label"] = "Option " + i;
-    //   this.arrayOptions.push(obj);
-    //   console.log(this.arrayOptions);
-    //   // this.arrayOptions.push("Option " + i);
-    // }
-    let textareaId = "question-input-" + this.props.QuestionId;
+    let textareaId = "question-input-" + this.props.questionData.id;
     return (
       <React.Fragment>
         <div className="question-area">
@@ -68,32 +68,32 @@ class Question extends React.Component {
             <AutoHeightTextarea
               className="question-input"
               id={textareaId}
+              value={this.props.questionData.question}
               name="inputted-question"
               placeholder="Please type your question..."
-              multiline={true}
               rows="14"
               cols="10"
               wrap="soft"
-              onKeyUp={(event) => {
-                this.props.QuestionContent(
-                  this.props.QuestionId,
-                  event.target.value,
-                  true,
-                  false
-                );
-                // console.log(event.target.value);
-              }}
+              onChange={(e) => {this.props.handleUpdateQuestionInput(this.props.questionData.id, e);}}
             />
             <div id="border"></div>
             <br />
           </div>
           <div id="question-selection">
             <Select
-              value={this.questionOptions.value}
+              value={this.questionOptions.map(option => {
+                  if(this.props.questionData.questionType == "") return this.questionOptions[0];
+                  if (option.value == this.props.questionData.questionType) return option;
+                }  
+              )}
               options={this.questionOptions}
-              defaultValue={this.questionOptions[0]}
               id="questionSelection"
-              onChange={(data) => this.handleQuestionTypeChange(data)}
+              defaultValue={this.questionOptions[0]}
+              onChange={(e) => {
+                this.props.handleResetOption(this.props.questionData.id)
+                this.props.handleUpdateQuestionType(this.props.questionData.id, e);
+                this.setState({selectedQuestionOption : this.props.questionData.questionType});
+              }}
             />
           </div>
         </div>
@@ -136,10 +136,7 @@ class Question extends React.Component {
                 <div
                   className="popup-content"
                   onClick={() => {
-                    // console.log(
-                    //   "on the way to remove id: " + this.props.QuestionId
-                    // );
-                    this.props.onRemove(this.props.QuestionId);
+                    this.props.onRemove(this.props.questionData.id);
                   }}
                 >
                   Remove Card
@@ -152,125 +149,8 @@ class Question extends React.Component {
     );
   }
 
-  handleQuestionTypeChange(data) {
-    this.setState({ selectedQuestionOption: data.value });
-    this.props.QuestionType(this.props.id, data.value, false, true);
-  }
-
-  handleInputChange(data) {
-    this.setState({ selectedInputOption: data.value });
-  }
-
-  // handleRemoveQuestion() {
-  //   this.props.onRemove = true;
-  // }
-
-  handleAddOption() {
-    this.setState({ optionCounter: this.state.optionCounter + 1 }, () => {
-      let obj = {};
-      obj["id"] = this.state.optionCounter;
-      obj["label"] = "Option " + this.state.optionCounter;
-      obj["value"] = "";
-      // this.arrayOptions.push(obj);
-      this.setState({ arrayOptions: [...this.state.arrayOptions, obj] }, () => {
-        let array = this.state.arrayOptions;
-        this.props.Parent.setState(
-          (prevState) => {
-            prevState.formItems.map((item) => {
-              let currentForm = prevState.formItems.filter((el) => {
-                return el.id == item.id;
-              });
-              return item.id == this.props.QuestionId
-                ? (currentForm[0].options = array)
-                : { ...item.options };
-            });
-          },
-          () => {
-            // console.log(this.props.Parent.state.formItems);
-          }
-        );
-      });
-    });
-  }
-
-  handleRemoveOption(id) {
-    // console.log("Enter remove option...");
-    let deletedId = id;
-    this.setState(
-      {
-        arrayOptions: this.state.arrayOptions.filter((element) => {
-          return element.id != deletedId;
-        }),
-      },
-      () => {
-        // console.log(this.state.arrayOptions);
-        let array = this.state.arrayOptions;
-        this.props.Parent.setState(
-          (prevState) => {
-            // prevState.formItems.map((obj) =>
-            //   obj.id == this.props.QuestionId &&
-            //   prevState.formItems[obj.id - 1].options != null
-            //     ? (prevState.formItems[obj.id - 1].options = array)
-            //     : null
-            // );
-
-            prevState.formItems.map((item) => {
-              let currentForm = prevState.formItems.filter((el) => {
-                return el.id == item.id;
-              });
-              return item.id == this.props.QuestionId
-                ? (currentForm[0].options = array)
-                : { ...item.options };
-            });
-          },
-          () => {
-            this.state.arrayOptions.map((obj) => {
-              // console.log(obj);
-              this.handleUpdateTextarea(obj);
-            });
-          }
-          // { testing: true }
-          // console.log(prevState)
-        );
-      }
-    );
-    // this.setState({ optionCounter: this.state.optionCounter - 1 });
-  }
-
-  handleOptionValue(event, object) {
-    // console.log("Changing option value...");
-    let idx = this.state.arrayOptions.indexOf(object);
-    // console.log("the index is " + idx);
-    let changedArrayValue = this.state.arrayOptions;
-    changedArrayValue[idx].value = event.target.value;
-    // console.log(changedArrayValue);
-    this.setState({ arrayOptions: changedArrayValue }, () => {
-      let array = this.state.arrayOptions;
-      this.props.Parent.setState(
-        (prevState) => {
-          prevState.formItems.map((item) => {
-            let currentForm = prevState.formItems.filter((el) => {
-              return el.id == item.id;
-            });
-            return item.id == this.props.QuestionId
-              ? (currentForm[0].options = array)
-              : { ...item.options };
-          });
-          // this.props.Parent.state.formItems.map((obj) => {
-          //   this.handleUpdateTextarea(obj);
-          // });
-        }
-        // { testing: true }
-        // console.log(prevState)
-      );
-    });
-    // event.target.value = "";
-  }
-
   handleUpdateTextarea(obj) {
-    // this.state.arrayOptions.map((obj) => {
-    // console.log("Entering update textarea");
-    let optionId = "question-" + this.props.QuestionId + "-options-" + obj.id;
+    let optionId = "question-" + this.props.questionData.id + "-options-" + obj.id;
     let textarea = document.getElementById(optionId);
     if (textarea) {
       // console.log(obj);
@@ -278,12 +158,9 @@ class Question extends React.Component {
         // console.log("The object has value of " + obj.value);
         textarea.value = obj.value;
       } else {
-        // console.log("obj.value is null");
-        // console.log("NULL");
         textarea.value = "";
       }
     }
-    // });
   }
 
   multipleChoiceOption() {
@@ -291,20 +168,11 @@ class Question extends React.Component {
       <React.Fragment>
         <div id="answer-selection-container">
           {
-            // this.props.Parent.state.formItems[this.props.QuestionId - 1].options
-            //   ? this.props.Parent.state.formItems[
-            //       this.props.QuestionId - 1
-            //     ].options.
-            this.state.arrayOptions
-              ? this.state.arrayOptions.map((obj) => {
+            this.props.arrayOptions
+              ? this.props.arrayOptions.map((obj) => {
                   let optionId =
-                    "question-" + this.props.QuestionId + "-options-" + obj.id;
-                  // console.log(obj);
-                  // if (obj.value != undefined) this.handleUpdateTextarea();
-                  this.handleUpdateTextarea(obj);
-                  // console.log("CHECK arrayOptions: ");
-                  // console.log(this.state.arrayOptions);
-                  // console.log(optionId);
+                    "question-" + this.props.questionData.id + "-options-" + obj.id;
+                  // this.handleUpdateTextarea(obj);
                   return (
                     <div className="answer-selection">
                       <input
@@ -313,36 +181,21 @@ class Question extends React.Component {
                         disabled
                       />
                       <AutoHeightTextarea
+                        key={optionId}
                         className="inputText"
                         id={optionId}
                         type="text"
                         placeholder={obj.label}
+                        value={obj.value}
                         wrap="soft"
-                        onKeyUp={(e) => {
-                          this.handleOptionValue(e, obj);
-                          // let value = e.target.value;
-                          // this.props.onUpdateOptions(
-                          //   this.props.QuestionId,
-                          //   obj.id,
-                          //   3,
-                          //   value
-                          // );
+                        onChange={(e) => {
+                          this.props.handleOptionValue(this.props.questionData.id, e, obj);
                         }}
                       />
-                      {/* {obj.value
-                      ? (document.getElementById({ optionId }).value =
-                          obj.value)
-                      : null} */}
                       <div
                         className="dashboard-remove-options-button"
                         onClick={() => {
-                          this.handleRemoveOption(obj.id);
-                          // this.props.onUpdateOptions(
-                          //   this.props.QuestionId,
-                          //   obj.id,
-                          //   2,
-                          //   null
-                          // );
+                          this.props.handleRemoveOption(this.props.questionData.id, obj.id, obj);
                         }}
                       >
                         <i className="fas fa-times"></i>
@@ -355,14 +208,12 @@ class Question extends React.Component {
           <div className="answer-selection">
             {this.displayNewOptionMultipleChoice()}
           </div>
-          {/* {console.log(this.arrayOptions)} */}
         </div>
       </React.Fragment>
     );
   }
 
   displayNewOptionMultipleChoice() {
-    // console.log(this.state.optionCounter);
     return (
       <React.Fragment>
         <input type="radio" className="answerSelection" disabled />
@@ -373,18 +224,7 @@ class Question extends React.Component {
           wrap="soft"
           readOnly
           onClick={() => {
-            this.handleAddOption();
-            // this.setState(
-            //   { optionCounter: this.state.optionCounter + 1 },
-            //   () => {
-            //     this.props.onUpdateOptions(
-            //       this.props.QuestionId,
-            //       this.state.optionCounter,
-            //       1,
-            //       null
-            //     );
-            //   }
-            // );
+            this.props.handleAddOption(this.props.questionData.id);
           }}
         />
       </React.Fragment>
@@ -396,13 +236,11 @@ class Question extends React.Component {
       <React.Fragment>
         <div id="answer-selection-container">
           {/* nilai true untuk pertama kali */}
-          {this.props.Options
-            ? this.props.Options.map((obj) => {
+          {this.props.arrayOptions
+            ? this.props.arrayOptions.map((obj) => {
                 let optionId =
-                  "question-" + this.props.QuestionId + "-options-" + obj.id;
+                  "question-" + this.props.questionData.id + "-options-" + obj.id;
                 console.log(obj);
-                this.handleUpdateTextarea(obj);
-                // if (obj.value != undefined) this.handleUpdateTextarea();
                 return (
                   <div className="answer-selection">
                     <input
@@ -411,32 +249,21 @@ class Question extends React.Component {
                       disabled
                     />
                     <AutoHeightTextarea
+                      key={optionId}
                       className="inputText"
                       id={optionId}
                       type="text"
                       placeholder={obj.label}
                       wrap="soft"
-                      onKeyUp={(e) => {
-                        this.handleOptionValue(e, obj);
-                        // let value = e.target.value;
-                        // this.props.onUpdateOptions(
-                        //   this.props.QuestionId,
-                        //   obj.id,
-                        //   3,
-                        //   value
-                        // );
+                      value={obj.value}
+                      onChange={(e) => {
+                        this.props.handleOptionValue(this.props.questionData.id, e, obj);
                       }}
                     />
                     <div
                       className="dashboard-remove-options-button"
                       onClick={() => {
-                        this.handleRemoveOption(obj.id);
-                        // this.props.onUpdateOptions(
-                        //   this.props.QuestionId,
-                        //   obj.id,
-                        //   2,
-                        //   null
-                        // );
+                        this.props.handleRemoveOption(this.props.questionData.id, obj.id, obj);
                       }}
                     >
                       <i className="fas fa-times"></i>
@@ -464,17 +291,7 @@ class Question extends React.Component {
           wrap="soft"
           readOnly
           onClick={() => {
-            this.setState(
-              { optionCounter: this.state.optionCounter + 1 },
-              () => {
-                this.props.onUpdateOptions(
-                  this.props.QuestionId,
-                  this.state.optionCounter,
-                  1,
-                  null
-                );
-              }
-            );
+            this.props.handleAddOption(this.props.questionData.id);
           }}
         />
       </React.Fragment>
@@ -483,8 +300,8 @@ class Question extends React.Component {
 
   linearScaleOption() {
     this.labelOptions = [];
-    for (let i = 1; i <= this.state.selectedInputOption; i++) {
-      this.labelOptions.push({ value: i, label: i });
+    for (let i = 0; i <= this.props.questionData.optionCounter; i++) {
+      this.labelOptions.push({value: i, label: i});
     }
     return (
       <React.Fragment>
@@ -495,11 +312,22 @@ class Question extends React.Component {
             </div>
             <div id="linear-input-box">
               <Select
-                value={this.inputOptions.value}
                 options={this.inputOptions}
+                value={this.labelOptions.map(option => {
+                  if(this.props.questionData.optionCounter == option.value){
+                    return option;
+                  }})
+                }
                 defaultValue={this.inputOptions[0]}
                 id="questionSelection"
-                onChange={(data) => this.handleInputChange(data)}
+                onChange={(e) => {
+                  console.log("Test 2");
+                  this.props.handleOptionCount(this.props.questionData.id, e);
+                  this.props.handleResetOption(this.props.questionData.id);
+                  for(let i=0; i < e.value; i++){
+                    this.props.handleAddOption(this.props.questionData.id);
+                  }
+                }}
               />
             </div>
           </div>
@@ -509,32 +337,32 @@ class Question extends React.Component {
               Label
             </div>
             <div className="linear-label-loop">
-              {this.labelOptions.map((object) => {
+              {this.props.questionData.arrayOptions.map((object) => {
+                let optionId = "question-" + this.props.questionData.id + "-options-" + object.id;
                 return (
                   <div className="linear-label-row">
                     <div className="linear-label-userinput">
                       <AutoHeightTextarea
+                        key={optionId}
+                        id={optionId}
                         className="inputText"
                         type="text"
                         placeholder="Insert label..."
                         wrap="soft"
+                        value={object.value}
+                        onChange={(e) => {
+                          this.props.handleOptionValue(this.props.questionData.id, e, object);
+                        }}
                       />
                     </div>
                     <div id="linear-label-select">
                       <div id="linear-label-select-box">
-                        <div id="linear-label-select-value">{object.label}</div>
+                        <div id="linear-label-select-value">{(this.labelOptions.length > 0) ? this.labelOptions[object.id].label : null}</div>
                       </div>
-                      {/* <Select
-                        value={this.labelOptions.value}
-                        options={this.labelOptions}
-                        defaultValue={this.labelOptions[0]}
-                        id="questionSelection"
-                      /> */}
                     </div>
                   </div>
                 );
               })}
-              {/* {this.displayNewOptionLinearLabel()} */}
             </div>
           </div>
         </div>
@@ -552,22 +380,12 @@ class Question extends React.Component {
               type="text"
               placeholder="Insert label..."
               wrap="soft"
-              onClick={(event) => {
-                let count = this.state.optionCounter + 1;
-                if (count > this.state.selectedInputOption)
-                  count = this.state.selectedInputOption;
-                this.setState({ optionCounter: count });
+              onClick={(e) => {
+                this.props.handleAddOption(this.props.questionData.id)
               }}
             />
           </div>
           <div id="linear-label-select">
-            {/* <Select
-              value={this.labelOptions.value}
-              options={this.labelOptions}
-              defaultValue={this.labelOptions[0]}
-              id="questionSelection"
-              // onChange={(data) => this.handleInputChange(data)}
-            /> */}
           </div>
         </div>
       </React.Fragment>
@@ -582,6 +400,8 @@ class Question extends React.Component {
           className="inputText"
           name="shortanswer-field"
           placeholder="Input your answer..."
+          value={this.props.questionData.arrayOptions[0]}
+          onChange={(e) => this.props.handleOptionValue(this.props.questionData.id, e, {"id" : 0})}
         />
       </div>
     );

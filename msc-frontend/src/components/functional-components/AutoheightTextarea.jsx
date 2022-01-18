@@ -7,9 +7,10 @@ const defaultStyle = {
   fontSize: "15px",
   scrollHeight: "10px",
 };
+// , 
+const AutoHeightTextarea = ({ style = defaultStyle, ...etc}) => {
 
-const AutoHeightTextarea = ({ style = defaultStyle, ...etc }) => {
-  const textareaRef = useRef(null);
+  const textareaRef = React.createRef();
   const [currentValue, setCurrentValue] = useState(""); // you can manage data with it
 
   useEffect(() => {
@@ -23,10 +24,6 @@ const AutoHeightTextarea = ({ style = defaultStyle, ...etc }) => {
       ref={textareaRef}
       style={style}
       {...etc}
-      value={currentValue}
-      onChange={(e) => {
-        setCurrentValue(e.target.value);
-      }}
     />
   );
 };
