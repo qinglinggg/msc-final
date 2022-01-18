@@ -321,7 +321,6 @@ class Question extends React.Component {
                 defaultValue={this.inputOptions[0]}
                 id="questionSelection"
                 onChange={(e) => {
-                  console.log("Test 2");
                   this.props.handleOptionCount(this.props.questionData.id, e);
                   this.props.handleResetOption(this.props.questionData.id);
                   for(let i=0; i < e.value; i++){
@@ -393,6 +392,7 @@ class Question extends React.Component {
   }
 
   shortAnswerOption() {
+    if(this.props.questionData.arrayOptions.length == 0) this.props.handleAddOption(this.props.questionData.id);
     return (
       <div id="shortanswer-container">
         <input
@@ -400,8 +400,8 @@ class Question extends React.Component {
           className="inputText"
           name="shortanswer-field"
           placeholder="Input your answer..."
-          value={this.props.questionData.arrayOptions[0]}
-          onChange={(e) => this.props.handleOptionValue(this.props.questionData.id, e, {"id" : 0})}
+          value={this.props.questionData.arrayOptions[0].value}
+          onChange={(e) => this.props.handleOptionValue(this.props.questionData.id, e, {"id" : 1})}
         />
       </div>
     );

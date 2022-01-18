@@ -32,7 +32,7 @@ class Dashboard extends React.Component {
   };
 
   componentDidMount() {
-    this.setState({ formItems: this.props.formItems_data });
+    // this.setState({ formItems: this.props.formItems_data });
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
@@ -64,7 +64,7 @@ class Dashboard extends React.Component {
     this.setState({ formCounter: this.state.formCounter + 1 }, () => {
       // let id = "question-" + this.state.formCounter;
       let newItem = {
-        "id": formCounter,
+        "id": this.state.formCounter,
         "question": "",
         "questionType": "",
         "arrayOptions": [],
@@ -119,8 +119,6 @@ class Dashboard extends React.Component {
       return elem;
     });
     this.setState({ formItems });
-    console.log("update type:");
-    console.log(formItems);
   }
 
   handleResetOption(id) {
@@ -149,6 +147,7 @@ class Dashboard extends React.Component {
     console.log(currentForm);
     currentForm = currentForm[0];
     currentForm["optionCounter"] += 1;
+    console.log(currentForm);
     let obj = {};
     obj["id"] = currentForm["optionCounter"];
     obj["label"] = "Option " + currentForm["optionCounter"];
