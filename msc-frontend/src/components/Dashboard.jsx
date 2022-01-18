@@ -26,10 +26,6 @@ class Dashboard extends React.Component {
     testing: false,
     openVisibility: false,
     openSettings: false,
-<<<<<<< HEAD
-=======
-    optionCheck: false,
->>>>>>> 50e987a (Fixed major issues and bugs on Dashboard temporary input handlers, autoheight text still not been fixed.)
     privacyCheck: true,
     formItems: [],
     formCounter: 0,
