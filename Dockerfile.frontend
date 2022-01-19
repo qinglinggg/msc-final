@@ -2,6 +2,7 @@ FROM node:16 AS build
 WORKDIR /app
 COPY ./msc-frontend/package.json .
 RUN npm install -g npm@8.3.1 --force
+RUN npm i --package-lock-only
 RUN npm audit fix
 COPY ./msc-frontend/ .
 RUN npm run build
