@@ -3,7 +3,7 @@ WORKDIR /app
 COPY ./msc-frontend/package.json .
 RUN npm install -g npm@8.3.1 --force
 RUN npm i --package-lock-only
-RUN npm audit fix
+RUN npm audit fix --force
 COPY ./msc-frontend/ .
 RUN npm run build
 
