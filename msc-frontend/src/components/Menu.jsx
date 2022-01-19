@@ -21,7 +21,9 @@ class Menu extends React.Component {
         <div className="sub-menu">
           <Link to="/item1/show-results">Data Visualization</Link>
         </div>
-        <div className="sub-menu">Feedback</div>
+        <div className="sub-menu">
+          <Link to="/item1/feedback">Feedback</Link>
+        </div>
         <div className="sub-menu">Back to Home</div>
         <div className="indicator"></div>
       </div>

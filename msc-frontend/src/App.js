@@ -12,6 +12,8 @@ import Menu from "./components/Menu";
 import Invitation from "./components/Invitation";
 import Design from "./components/Design";
 import DataVisualization from "./components/Data-visualization";
+import Feedback from "./components/Feedback";
+import Message from "./components/Message";
 
 class App extends React.Component {
   state = {
@@ -24,6 +26,96 @@ class App extends React.Component {
       },
     ],
     formItems: ["Test", "Test2"],
+    formMessages: [
+      {
+        userName: "Sari Sulaiman",
+        messagesHistory: [
+          {
+            userID: 1,
+            message:
+              "Permisi, saya sudah dapat akses ke kuesioner ini. Mohon bantuannya. Permisi, saya sudah dapat akses ke kuesioner ini. Mohon bantuannya.",
+            timestamp: "3.45 PM",
+          },
+          {
+            userID: 2,
+            message:
+              "Iya selamat siang, Ibu Sari. Baik, akan kami bantu dengan segenap hati.",
+            timestamp: "3.46 PM",
+          },
+          {
+            userID: 1,
+            message: "Baiklah kalau begitu.",
+            timestamp: "3.46 PM",
+          },
+          {
+            userID: 1,
+            message: "Akan saya kabari jika sudah isi ya :)",
+            timestamp: "3.47 PM",
+          },
+          {
+            userID: 1,
+            message: "Apakah form ini akan ditutup pada tanggal 10 Oktober?",
+            timestamp: "3.47 PM",
+          },
+        ],
+        lastMessage: "Apakah form ini akan ditutup pada tanggal 10 Oktober?",
+        timestamp: "6.00 PM",
+        read: false,
+        tag: "3",
+      },
+      {
+        userName: "Alvina Putri",
+        lastMessage:
+          "Ingin bertanya untuk pertanyaan nomor 6 apakah konteksnya secara umum atau dalam biro?",
+        timestamp: "5.25 PM",
+        read: true,
+        tag: "Sent",
+      },
+      {
+        userName: "Averina Nugroho",
+        lastMessage: "Baik, nanti akan kami input pesan anda. Terima kasih!",
+        timestamp: "5.20 PM",
+        read: true,
+        tag: "Sent",
+      },
+      {
+        userName: "Jeanette Suryadi",
+        lastMessage: "Sent an attachment",
+        timestamp: "5.10 PM",
+        read: false,
+        tag: "2",
+      },
+      {
+        userName: "William Putra",
+        lastMessage:
+          "Baik, akan saya isi formnya nanti malam ya. Terima kasih.",
+        timestamp: "4.30 PM",
+        read: false,
+        tag: "1",
+      },
+      {
+        userName: "Celine Jadja",
+        lastMessage: "Maksudnya biro diisi dengan divisinya?",
+        timestamp: "4.20 PM",
+        read: false,
+        tag: "1",
+      },
+      {
+        userName: "Elvin Tanjaya",
+        lastMessage:
+          "Informasi biodata dapat disampaikan secara singkat saja Pak.",
+        timestamp: "4.20 PM",
+        read: true,
+        tag: "Sent",
+      },
+      {
+        userName: "Albertus Hadi Saputra",
+        lastMessage: "Siap Pak.",
+        timestamp: "3.15 PM",
+        read: true,
+        tag: "Sent",
+      },
+    ],
   };
 
   componentDidMount() {
@@ -93,6 +185,7 @@ class App extends React.Component {
   }
 
   render() {
+    let count = 0;
     return (
       <Router>
         <Navbar user_data={this.state.userProfiles} />
@@ -136,6 +229,22 @@ class App extends React.Component {
                   <DataVisualization formItems_data={this.state.formItems} />
                 }
               />
+              <Route
+                path="/item1/feedback"
+                element={
+                  <Feedback formMessages_data={this.state.formMessages} />
+                }
+              />
+              {this.state.formMessages.map((message) => {
+                count = count + 1;
+                let path = "chat-" + count;
+                return (
+                  <Route
+                    path={"item1/feedback/" + path}
+                    element={<Message messages={message} />}
+                  />
+                );
+              })}
             </Routes>
           </div>
         </div>
