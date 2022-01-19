@@ -1,7 +1,7 @@
 FROM node:16 AS build
 WORKDIR /app
 COPY ./msc-frontend/package.json .
-RUN npm install
+RUN npm install -g npm@8.3.1 --force
 COPY ./msc-frontend/ .
 RUN npm run build
 
