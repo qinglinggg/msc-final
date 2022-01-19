@@ -176,7 +176,7 @@ class Question extends React.Component {
                   return (
                     <div className="answer-selection">
                       <input
-                        className="answerSelectionRadio"
+                        className="answerSelection"
                         type="radio"
                         disabled
                       />
@@ -244,8 +244,8 @@ class Question extends React.Component {
                 return (
                   <div className="answer-selection">
                     <input
-                      className="answerSelectionRadio"
-                      type="radio"
+                      className="answerSelection"
+                      type="checkbox"
                       disabled
                     />
                     <AutoHeightTextarea
