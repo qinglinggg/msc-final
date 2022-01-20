@@ -147,11 +147,18 @@ class App extends React.Component {
     // let pageContainer = document.querySelector(".page-container");
     let navBar = document.getElementById("navbar");
     let body = document.getElementById("body");
-    let menuClose = document.getElementById("menu-title");
+    let menuClose = document.getElementById("menu-close");
     let sideMenu = document.getElementById("menu-container");
-    menuClose.addEventListener("click", () => {
-      body.classList.toggle("openMenu");
-    });
+    if(menuClose){
+      menuClose.addEventListener("click", () => {
+        body.classList.toggle("openMenu");
+      });
+    }
+    if(background){
+      background.addEventListener("click", () => {
+        body.classList.toggle("openMenu");
+      });
+    }
     let subMenus = document.querySelectorAll(".sub-menu");
     function activateButton() {
       subMenus.forEach((item) => {
@@ -162,10 +169,12 @@ class App extends React.Component {
     function disableOpenMenu() {
       body.classList.toggle("openMenu");
     }
-    subMenus.forEach((item) => {
-      item.addEventListener("mouseover", activateButton);
-      item.addEventListener("click", disableOpenMenu);
-    });
+    if(subMenus) {
+      subMenus.forEach((item) => {
+        item.addEventListener("mouseover", activateButton);
+        item.addEventListener("click", disableOpenMenu);
+      });
+    }
     container.style.top = navBar.clientHeight + "px";
     container.style.height = window.innerHeight - navBar.clientHeight + "px";
     background.style.height =

@@ -12,17 +12,27 @@ class Dashboard extends React.Component {
   constructor(props) {
     super(props);
     this.handleAddItem = this.handleAddItem.bind(this);
+    this.handleRemoveItem = this.handleRemoveItem.bind(this);
+    this.handleUpdateQuestionType = this.handleUpdateQuestionType.bind(this);
+    this.handleResetOption = this.handleResetOption.bind(this);
+    this.handleAddOption = this.handleAddOption.bind(this);
+    this.handleRemoveOption = this.handleRemoveOption.bind(this);
+    this.handleOptionValue = this.handleOptionValue.bind(this);
+    this.handleUpdateQuestionInput = this.handleUpdateQuestionInput.bind(this);
+    this.handleOptionCount = this.handleOptionCount.bind(this);
   }
 
   state = {
+    testing: false,
     openVisibility: false,
     openSettings: false,
     privacyCheck: true,
     formItems: [],
+    formCounter: 0,
   };
 
   componentDidMount() {
-    this.setState({ formItems: this.props.formItems_data });
+    // this.setState({ formItems: this.props.formItems_data });
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
@@ -51,13 +61,164 @@ class Dashboard extends React.Component {
 
   handleAddItem() {
     let currentStateData = this.state.formItems;
-    let newItem = {
-      question: "",
-      questionType: "",
-      options: [],
-    };
-    currentStateData.push(newItem);
-    this.setState({ formItems: currentStateData });
+    this.setState({ formCounter: this.state.formCounter + 1 }, () => {
+      // let id = "question-" + this.state.formCounter;
+      let newItem = {
+        "id": this.state.formCounter,
+        "question": "",
+        "questionType": "",
+        "arrayOptions": [],
+        "optionCounter": 0,
+      };
+      currentStateData.push(newItem);
+      this.setState({ formItems: currentStateData });
+      // console.log(currentStateData);
+    });
+  }
+
+  handleRemoveItem(deletedQuestionId) {
+    let formItems = [ ...this.state.formItems ];
+    let newFormItems = formItems.filter((element) => {
+      return element.id != deletedQuestionId;
+    });
+    this.setState(
+      {
+        formItems: newFormItems,
+      }
+    );
+  }
+
+  handleUpdateQuestionInput(questionId, event) {
+    let formItems = [...this.state.formItems];
+    let currentForm = formItems.filter((elem) => {
+      return elem.id == questionId;
+    });
+    currentForm = currentForm[0];
+    currentForm["question"] = event.target.value;
+    formItems = formItems.map((elem) => {
+      if(questionId == elem.id){
+        return currentForm;
+      }
+      return elem;
+    });
+    this.setState({formItems});
+  }
+
+  handleUpdateQuestionType(questionId, event){
+    let formItems = [...this.state.formItems];
+    let currentForm = formItems.filter((elem) => {
+      return elem.id == questionId;
+    });
+    currentForm = currentForm[0];
+    currentForm["questionType"] = event.value;
+    // console.log(event.value);
+    formItems = formItems.map((elem) => {
+      if(questionId == elem.id){
+        return currentForm;
+      }
+      return elem;
+    });
+    this.setState({ formItems });
+  }
+
+  handleResetOption(id) {
+    let formItems = [...this.state.formItems];
+    let currentForm = formItems.filter((elem) => {
+      return elem.id == id;
+    });
+    currentForm = currentForm[0];
+    currentForm["optionCounter"] = 0;
+    currentForm["arrayOptions"] = [];
+    formItems = formItems.map((elem) => {
+      if(elem.id == id) {
+        return currentForm;
+      }
+      return elem;
+    });
+    this.setState({ formItems });
+  }
+
+  handleAddOption(id) {
+    // console.log("Handle Add Option: " + id);
+    let formItems = [...this.state.formItems];
+    let currentForm = formItems.filter((elem) => {
+      return elem.id == id;
+    });
+    console.log(currentForm);
+    currentForm = currentForm[0];
+    currentForm["optionCounter"] += 1;
+    console.log(currentForm);
+    let obj = {};
+    obj["id"] = currentForm["optionCounter"];
+    obj["label"] = "Option " + currentForm["optionCounter"];
+    obj["value"] = "";
+    currentForm["arrayOptions"].push(obj);
+    formItems = formItems.map((elem) => {
+      if(elem.id == id) {
+        return currentForm;
+      }
+      return elem;
+    });
+    // console.log("Final: ");
+    // console.log(formItems);
+    this.setState({ formItems })
+  }
+
+  handleRemoveOption(questionId, objId, obj) {
+    let formItems = [ ...this.state.formItems ];
+    let currentForm = formItems.filter((elem) => {
+      return elem.id == questionId;
+    });
+    currentForm = currentForm[0];
+    let arrayOptions = currentForm["arrayOptions"];
+    arrayOptions = arrayOptions.filter((elem) => {
+      return elem.id != objId;
+    })
+    currentForm["arrayOptions"] = arrayOptions;
+    formItems = formItems.map((elem) => {
+      if(elem.id == questionId){
+        return currentForm;
+      }
+      return elem;
+    })
+    this.setState({ formItems });
+  }
+
+  handleOptionValue(questionId, event, object) {
+    let formItems = [ ...this.state.formItems ];
+    let currentForm = formItems.filter((elem) => {
+      return elem.id == questionId;
+    });
+    currentForm = currentForm[0];
+    let arrayOptions = currentForm["arrayOptions"];
+    arrayOptions.map((elem) => {
+      if (elem.id == object.id){
+        elem.value = event.target.value;
+      }
+    });
+    formItems = formItems.map((elem) => {
+      if(elem.id == questionId){
+        return currentForm;
+      }
+      return elem;
+    })
+    this.setState({ formItems });
+  }
+
+  handleOptionCount(questionId, event){
+    let formItems = [ ...this.state.formItems ];
+    let currentForm = formItems.filter((elem) => {
+      return elem.id == questionId;
+    });
+    currentForm = currentForm[0];
+    currentForm["optionCounter"] = event.value;
+    formItems = formItems.map((elem) => {
+      if(elem.id == questionId){
+        return currentForm;
+      }
+      return elem;
+    });
+    this.setState({ formItems });
   }
 
   render() {
@@ -92,26 +253,46 @@ class Dashboard extends React.Component {
         {/* kalo belum ada, lgsg tombol Add Question aja */}
         {/* AddQuestion -> tombol dulu baru kalo dipencet muncul menu tambahan */}
         <div id="page-content">
-          <div className="questions-container">
-            {this.state.formItems.map((res) => {
-              return (
-                <React.Fragment>
-                  <div className="separator" />
-                  <div className="question">
-                    <Question mode={true} />
-                  </div>
-                </React.Fragment>
-              );
-            })}
-            <div className="separator" />
-            <div
-              className="question"
-              id="addQuestion"
-              onClick={() => this.handleAddItem()}
-            >
-              <Question mode={false} />
-            </div>
-          </div>
+          <div className="questions-container">{this.displayQuestion()}</div>
+        </div>
+      </React.Fragment>
+    );
+  }
+
+  displayQuestion() {
+    return (
+      <React.Fragment>
+        {this.state.formItems.map((res) => {
+          // console.log(res);
+          return (
+            <React.Fragment>
+              <div className="separator" />
+              <div className="question">
+                <Question
+                  key={"question-"+res.id}
+                  questionData={res}
+                  mode={true}
+                  arrayOptions={res["arrayOptions"]}
+                  onRemove={this.handleRemoveItem}
+                  handleAddOption={this.handleAddOption}
+                  handleRemoveOption={this.handleRemoveOption}
+                  handleOptionValue={this.handleOptionValue}
+                  handleUpdateQuestionInput={this.handleUpdateQuestionInput}
+                  handleUpdateQuestionType={this.handleUpdateQuestionType}
+                  handleResetOption = {this.handleResetOption}
+                  handleOptionCount = {this.handleOptionCount}
+                />
+              </div>
+            </React.Fragment>
+          );
+        })}
+        <div className="separator" />
+        <div
+          className="question"
+          id="addQuestion"
+          onClick={() => this.handleAddItem()}
+        >
+          <Question mode={false} />
         </div>
       </React.Fragment>
     );

@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import iconMenubarGrey from "./images/menubarGrey.png";
 import Select from "react-select";
+import UploadImage from "./functional-components/UploadImage";
+import UploadImageReact from "./functional-components/UploadImageWithProgressBar-React";
 
 class Design extends React.Component {
   constructor() {
@@ -69,13 +71,20 @@ class Design extends React.Component {
         <div id="page-content">
           <div id="design-background-container">
             <div id="design-background-title">Choose background...</div>
-            <Select
-              value={this.backgroundOptions.value}
-              options={this.backgroundOptions}
-              defaultValue={this.backgroundOptions[0]}
-              className="design-selection"
-              onChange={(data) => this.handleBackgroundChange(data)}
-            />
+            <div id="design-background-input-container">
+              <Select
+                value={this.backgroundOptions.value}
+                options={this.backgroundOptions}
+                defaultValue={this.backgroundOptions[0]}
+                className="design-selection"
+                onChange={(data) => this.handleBackgroundChange(data)}
+              />
+              <div id="design-background-input-uploadimage">
+                {this.state.selectedBackgroundOption == 1 ? (
+                  <UploadImage />
+                ) : null}
+              </div>
+            </div>
           </div>
           <div id="design-color-container">
             <div id="design-color-title">Choose color theme...</div>
