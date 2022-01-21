@@ -18,6 +18,8 @@ import Message from "./components/Message";
 class App extends React.Component {
   state = {
     userProfiles: [],
+
+    // Home
     forms: [],
     waitingForms: [
       {
@@ -25,6 +27,8 @@ class App extends React.Component {
         description: "Mengisi survey 1",
       },
     ],
+
+    // inside Forms:
     formItems: ["Test", "Test2"],
     formMessages: [
       {
@@ -149,12 +153,12 @@ class App extends React.Component {
     let body = document.getElementById("body");
     let menuClose = document.getElementById("menu-close");
     let sideMenu = document.getElementById("menu-container");
-    if(menuClose){
+    if (menuClose) {
       menuClose.addEventListener("click", () => {
         body.classList.toggle("openMenu");
       });
     }
-    if(background){
+    if (background) {
       background.addEventListener("click", () => {
         body.classList.toggle("openMenu");
       });
@@ -169,7 +173,7 @@ class App extends React.Component {
     function disableOpenMenu() {
       body.classList.toggle("openMenu");
     }
-    if(subMenus) {
+    if (subMenus) {
       subMenus.forEach((item) => {
         item.addEventListener("mouseover", activateButton);
         item.addEventListener("click", disableOpenMenu);
@@ -191,6 +195,10 @@ class App extends React.Component {
     axios.post(`http://localhost:8080/api/v1/forms`, obj).then((res) => {
       console.log(this.state);
     });
+  }
+
+  sendNewMessage(obj) {
+    // axios
   }
 
   render() {
@@ -250,7 +258,7 @@ class App extends React.Component {
                 return (
                   <Route
                     path={"item1/feedback/" + path}
-                    element={<Message messages={message} />}
+                    element={<Message messages={message} Parent={this} />}
                   />
                 );
               })}

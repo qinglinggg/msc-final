@@ -44,14 +44,7 @@ class Feedback extends React.Component {
                       src={profilePicture}
                       alt=""
                     />
-                    <Link
-                      to={path}
-                      className="link"
-                      id="link-container"
-                      //   onClick={() =>
-                      //     this.displayChat(path, message.messagesHistory)
-                      //   }
-                    >
+                    <Link to={path} className="link" id="link-container">
                       <div id="chat-message-box">
                         <div id="chat-user-name">{message.userName}</div>
                         <div id="chat-user-message">{message.lastMessage}</div>

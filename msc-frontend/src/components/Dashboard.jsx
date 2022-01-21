@@ -64,11 +64,11 @@ class Dashboard extends React.Component {
     this.setState({ formCounter: this.state.formCounter + 1 }, () => {
       // let id = "question-" + this.state.formCounter;
       let newItem = {
-        "id": this.state.formCounter,
-        "question": "",
-        "questionType": "",
-        "arrayOptions": [],
-        "optionCounter": 0,
+        id: this.state.formCounter,
+        question: "",
+        questionType: "",
+        arrayOptions: [],
+        optionCounter: 0,
       };
       currentStateData.push(newItem);
       this.setState({ formItems: currentStateData });
@@ -77,15 +77,13 @@ class Dashboard extends React.Component {
   }
 
   handleRemoveItem(deletedQuestionId) {
-    let formItems = [ ...this.state.formItems ];
+    let formItems = [...this.state.formItems];
     let newFormItems = formItems.filter((element) => {
       return element.id != deletedQuestionId;
     });
-    this.setState(
-      {
-        formItems: newFormItems,
-      }
-    );
+    this.setState({
+      formItems: newFormItems,
+    });
   }
 
   handleUpdateQuestionInput(questionId, event) {
@@ -96,15 +94,15 @@ class Dashboard extends React.Component {
     currentForm = currentForm[0];
     currentForm["question"] = event.target.value;
     formItems = formItems.map((elem) => {
-      if(questionId == elem.id){
+      if (questionId == elem.id) {
         return currentForm;
       }
       return elem;
     });
-    this.setState({formItems});
+    this.setState({ formItems });
   }
 
-  handleUpdateQuestionType(questionId, event){
+  handleUpdateQuestionType(questionId, event) {
     let formItems = [...this.state.formItems];
     let currentForm = formItems.filter((elem) => {
       return elem.id == questionId;
@@ -113,7 +111,7 @@ class Dashboard extends React.Component {
     currentForm["questionType"] = event.value;
     // console.log(event.value);
     formItems = formItems.map((elem) => {
-      if(questionId == elem.id){
+      if (questionId == elem.id) {
         return currentForm;
       }
       return elem;
@@ -130,7 +128,7 @@ class Dashboard extends React.Component {
     currentForm["optionCounter"] = 0;
     currentForm["arrayOptions"] = [];
     formItems = formItems.map((elem) => {
-      if(elem.id == id) {
+      if (elem.id == id) {
         return currentForm;
       }
       return elem;
@@ -154,18 +152,18 @@ class Dashboard extends React.Component {
     obj["value"] = "";
     currentForm["arrayOptions"].push(obj);
     formItems = formItems.map((elem) => {
-      if(elem.id == id) {
+      if (elem.id == id) {
         return currentForm;
       }
       return elem;
     });
     // console.log("Final: ");
     // console.log(formItems);
-    this.setState({ formItems })
+    this.setState({ formItems });
   }
 
   handleRemoveOption(questionId, objId, obj) {
-    let formItems = [ ...this.state.formItems ];
+    let formItems = [...this.state.formItems];
     let currentForm = formItems.filter((elem) => {
       return elem.id == questionId;
     });
@@ -173,47 +171,47 @@ class Dashboard extends React.Component {
     let arrayOptions = currentForm["arrayOptions"];
     arrayOptions = arrayOptions.filter((elem) => {
       return elem.id != objId;
-    })
+    });
     currentForm["arrayOptions"] = arrayOptions;
     formItems = formItems.map((elem) => {
-      if(elem.id == questionId){
+      if (elem.id == questionId) {
         return currentForm;
       }
       return elem;
-    })
+    });
     this.setState({ formItems });
   }
 
   handleOptionValue(questionId, event, object) {
-    let formItems = [ ...this.state.formItems ];
+    let formItems = [...this.state.formItems];
     let currentForm = formItems.filter((elem) => {
       return elem.id == questionId;
     });
     currentForm = currentForm[0];
     let arrayOptions = currentForm["arrayOptions"];
     arrayOptions.map((elem) => {
-      if (elem.id == object.id){
+      if (elem.id == object.id) {
         elem.value = event.target.value;
       }
     });
     formItems = formItems.map((elem) => {
-      if(elem.id == questionId){
+      if (elem.id == questionId) {
         return currentForm;
       }
       return elem;
-    })
+    });
     this.setState({ formItems });
   }
 
-  handleOptionCount(questionId, event){
-    let formItems = [ ...this.state.formItems ];
+  handleOptionCount(questionId, event) {
+    let formItems = [...this.state.formItems];
     let currentForm = formItems.filter((elem) => {
       return elem.id == questionId;
     });
     currentForm = currentForm[0];
     currentForm["optionCounter"] = event.value;
     formItems = formItems.map((elem) => {
-      if(elem.id == questionId){
+      if (elem.id == questionId) {
         return currentForm;
       }
       return elem;
@@ -269,7 +267,7 @@ class Dashboard extends React.Component {
               <div className="separator" />
               <div className="question">
                 <Question
-                  key={"question-"+res.id}
+                  key={"question-" + res.id}
                   questionData={res}
                   mode={true}
                   arrayOptions={res["arrayOptions"]}
@@ -279,8 +277,8 @@ class Dashboard extends React.Component {
                   handleOptionValue={this.handleOptionValue}
                   handleUpdateQuestionInput={this.handleUpdateQuestionInput}
                   handleUpdateQuestionType={this.handleUpdateQuestionType}
-                  handleResetOption = {this.handleResetOption}
-                  handleOptionCount = {this.handleOptionCount}
+                  handleResetOption={this.handleResetOption}
+                  handleOptionCount={this.handleOptionCount}
                 />
               </div>
             </React.Fragment>
