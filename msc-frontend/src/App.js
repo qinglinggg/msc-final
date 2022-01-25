@@ -15,7 +15,15 @@ import DataVisualization from "./components/Data-visualization";
 import Feedback from "./components/Feedback";
 import Message from "./components/Message";
 
+const BASE_URL = 'http://localhost:8080';
+
 class App extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.handleCreateNewForm = this.handleCreateNewForm.bind(this);
+  }
+
   state = {
     userProfiles: [],
 
@@ -123,24 +131,24 @@ class App extends React.Component {
   };
 
   componentDidMount() {
-    axios.get(`http://localhost:8080/api/v1/user-profiles`).then((res) => {
+    axios.get(`${BASE_URL}/api/v1/user-profiles`).then(async (res) => {
       const userProfiles = res.data;
       this.setState({ userProfiles });
-      console.log(this.state);
     });
-    axios.get(`http://localhost:8080/api/v1/forms`).then((res) => {
+    axios.get(`${BASE_URL}/api/v1/forms`).then((res) => {
       const forms = res.data;
       this.setState({ forms });
-      console.log(this.state);
     });
-    axios.get(`http://localhost:8080/api/v1/waitingForms`).then((res) => {
-      const waitingForms = res.data;
-      this.setState({ waitingForms });
-      console.log(this.state);
-    });
-    // axios.get(`http://localhost:8080/api/v1/formItems`).then((res) => {
+    // axios.get(`${BASE_URL}/api/v1/waitingForms`).then(async (res) => {
+    //   const waitingForms = res.data;
+    //   this.setState({ waitingForms });
+    //   console.log("Waiting Forms Update State:")
+    //   console.log(this.state);
+    // });
+    // axios.get(`${BASE_URL}/api/v1/formItems`).then((res) => {
     //   const formItems = res.data;
     //   this.setState({ formItems });
+    //   console.log("Form Items Update State:");
     //   console.log(this.state);
     // });
 
@@ -155,11 +163,6 @@ class App extends React.Component {
     let sideMenu = document.getElementById("menu-container");
     if (menuClose) {
       menuClose.addEventListener("click", () => {
-        body.classList.toggle("openMenu");
-      });
-    }
-    if (background) {
-      background.addEventListener("click", () => {
         body.classList.toggle("openMenu");
       });
     }
@@ -189,12 +192,18 @@ class App extends React.Component {
     sideMenu.style.top = container.style.top + "px";
   }
 
-  createNewForm(obj) {
-    console.log("masuk createNewForm");
-
-    axios.post(`http://localhost:8080/api/v1/forms`, obj).then((res) => {
-      console.log(this.state);
-    });
+  async handleCreateNewForm(obj) {
+    let formsData = [...this.state.forms];
+    try {
+      const response = await axios({
+        method: "post",
+        url: `${BASE_URL}/api/v1/forms/insert`,
+        data: obj,
+        headers: {"Content-Type": "application/json"}
+      });
+    } catch(error) {
+      console.log(error);
+    }
   }
 
   sendNewMessage(obj) {
@@ -215,43 +224,48 @@ class App extends React.Component {
                 path="/"
                 element={
                   <Home
-                    page1_data={this.state.forms}
+                    formsData={this.state.forms}
                     waitingForms={this.state.waitingForms}
-                    Parent={this}
-                    createNewForm={this.createNewForm}
+                    handleCreateNewForm={this.handleCreateNewForm}
                   />
                 }
               />
-              <Route
-                path="/item1/dashboard"
-                element={
-                  // <Dashboard formItems_data={this.state.forms.formItems} />
-                  <Dashboard formItems_data={this.state.formItems} />
-                } // data dari item1
-              />
-              <Route
-                path="/item1/invitation"
-                element={
-                  // <Invitation formItems_data={this.state.forms.formItems} />
-                  <Invitation formItems_data={this.state.formItems} />
-                } // data dari item1
-              />
-              <Route
-                path="/item1/design"
-                element={<Design formItems_data={this.state.formItems} />} // data dari item1
-              />
-              <Route
-                path="/item1/show-results"
-                element={
-                  <DataVisualization formItems_data={this.state.formItems} />
-                }
-              />
-              <Route
-                path="/item1/feedback"
-                element={
-                  <Feedback formMessages_data={this.state.formMessages} />
-                }
-              />
+            </Routes>
+            {this.state.forms.map(formData => {
+              return (
+                <Routes>
+                  <Route
+                  path={"/" + formData.formId + "/dashboard"}
+                  element={
+                    // <Dashboard formItems_data={this.state.forms.formItems} />
+                    <Dashboard formItems_data={this.state.formItems} />
+                  } // data dari item1
+                  />
+                  <Route
+                  path={"/" + formData.formId + "/invitation"}
+                  element={
+                    // <Invitation formItems_data={this.state.forms.formItems} />
+                    <Invitation formItems_data={this.state.formItems} />
+                  } // data dari item1
+                  />
+                  <Route
+                  path={"/" + formData.formId + "/design"}
+                  element={<Design formItems_data={this.state.formItems} />} // data dari item1
+                  />
+                  <Route
+                  path={"/" + formData.formId + "/show-results"}
+                  element={
+                    <DataVisualization formItems_data={this.state.formItems} />
+                  } />
+                  <Route
+                  path={"/" + formData.formId + "/feedback"}
+                  element={
+                    <Feedback formMessages_data={this.state.formMessages} />
+                  } />
+                </Routes>
+              );
+            })}
+            <Routes>
               {this.state.formMessages.map((message) => {
                 count = count + 1;
                 let path = "chat-" + count;

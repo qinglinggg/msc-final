@@ -4,7 +4,11 @@ import dummyItemImage from "./images/form.png";
 class Page1Items extends React.Component {
   render() {
     return (
-      <div className="item-container">
+      <div className="item-container"
+      onClick={() => {
+        window.location = "/"+this.props.data.formId+"/dashboard";
+        console.log("clicked");
+      }}>
         <img id="item-image" src={dummyItemImage} />
         <div className="item-meta">
           <div id="item-name">{this.props.data.title}</div>

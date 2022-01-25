@@ -63,7 +63,7 @@ public class FormDAO {
     public int insertForm(Form form){
         final String query = "INSERT INTO Form VALUES (?,?,?,?,?,?)";
         int res = jdbcTemplate.update(query, form.getFormId().toString(), form.getTitle(), form.getDescription(), form.getPrivacySetting(), dateFormat.format(form.getCreateDate()), form.getModifyDate());
-        return res;
+        return form;
     }
 
     public int removeForm(String id){
@@ -120,7 +120,7 @@ public class FormDAO {
     public int addFormItems(String id, FormItems item) {
         final String query = "INSERT INTO FormItems VALUES(?,?,?,?,?)";
         int res = jdbcTemplate.update(query, id, item.getId().toString(), item.getContent(), item.getType());
-        return res;
+        return item;
     }
 
     public List<FormItems> getFormItems(String id) {

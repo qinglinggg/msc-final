@@ -48,8 +48,7 @@ public class UserProfileDAO {
         System.out.println("UserProfileDAO start");
         final String query = "INSERT INTO User VALUES (?,?,?,?,?)";
         int res = jdbcTemplate.update(query, user.getUserId().toString(), user.getUsername(), user.getFullname(), user.getEmail(), user.getProfileImage());
-        System.out.println("UserProfileDAO end");
-        return res;
+        return user;
     }
 
     public int deleteUser(String id){
