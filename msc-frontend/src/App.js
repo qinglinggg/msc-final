@@ -15,7 +15,7 @@ import DataVisualization from "./components/Data-visualization";
 import Feedback from "./components/Feedback";
 import Message from "./components/Message";
 
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = 'http://msc-backend';
 
 class App extends React.Component {
 
