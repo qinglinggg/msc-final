@@ -9,8 +9,8 @@ import Responses from "./Responses.jsx";
 import ReactToPrint from "react-to-print";
 
 class DataVisualization extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.handleMenu = this.handleMenu.bind(this);
     this.handlePageSelection = this.handlePageSelection.bind(this);
     this.handleExportSelection = this.handleExportSelection.bind(this);
@@ -54,6 +54,7 @@ class DataVisualization extends React.Component {
   }
 
   render() {
+    console.log("masuk");
     let loadPage = null;
     if (this.state.activePage == 1) {
       loadPage = this.displaySummaryPage();

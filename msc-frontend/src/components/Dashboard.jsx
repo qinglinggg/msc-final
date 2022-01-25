@@ -24,7 +24,6 @@ class Dashboard extends React.Component {
 
   state = {
     testing: false,
-    openVisibility: false,
     openSettings: false,
     privacyCheck: true,
     formItems: [],
@@ -38,10 +37,6 @@ class Dashboard extends React.Component {
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
-  }
-
-  handleVisibility() {
-    this.setState({ openVisibility: !this.state.openVisibility });
   }
 
   handleSettings() {
@@ -231,12 +226,9 @@ class Dashboard extends React.Component {
           </div>
           {/* <div className="title">Dashboard</div> */}
           <div className="dashboard-icon">
-            <img
-              className="icon-image"
-              onClick={() => this.handleVisibility()}
-              src={iconVisibility}
-              alt=""
-            />
+            <Link to="/item1/preview">
+              <img className="icon-image" src={iconVisibility} alt="" />
+            </Link>
             <img
               className="icon-image"
               onClick={() => this.handleSettings()}

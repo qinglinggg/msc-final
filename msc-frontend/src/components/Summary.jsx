@@ -11,12 +11,12 @@ class Summary extends React.Component {
           return (
             <div className="result-container">
               <div className="question-field">
-                {counter}. {data}
+                {counter}. {data.question}
               </div>
               {/* {console.log("graph" + counter)} */}
               <div className="graph-section">
                 <div className="graph">
-                  <Graph Question={data} count={counter} />
+                  <Graph Question={data.question} count={counter} />
                 </div>
                 <div className="sub-graph"></div>
               </div>

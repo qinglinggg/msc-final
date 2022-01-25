@@ -23,7 +23,7 @@ class Menu extends React.Component {
         <Link to="/item1/feedback" className="sub-menu">
           Feedback
         </Link>
-        <Link to="/item1/show-results" className="sub-menu">
+        <Link to="/" className="sub-menu">
           Back to Home
         </Link>
       </div>
