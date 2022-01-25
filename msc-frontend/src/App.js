@@ -201,6 +201,9 @@ class App extends React.Component {
         data: obj,
         headers: {"Content-Type": "application/json"}
       });
+      formsData.push(response);
+      this.setState({forms: formsData});
+      window.location = "/" + response.formId + "/dashboard";
     } catch(error) {
       console.log(error);
     }

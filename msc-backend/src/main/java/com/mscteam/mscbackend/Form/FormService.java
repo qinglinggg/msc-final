@@ -25,7 +25,7 @@ public class FormService {
         return formDAO.getFormById(id);
     }
 
-    public int insertForm(Form form){
+    public Form insertForm(Form form){
         return formDAO.insertForm(form);
     }
 
@@ -37,7 +37,7 @@ public class FormService {
         return formDAO.updateForm(id, toBeUpdated);
     }
 
-    public int addFormItems(String id, FormItems item) {
+    public FormItems addFormItems(String id, FormItems item) {
         return formDAO.addFormItems(id, item);
     }
 
@@ -50,7 +50,7 @@ public class FormService {
         return listItems;
     }
 
-    public int addAnswerSelection(String formItemsId, FormAnswerSelection answerSelection) {
+    public FormAnswerSelection addAnswerSelection(String formItemsId, FormAnswerSelection answerSelection) {
         return formDAO.addAnswerSelection(formItemsId, answerSelection);
     }
 

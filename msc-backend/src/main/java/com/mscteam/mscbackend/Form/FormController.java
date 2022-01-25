@@ -38,7 +38,7 @@ public class FormController {
     }
 
     @PostMapping(path="/insert", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public int insertForm(@RequestBody Form form){
+    public Form insertForm(@RequestBody Form form){
         return formService.insertForm(form);
     }
 
@@ -53,7 +53,7 @@ public class FormController {
     }
 
     @PostMapping(path="/add-form-items/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public int addFormItem(@PathVariable("id") String id, @RequestBody FormItems item){
+    public FormItems addFormItem(@PathVariable("id") String id, @RequestBody FormItems item){
         return formService.addFormItems(id, item);
     }
 
@@ -63,7 +63,7 @@ public class FormController {
     }
     
     @PostMapping(path="/add-answer-selection/{formItems-id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public int addAnswerSelection(String formItemsId, @RequestBody FormAnswerSelection answerSelection){
+    public FormAnswerSelection addAnswerSelection(String formItemsId, @RequestBody FormAnswerSelection answerSelection){
         return formService.addAnswerSelection(formItemsId, answerSelection);
     }
 

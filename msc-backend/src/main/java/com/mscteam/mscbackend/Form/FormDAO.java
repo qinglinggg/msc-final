@@ -60,7 +60,7 @@ public class FormDAO {
         return Optional.ofNullable(form);
     }
 
-    public int insertForm(Form form){
+    public Form insertForm(Form form){
         final String query = "INSERT INTO Form VALUES (?,?,?,?,?,?)";
         int res = jdbcTemplate.update(query, form.getFormId().toString(), form.getTitle(), form.getDescription(), form.getPrivacySetting(), dateFormat.format(form.getCreateDate()), form.getModifyDate());
         return form;
@@ -117,7 +117,7 @@ public class FormDAO {
         return res;
     }
 
-    public int addFormItems(String id, FormItems item) {
+    public FormItems addFormItems(String id, FormItems item) {
         final String query = "INSERT INTO FormItems VALUES(?,?,?,?,?)";
         int res = jdbcTemplate.update(query, id, item.getId().toString(), item.getContent(), item.getType());
         return item;
@@ -142,10 +142,10 @@ public class FormDAO {
         return res;
     }
 
-    public int addAnswerSelection(String id, FormAnswerSelection answerSelection) {
+    public FormAnswerSelection addAnswerSelection(String id, FormAnswerSelection answerSelection) {
         final String query = "INSERT INTO FormAnswerSelection VALUES(?,?,?)";
         int res = jdbcTemplate.update(query, id, answerSelection.getId(), answerSelection.getContent());
-        return res;
+        return answerSelection;
     }
 
     public int removeAnswerSelection(String id){
