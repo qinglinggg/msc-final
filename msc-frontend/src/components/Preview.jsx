@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 import iconMenubarGrey from "./images/menubarGrey.png";
+import { Link } from "react-router-dom";
+import iconVisibility2 from "./images/visibility2.png";
+import iconSettings from "./images/settings.png";
 
 class Preview extends Component {
   constructor(props) {
@@ -43,6 +46,18 @@ class Preview extends Component {
           </div>
           <div className="page-title" id="page-title-home">
             Preview
+          </div>
+          <div className="dashboard-icon">
+            <Link to="/item1/dashboard">
+              <img className="icon-image" src={iconVisibility2} alt="" />
+            </Link>
+            <img
+              className="icon-image"
+              onClick={() => this.handleSettings()}
+              src={iconSettings}
+              alt=""
+            />
+            {this.state.openSettings ? this.displaySettings() : null}
           </div>
         </div>
         {this.displayQuestion(currentQuestion, lastIndex)}

@@ -713,10 +713,10 @@ html {
 /* Question Section */
 
 .question {
-  min-width: 500px;
-  min-height: 250px;
-  height: 250px;
-  width: 500px;
+  min-width: 550px;
+  min-height: 275px;
+  height: 275px;
+  width: 550px;
   margin: 50px;
   padding: 15px;
   justify-content: flex-start;
@@ -827,8 +827,30 @@ html {
   margin-top: 5px;
 }
 
+.null {
+  width: 250px;
+  height: fit-content;
+  display: flex;
+}
+
+/* branching selection */
+
+#branchingSelection > .css-1s2u09g-control {
+  border: none !important;
+}
+
+#branchingSelection .css-1okebmr-indicatorSeparator {
+  display: none;
+}
+
+#branchingSelection {
+  width: 100%;
+  height: fit-content;
+  font-size: medium;
+}
+
 .answer-selection .inputText {
-  width: 260px;
+  width: 220px;
   height: fit-content;
   margin-left: 5px;
   border: none;
@@ -1459,7 +1481,7 @@ html {
 }
 
 .data-visualization-container > .result-container {
-  width: 80%;
+  width: 90%;
   height: fit-content;
   padding: 15px;
   border-radius: 15px;
@@ -1475,8 +1497,10 @@ html {
   text-align: left;
   color: #878787;
   font-size: large;
-  display: block;
-  width: 100%;
+  display: flex;
+  text-align: justify;
+  flex-wrap: wrap;
+  width: 95%;
   height: fit-content;
   margin: 30px 15px 15px 15px;
   padding-left: 20px;

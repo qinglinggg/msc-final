@@ -42,11 +42,13 @@ class App extends React.Component {
             id: 1,
             label: "Option 1",
             value: "Tidak puas",
+            branching: "Go to question 2",
           },
           {
             id: 2,
             label: "Option 2",
             value: "Sedikit puas",
+            branching: "Continue to the next question",
           },
           {
             id: 3,
@@ -118,36 +120,36 @@ class App extends React.Component {
             label: "Option 1",
             value: "Fitur C",
           },
-          {
-            id: 1,
-            label: "Option 1",
-            value: "Fitur A",
-          },
-          {
-            id: 2,
-            label: "Option 2",
-            value: "Fitur B",
-          },
-          {
-            id: 3,
-            label: "Option 1",
-            value: "Fitur C",
-          },
-          {
-            id: 1,
-            label: "Option 1",
-            value: "Fitur A",
-          },
-          {
-            id: 2,
-            label: "Option 2",
-            value: "Fitur B",
-          },
-          {
-            id: 3,
-            label: "Option 1",
-            value: "Fitur C",
-          },
+          // {
+          //   id: 1,
+          //   label: "Option 1",
+          //   value: "Fitur A",
+          // },
+          // {
+          //   id: 2,
+          //   label: "Option 2",
+          //   value: "Fitur B",
+          // },
+          // {
+          //   id: 3,
+          //   label: "Option 1",
+          //   value: "Fitur C",
+          // },
+          // {
+          //   id: 1,
+          //   label: "Option 1",
+          //   value: "Fitur A",
+          // },
+          // {
+          //   id: 2,
+          //   label: "Option 2",
+          //   value: "Fitur B",
+          // },
+          // {
+          //   id: 3,
+          //   label: "Option 1",
+          //   value: "Fitur C",
+          // },
         ],
         optionCounter: 3,
       },
@@ -184,7 +186,7 @@ class App extends React.Component {
           {
             userID: 1,
             message:
-              "Permisi, saya sudah dapat akses ke kuesioner ini. Mohon bantuannya. Permisi, saya sudah dapat akses ke kuesioner ini. Mohon bantuannya.",
+              "Permisi, saya sudah dapat akses ke kuesioner ini. Mohon bantuannya.",
             timestamp: "3.45 PM",
           },
           {
