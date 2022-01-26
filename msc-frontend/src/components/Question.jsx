@@ -7,12 +7,14 @@ class Question extends React.Component {
   constructor(props) {
     super(props);
     this.displayQuestion = this.displayQuestion.bind(this);
+    this.handleBranchingSelection = this.handleBranchingSelection.bind(this);
   }
 
   state = {
     selectedQuestionOption: "",
     selectedInputOption: 2,
-    selectedIsOptional: false
+    selectedIsOptional: false,
+    selectedOptionBranching: "",
   };
 
   questionOptions = [
@@ -22,14 +24,18 @@ class Question extends React.Component {
     { value: "LS", label: "Linear scale" },
   ];
 
+  branchingOptions = [];
+
   componentDidMount() {
     if (this.props.questionData) {
-      if(this.props.questionData.questionType != ""){
+      if (this.props.questionData.questionType != "") {
         console.log("in 1");
-        this.setState({ selectedQuestionOption : this.props.questionData.questionType });
+        this.setState({
+          selectedQuestionOption: this.props.questionData.questionType,
+        });
       } else {
         console.log("in 2");
-        this.setState({ selectedQuestionOption : "MC" });
+        this.setState({ selectedQuestionOption: "MC" });
       }
     }
     console.log(this.state);
@@ -74,25 +80,36 @@ class Question extends React.Component {
               rows="14"
               cols="10"
               wrap="soft"
-              onChange={(e) => {this.props.handleUpdateQuestionInput(this.props.questionData.id, e);}}
+              onChange={(e) => {
+                this.props.handleUpdateQuestionInput(
+                  this.props.questionData.id,
+                  e
+                );
+              }}
             />
             <div id="border"></div>
             <br />
           </div>
           <div id="question-selection">
             <Select
-              value={this.questionOptions.map(option => {
-                  if(this.props.questionData.questionType == "") return this.questionOptions[0];
-                  if (option.value == this.props.questionData.questionType) return option;
-                }  
-              )}
+              value={this.questionOptions.map((option) => {
+                if (this.props.questionData.questionType == "")
+                  return this.questionOptions[0];
+                if (option.value == this.props.questionData.questionType)
+                  return option;
+              })}
               options={this.questionOptions}
               id="questionSelection"
               defaultValue={this.questionOptions[0]}
               onChange={(e) => {
-                this.props.handleResetOption(this.props.questionData.id)
-                this.props.handleUpdateQuestionType(this.props.questionData.id, e);
-                this.setState({selectedQuestionOption : this.props.questionData.questionType});
+                this.props.handleResetOption(this.props.questionData.id);
+                this.props.handleUpdateQuestionType(
+                  this.props.questionData.id,
+                  e
+                );
+                this.setState({
+                  selectedQuestionOption: this.props.questionData.questionType,
+                });
               }}
             />
           </div>
@@ -131,7 +148,7 @@ class Question extends React.Component {
             >
               {/* isi dari popup, konten yg mau dishow */}
               <div className="popup-wrapper">
-                <div className="popup-content">Question Settings</div>
+                <div className="popup-content">Enable branching</div>
                 <div className="popup-divider"></div>
                 <div
                   className="popup-content"
@@ -150,7 +167,8 @@ class Question extends React.Component {
   }
 
   handleUpdateTextarea(obj) {
-    let optionId = "question-" + this.props.questionData.id + "-options-" + obj.id;
+    let optionId =
+      "question-" + this.props.questionData.id + "-options-" + obj.id;
     let textarea = document.getElementById(optionId);
     if (textarea) {
       // console.log(obj);
@@ -163,48 +181,108 @@ class Question extends React.Component {
     }
   }
 
+  handleBranchingSelection() {
+    this.branchingOptions = [];
+    let length = this.props.formItemsLength;
+    let tempBranch = [];
+
+    for (let index = 1; index < length; index++) {
+      let obj = { value: index, label: "Continue to the next question" };
+      tempBranch.push(obj);
+    }
+    this.branchingOptions = tempBranch;
+    console.log(this.branchingOptions);
+  }
+
   multipleChoiceOption() {
+    // console.log("masuk multipleChoiceOption");
+    this.handleBranchingSelection();
     return (
       <React.Fragment>
         <div id="answer-selection-container">
-          {
-            this.props.arrayOptions
-              ? this.props.arrayOptions.map((obj) => {
-                  let optionId =
-                    "question-" + this.props.questionData.id + "-options-" + obj.id;
-                  // this.handleUpdateTextarea(obj);
-                  return (
-                    <div className="answer-selection">
-                      <input
-                        className="answerSelection"
-                        type="radio"
-                        disabled
-                      />
-                      <AutoHeightTextarea
-                        key={optionId}
-                        className="inputText"
-                        id={optionId}
-                        type="text"
-                        placeholder={obj.label}
-                        value={obj.value}
-                        wrap="soft"
+          {this.props.arrayOptions
+            ? this.props.arrayOptions.map((obj) => {
+                let optionId =
+                  "question-" +
+                  this.props.questionData.id +
+                  "-options-" +
+                  obj.id;
+                let currentOption = this.props.questionData.arrayOptions.filter(
+                  (elem) => {
+                    return elem.id == obj.id;
+                  }
+                );
+                currentOption = currentOption[0];
+                // console.log(this.props.questionData);
+                // this.handleUpdateTextarea(obj);
+                return (
+                  <div className="answer-selection">
+                    <input className="answerSelection" type="radio" disabled />
+                    <AutoHeightTextarea
+                      key={optionId}
+                      className="inputText"
+                      id={optionId}
+                      type="text"
+                      placeholder={obj.label}
+                      value={obj.value}
+                      wrap="soft"
+                      onChange={(e) => {
+                        this.props.handleOptionValue(
+                          this.props.questionData.id,
+                          e,
+                          obj
+                        );
+                      }}
+                    />
+                    <div className="null">
+                      <Select
+                        value={this.branchingOptions.map((branch) => {
+                          if (currentOption.branching == "") {
+                            // console.log(this.branchingOptions[0]);
+                            return this.branchingOptions[0];
+                          } else if (branch.value == currentOption.branching) {
+                            return branch;
+                          }
+                        })}
+                        options={this.branchingOptions}
+                        id="branchingSelection"
+                        defaultValue={this.branchingOptions[0]}
                         onChange={(e) => {
-                          this.props.handleOptionValue(this.props.questionData.id, e, obj);
+                          this.props.handleResetOption(
+                            this.props.questionData.id
+                          );
+                          this.props.handleUpdateOptionBranching(
+                            this.props.questionData.id,
+                            obj.id,
+                            e
+                          );
+                          this.setState(
+                            {
+                              selectedOptionBranching: this.props.res.branching,
+                            },
+                            () => {
+                              console.log(e);
+                            }
+                          );
                         }}
                       />
-                      <div
-                        className="dashboard-remove-options-button"
-                        onClick={() => {
-                          this.props.handleRemoveOption(this.props.questionData.id, obj.id, obj);
-                        }}
-                      >
-                        <i className="fas fa-times"></i>
-                      </div>
                     </div>
-                  );
-                })
-              : null
-          }
+                    <div
+                      className="dashboard-remove-options-button"
+                      onClick={() => {
+                        this.props.handleRemoveOption(
+                          this.props.questionData.id,
+                          obj.id,
+                          obj
+                        );
+                      }}
+                    >
+                      <i className="fas fa-times"></i>
+                    </div>
+                  </div>
+                );
+              })
+            : null}
           <div className="answer-selection">
             {this.displayNewOptionMultipleChoice()}
           </div>
@@ -239,7 +317,10 @@ class Question extends React.Component {
           {this.props.arrayOptions
             ? this.props.arrayOptions.map((obj) => {
                 let optionId =
-                  "question-" + this.props.questionData.id + "-options-" + obj.id;
+                  "question-" +
+                  this.props.questionData.id +
+                  "-options-" +
+                  obj.id;
                 console.log(obj);
                 return (
                   <div className="answer-selection">
@@ -257,13 +338,21 @@ class Question extends React.Component {
                       wrap="soft"
                       value={obj.value}
                       onChange={(e) => {
-                        this.props.handleOptionValue(this.props.questionData.id, e, obj);
+                        this.props.handleOptionValue(
+                          this.props.questionData.id,
+                          e,
+                          obj
+                        );
                       }}
                     />
                     <div
                       className="dashboard-remove-options-button"
                       onClick={() => {
-                        this.props.handleRemoveOption(this.props.questionData.id, obj.id, obj);
+                        this.props.handleRemoveOption(
+                          this.props.questionData.id,
+                          obj.id,
+                          obj
+                        );
                       }}
                     >
                       <i className="fas fa-times"></i>
@@ -301,7 +390,7 @@ class Question extends React.Component {
   linearScaleOption() {
     this.labelOptions = [];
     for (let i = 0; i <= this.props.questionData.optionCounter; i++) {
-      this.labelOptions.push({value: i, label: i});
+      this.labelOptions.push({ value: i, label: i });
     }
     return (
       <React.Fragment>
@@ -313,17 +402,17 @@ class Question extends React.Component {
             <div id="linear-input-box">
               <Select
                 options={this.inputOptions}
-                value={this.labelOptions.map(option => {
-                  if(this.props.questionData.optionCounter == option.value){
+                value={this.labelOptions.map((option) => {
+                  if (this.props.questionData.optionCounter == option.value) {
                     return option;
-                  }})
-                }
+                  }
+                })}
                 defaultValue={this.inputOptions[0]}
                 id="questionSelection"
                 onChange={(e) => {
                   this.props.handleOptionCount(this.props.questionData.id, e);
                   this.props.handleResetOption(this.props.questionData.id);
-                  for(let i=0; i < e.value; i++){
+                  for (let i = 0; i < e.value; i++) {
                     this.props.handleAddOption(this.props.questionData.id);
                   }
                 }}
@@ -337,7 +426,11 @@ class Question extends React.Component {
             </div>
             <div className="linear-label-loop">
               {this.props.questionData.arrayOptions.map((object) => {
-                let optionId = "question-" + this.props.questionData.id + "-options-" + object.id;
+                let optionId =
+                  "question-" +
+                  this.props.questionData.id +
+                  "-options-" +
+                  object.id;
                 return (
                   <div className="linear-label-row">
                     <div className="linear-label-userinput">
@@ -350,13 +443,21 @@ class Question extends React.Component {
                         wrap="soft"
                         value={object.value}
                         onChange={(e) => {
-                          this.props.handleOptionValue(this.props.questionData.id, e, object);
+                          this.props.handleOptionValue(
+                            this.props.questionData.id,
+                            e,
+                            object
+                          );
                         }}
                       />
                     </div>
                     <div id="linear-label-select">
                       <div id="linear-label-select-box">
-                        <div id="linear-label-select-value">{(this.labelOptions.length > 0) ? this.labelOptions[object.id].label : null}</div>
+                        <div id="linear-label-select-value">
+                          {this.labelOptions.length > 0
+                            ? this.labelOptions[object.id].label
+                            : null}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -380,19 +481,19 @@ class Question extends React.Component {
               placeholder="Insert label..."
               wrap="soft"
               onClick={(e) => {
-                this.props.handleAddOption(this.props.questionData.id)
+                this.props.handleAddOption(this.props.questionData.id);
               }}
             />
           </div>
-          <div id="linear-label-select">
-          </div>
+          <div id="linear-label-select"></div>
         </div>
       </React.Fragment>
     );
   }
 
   shortAnswerOption() {
-    if(this.props.questionData.arrayOptions.length == 0) this.props.handleAddOption(this.props.questionData.id);
+    if (this.props.questionData.arrayOptions.length == 0)
+      this.props.handleAddOption(this.props.questionData.id);
     return (
       <div id="shortanswer-container">
         <input
@@ -401,7 +502,11 @@ class Question extends React.Component {
           name="shortanswer-field"
           placeholder="Input your answer..."
           value={this.props.questionData.arrayOptions[0].value}
-          onChange={(e) => this.props.handleOptionValue(this.props.questionData.id, e, {"id" : 1})}
+          onChange={(e) =>
+            this.props.handleOptionValue(this.props.questionData.id, e, {
+              id: 1,
+            })
+          }
         />
       </div>
     );

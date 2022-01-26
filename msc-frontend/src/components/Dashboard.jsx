@@ -19,12 +19,13 @@ class Dashboard extends React.Component {
     this.handleRemoveOption = this.handleRemoveOption.bind(this);
     this.handleOptionValue = this.handleOptionValue.bind(this);
     this.handleUpdateQuestionInput = this.handleUpdateQuestionInput.bind(this);
+    this.handleUpdateOptionBranching =
+      this.handleUpdateOptionBranching.bind(this);
     this.handleOptionCount = this.handleOptionCount.bind(this);
   }
 
   state = {
     testing: false,
-    openVisibility: false,
     openSettings: false,
     privacyCheck: true,
     formItems: [],
@@ -38,10 +39,6 @@ class Dashboard extends React.Component {
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
-  }
-
-  handleVisibility() {
-    this.setState({ openVisibility: !this.state.openVisibility });
   }
 
   handleSettings() {
@@ -107,12 +104,50 @@ class Dashboard extends React.Component {
     let currentForm = formItems.filter((elem) => {
       return elem.id == questionId;
     });
+    // console.log("currentForm:");
+    // console.log(currentForm);
+
     currentForm = currentForm[0];
+
+    // console.log("currentForm[0]:");
+    // console.log(currentForm);
+
     currentForm["questionType"] = event.value;
     // console.log(event.value);
     formItems = formItems.map((elem) => {
       if (questionId == elem.id) {
         return currentForm;
+      }
+      return elem;
+    });
+    this.setState({ formItems });
+  }
+
+  handleUpdateOptionBranching(questionId, optionId, event) {
+    let formItems = [...this.state.formItems];
+    let currentForm = formItems.filter((elem) => {
+      return elem.id == questionId;
+    });
+    currentForm = currentForm[0];
+    console.log("currentForm");
+    console.log(currentForm);
+    console.log(currentForm.arrayOptions);
+    let currentOptions = currentForm.arrayOptions.filter((elem) => {
+      return elem.id == optionId;
+    });
+    // currentOptions = currentOptions[0];
+    console.log("currentOptions");
+    console.log(currentOptions);
+    currentOptions["branching"] = event.value;
+
+    formItems = formItems.map((elem) => {
+      if (questionId == elem.id) {
+        elem.arrayOptions.map((opt) => {
+          if (optionId == opt.id) {
+            return currentOptions;
+          }
+          return opt;
+        });
       }
       return elem;
     });
@@ -150,6 +185,7 @@ class Dashboard extends React.Component {
     obj["id"] = currentForm["optionCounter"];
     obj["label"] = "Option " + currentForm["optionCounter"];
     obj["value"] = "";
+    obj["branching"] = "";
     currentForm["arrayOptions"].push(obj);
     formItems = formItems.map((elem) => {
       if (elem.id == id) {
@@ -231,12 +267,9 @@ class Dashboard extends React.Component {
           </div>
           {/* <div className="title">Dashboard</div> */}
           <div className="dashboard-icon">
-            <img
-              className="icon-image"
-              onClick={() => this.handleVisibility()}
-              src={iconVisibility}
-              alt=""
-            />
+            <Link to="/item1/preview">
+              <img className="icon-image" src={iconVisibility} alt="" />
+            </Link>
             <img
               className="icon-image"
               onClick={() => this.handleSettings()}
@@ -268,6 +301,7 @@ class Dashboard extends React.Component {
               <div className="question">
                 <Question
                   key={"question-" + res.id}
+                  formItemsLength={this.state.formItems.length}
                   questionData={res}
                   mode={true}
                   arrayOptions={res["arrayOptions"]}
@@ -277,6 +311,7 @@ class Dashboard extends React.Component {
                   handleOptionValue={this.handleOptionValue}
                   handleUpdateQuestionInput={this.handleUpdateQuestionInput}
                   handleUpdateQuestionType={this.handleUpdateQuestionType}
+                  handleUpdateOptionBranching={this.handleUpdateOptionBranching}
                   handleResetOption={this.handleResetOption}
                   handleOptionCount={this.handleOptionCount}
                 />
