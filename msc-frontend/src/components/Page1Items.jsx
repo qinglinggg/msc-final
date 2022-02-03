@@ -6,8 +6,8 @@ class Page1Items extends React.Component {
     return (
       <div className="item-container"
       onClick={() => {
-        window.location = "/"+this.props.data.formId+"/dashboard";
-        console.log("clicked");
+        window.location = `/dashboard/formId/${this.props.data.formId}`;
+        // console.log("clicked");
       }}>
         <img id="item-image" src={dummyItemImage} />
         <div className="item-meta">

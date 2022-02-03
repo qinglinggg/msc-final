@@ -1,7 +1,7 @@
 import logo from "./logo.svg";
 import "./App.css";
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useParams } from "react-router-dom";
 import axios from "axios";
 // import "bootstrap/dist/css/bootstrap.css";
 // import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
@@ -14,11 +14,12 @@ import Design from "./components/Design";
 import DataVisualization from "./components/Data-visualization";
 import Feedback from "./components/Feedback";
 import Message from "./components/Message";
+import RouteDashboard from "./components/Dashboard";
+import { render } from "react-dom";
 
 const BASE_URL = 'http://localhost:8080';
 
 class App extends React.Component {
-
   constructor(props) {
     super(props);
     this.handleCreateNewForm = this.handleCreateNewForm.bind(this);
@@ -37,7 +38,7 @@ class App extends React.Component {
     ],
 
     // inside Forms:
-    formItems: ["Test", "Test2"],
+    formItems: [],
     formMessages: [
       {
         userName: "Sari Sulaiman",
@@ -195,15 +196,16 @@ class App extends React.Component {
   async handleCreateNewForm(obj) {
     let formsData = [...this.state.forms];
     try {
-      const response = await axios({
+      await axios({
         method: "post",
         url: `${BASE_URL}/api/v1/forms/insert`,
         data: obj,
         headers: {"Content-Type": "application/json"}
+      }).then((response) => {
+        formsData.push(response.data);
+        this.setState({forms: formsData});
+        window.location = `/dashboard/formId/${response.data.formId}`;
       });
-      formsData.push(response);
-      this.setState({forms: formsData});
-      window.location = "/" + response.formId + "/dashboard";
     } catch(error) {
       console.log(error);
     }
@@ -233,52 +235,42 @@ class App extends React.Component {
                   />
                 }
               />
-            </Routes>
-            {this.state.forms.map(formData => {
-              return (
-                <Routes>
-                  <Route
-                  path={"/" + formData.formId + "/dashboard"}
-                  element={
-                    // <Dashboard formItems_data={this.state.forms.formItems} />
-                    <Dashboard formItems_data={this.state.formItems} />
-                  } // data dari item1
-                  />
-                  <Route
-                  path={"/" + formData.formId + "/invitation"}
-                  element={
-                    // <Invitation formItems_data={this.state.forms.formItems} />
-                    <Invitation formItems_data={this.state.formItems} />
-                  } // data dari item1
-                  />
-                  <Route
-                  path={"/" + formData.formId + "/design"}
-                  element={<Design formItems_data={this.state.formItems} />} // data dari item1
-                  />
-                  <Route
-                  path={"/" + formData.formId + "/show-results"}
-                  element={
-                    <DataVisualization formItems_data={this.state.formItems} />
-                  } />
-                  <Route
-                  path={"/" + formData.formId + "/feedback"}
-                  element={
-                    <Feedback formMessages_data={this.state.formMessages} />
-                  } />
-                </Routes>
-              );
-            })}
-            <Routes>
-              {this.state.formMessages.map((message) => {
-                count = count + 1;
-                let path = "chat-" + count;
-                return (
-                  <Route
-                    path={"item1/feedback/" + path}
-                    element={<Message messages={message} Parent={this} />}
-                  />
-                );
-              })}
+              <Route
+              path={`/dashboard/formId/:formId`}
+              element={<Dashboard forms={this.state.forms} />}
+              />
+                {/* <Route exact
+                path={"/invitation/formId=" + formData.formId }
+                component={
+                  <Invitation forms={this.state.forms} formItems_data={this.state.formItems} />
+                }
+                />
+                <Route exact
+                path={"/design/formId=" + formData.formId}
+                component={<Design forms={this.state.forms} formItems_data={this.state.formItems} />}
+                />
+                <Route exact
+                path={"/show-results/formId=" + formData.formId}
+                component={
+                  <DataVisualization forms={this.state.forms} formItems_data={this.state.formItems} />
+                } />
+                <Route exact
+                path={"/feedback/formId=" + formData.formId}
+                component={
+                  <Feedback forms={this.state.forms} formMessages_data={this.state.formMessages} />
+                } /> */ }
+              {/* <Route>
+                {this.state.formMessages.map((message) => {
+                  count = count + 1;
+                  let path = "chat-" + count;
+                  return (
+                    <Route
+                      path={"item1/feedback/" + path}
+                      element={<Message messages={message} Parent={this} />}
+                    />
+                  );
+                })}
+              </Route> */}
             </Routes>
           </div>
         </div>

@@ -1,170 +1,237 @@
-import react, { createRef, Fragment, useEffect } from "react";
+import react, { createRef, Fragment, useEffect, useState } from "react";
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import { Link, useParams } from "react-router-dom";
 import Question from "./Question";
 import iconMenubarGrey from "./images/menubarGrey.png";
 import iconVisibility from "./images/visibility.png";
 import iconSettings from "./images/settings.png";
-// import { TextInput } from "react-native-paper";
-// import { Dropdown } from "react-bootstrap";
 
-class Dashboard extends React.Component {
-  constructor(props) {
-    super(props);
-    this.handleAddItem = this.handleAddItem.bind(this);
-    this.handleRemoveItem = this.handleRemoveItem.bind(this);
-    this.handleUpdateQuestionType = this.handleUpdateQuestionType.bind(this);
-    this.handleResetOption = this.handleResetOption.bind(this);
-    this.handleAddOption = this.handleAddOption.bind(this);
-    this.handleRemoveOption = this.handleRemoveOption.bind(this);
-    this.handleOptionValue = this.handleOptionValue.bind(this);
-    this.handleUpdateQuestionInput = this.handleUpdateQuestionInput.bind(this);
-    this.handleOptionCount = this.handleOptionCount.bind(this);
-  }
+const BASE_URL = "http://localhost:8080";
 
-  state = {
-    testing: false,
-    openVisibility: false,
-    openSettings: false,
-    privacyCheck: true,
-    formItems: [],
-    formCounter: 0,
-  };
+function Dashboard(props) {
+  const [testing, setTesting] = useState(false);
+  const [openVisibility, setOpenVisibility] = useState(false);
+  const [openSettings, setOpenSettings] = useState(false);
+  const [privacyCheck, setPrivacyCheck] = useState(true);
+  const [formItems, setFormItems] = useState([]);
+  const [optionCheck, setOptionCheck] = useState(false);
+  const [formCounter, setFormCounter] = useState(0);
+  const [currentFormData, setCurrentFormData] = useState()
+  const {formId} = useParams();
 
-  componentDidMount() {
-    // this.setState({ formItems: this.props.formItems_data });
+  useEffect(() => {
+    setCurrentFormData(props.forms.map((formData) => {
+      if (formData.formId == formId) {
+        return formData;
+      }
+    }));
+    try {
+      axios({
+        method: "get",
+        url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`
+      }).then((res) => {
+        let currentStateData = [...formItems];
+        res.data.map((data) => {
+          let newItem = {
+            id: data.id,
+            itemNumber: data.itemNumber,
+            questionContent: data.content,
+            questionType: data.type,
+            arrayOptions: [],
+            optionCounter: 0
+          }
+          currentStateData.push(newItem);
+        });
+        setFormItems(currentStateData);
+      });
+    } catch(error) {
+      console.log(error)
+    }
+  }, []); // run once
+  useEffect(() => {
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
+  });
+
+  const handleVisibility = () => {
+    setOpenVisibility(!openVisibility);
   }
 
-  handleVisibility() {
-    this.setState({ openVisibility: !this.state.openVisibility });
+  const handleSettings = () => {
+    setOpenSettings(!openSettings);
   }
 
-  handleSettings() {
-    this.setState({ openSettings: !this.state.openSettings });
-  }
-
-  validateInput(event) {
+  const validateInput = (event) => {
     // if (document.form.question.value == "") return null;
     if (event.target.value.length > 0) {
       return true;
     }
   }
 
-  handleOptionChecked() {
-    this.setState({ optionCheck: !this.state.optionCheck });
+  const handleOptionChecked = () => {
+    setOptionCheck(!optionCheck);
   }
 
-  handleAddItem() {
-    let currentStateData = this.state.formItems;
-    this.setState({ formCounter: this.state.formCounter + 1 }, () => {
-      // let id = "question-" + this.state.formCounter;
+  const handleAddItem = () => {
+    let currentStateData = [...formItems];
+    setFormCounter(formCounter + 1);
+    try{
       let newItem = {
-        id: this.state.formCounter,
-        question: "",
+        itemNumber: formCounter,
+        questionContent: "",
         questionType: "",
         arrayOptions: [],
         optionCounter: 0,
       };
-      currentStateData.push(newItem);
-      this.setState({ formItems: currentStateData });
-      // console.log(currentStateData);
-    });
+      axios({
+        method: "post",
+        url: `${BASE_URL}/api/v1/forms/add-form-items/${formId}`,
+        data: newItem,
+        headers: {"Content-Type": "application/json"}
+      }).then((res) => {
+        console.log(res.data);
+        newItem = {
+          itemNumber: res.data.itemNumber,
+          questionContent: res.data.content,
+          questionType: res.data.type,
+          arrayOptions: [],
+          optionCounter: 0,
+        };
+        currentStateData.push(newItem);
+        setFormItems(currentStateData);
+      });
+    } catch(error){
+      console.log(error);
+    }
   }
 
-  handleRemoveItem(deletedQuestionId) {
-    let formItems = [...this.state.formItems];
-    let newFormItems = formItems.filter((element) => {
+  const handleRemoveItem = (deletedQuestionId) => {
+    let tempFormItems = [...formItems];
+    let newFormItems = tempFormItems.filter((element) => {
       return element.id != deletedQuestionId;
     });
-    this.setState({
-      formItems: newFormItems,
-    });
+    try{
+      axios({
+        method: "delete",
+        url: `${BASE_URL}/api/v1/forms/remove-form-items/${formId}/${deletedQuestionId}`
+      }).then((res) => {
+        setFormItems(newFormItems);
+        console.log(newFormItems);
+      });
+    } catch(error){
+      console.log(error);
+    }
   }
 
-  handleUpdateQuestionInput(questionId, event) {
-    let formItems = [...this.state.formItems];
-    let currentForm = formItems.filter((elem) => {
+  const handleUpdateQuestionInput = (questionId, event) => {
+    let tempFormItems = [...formItems];
+    let currentForm = tempFormItems.filter((elem) => {
       return elem.id == questionId;
     });
     currentForm = currentForm[0];
-    currentForm["question"] = event.target.value;
-    formItems = formItems.map((elem) => {
+    currentForm["questionContent"] = event.target.value;
+    tempFormItems = tempFormItems.map((elem) => {
       if (questionId == elem.id) {
         return currentForm;
       }
       return elem;
     });
-    this.setState({ formItems });
+    try{
+      axios({
+        method: "put",
+        url: `${BASE_URL}/api/v1/forms/update-form-items/${formId}/${questionId}`
+      }).then((res) => {
+        setFormItems(tempFormItems);
+        console.log(tempFormItems);
+      });
+    } catch(error){
+      console.log(error);
+    }
+    setFormItems(tempFormItems);
   }
 
-  handleUpdateQuestionType(questionId, event) {
-    let formItems = [...this.state.formItems];
-    let currentForm = formItems.filter((elem) => {
+  const handleUpdateQuestionType = (questionId, event) => {
+    let tempFormItems = [...formItems];
+    let currentForm = tempFormItems.filter((elem) => {
       return elem.id == questionId;
     });
     currentForm = currentForm[0];
     currentForm["questionType"] = event.value;
-    // console.log(event.value);
-    formItems = formItems.map((elem) => {
+    tempFormItems = tempFormItems.map((elem) => {
       if (questionId == elem.id) {
         return currentForm;
       }
       return elem;
     });
-    this.setState({ formItems });
+    setFormItems(tempFormItems);
   }
 
-  handleResetOption(id) {
-    let formItems = [...this.state.formItems];
-    let currentForm = formItems.filter((elem) => {
+  const handleResetOption = (id) => {
+    let tempFormItems = [...formItems];
+    let currentForm = tempFormItems.filter((elem) => {
       return elem.id == id;
     });
     currentForm = currentForm[0];
     currentForm["optionCounter"] = 0;
     currentForm["arrayOptions"] = [];
-    formItems = formItems.map((elem) => {
+    tempFormItems = tempFormItems.map((elem) => {
       if (elem.id == id) {
         return currentForm;
       }
       return elem;
     });
-    this.setState({ formItems });
+    setFormItems(tempFormItems);
   }
 
-  handleAddOption(id) {
+  const handleOptionList = (id, obj) => {
     // console.log("Handle Add Option: " + id);
-    let formItems = [...this.state.formItems];
-    let currentForm = formItems.filter((elem) => {
+    let tempFormItems = [...formItems];
+    let currentForm = tempFormItems.filter((elem) => {
       return elem.id == id;
     });
-    console.log(currentForm);
     currentForm = currentForm[0];
-    currentForm["optionCounter"] += 1;
-    console.log(currentForm);
-    let obj = {};
-    obj["id"] = currentForm["optionCounter"];
-    obj["label"] = "Option " + currentForm["optionCounter"];
-    obj["value"] = "";
     currentForm["arrayOptions"].push(obj);
-    formItems = formItems.map((elem) => {
-      if (elem.id == id) {
-        return currentForm;
-      }
-      return elem;
-    });
-    // console.log("Final: ");
-    // console.log(formItems);
-    this.setState({ formItems });
+    currentForm["optionCounter"] += 1;
+    setFormItems(tempFormItems);
   }
 
-  handleRemoveOption(questionId, objId, obj) {
-    let formItems = [...this.state.formItems];
-    let currentForm = formItems.filter((elem) => {
+  const handleAddOption = (id) => {
+    // console.log("Handle Add Option: " + id);
+    let tempFormItems = [...formItems];
+    let currentForm = tempFormItems.filter((elem) => {
+      return elem.id == id;
+    });
+    currentForm = currentForm[0];
+    currentForm["optionCounter"] += 1;
+    let obj = {};
+    obj["formItemsId"] = id;
+    obj["label"] = "Option " + currentForm["optionCounter"];
+    obj["value"] = "";
+    console.log(obj);
+    axios({
+      method: "post",
+      url: `${BASE_URL}/api/v1/forms/add-answer-selection/${currentForm["id"]}`,
+      data: obj,
+      headers: {"Content-Type": "application/json"}
+    }).then((res) => {
+      currentForm["arrayOptions"].push(res.data);
+      tempFormItems = tempFormItems.map((elem) => {
+        if (elem.id == id) {
+          return currentForm;
+        }
+        return elem;
+      });
+      setFormItems(tempFormItems);
+    });
+  }
+
+  const handleRemoveOption = (questionId, objId, obj) => {
+    let tempFormItems = [...formItems];
+    let currentForm = tempFormItems.filter((elem) => {
       return elem.id == questionId;
     });
     currentForm = currentForm[0];
@@ -173,18 +240,18 @@ class Dashboard extends React.Component {
       return elem.id != objId;
     });
     currentForm["arrayOptions"] = arrayOptions;
-    formItems = formItems.map((elem) => {
+    tempFormItems = tempFormItems.map((elem) => {
       if (elem.id == questionId) {
         return currentForm;
       }
       return elem;
     });
-    this.setState({ formItems });
+    setFormItems(tempFormItems);
   }
 
-  handleOptionValue(questionId, event, object) {
-    let formItems = [...this.state.formItems];
-    let currentForm = formItems.filter((elem) => {
+  const handleOptionValue = (questionId, event, object) => {
+    let tempFormItems = [...formItems];
+    let currentForm = tempFormItems.filter((elem) => {
       return elem.id == questionId;
     });
     currentForm = currentForm[0];
@@ -194,73 +261,35 @@ class Dashboard extends React.Component {
         elem.value = event.target.value;
       }
     });
-    formItems = formItems.map((elem) => {
+    tempFormItems = tempFormItems.map((elem) => {
       if (elem.id == questionId) {
         return currentForm;
       }
       return elem;
     });
-    this.setState({ formItems });
+    setFormItems(tempFormItems);
   }
 
-  handleOptionCount(questionId, event) {
-    let formItems = [...this.state.formItems];
-    let currentForm = formItems.filter((elem) => {
+  const handleOptionCount = (questionId, event) => {
+    let tempFormItems = [...formItems];
+    let currentForm = tempFormItems.filter((elem) => {
       return elem.id == questionId;
     });
     currentForm = currentForm[0];
     currentForm["optionCounter"] = event.value;
-    formItems = formItems.map((elem) => {
+    tempFormItems = tempFormItems.map((elem) => {
       if (elem.id == questionId) {
         return currentForm;
       }
       return elem;
     });
-    this.setState({ formItems });
+    setFormItems(tempFormItems);
   }
 
-  render() {
+  const displayQuestion = () => {
     return (
       <React.Fragment>
-        <div className="title-container">
-          <div className="menu-icon" id="menu-icon">
-            <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
-          </div>
-          <div className="page-title" id="page-title-home">
-            Dashboard
-          </div>
-          {/* <div className="title">Dashboard</div> */}
-          <div className="dashboard-icon">
-            <img
-              className="icon-image"
-              onClick={() => this.handleVisibility()}
-              src={iconVisibility}
-              alt=""
-            />
-            <img
-              className="icon-image"
-              onClick={() => this.handleSettings()}
-              src={iconSettings}
-              alt=""
-            />
-            {this.state.openSettings ? this.displaySettings() : null}
-          </div>
-        </div>
-
-        {/* kondisi kalo udah ada question, tampilin question dulu, baru AddQuestion*/}
-        {/* kalo belum ada, lgsg tombol Add Question aja */}
-        {/* AddQuestion -> tombol dulu baru kalo dipencet muncul menu tambahan */}
-        <div id="page-content">
-          <div className="questions-container">{this.displayQuestion()}</div>
-        </div>
-      </React.Fragment>
-    );
-  }
-
-  displayQuestion() {
-    return (
-      <React.Fragment>
-        {this.state.formItems.map((res) => {
+        {formItems.map((res) => {
           // console.log(res);
           return (
             <React.Fragment>
@@ -271,14 +300,15 @@ class Dashboard extends React.Component {
                   questionData={res}
                   mode={true}
                   arrayOptions={res["arrayOptions"]}
-                  onRemove={this.handleRemoveItem}
-                  handleAddOption={this.handleAddOption}
-                  handleRemoveOption={this.handleRemoveOption}
-                  handleOptionValue={this.handleOptionValue}
-                  handleUpdateQuestionInput={this.handleUpdateQuestionInput}
-                  handleUpdateQuestionType={this.handleUpdateQuestionType}
-                  handleResetOption={this.handleResetOption}
-                  handleOptionCount={this.handleOptionCount}
+                  onRemove={handleRemoveItem}
+                  handleAddOption={handleAddOption}
+                  handleRemoveOption={handleRemoveOption}
+                  handleOptionValue={handleOptionValue}
+                  handleUpdateQuestionInput={handleUpdateQuestionInput}
+                  handleUpdateQuestionType={handleUpdateQuestionType}
+                  handleResetOption={handleResetOption}
+                  handleOptionCount={handleOptionCount}
+                  handleOptionList={handleOptionList}
                 />
               </div>
             </React.Fragment>
@@ -288,7 +318,7 @@ class Dashboard extends React.Component {
         <div
           className="question"
           id="addQuestion"
-          onClick={() => this.handleAddItem()}
+          onClick={() => handleAddItem()}
         >
           <Question mode={false} />
         </div>
@@ -296,11 +326,11 @@ class Dashboard extends React.Component {
     );
   }
 
-  displaySettings() {
+  const displaySettings = () => {
     return (
       <React.Fragment>
         <div className="popup" id="popup-addItem">
-          <span className="closePopup" onClick={() => this.handleSettings()}>
+          <span className="closePopup" onClick={() => handleSettings()}>
             &times;
           </span>
           <form className="form-components">
@@ -326,9 +356,9 @@ class Dashboard extends React.Component {
                   name="privacy"
                   id="anonymous"
                   value="anonymous"
-                  checked={this.state.privacyCheck ? true : false}
+                  checked={privacyCheck ? true : false}
                   onClick={() => {
-                    this.setState({ privacyCheck: true });
+                    setPrivacyCheck(!privacyCheck)
                   }}
                 />
                 <label for="anonymous">Anonymous</label>
@@ -337,9 +367,9 @@ class Dashboard extends React.Component {
                   name="privacy"
                   id="not-anonymous"
                   value="not-anonymous"
-                  checked={this.state.privacyCheck ? false : true}
+                  checked={privacyCheck ? false : true}
                   onClick={() => {
-                    this.setState({ privacyCheck: false });
+                    setPrivacyCheck(!privacyCheck)
                   }}
                 />
                 <label for="not-anonymous">Not Anonymous</label>
@@ -362,6 +392,41 @@ class Dashboard extends React.Component {
       </React.Fragment>
     );
   }
+
+  return (
+    <React.Fragment>
+      <div className="title-container">
+        <div className="menu-icon" id="menu-icon">
+          <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
+        </div>
+        <div className="page-title" id="page-title-home">
+          Dashboard
+        </div>
+        {/* <div className="title">Dashboard</div> */}
+        <div className="dashboard-icon">
+          <img
+            className="icon-image"
+            onClick={() => handleVisibility()}
+            src={iconVisibility}
+            alt=""
+          />
+          <img
+            className="icon-image"
+            onClick={() => handleSettings()}
+            src={iconSettings}
+            alt=""
+          />
+          {openSettings ? displaySettings() : null}
+        </div>
+      </div>
+      {/* kondisi kalo udah ada question, tampilin question dulu, baru AddQuestion*/}
+      {/* kalo belum ada, lgsg tombol Add Question aja */}
+      {/* AddQuestion -> tombol dulu baru kalo dipencet muncul menu tambahan */}
+      <div id="page-content">
+        <div className="questions-container">{displayQuestion()}</div>
+      </div>
+    </React.Fragment>
+  );
 }
 
 export default Dashboard;

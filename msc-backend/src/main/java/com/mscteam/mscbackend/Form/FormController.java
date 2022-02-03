@@ -19,11 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/forms")
 @CrossOrigin("*")
 public class FormController {
-    
+
     private FormService formService;
 
     @Autowired
-    public FormController(FormService formService){
+    public FormController(FormService formService) {
         this.formService = formService;
     }
 
@@ -32,43 +32,55 @@ public class FormController {
         return formService.getAllForms();
     }
 
-    @GetMapping(path="/{id}")
-    public Optional<Form> getFormById(@PathVariable("id") String id){
+    @GetMapping(path = "/{id}")
+    public Optional<Form> getFormById(@PathVariable("id") String id) {
         return formService.getFormById(id);
     }
 
-    @PostMapping(path="/insert", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Form insertForm(@RequestBody Form form){
+    @PostMapping(path = "/insert", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Form insertForm(@RequestBody Form form) {
         return formService.insertForm(form);
     }
 
-    @DeleteMapping(path="/{id}")
-    public int removeForm(@PathVariable("id") String id){
+    @DeleteMapping(path = "/{id}")
+    public int removeForm(@PathVariable("id") String id) {
         return formService.removeForm(id);
     }
 
-    @PutMapping(path="/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public int updateForm(@PathVariable("id") String id, @RequestBody Form toBeUpdated){
+    @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public int updateForm(@PathVariable("id") String id, @RequestBody Form toBeUpdated) {
         return formService.updateForm(id, toBeUpdated);
     }
 
-    @PostMapping(path="/add-form-items/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public FormItems addFormItem(@PathVariable("id") String id, @RequestBody FormItems item){
+    @PostMapping(path = "/add-form-items/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public FormItems addFormItem(@PathVariable("id") String id, @RequestBody FormItems item) {
         return formService.addFormItems(id, item);
     }
 
-    @GetMapping(path="/get-form-items/{id}")
-    public List<FormItems> getFormItems(String formId){
-        return formService.getFormItems(formId);
+    @DeleteMapping(path = "/remove-form-items/{formItemsId}")
+    public int removeFormItems(@PathVariable("formItemsId") String formItemsId) {
+        return formService.removeFormItems(formItemsId);
     }
-    
-    @PostMapping(path="/add-answer-selection/{formItems-id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public FormAnswerSelection addAnswerSelection(String formItemsId, @RequestBody FormAnswerSelection answerSelection){
+
+    @GetMapping(path = "/get-form-items/{id}")
+    public List<FormItems> getFormItems(@PathVariable("id") String id) {
+        return formService.getFormItems(id);
+    }
+
+    //
+    @PostMapping(path = "/add-answer-selection/{formItemsId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public FormAnswerSelection addAnswerSelection(@PathVariable("formItemsId") String formItemsId,
+            @RequestBody FormAnswerSelection answerSelection) {
         return formService.addAnswerSelection(formItemsId, answerSelection);
     }
 
-    @GetMapping(path="/get-answer-selection/{formItems-id}")
-    public List<FormAnswerSelection> getAnswerSelections(String formItemsId){
+    @PutMapping(path = "/update-answer-selection/{formItemsId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public int updateAnswerSelection(@PathVariable("formItemsId") String formItemsId, FormItems toBeUpdated) {
+        return formService.updateAnswerSelection(formItemsId, toBeUpdated);
+    }
+
+    @GetMapping(path = "/get-answer-selection/{formItemsId}")
+    public List<FormAnswerSelection> getAnswerSelections(@PathVariable("formItemsId") String formItemsId) {
         return formService.getAnswerSelection(formItemsId);
     }
 }
