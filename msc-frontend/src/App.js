@@ -1,7 +1,12 @@
 import logo from "./logo.svg";
 import "./App.css";
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useParams,
+} from "react-router-dom";
 import axios from "axios";
 // import "bootstrap/dist/css/bootstrap.css";
 // import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
@@ -15,6 +20,8 @@ import DataVisualization from "./components/Data-visualization";
 import Feedback from "./components/Feedback";
 import Message from "./components/Message";
 import Preview from "./components/Preview";
+import RouteDashboard from "./components/Dashboard";
+import { render } from "react-dom";
 
 const BASE_URL = "http://localhost:8080";
 
@@ -38,154 +45,155 @@ class App extends React.Component {
 
     // inside Forms:
     // formItems: ["Test", "Test2"],
-    formItems: [
-      {
-        id: 1,
-        question:
-          "Dari skala 1-5, seberapa puaskah Anda terhadap fitur A pada Halo BCA?",
-        questionType: "LS",
-        arrayOptions: [
-          {
-            id: 1,
-            label: "Option 1",
-            value: "Tidak puas",
-            branching: "Go to question 2",
-          },
-          {
-            id: 2,
-            label: "Option 2",
-            value: "Sedikit puas",
-            branching: "Continue to the next question",
-          },
-          {
-            id: 3,
-            label: "Option 1",
-            value: "Sangat puas",
-          },
-          // {
-          //   id: 1,
-          //   label: "Option 1",
-          //   value: "Tidak puas",
-          // },
-          // {
-          //   id: 2,
-          //   label: "Option 2",
-          //   value: "Sedikit puas",
-          // },
-          // {
-          //   id: 3,
-          //   label: "Option 1",
-          //   value: "Sangat puas",
-          // },
-          // {
-          //   id: 1,
-          //   label: "Option 1",
-          //   value: "Tidak puas",
-          // },
-          // {
-          //   id: 2,
-          //   label: "Option 2",
-          //   value: "Sedikit puas",
-          // },
-          // {
-          //   id: 3,
-          //   label: "Option 1",
-          //   value: "Sangat puas",
-          // },
-          // {
-          //   id: 3,
-          //   label: "Option 1",
-          //   value: "Sangat puas",
-          // },
-        ],
-        optionCounter: 3,
-      },
-      {
-        id: 2,
-        question:
-          "Pada pertanyaan sebelumnya, Anda menjawab dengan skala dibawah 4. Apakah terdapat keluhan yang Anda hadapi selama menggunakan fitur A pada Halo BCA?",
-        questionType: "SA",
-      },
-      {
-        id: 3,
-        question:
-          "Centang 3 fitur yang paling bermanfaat dan sering Anda gunakan pada Halo BCA!",
-        questionType: "CB",
-        arrayOptions: [
-          {
-            id: 1,
-            label: "Option 1",
-            value: "Fitur A",
-          },
-          {
-            id: 2,
-            label: "Option 2",
-            value: "Fitur B",
-          },
-          {
-            id: 3,
-            label: "Option 1",
-            value: "Fitur C",
-          },
-          // {
-          //   id: 1,
-          //   label: "Option 1",
-          //   value: "Fitur A",
-          // },
-          // {
-          //   id: 2,
-          //   label: "Option 2",
-          //   value: "Fitur B",
-          // },
-          // {
-          //   id: 3,
-          //   label: "Option 1",
-          //   value: "Fitur C",
-          // },
-          // {
-          //   id: 1,
-          //   label: "Option 1",
-          //   value: "Fitur A",
-          // },
-          // {
-          //   id: 2,
-          //   label: "Option 2",
-          //   value: "Fitur B",
-          // },
-          // {
-          //   id: 3,
-          //   label: "Option 1",
-          //   value: "Fitur C",
-          // },
-        ],
-        optionCounter: 3,
-      },
-      {
-        id: 4,
-        question:
-          "Apabila disuruh memilih top 1 dari 3 pilihan yang telah Anda pilih pada pertanyaan sebelumnya, fitur mana yang akan Anda pilih?",
-        questionType: "MC",
-        arrayOptions: [
-          {
-            id: 1,
-            label: "Option 1",
-            value: "Fitur A",
-          },
-          {
-            id: 2,
-            label: "Option 2",
-            value: "Fitur B",
-          },
-          {
-            id: 3,
-            label: "Option 1",
-            value: "Fitur C",
-          },
-        ],
-        optionCounter: 3,
-      },
-    ],
+    // formItems: [
+    //   {
+    //     id: 1,
+    //     question:
+    //       "Dari skala 1-5, seberapa puaskah Anda terhadap fitur A pada Halo BCA?",
+    //     questionType: "LS",
+    //     arrayOptions: [
+    //       {
+    //         id: 1,
+    //         label: "Option 1",
+    //         value: "Tidak puas",
+    //         branching: "Go to question 2",
+    //       },
+    //       {
+    //         id: 2,
+    //         label: "Option 2",
+    //         value: "Sedikit puas",
+    //         branching: "Continue to the next question",
+    //       },
+    //       {
+    //         id: 3,
+    //         label: "Option 1",
+    //         value: "Sangat puas",
+    //       },
+    //       // {
+    //       //   id: 1,
+    //       //   label: "Option 1",
+    //       //   value: "Tidak puas",
+    //       // },
+    //       // {
+    //       //   id: 2,
+    //       //   label: "Option 2",
+    //       //   value: "Sedikit puas",
+    //       // },
+    //       // {
+    //       //   id: 3,
+    //       //   label: "Option 1",
+    //       //   value: "Sangat puas",
+    //       // },
+    //       // {
+    //       //   id: 1,
+    //       //   label: "Option 1",
+    //       //   value: "Tidak puas",
+    //       // },
+    //       // {
+    //       //   id: 2,
+    //       //   label: "Option 2",
+    //       //   value: "Sedikit puas",
+    //       // },
+    //       // {
+    //       //   id: 3,
+    //       //   label: "Option 1",
+    //       //   value: "Sangat puas",
+    //       // },
+    //       // {
+    //       //   id: 3,
+    //       //   label: "Option 1",
+    //       //   value: "Sangat puas",
+    //       // },
+    //     ],
+    //     optionCounter: 3,
+    //   },
+    //   {
+    //     id: 2,
+    //     question:
+    //       "Pada pertanyaan sebelumnya, Anda menjawab dengan skala dibawah 4. Apakah terdapat keluhan yang Anda hadapi selama menggunakan fitur A pada Halo BCA?",
+    //     questionType: "SA",
+    //   },
+    //   {
+    //     id: 3,
+    //     question:
+    //       "Centang 3 fitur yang paling bermanfaat dan sering Anda gunakan pada Halo BCA!",
+    //     questionType: "CB",
+    //     arrayOptions: [
+    //       {
+    //         id: 1,
+    //         label: "Option 1",
+    //         value: "Fitur A",
+    //       },
+    //       {
+    //         id: 2,
+    //         label: "Option 2",
+    //         value: "Fitur B",
+    //       },
+    //       {
+    //         id: 3,
+    //         label: "Option 1",
+    //         value: "Fitur C",
+    //       },
+    //       // {
+    //       //   id: 1,
+    //       //   label: "Option 1",
+    //       //   value: "Fitur A",
+    //       // },
+    //       // {
+    //       //   id: 2,
+    //       //   label: "Option 2",
+    //       //   value: "Fitur B",
+    //       // },
+    //       // {
+    //       //   id: 3,
+    //       //   label: "Option 1",
+    //       //   value: "Fitur C",
+    //       // },
+    //       // {
+    //       //   id: 1,
+    //       //   label: "Option 1",
+    //       //   value: "Fitur A",
+    //       // },
+    //       // {
+    //       //   id: 2,
+    //       //   label: "Option 2",
+    //       //   value: "Fitur B",
+    //       // },
+    //       // {
+    //       //   id: 3,
+    //       //   label: "Option 1",
+    //       //   value: "Fitur C",
+    //       // },
+    //     ],
+    //     optionCounter: 3,
+    //   },
+    //   {
+    //     id: 4,
+    //     question:
+    //       "Apabila disuruh memilih top 1 dari 3 pilihan yang telah Anda pilih pada pertanyaan sebelumnya, fitur mana yang akan Anda pilih?",
+    //     questionType: "MC",
+    //     arrayOptions: [
+    //       {
+    //         id: 1,
+    //         label: "Option 1",
+    //         value: "Fitur A",
+    //       },
+    //       {
+    //         id: 2,
+    //         label: "Option 2",
+    //         value: "Fitur B",
+    //       },
+    //       {
+    //         id: 3,
+    //         label: "Option 1",
+    //         value: "Fitur C",
+    //       },
+    //     ],
+    //     optionCounter: 3,
+    //   },
+    // ],
 
+    formItems: [],
     formMessages: [
       {
         userName: "Sari Sulaiman",
@@ -343,15 +351,16 @@ class App extends React.Component {
   async handleCreateNewForm(obj) {
     let formsData = [...this.state.forms];
     try {
-      const response = await axios({
+      await axios({
         method: "post",
         url: `${BASE_URL}/api/v1/forms/insert`,
         data: obj,
         headers: { "Content-Type": "application/json" },
+      }).then((response) => {
+        formsData.push(response.data);
+        this.setState({ forms: formsData });
+        window.location = `/dashboard/formId/${response.data.formId}`;
       });
-      formsData.push(response);
-      this.setState({ forms: formsData });
-      window.location = "/" + response.formId + "/dashboard";
     } catch (error) {
       console.log(error);
     }
@@ -381,56 +390,42 @@ class App extends React.Component {
                   />
                 }
               />
-            </Routes>
-            {this.state.forms.map((formData) => {
-              return (
-                <Routes>
-                  <Route
-                    path={"/" + formData.formId + "/dashboard"}
-                    element={
-                      // <Dashboard formItems_data={this.state.forms.formItems} />
-                      <Dashboard formItems_data={this.state.formItems} />
-                    } // data dari item1
-                  />
-                  <Route
-                    path={"/" + formData.formId + "/invitation"}
-                    element={
-                      // <Invitation formItems_data={this.state.forms.formItems} />
-                      <Invitation formItems_data={this.state.formItems} />
-                    } // data dari item1
-                  />
-                  <Route
-                    path={"/" + formData.formId + "/design"}
-                    element={<Design formItems_data={this.state.formItems} />} // data dari item1
-                  />
-                  <Route
-                    path={"/" + formData.formId + "/show-results"}
-                    element={
-                      <DataVisualization
-                        formItems_data={this.state.formItems}
-                      />
-                    }
-                  />
-                  <Route
-                    path={"/" + formData.formId + "/feedback"}
-                    element={
-                      <Feedback formMessages_data={this.state.formMessages} />
-                    }
-                  />
-                </Routes>
-              );
-            })}
-            <Routes>
-              {this.state.formMessages.map((message) => {
-                count = count + 1;
-                let path = "chat-" + count;
-                return (
-                  <Route
-                    path={"item1/feedback/" + path}
-                    element={<Message messages={message} Parent={this} />}
-                  />
-                );
-              })}
+              <Route
+                path={`/dashboard/formId/:formId`}
+                element={<Dashboard forms={this.state.forms} />}
+              />
+              {/* <Route exact
+                path={"/invitation/formId=" + formData.formId }
+                component={
+                  <Invitation forms={this.state.forms} formItems_data={this.state.formItems} />
+                }
+                />
+                <Route exact
+                path={"/design/formId=" + formData.formId}
+                component={<Design forms={this.state.forms} formItems_data={this.state.formItems} />}
+                />
+                <Route exact
+                path={"/show-results/formId=" + formData.formId}
+                component={
+                  <DataVisualization forms={this.state.forms} formItems_data={this.state.formItems} />
+                } />
+                <Route exact
+                path={"/feedback/formId=" + formData.formId}
+                component={
+                  <Feedback forms={this.state.forms} formMessages_data={this.state.formMessages} />
+                } /> */}
+              {/* <Route>
+                {this.state.formMessages.map((message) => {
+                  count = count + 1;
+                  let path = "chat-" + count;
+                  return (
+                    <Route
+                      path={"item1/feedback/" + path}
+                      element={<Message messages={message} Parent={this} />}
+                    />
+                  );
+                })}
+              </Route> */}
             </Routes>
           </div>
         </div>

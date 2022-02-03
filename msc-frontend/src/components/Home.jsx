@@ -146,7 +146,6 @@ class Home extends React.Component {
 
   handleSubmit(e, obj) {
     let body = document.getElementById("body");
-    body.classList.toggle("openPopup");
     e.preventDefault();
     if (obj.title == "" || obj.description == "" || obj.privacySetting == "") {
       this.setState({ isRequired: true });
@@ -159,7 +158,6 @@ class Home extends React.Component {
   displayPopUp() {
     let body = document.getElementById("body");
     body.classList.toggle("openPopup");
-
     let obj = {};
     obj.title = "";
     obj.description = "";
@@ -191,7 +189,6 @@ class Home extends React.Component {
               className="closePopup"
               onClick={() => {
                 this.handleAddItem();
-                body.classList.toggle("openPopup");
               }}
             >
               &times;

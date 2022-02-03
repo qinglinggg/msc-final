@@ -7,20 +7,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class FormAnswerSelection {
     private UUID formItemsId;
     private UUID answerSelectionId;
-    private String answerSelectionContent;
-    
+    private String answerSelectionLabel;
+    private String answerSelectionValue;
+
     // Get Items
-    public FormAnswerSelection(UUID formItemsId, UUID answerSelectionId, String answerSelectionContent){
+    public FormAnswerSelection(UUID formItemsId, UUID answerSelectionId, String answerSelectionLabel,
+            String answerSelectionValue) {
         this.formItemsId = formItemsId;
         this.answerSelectionId = answerSelectionId;
-        this.answerSelectionContent = answerSelectionContent;
+        this.answerSelectionLabel = answerSelectionLabel;
+        this.answerSelectionValue = answerSelectionValue;
     }
 
     // Create and Insert Mode
-    public FormAnswerSelection(@JsonProperty("formItemsId") UUID formItemsId, @JsonProperty("answerSelectionContent") String answerSelectionContent){
+    public FormAnswerSelection(@JsonProperty("formItemsId") UUID formItemsId,
+            @JsonProperty("label") String answerSelectionLabel,
+            @JsonProperty("value") String answerSelectionValue) {
         this.formItemsId = formItemsId;
         this.answerSelectionId = UUID.randomUUID();
-        this.answerSelectionContent = answerSelectionContent;
+        this.answerSelectionLabel = answerSelectionLabel;
+        this.answerSelectionValue = answerSelectionValue;
     }
 
     public UUID getFormItemsId() {
@@ -31,11 +37,20 @@ public class FormAnswerSelection {
         return this.answerSelectionId;
     }
 
-    public String getContent() {
-        return this.answerSelectionContent;
+    public String getLabel() {
+        return this.answerSelectionLabel;
     }
 
-    public void setContent(String answerSelectionContent) {
-        this.answerSelectionContent = answerSelectionContent;
+    public String getValue() {
+        return this.answerSelectionValue;
     }
+
+    public void setLabel(String answerSelectionLabel) {
+        this.answerSelectionLabel = answerSelectionLabel;
+    }
+
+    public void setValue(String answerSelectionValue) {
+        this.answerSelectionValue = answerSelectionValue;
+    }
+
 }
