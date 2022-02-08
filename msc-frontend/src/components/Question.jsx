@@ -58,7 +58,7 @@ function Question(props) {
             <AutoHeightTextarea
               className="question-input"
               id={textareaId}
-              value={props.questionData.question}
+              value={props.questionData.questionContent}
               name="inputted-question"
               placeholder="Please type your question..."
               rows="14"
@@ -83,7 +83,15 @@ function Question(props) {
               id="questionSelection"
               defaultValue={questionOptions[0]}
               onChange={(e) => {
-                props.handleResetOption(props.questionData.id);
+                if (
+                  !(
+                    props.questionData.questionType == "MC" && e.value == "CB"
+                  ) &&
+                  !(props.questionData.questionType == "CB" && e.value == "MC")
+                ) {
+                  props.handleResetOption(props.questionData.id);
+                  // console.log("salah");
+                }
                 props.handleUpdateQuestionType(props.questionData.id, e);
                 setSelectedQuestionOption(props.questionData.questionType);
               }}
@@ -164,6 +172,7 @@ function Question(props) {
                 let optionId =
                   "question-" + props.questionData.id + "-options-" + obj.id;
                 // this.handleUpdateTextarea(obj);
+
                 return (
                   <React.Fragment>
                     <div className="answer-selection">
@@ -200,18 +209,6 @@ function Question(props) {
                       >
                         <i className="fas fa-times"></i>
                       </div>
-                    </div>
-                    <div
-                      className="dashboard-remove-options-button"
-                      onClick={() => {
-                        this.props.handleRemoveOption(
-                          this.props.questionData.id,
-                          obj.id,
-                          obj
-                        );
-                      }}
-                    >
-                      <i className="fas fa-times"></i>
                     </div>
                   </React.Fragment>
                 );
@@ -252,7 +249,6 @@ function Question(props) {
             ? props.arrayOptions.map((obj) => {
                 let optionId =
                   "question-" + props.questionData.id + "-options-" + obj.id;
-                // console.log(obj);
                 return (
                   <div className="answer-selection">
                     <input
@@ -317,6 +313,8 @@ function Question(props) {
     for (let i = 0; i <= props.questionData.optionCounter; i++) {
       labelOptions.push({ value: i, label: i });
     }
+
+    let labelIdx = 0;
     return (
       <React.Fragment>
         <div className="linear-container">
@@ -327,19 +325,23 @@ function Question(props) {
             <div id="linear-input-box">
               <Select
                 options={inputOptions}
-                value={labelOptions.map((option) => {
-                  if (props.questionData.optionCounter == option.value) {
-                    return option;
-                  }
-                })}
+                value={
+                  labelOptions.map((option) => {
+                    if (props.questionData.optionCounter == option.value) {
+                      return option;
+                    }
+                  })
+                  // inputOptions[0].value
+                }
                 defaultValue={inputOptions[0]}
                 id="questionSelection"
                 onChange={(e) => {
-                  props.handleOptionCount(props.questionData.id, e);
                   props.handleResetOption(props.questionData.id);
-                  for (let i = 0; i < e.value; i++) {
+                  props.handleOptionCount(props.questionData.id, e.value);
+                  for (let i = 1; i <= e.value; i++) {
                     props.handleAddOption(props.questionData.id);
                   }
+                  props.handleUpdateOptionLabel(props.questionData.id, e.value);
                 }}
               />
             </div>
@@ -353,6 +355,7 @@ function Question(props) {
               {props.questionData.arrayOptions.map((object) => {
                 let optionId =
                   "question-" + props.questionData.id + "-options-" + object.id;
+                labelIdx = labelIdx + 1;
                 return (
                   <div className="linear-label-row">
                     <div className="linear-label-userinput">
@@ -377,7 +380,7 @@ function Question(props) {
                       <div id="linear-label-select-box">
                         <div id="linear-label-select-value">
                           {labelOptions.length > 0
-                            ? labelOptions[object.id].label
+                            ? labelOptions[labelIdx].label
                             : null}
                         </div>
                       </div>
@@ -392,41 +395,44 @@ function Question(props) {
     );
   };
 
-  const displayNewOptionLinearLabel = () => {
-    return (
-      <React.Fragment>
-        <div className="linear-label-row">
-          <div className="linear-label-userinput">
-            <AutoHeightTextarea
-              className="inputText"
-              type="text"
-              placeholder="Insert label..."
-              wrap="soft"
-              onClick={(e) => {
-                props.handleAddOption(props.questionData.id);
-              }}
-            />
-          </div>
-          <div id="linear-label-select"></div>
-        </div>
-      </React.Fragment>
-    );
-  };
+  // const displayNewOptionLinearLabel = () => {
+  //   return (
+  //     <React.Fragment>
+  //       <div className="linear-label-row">
+  //         <div className="linear-label-userinput">
+  //           <AutoHeightTextarea
+  //             className="inputText"
+  //             type="text"
+  //             placeholder="Insert label..."
+  //             wrap="soft"
+  //             onClick={(e) => {
+  //               props.handleAddOption(props.questionData.id);
+  //             }}
+  //           />
+  //         </div>
+  //         <div id="linear-label-select"></div>
+  //       </div>
+  //     </React.Fragment>
+  //   );
+  // };
 
   const shortAnswerOption = () => {
-    if (props.questionData.arrayOptions.length == 0)
-      props.handleAddOption(props.questionData.id);
+    console.log(props.questionData.arrayOptions);
     return (
       <div id="shortanswer-container">
         <input
           type="text"
           className="inputText"
           name="shortanswer-field"
-          placeholder="Input your answer..."
-          value={props.questionData.arrayOptions[0].value}
-          onChange={(e) =>
-            props.handleOptionValue(props.questionData.id, e, { id: 1 })
-          }
+          placeholder="The answer will be on here..."
+          // value={
+          //   "Input your answer..."
+          //   // props.questionData.arrayOptions[0].value
+          // }
+          // onChange={(e) =>
+          //   props.handleOptionValue(props.questionData.id, e, { id: 1 })
+          // }
+          disabled
         />
       </div>
     );

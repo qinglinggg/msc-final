@@ -62,25 +62,44 @@ public class FormController {
         return formService.removeFormItems(formItemsId);
     }
 
+    @PutMapping(path = "/update-form-items/{formItemsId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public int updateFormItems(@PathVariable("formItemsId") String formItemsId, @RequestBody FormItems toBeUpdated) {
+        return formService.updateFormItems(formItemsId, toBeUpdated);
+    }
+
     @GetMapping(path = "/get-form-items/{id}")
     public List<FormItems> getFormItems(@PathVariable("id") String id) {
         return formService.getFormItems(id);
     }
 
-    //
     @PostMapping(path = "/add-answer-selection/{formItemsId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public FormAnswerSelection addAnswerSelection(@PathVariable("formItemsId") String formItemsId,
             @RequestBody FormAnswerSelection answerSelection) {
         return formService.addAnswerSelection(formItemsId, answerSelection);
     }
 
-    @PutMapping(path = "/update-answer-selection/{formItemsId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public int updateAnswerSelection(@PathVariable("formItemsId") String formItemsId, FormItems toBeUpdated) {
-        return formService.updateAnswerSelection(formItemsId, toBeUpdated);
+    @PutMapping(path = "/update-answer-selection/{answerSelectionId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public int updateAnswerSelection(@PathVariable("answerSelectionId") String answerSelectionId, @RequestBody FormAnswerSelection toBeUpdated) {
+        return formService.updateAnswerSelection(answerSelectionId, toBeUpdated);
+    }
+
+    @PutMapping(path = "/update-all-answer-selection-label/{formItemsId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public int updateAllAnswerSelectionLabel(@PathVariable("formItemsId") String formItemsId, @RequestBody Integer numberOfItems) {
+        return formService.updateAllAnswerSelectionLabel(formItemsId, numberOfItems);
     }
 
     @GetMapping(path = "/get-answer-selection/{formItemsId}")
     public List<FormAnswerSelection> getAnswerSelections(@PathVariable("formItemsId") String formItemsId) {
         return formService.getAnswerSelection(formItemsId);
+    }
+
+    @DeleteMapping(path = "/remove-answer-selection/{answerSelectionId}")
+    public int removeAnswerSelection(@PathVariable("answerSelectionId") String answerSelectionId){
+        return formService.removeAnswerSelection(answerSelectionId);
+    }
+
+    @DeleteMapping(path = "/remove-all-answer-selection/{formItemsId}")
+    public int removeAllAnswerSelection(@PathVariable("formItemsId") String formItemsId){
+        return formService.removeAllAnswerSelection(formItemsId);
     }
 }

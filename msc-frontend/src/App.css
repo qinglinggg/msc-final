@@ -735,7 +735,7 @@ html {
 .question {
   min-width: 550px;
   min-height: 275px;
-  height: 275px;
+  height: fit-content;
   width: 550px;
   margin: 50px;
   padding: 15px;
@@ -744,7 +744,6 @@ html {
   align-items: center;
   border: var(--gray-border) 1px solid;
   border-radius: 10px;
-  overflow-y: scroll;
   background-color: white;
 }
 
