@@ -143,20 +143,6 @@ public class FormDAO {
         return formItems;
     }
 
-    // public FormItems getFormItemsById(String formItemsId){
-    //     final String query = "SELECT * FROM FormItems WHERE formItemsId = ?";
-    //     FormItems formItem = jdbcTemplate.queryForObject(query, (resultSet, i) -> {
-    //         System.out.println(query);
-    //         String formId = resultSet.getString("formId");
-    //         int itemNumber = Integer.parseInt(resultSet.getString("itemNumber"));
-    //         String questionContent = resultSet.getString("questionContent");
-    //         String questionType = resultSet.getString("questionType");
-    //         return new FormItems(UUID.fromString(formId), UUID.fromString(formItemsId), itemNumber, questionContent,
-    //                 questionType);
-    //     });
-    //     return formItem;
-    // }
-
     public int removeFormItems(String formItemsId) {
         final String query = "DELETE FROM FormItems WHERE formItemsId=?";
         int res = jdbcTemplate.update(query, formItemsId);
@@ -166,12 +152,13 @@ public class FormDAO {
     public int updateFormItems(String formItemsId, FormItems toBeUpdated) {
         String query = "UPDATE FormItems SET ";
         Boolean comma = false;
-        if(toBeUpdated.getContent() != "" && toBeUpdated.getContent() != null){
+        if (toBeUpdated.getContent() != "" && toBeUpdated.getContent() != null) {
             query = query + "questionContent = '" + toBeUpdated.getContent().toString() + "'";
             comma = true;
         }
-        if(toBeUpdated.getType() != "" && toBeUpdated.getType() != null){
-            if(comma == true) query = query + ", ";
+        if (toBeUpdated.getType() != "" && toBeUpdated.getType() != null) {
+            if (comma == true)
+                query = query + ", ";
             query = query + "questionType = '" + toBeUpdated.getType().toString() + "'";
         }
         query = query + " WHERE formItemsId = '" + formItemsId + "'";
@@ -180,11 +167,13 @@ public class FormDAO {
         return res;
     }
 
-    public FormAnswerSelection addAnswerSelection(String id, Integer answerSelectionNo, FormAnswerSelection answerSelection) {
+    public FormAnswerSelection addAnswerSelection(String id, Integer answerSelectionNo,
+            FormAnswerSelection answerSelection) {
         answerSelection.setNo(answerSelectionNo + 1);
         answerSelection.setLabel("Option " + answerSelection.getNo());
         final String query = "INSERT INTO FormAnswerSelection(formItemsId, answerSelectionId, answerSelectionNo, answerSelectionLabel, answerSelectionValue) VALUES(?,?,?,?,?)";
-        int res = jdbcTemplate.update(query, id, answerSelection.getId().toString(), answerSelection.getNo(), answerSelection.getLabel(),
+        int res = jdbcTemplate.update(query, id, answerSelection.getId().toString(), answerSelection.getNo(),
+                answerSelection.getLabel(),
                 answerSelection.getValue());
         return answerSelection;
     }
@@ -195,7 +184,7 @@ public class FormDAO {
         return res;
     }
 
-    public int removeAllAnswerSelection(String formItemsId){
+    public int removeAllAnswerSelection(String formItemsId) {
         final String query = "DELETE FROM FormAnswerSelection WHERE formItemsId=?";
         int res = jdbcTemplate.update(query, formItemsId);
         return res;
@@ -214,9 +203,10 @@ public class FormDAO {
 
         final String query = "UPDATE FormAnswerSelection SET answerSelectionNo = ?, answerSelectionLabel = ? WHERE answerSelectionId = ?";
         int res = jdbcTemplate.update(query, answerSelectionNo, answerSelectionLabel, answerSelectionId);
-        
-        // System.out.println("id: " + answerSelectionId + ", no: " + answerSelectionNo + ", label: " + answerSelectionLabel);
-        System.out.println(res);
+
+        // System.out.println("id: " + answerSelectionId + ", no: " + answerSelectionNo
+        // + ", label: " + answerSelectionLabel);
+        // System.out.println(res);
         return res;
     }
 
@@ -228,7 +218,8 @@ public class FormDAO {
             Integer answerSelectionNo = resultSet.getInt("answerSelectionNo");
             String answerSelectionLabel = resultSet.getString("answerSelectionLabel");
             String answerSelectionValue = resultSet.getString("answerSelectionValue");
-            return new FormAnswerSelection(UUID.fromString(formItemsId), UUID.fromString(answerSelectionId), answerSelectionNo,
+            return new FormAnswerSelection(UUID.fromString(formItemsId), UUID.fromString(answerSelectionId),
+                    answerSelectionNo,
                     answerSelectionLabel, answerSelectionValue);
         }, id);
         return formAnswerSelections;

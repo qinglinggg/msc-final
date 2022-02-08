@@ -29,7 +29,6 @@ function Question(props) {
     { value: 9, label: "9" },
     { value: 10, label: "10" },
   ];
-  const labelOptions = [];
 
   useEffect(() => {
     if (props.mode) {
@@ -233,7 +232,7 @@ function Question(props) {
           wrap="soft"
           readOnly
           onClick={() => {
-            props.handleAddOption(props.questionData.id);
+            props.handleAddOption(props.questionData.id, null, null);
           }}
         />
       </React.Fragment>
@@ -301,7 +300,7 @@ function Question(props) {
           wrap="soft"
           readOnly
           onClick={() => {
-            props.handleAddOption(props.questionData.id);
+            props.handleAddOption(props.questionData.id, null, null);
           }}
         />
       </React.Fragment>
@@ -309,12 +308,11 @@ function Question(props) {
   };
 
   const linearScaleOption = () => {
-    let labelOptions = [];
-    for (let i = 0; i <= props.questionData.optionCounter; i++) {
-      labelOptions.push({ value: i, label: i });
-    }
-
     let labelIdx = 0;
+    let labelOptions = [];
+    for (let i = 0; i < props.questionData.optionCounter; i++) {
+      labelOptions.push({ value: i+1, label: i+1 });
+    }
     return (
       <React.Fragment>
         <div className="linear-container">
@@ -336,12 +334,8 @@ function Question(props) {
                 defaultValue={inputOptions[0]}
                 id="questionSelection"
                 onChange={(e) => {
-                  props.handleResetOption(props.questionData.id);
+                  props.handleResetOption(props.questionData.id, 0, e.value - 1);
                   props.handleOptionCount(props.questionData.id, e.value);
-                  for (let i = 1; i <= e.value; i++) {
-                    props.handleAddOption(props.questionData.id);
-                  }
-                  props.handleUpdateOptionLabel(props.questionData.id, e.value);
                 }}
               />
             </div>
@@ -379,8 +373,10 @@ function Question(props) {
                     <div id="linear-label-select">
                       <div id="linear-label-select-box">
                         <div id="linear-label-select-value">
+                          {console.log("Current Label IDX:")}
+                          {console.log(labelIdx)}
                           {labelOptions.length > 0
-                            ? labelOptions[labelIdx].label
+                            ? labelOptions[labelIdx-1].label
                             : null}
                         </div>
                       </div>
@@ -406,7 +402,7 @@ function Question(props) {
   //             placeholder="Insert label..."
   //             wrap="soft"
   //             onClick={(e) => {
-  //               props.handleAddOption(props.questionData.id);
+  //               props.handleAddOption(props.questionData.id, null, null);
   //             }}
   //           />
   //         </div>
@@ -417,7 +413,6 @@ function Question(props) {
   // };
 
   const shortAnswerOption = () => {
-    console.log(props.questionData.arrayOptions);
     return (
       <div id="shortanswer-container">
         <input

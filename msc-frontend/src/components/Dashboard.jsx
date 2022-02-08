@@ -189,7 +189,7 @@ function Dashboard(props) {
     }
   };
 
-  const handleResetOption = (id) => {
+  const handleResetOption = (id, iterCount, finalCount) => {
     let tempFormItems = [...formItems];
     let currentForm = tempFormItems.filter((elem) => {
       return elem.id == id;
@@ -215,6 +215,7 @@ function Dashboard(props) {
           return elem;
         });
         setFormItems(tempFormItems);
+        handleAddOption(id, iterCount, finalCount);
       });
     } catch (error) {
       console.log(error);
@@ -241,22 +242,16 @@ function Dashboard(props) {
     setFormItems(tempFormItems);
   };
 
-  const handleAddOption = (id) => {
+  const handleAddOption = (id, iterCount, finalCount) => {
     // console.log("Handle Add Option: " + id);
     let tempFormItems = [...formItems];
     let currentForm = tempFormItems.filter((elem) => {
       return elem.id == id;
     });
     currentForm = currentForm[0];
-    // currentForm["optionCounter"] += 1;
     let obj = {};
     obj["formItemsId"] = id;
-    // obj["optionCounter"] = currentForm["optionCounter"];
-    // obj["no"] = currentForm["optionCounter"];
-    // obj["label"] = "Option " + currentForm["optionCounter"];
     obj["value"] = "";
-    // console.log(obj);
-    // return new Promise(
     axios({
       method: "post",
       url: `${BASE_URL}/api/v1/forms/add-answer-selection/${currentForm["id"]}`,
@@ -264,19 +259,17 @@ function Dashboard(props) {
       headers: { "Content-Type": "application/json" },
     }).then((res) => {
       currentForm["arrayOptions"].push(res.data);
-      // console.log(res.data);
-      // console.log("currentForm:");
-      // console.log(currentForm);
       tempFormItems = tempFormItems.map((elem) => {
         if (elem.id == id) {
           return currentForm;
         }
         return elem;
       });
-      // console.log(tempFormItems);
       setFormItems(tempFormItems);
-    });
-    // );
+      if (finalCount && iterCount < finalCount){
+        handleAddOption(id, iterCount + 1, finalCount);
+      }
+    });;
   };
 
   const handleRemoveOption = (questionId, objId, obj) => {
@@ -310,12 +303,6 @@ function Dashboard(props) {
     let value = event.target.value;
 
     setTimeout(() => {
-      // console.log("questionId: ");
-      // console.log(questionId);
-      // console.log("event: ");
-      // console.log(value);
-      // console.log("object: ");
-      // console.log(object);
       let tempFormItems = [...formItems];
       let currentForm = tempFormItems.filter((elem) => {
         return elem.id == questionId;
@@ -350,53 +337,6 @@ function Dashboard(props) {
         setFormItems(tempFormItems);
       });
     }, 5000);
-  };
-
-  const handleUpdateOptionLabel = (formItemsId, value) => {
-    // let tempFormItems = [...formItems];
-    // let currentForm = tempFormItems.filter((elem) => {
-    //   return elem.id == formItemsId;
-    // });
-    // currentForm = currentForm[0];
-    console.log("handleUpdateOptionLabel");
-    // let arrayOptions = currentForm["arrayOptions"];
-
-    // let idx = 0;
-    // currentForm["arrayOptions"] = arrayOptions.map((options) => {
-    //   console.log("masuk");
-    //   idx++;
-    //   options.label = "Label " + idx;
-    //   options.no = idx;
-    //   try {
-    //     axios({
-    //       method: "put",
-    //       url: `${BASE_URL}/api/v1/forms/update-answer-selection-label/${options.id}`,
-    //       data: idx,
-    //       headers: { "Content-Type": "application/json" },
-    //     });
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // });
-
-    // tempFormItems = tempFormItems.map((elem) => {
-    //   if (elem.id == formItemsId) {
-    //     return currentForm;
-    //   }
-    //   return elem;
-    // });
-    // setFormItems(tempFormItems);
-
-    try {
-      axios({
-        method: "put",
-        url: `${BASE_URL}/api/v1/forms/update-all-answer-selection-label/${formItemsId}`,
-        data: value,
-        headers: { "Content-Type": "application/json" },
-      });
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   const handleOptionCount = (questionId, value) => {
@@ -439,7 +379,6 @@ function Dashboard(props) {
                   handleResetOption={handleResetOption}
                   handleOptionCount={handleOptionCount}
                   handleOptionList={handleOptionList}
-                  handleUpdateOptionLabel={handleUpdateOptionLabel}
                 />
               </div>
             </React.Fragment>
