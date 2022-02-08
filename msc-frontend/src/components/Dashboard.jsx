@@ -22,6 +22,12 @@ function Dashboard(props) {
   const { formId } = useParams();
 
   useEffect(() => {
+    let body = document.getElementById("body");
+    let menuBtn = document.getElementById("menu-icon");
+    menuBtn.addEventListener("click", () => {
+      body.classList.toggle("openMenu");
+    });
+
     setCurrentFormData(
       props.forms.map((formData) => {
         if (formData.formId == formId) {
@@ -52,13 +58,14 @@ function Dashboard(props) {
       console.log(error);
     }
   }, []); // run once
-  useEffect(() => {
-    let body = document.getElementById("body");
-    let menuBtn = document.getElementById("menu-icon");
-    menuBtn.addEventListener("click", () => {
-      body.classList.toggle("openMenu");
-    });
-  });
+
+  // useEffect(() => {
+  //   let body = document.getElementById("body");
+  //   let menuBtn = document.getElementById("menu-icon");
+  //   menuBtn.addEventListener("click", () => {
+  //     body.classList.toggle("openMenu");
+  //   });
+  // });
 
   const handleVisibility = () => {
     setOpenVisibility(!openVisibility);
