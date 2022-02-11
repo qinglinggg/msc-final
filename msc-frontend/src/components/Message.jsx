@@ -8,6 +8,7 @@ import axios from "axios";
 function Message(props) {
   const [formMessages, setFormMessages] = useState([]);
   const [tempMessage, setTempMessage] = useState("");
+  const [user, setUser] = useState({});
   const { feedbackId } = useParams(); // ?
 
   const BASE_URL = "http://localhost:8080";
@@ -19,12 +20,18 @@ function Message(props) {
       body.classList.toggle("openMenu");
     });
 
-    axios.get(`${BASE_URL}/api/v1/by-feedback/${feedbackId}`).then((res) => {
+    axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`).then((res) => {
       const formMessages = res.data;
+      // console.log(formMessages);
       setFormMessages(formMessages);
     });
 
-  });
+    axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/get-user/${feedbackId}`).then((res) => {
+      const user = res.data;
+      setUser(user);
+    });
+
+  }, []);
 
   const handleMessageInput = (e) => {
     setTempMessage(e.target.value);
@@ -42,7 +49,7 @@ function Message(props) {
     try {
       axios({
         method: "post",
-        url: `${BASE_URL}/api/v1/feedback/by-feedback-message/insert/${feedbackId}`,
+        url: `${BASE_URL}/api/v1/feedback/by-feedback-message/insert`,
         data: newMessage,
         headers: { "Content-Type": "application/json" }
       }).then((res) => {
@@ -92,12 +99,12 @@ function Message(props) {
                 src={profilePicture}
                 alt=""
               />
-              {props.user.fullname}
+              {user.fullname}
             </div>
           </div>
           <div className="message-line"></div>
           <div id="message-content-wrapper">
-            {props.messages.map((m) => {
+            {formMessages.map((m) => {
               return (
                 <React.Fragment>
                   <div className="message-content">
@@ -106,7 +113,7 @@ function Message(props) {
                       id={m.userID != 2 ? "message-user-1" : "message-user-2"}
                     >
                       <div className="message-single-bubble">
-                        <div id="message-single-content">{m.message}</div>
+                        <div id="message-single-content">{m.feedbackMessage}</div>
                       </div>
                       <div id="message-single-timestamp">{m.createDateTime}</div>
                     </div>

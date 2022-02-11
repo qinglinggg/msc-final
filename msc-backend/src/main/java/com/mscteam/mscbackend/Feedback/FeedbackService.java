@@ -43,7 +43,10 @@ public class FeedbackService {
 
     public FeedbackMessage getLastFeedbackMessageByFeedbackId(String id){
         List<FeedbackMessage> sortedList = this.getFeedbackMessageByFeedbackId(id);
-        FeedbackMessage lastMessage = sortedList.get(sortedList.size() - 1);
+        FeedbackMessage lastMessage = null;
+        System.out.println(sortedList);
+        if(sortedList.size() > 0) lastMessage = sortedList.get(sortedList.size() - 1);
+
         return lastMessage;
     }
 

@@ -29,6 +29,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.handleCreateNewForm = this.handleCreateNewForm.bind(this);
+    this.handleSetFormMessages = this.handleSetFormMessages.bind(this);
   }
 
   state = {
@@ -36,6 +37,8 @@ class App extends React.Component {
 
     // Home
     forms: [],
+    formItems: ["test1", "test2"],
+    
     waitingForms: [
       {
         title: "Survey 1",
@@ -43,98 +46,7 @@ class App extends React.Component {
       },
     ],
 
-    // dummy
-    formMessages: [
-      {
-        userName: "Sari Sulaiman",
-        messagesHistory: [
-          {
-            userID: 1,
-            message:
-              "Permisi, saya sudah dapat akses ke kuesioner ini. Mohon bantuannya.",
-            timestamp: "3.45 PM",
-          },
-          {
-            userID: 2,
-            message:
-              "Iya selamat siang, Ibu Sari. Baik, akan kami bantu dengan segenap hati.",
-            timestamp: "3.46 PM",
-          },
-          {
-            userID: 1,
-            message: "Baiklah kalau begitu.",
-            timestamp: "3.46 PM",
-          },
-          {
-            userID: 1,
-            message: "Akan saya kabari jika sudah isi ya :)",
-            timestamp: "3.47 PM",
-          },
-          {
-            userID: 1,
-            message: "Apakah form ini akan ditutup pada tanggal 10 Oktober?",
-            timestamp: "3.47 PM",
-          },
-        ],
-        lastMessage: "Apakah form ini akan ditutup pada tanggal 10 Oktober?",
-        timestamp: "6.00 PM",
-        read: false,
-        tag: "3",
-      },
-      {
-        userName: "Alvina Putri",
-        lastMessage:
-          "Ingin bertanya untuk pertanyaan nomor 6 apakah konteksnya secara umum atau dalam biro?",
-        timestamp: "5.25 PM",
-        read: true,
-        tag: "Sent",
-      },
-      {
-        userName: "Averina Nugroho",
-        lastMessage: "Baik, nanti akan kami input pesan anda. Terima kasih!",
-        timestamp: "5.20 PM",
-        read: true,
-        tag: "Sent",
-      },
-      {
-        userName: "Jeanette Suryadi",
-        lastMessage: "Sent an attachment",
-        timestamp: "5.10 PM",
-        read: false,
-        tag: "2",
-      },
-      {
-        userName: "William Putra",
-        lastMessage:
-          "Baik, akan saya isi formnya nanti malam ya. Terima kasih.",
-        timestamp: "4.30 PM",
-        read: false,
-        tag: "1",
-      },
-      {
-        userName: "Celine Jadja",
-        lastMessage: "Maksudnya biro diisi dengan divisinya?",
-        timestamp: "4.20 PM",
-        read: false,
-        tag: "1",
-      },
-      {
-        userName: "Elvin Tanjaya",
-        lastMessage:
-          "Informasi biodata dapat disampaikan secara singkat saja Pak.",
-        timestamp: "4.20 PM",
-        read: true,
-        tag: "Sent",
-      },
-      {
-        userName: "Albertus Hadi Saputra",
-        lastMessage: "Siap Pak.",
-        timestamp: "3.15 PM",
-        read: true,
-        tag: "Sent",
-      },
-    ],
-  };
+  }
 
   componentDidMount() {
     axios.get(`${BASE_URL}/api/v1/user-profiles`).then(async (res) => {
@@ -227,6 +139,10 @@ class App extends React.Component {
     this.setState({ messageHistory: newArray });
   }
 
+  handleSetFormMessages(formMessages){
+    this.setState({formMessages});
+  }
+
   render() {
     let count = 0;
     return (
@@ -257,20 +173,34 @@ class App extends React.Component {
                 element={<Dashboard forms={this.state.forms} />}
               />
               <Route
+                path={`/item1/design`}
+                element={<Design />}
+              />
+              <Route
+                path={`/item1/invitation`}
+                element={<Invitation />}
+              />
+              <Route
+                path={`/item1/show-results`}
+                element={<DataVisualization forms={this.state.forms} formItems_data={this.state.formItems} />}
+              />
+              
+              <Route
                 path={`/feedback/formId/:formId`}
                 element={
                   <Feedback
-                    formMessages_data={this.state.formMessages}
+                    handleSetFormMessages={this.handleSetFormMessages}
                   />
                 }
               />
               <Route>
-                {this.state.formMessages.map((message) => {
+                {this.state.formMessages ? this.state.formMessages.map((message) => {
                   count = count + 1;
                   let path = "chat-" + count;
 
                   // coba2
-                  let user = axios.get(`${BASE_URL}/api/v1/user-profiles/${message.feedbackId}`);
+                  console.log(message);
+                  let user = axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/get-user/${message.feedbackId}`);
                   let feedbackMessageList = axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/${message.feedbackId}`);
                   
                   return (
@@ -285,7 +215,7 @@ class App extends React.Component {
                       }
                     />
                   );
-                })}
+                }) : null}
               </Route>
 
               {/* <Route exact

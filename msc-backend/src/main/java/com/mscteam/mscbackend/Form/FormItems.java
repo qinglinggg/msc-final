@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class FormItems implements Comparable<FormItems>{
     private UUID formId;
     private UUID formItemsId;
-    private int itemNumber;
+    private Integer itemNumber;
     private String questionContent;
     private String questionType;
     private UUID nextFormId;

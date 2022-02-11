@@ -49,12 +49,12 @@ public class FeedbackController {
     }
 
     @GetMapping(path="/by-feedback/{id}")
-    public List<FeedbackMessage> getFeedbackMessageByFeedbackId(String id){
+    public List<FeedbackMessage> getFeedbackMessageByFeedbackId(@PathVariable("id") String id){
         return feedbackService.getFeedbackMessageByFeedbackId(id);
     }
 
     @GetMapping(path="/by-feedback/get-last-message/{id}")
-    public FeedbackMessage getLastFeedbackMessageByFeedbackId(String id){
+    public FeedbackMessage getLastFeedbackMessageByFeedbackId(@PathVariable("id") String id){
         return feedbackService.getLastFeedbackMessageByFeedbackId(id);
     }
 
@@ -65,7 +65,7 @@ public class FeedbackController {
         return feedbackService.insertFeedback(feedback);
     }
 
-    @PostMapping(path="/by-feedback-message/insert/", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path="/by-feedback-message/insert", consumes = MediaType.APPLICATION_JSON_VALUE)
     public int insertFeedbackMessage(@RequestBody FeedbackMessage feedbackMessage){
         return feedbackService.insertFeedbackMessage(feedbackMessage);
     }

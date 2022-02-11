@@ -70,17 +70,18 @@ public class FeedbackDAO {
             Integer isRead = resultSet.getInt("isRead");
             try {
                 createDateTime = dateFormat.parse(resultSet.getString("createDateTime"));
-                // createTime?
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            System.out.println(resultSet);
             return new FeedbackMessage(UUID.fromString(feedbackId), UUID.fromString(messageId), message, createDateTime, isRead);
         }, id);
+        // System.out.println(feedbackMessage);
         return feedbackMessage;
     }
 
     public UserProfile getUserByFeedbackId(String id){
-        final String query = "SELECT * FROM UserProfile up WHERE up.userId IN (SELECT userId FROM Feedback WHERE feedbackId = ? )";
+        final String query = "SELECT * FROM User WHERE userId = (SELECT userId FROM Feedback WHERE feedbackId = ? )";
         UserProfile userProfile = jdbcTemplate.queryForObject(query, (resultSet, i) -> {
             String userId = resultSet.getString("userId");
             String username = resultSet.getString("username");
@@ -89,6 +90,7 @@ public class FeedbackDAO {
             String profileImage = resultSet.getString("profileImage");
             return new UserProfile(userId, username, fullname, email, profileImage);
         }, id);
+        System.out.println(userProfile);
         return userProfile;
     }
 
