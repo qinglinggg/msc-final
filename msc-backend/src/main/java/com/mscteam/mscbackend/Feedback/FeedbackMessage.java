@@ -5,18 +5,20 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class FeedbackMessage {
+public class FeedbackMessage implements Comparable<FeedbackMessage> {
     private UUID feedbackId;
     private UUID messageId;
     private String message;
-    private Date createDate;
+    private Date createDateTime;
+    private Integer isRead;
 
     // Get Items
-    public FeedbackMessage(UUID feedbackId, UUID messageId, String message, Date createDate){
+    public FeedbackMessage(UUID feedbackId, UUID messageId, String message, Date createDateTime, Integer isRead){
         this.feedbackId = feedbackId;
         this.messageId = messageId;
         this.message = message;
-        this.createDate = createDate;
+        this.createDateTime = createDateTime;
+        this.isRead = isRead;
     }
     
     // Create, Insert mode
@@ -24,7 +26,8 @@ public class FeedbackMessage {
         this.feedbackId = feedbackId;
         this.messageId = UUID.randomUUID();
         this.message = message;
-        this.createDate = new Date();
+        this.createDateTime = new Date();
+        this.isRead = 0;
     }
 
     public UUID getFeedbackId() {
@@ -39,7 +42,18 @@ public class FeedbackMessage {
         return this.message;
     }
 
-    public Date getCreateDate() {
-        return this.createDate;
+    public Date getCreateDateTime() {
+        return this.createDateTime;
     }
+
+    public Integer getIsRead() {
+        return this.isRead;
+    }
+
+    @Override
+    public int compareTo(FeedbackMessage o) {
+        if (this.getCreateDateTime() == null || o.getCreateDateTime() == null) return 0;
+        return this.getCreateDateTime().compareTo(o.getCreateDateTime());
+    }
+
 }

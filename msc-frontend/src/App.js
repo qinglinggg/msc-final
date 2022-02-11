@@ -43,157 +43,7 @@ class App extends React.Component {
       },
     ],
 
-    // inside Forms:
-    // formItems: ["Test", "Test2"],
-    // formItems: [
-    //   {
-    //     id: 1,
-    //     question:
-    //       "Dari skala 1-5, seberapa puaskah Anda terhadap fitur A pada Halo BCA?",
-    //     questionType: "LS",
-    //     arrayOptions: [
-    //       {
-    //         id: 1,
-    //         label: "Option 1",
-    //         value: "Tidak puas",
-    //         branching: "Go to question 2",
-    //       },
-    //       {
-    //         id: 2,
-    //         label: "Option 2",
-    //         value: "Sedikit puas",
-    //         branching: "Continue to the next question",
-    //       },
-    //       {
-    //         id: 3,
-    //         label: "Option 1",
-    //         value: "Sangat puas",
-    //       },
-    //       // {
-    //       //   id: 1,
-    //       //   label: "Option 1",
-    //       //   value: "Tidak puas",
-    //       // },
-    //       // {
-    //       //   id: 2,
-    //       //   label: "Option 2",
-    //       //   value: "Sedikit puas",
-    //       // },
-    //       // {
-    //       //   id: 3,
-    //       //   label: "Option 1",
-    //       //   value: "Sangat puas",
-    //       // },
-    //       // {
-    //       //   id: 1,
-    //       //   label: "Option 1",
-    //       //   value: "Tidak puas",
-    //       // },
-    //       // {
-    //       //   id: 2,
-    //       //   label: "Option 2",
-    //       //   value: "Sedikit puas",
-    //       // },
-    //       // {
-    //       //   id: 3,
-    //       //   label: "Option 1",
-    //       //   value: "Sangat puas",
-    //       // },
-    //       // {
-    //       //   id: 3,
-    //       //   label: "Option 1",
-    //       //   value: "Sangat puas",
-    //       // },
-    //     ],
-    //     optionCounter: 3,
-    //   },
-    //   {
-    //     id: 2,
-    //     question:
-    //       "Pada pertanyaan sebelumnya, Anda menjawab dengan skala dibawah 4. Apakah terdapat keluhan yang Anda hadapi selama menggunakan fitur A pada Halo BCA?",
-    //     questionType: "SA",
-    //   },
-    //   {
-    //     id: 3,
-    //     question:
-    //       "Centang 3 fitur yang paling bermanfaat dan sering Anda gunakan pada Halo BCA!",
-    //     questionType: "CB",
-    //     arrayOptions: [
-    //       {
-    //         id: 1,
-    //         label: "Option 1",
-    //         value: "Fitur A",
-    //       },
-    //       {
-    //         id: 2,
-    //         label: "Option 2",
-    //         value: "Fitur B",
-    //       },
-    //       {
-    //         id: 3,
-    //         label: "Option 1",
-    //         value: "Fitur C",
-    //       },
-    //       // {
-    //       //   id: 1,
-    //       //   label: "Option 1",
-    //       //   value: "Fitur A",
-    //       // },
-    //       // {
-    //       //   id: 2,
-    //       //   label: "Option 2",
-    //       //   value: "Fitur B",
-    //       // },
-    //       // {
-    //       //   id: 3,
-    //       //   label: "Option 1",
-    //       //   value: "Fitur C",
-    //       // },
-    //       // {
-    //       //   id: 1,
-    //       //   label: "Option 1",
-    //       //   value: "Fitur A",
-    //       // },
-    //       // {
-    //       //   id: 2,
-    //       //   label: "Option 2",
-    //       //   value: "Fitur B",
-    //       // },
-    //       // {
-    //       //   id: 3,
-    //       //   label: "Option 1",
-    //       //   value: "Fitur C",
-    //       // },
-    //     ],
-    //     optionCounter: 3,
-    //   },
-    //   {
-    //     id: 4,
-    //     question:
-    //       "Apabila disuruh memilih top 1 dari 3 pilihan yang telah Anda pilih pada pertanyaan sebelumnya, fitur mana yang akan Anda pilih?",
-    //     questionType: "MC",
-    //     arrayOptions: [
-    //       {
-    //         id: 1,
-    //         label: "Option 1",
-    //         value: "Fitur A",
-    //       },
-    //       {
-    //         id: 2,
-    //         label: "Option 2",
-    //         value: "Fitur B",
-    //       },
-    //       {
-    //         id: 3,
-    //         label: "Option 1",
-    //         value: "Fitur C",
-    //       },
-    //     ],
-    //     optionCounter: 3,
-    //   },
-    // ],
-
-    formItems: [],
+    // dummy
     formMessages: [
       {
         userName: "Sari Sulaiman",
@@ -366,8 +216,15 @@ class App extends React.Component {
     }
   }
 
-  sendNewMessage(obj) {
-    // axios
+  handleSendNewMessage(message) {
+    let newArray = this.state.messages.messagesHistory;
+    let newMessage = {
+      userID: 2, // user id pemilik form
+      message: message,
+      timestamp: "3.48 PM",
+    };
+    newArray.push(newMessage);
+    this.setState({ messageHistory: newArray });
   }
 
   render() {
@@ -377,7 +234,7 @@ class App extends React.Component {
         <Navbar user_data={this.state.userProfiles} />
         <div className="background"></div>
         <div className="container" id="container">
-          <Menu />
+        <Menu />
           <div className="page-container" id="page-container">
             <Routes>
               <Route
@@ -390,10 +247,47 @@ class App extends React.Component {
                   />
                 }
               />
+              {/* <Route 
+                path={`menu/:formId`}
+                element={
+                  <Menu forms={this.state.forms}/>
+                }/> */}
               <Route
                 path={`/dashboard/formId/:formId`}
                 element={<Dashboard forms={this.state.forms} />}
               />
+              <Route
+                path={`/feedback/formId/:formId`}
+                element={
+                  <Feedback
+                    formMessages_data={this.state.formMessages}
+                  />
+                }
+              />
+              <Route>
+                {this.state.formMessages.map((message) => {
+                  count = count + 1;
+                  let path = "chat-" + count;
+
+                  // coba2
+                  let user = axios.get(`${BASE_URL}/api/v1/user-profiles/${message.feedbackId}`);
+                  let feedbackMessageList = axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/${message.feedbackId}`);
+                  
+                  return (
+                    <Route
+                      path={`/feedback/formId/:feedbackId/${path}`}
+                      element={
+                        <Message
+                          user={user}
+                          messages={feedbackMessageList}
+                          handleSendNewMessage={this.handleSendNewMessage}
+                        />
+                      }
+                    />
+                  );
+                })}
+              </Route>
+
               {/* <Route exact
                 path={"/invitation/formId=" + formData.formId }
                 component={
@@ -414,18 +308,6 @@ class App extends React.Component {
                 component={
                   <Feedback forms={this.state.forms} formMessages_data={this.state.formMessages} />
                 } /> */}
-              {/* <Route>
-                {this.state.formMessages.map((message) => {
-                  count = count + 1;
-                  let path = "chat-" + count;
-                  return (
-                    <Route
-                      path={"item1/feedback/" + path}
-                      element={<Message messages={message} Parent={this} />}
-                    />
-                  );
-                })}
-              </Route> */}
             </Routes>
           </div>
         </div>

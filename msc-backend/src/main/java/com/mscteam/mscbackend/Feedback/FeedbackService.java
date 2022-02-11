@@ -1,7 +1,10 @@
 package com.mscteam.mscbackend.Feedback;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import com.mscteam.mscbackend.UserProfile.UserProfile;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +32,19 @@ public class FeedbackService {
     }
 
     public List<FeedbackMessage> getFeedbackMessageByFeedbackId(String id) {
-        return feedbackDAO.getFeedbackMessageByFeedbackId(id);
+        List<FeedbackMessage> feedbackMessagesList = feedbackDAO.getFeedbackMessageByFeedbackId(id);
+        Collections.sort(feedbackMessagesList);
+        return feedbackMessagesList;
+    }
+
+    public UserProfile getUserByFeedbackId(String id){
+        return feedbackDAO.getUserByFeedbackId(id);
+    }
+
+    public FeedbackMessage getLastFeedbackMessageByFeedbackId(String id){
+        List<FeedbackMessage> sortedList = this.getFeedbackMessageByFeedbackId(id);
+        FeedbackMessage lastMessage = sortedList.get(sortedList.size() - 1);
+        return lastMessage;
     }
 
     public int insertFeedback(Feedback feedback) {

@@ -84,9 +84,8 @@ public class FormService {
 
     public List<FormAnswerSelection> getAnswerSelection(String formItemsId) {
         List<FormAnswerSelection> listAnswers = formDAO.getAnswerSelection(formItemsId);
-        // Collections.sort(listAnswers);
         listAnswers.sort((a1, a2) -> a1.getNo() - a2.getNo());
-        listAnswers.forEach((answer) -> System.out.println(answer));
+        // listAnswers.forEach((answer) -> System.out.println(answer));
         return listAnswers;
     }
 

@@ -1,132 +1,140 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import React, { Component, useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import iconMenubarGrey from "./images/menubarGrey.png";
 import profilePicture from "./images/woman.jpg";
 import backspaceIcon from "./images/backspaceIcon.png";
+import axios from "axios";
 
-class Message extends React.Component {
-  constructor(props) {
-    super(props);
-    this.handleMessageInput = this.handleMessageInput.bind(this);
-    this.handleClickSend = this.handleClickSend.bind(this);
-    this.handleEnter = this.handleEnter.bind(this);
-  }
+function Message(props) {
+  const [formMessages, setFormMessages] = useState([]);
+  const [tempMessage, setTempMessage] = useState("");
+  const { feedbackId } = useParams(); // ?
 
-  state = {
-    tempMessage: "",
-  };
+  const BASE_URL = "http://localhost:8080";
 
-  componentDidMount() {
+  useEffect(() => {
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
-  }
 
-  handleMessageInput(e) {
-    this.setState({ tempMessage: e.target.value }, () => {
-      console.log(this.state.tempMessage);
+    axios.get(`${BASE_URL}/api/v1/by-feedback/${feedbackId}`).then((res) => {
+      const formMessages = res.data;
+      setFormMessages(formMessages);
     });
-  }
 
-  handleClickSend() {
-    //  harusnya sendNewMessage() di app.js
-    let newArray = this.props.messages.messagesHistory;
+  });
+
+  const handleMessageInput = (e) => {
+    setTempMessage(e.target.value);
+  };
+
+  const handleClickSend = () => {
+    let newArray = formMessages;
     let newMessage = {
-      userID: 2, // user id pemilik akun
-      message: this.state.tempMessage,
-      timestamp: "3.48 PM",
+      feedbackId: formMessages.feedbackId,
+      userID: "2", // user id pemilik form
+      message: tempMessage,
     };
     newArray.push(newMessage);
-    this.props.Parent.setState({ messageHistory: newArray });
 
-    // yg ini tetap
-    this.setState({ tempMessage: "" });
-    this.updateTextarea();
-  }
+    try {
+      axios({
+        method: "post",
+        url: `${BASE_URL}/api/v1/feedback/by-feedback-message/insert/${feedbackId}`,
+        data: newMessage,
+        headers: { "Content-Type": "application/json" }
+      }).then((res) => {
+        // find feedback by feedbackid
+        setFormMessages(newArray);
+        setTempMessage("");
+        updateTextarea();
+      })
+    } catch (error){
+      console.log(error);
+    }
+  };
 
-  handleEnter(e) {
-    if (e.key === "Enter") this.handleClickSend();
-  }
+  const handleEnter = (e) => {
+    if (e.key === "Enter") handleClickSend();
+  };
 
-  updateTextarea() {
+  const updateTextarea = () => {
     let textarea = document.getElementById("message-input");
     if (textarea) {
       textarea.value = "";
     }
-  }
+  };
 
-  render() {
-    return (
-      <React.Fragment>
-        <div className="title-container">
-          <div className="menu-icon" id="menu-icon">
-            <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
-          </div>
-          <div className="page-title" id="page-title-home">
-            Chat
-          </div>
+  return (
+    <React.Fragment>
+      <div className="title-container">
+        <div className="menu-icon" id="menu-icon">
+          <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
         </div>
-        <div id="page-content">
-          <div id="message-container">
-            <div id="message-header">
-              <Link to="/item1/feedback">
-                <img id="backspace-icon-img" src={backspaceIcon} alt="" />
-              </Link>
-              <div id="message-profile">
-                {/* <div id="message-user-name"></div> */}
-                {/* <div id="message-status"></div> */}
-                <img
-                  className="profile-image"
-                  id="message-profile-image"
-                  src={profilePicture}
-                  alt=""
-                />
-                {this.props.messages.userName}
-              </div>
+        <div className="page-title" id="page-title-home">
+          Chat
+        </div>
+      </div>
+      <div id="page-content">
+        <div id="message-container">
+          <div id="message-header">
+            <Link to="/item1/feedback">
+              <img id="backspace-icon-img" src={backspaceIcon} alt="" />
+            </Link>
+            <div id="message-profile">
+              {/* <div id="message-user-name"></div> */}
+              {/* <div id="message-status"></div> */}
+              <img
+                className="profile-image"
+                id="message-profile-image"
+                src={profilePicture}
+                alt=""
+              />
+              {props.user.fullname}
             </div>
-            <div className="message-line"></div>
-            <div id="message-content-wrapper">
-              {this.props.messages.messagesHistory.map((m) => {
-                return (
-                  <React.Fragment>
-                    <div className="message-content">
-                      <div
-                        className="message-content-2"
-                        id={m.userID == 1 ? "message-user-1" : "message-user-2"}
-                      >
-                        <div className="message-single-bubble">
-                          <div id="message-single-content">{m.message}</div>
-                        </div>
-                        <div id="message-single-timestamp">{m.timestamp}</div>
+          </div>
+          <div className="message-line"></div>
+          <div id="message-content-wrapper">
+            {props.messages.map((m) => {
+              return (
+                <React.Fragment>
+                  <div className="message-content">
+                    <div
+                      className="message-content-2"
+                      id={m.userID != 2 ? "message-user-1" : "message-user-2"}
+                    >
+                      <div className="message-single-bubble">
+                        <div id="message-single-content">{m.message}</div>
                       </div>
+                      <div id="message-single-timestamp">{m.createDateTime}</div>
                     </div>
-                  </React.Fragment>
-                );
-              })}
-            </div>
-            <div className="message-line"></div>
-            <div id="message-input-box">
-              <input
-                id="message-input"
-                placeholder="Send a message..."
-                onChange={(e) => {
-                  this.handleMessageInput(e);
-                }}
-                onKeyUp={(e) => {
-                  this.handleEnter(e);
-                }}
-              ></input>
-              <div id="message-send" onClick={this.handleClickSend}>
-                <ion-icon name="send-outline" id="send-icon"></ion-icon>
-              </div>
+                  </div>
+                </React.Fragment>
+              );
+            })}
+          </div>
+          <div className="message-line"></div>
+          <div id="message-input-box">
+            <input
+              id="message-input"
+              placeholder="Send a message..."
+              onChange={(e) => {
+                handleMessageInput(e);
+              }}
+              onKeyUp={(e) => {
+                handleEnter(e);
+              }}
+            ></input>
+            <div id="message-send" onClick={handleClickSend}>
+              <ion-icon name="send-outline" id="send-icon"></ion-icon>
             </div>
           </div>
         </div>
-      </React.Fragment>
-    );
-  }
+      </div>
+    </React.Fragment>
+  );
 }
 
 export default Message;
