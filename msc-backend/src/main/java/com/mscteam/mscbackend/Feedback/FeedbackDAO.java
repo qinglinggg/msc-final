@@ -1,9 +1,13 @@
 package com.mscteam.mscbackend.Feedback;
 
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import com.mscteam.mscbackend.UserProfile.UserProfile;
+
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,20 +60,36 @@ public class FeedbackDAO {
     }
 
     public List<FeedbackMessage> getFeedbackMessageByFeedbackId(String id){
+        
         final String query = "SELECT * FROM FeedbackMessage WHERE feedbackId=?";
         List<FeedbackMessage> feedbackMessage = jdbcTemplate.query(query, (resultSet, i) -> {
             String feedbackId = resultSet.getString("feedbackId");
             String messageId = resultSet.getString("messageId");
             String message = resultSet.getString("message");
-            Date createDate = null;
+            Date createDateTime = null;
+            Integer isRead = resultSet.getInt("isRead");
             try {
-                createDate = dateFormat.parse(resultSet.getString("createDate"));
+                createDateTime = dateFormat.parse(resultSet.getString("createDateTime"));
+                // createTime?
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return new FeedbackMessage(UUID.fromString(feedbackId), UUID.fromString(messageId), message, createDate);
+            return new FeedbackMessage(UUID.fromString(feedbackId), UUID.fromString(messageId), message, createDateTime, isRead);
         }, id);
         return feedbackMessage;
+    }
+
+    public UserProfile getUserByFeedbackId(String id){
+        final String query = "SELECT * FROM UserProfile up WHERE up.userId IN (SELECT userId FROM Feedback WHERE feedbackId = ? )";
+        UserProfile userProfile = jdbcTemplate.queryForObject(query, (resultSet, i) -> {
+            String userId = resultSet.getString("userId");
+            String username = resultSet.getString("username");
+            String fullname = resultSet.getString("fullname");
+            String email = resultSet.getString("email");
+            String profileImage = resultSet.getString("profileImage");
+            return new UserProfile(userId, username, fullname, email, profileImage);
+        }, id);
+        return userProfile;
     }
 
     public int insertFeedback(Feedback feedback){

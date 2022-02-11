@@ -3,6 +3,8 @@ package com.mscteam.mscbackend.Feedback;
 import java.util.List;
 import java.util.Optional;
 
+import com.mscteam.mscbackend.UserProfile.UserProfile;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -41,17 +43,29 @@ public class FeedbackController {
         return feedbackService.getFeedbackById(id);
     }
 
+    @GetMapping(path="/by-feedback/get-user/{id}")
+    public UserProfile getUserByFeedbackId(@PathVariable("id") String id){
+        return feedbackService.getUserByFeedbackId(id);
+    }
+
     @GetMapping(path="/by-feedback/{id}")
     public List<FeedbackMessage> getFeedbackMessageByFeedbackId(String id){
         return feedbackService.getFeedbackMessageByFeedbackId(id);
     }
+
+    @GetMapping(path="/by-feedback/get-last-message/{id}")
+    public FeedbackMessage getLastFeedbackMessageByFeedbackId(String id){
+        return feedbackService.getLastFeedbackMessageByFeedbackId(id);
+    }
+
+    // count tag isread
 
     @PostMapping(path="/by-feedback/insert", consumes = MediaType.APPLICATION_JSON_VALUE)
     public int insertFeedback(@RequestBody Feedback feedback){
         return feedbackService.insertFeedback(feedback);
     }
 
-    @PostMapping(path="/by-feedback-message/insert", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path="/by-feedback-message/insert/", consumes = MediaType.APPLICATION_JSON_VALUE)
     public int insertFeedbackMessage(@RequestBody FeedbackMessage feedbackMessage){
         return feedbackService.insertFeedbackMessage(feedbackMessage);
     }

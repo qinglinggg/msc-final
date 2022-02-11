@@ -1,5 +1,5 @@
 import React, { Component, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import iconMenubarGrey from "./images/menubarGrey.png";
 import profilePicture from "./images/woman.jpg";
 import backspaceIcon from "./images/backspaceIcon.png";
@@ -8,6 +8,7 @@ import axios from "axios";
 function Message(props) {
   const [formMessages, setFormMessages] = useState([]);
   const [tempMessage, setTempMessage] = useState("");
+  const { feedbackId } = useParams(); // ?
 
   const BASE_URL = "http://localhost:8080";
 
@@ -18,121 +19,41 @@ function Message(props) {
       body.classList.toggle("openMenu");
     });
 
-    axios.get(`${BASE_URL}/api/v1/feedback`).then((res) => {
+    axios.get(`${BASE_URL}/api/v1/by-feedback/${feedbackId}`).then((res) => {
       const formMessages = res.data;
       setFormMessages(formMessages);
     });
+
   });
-
-  const postDummyMessage = () => {
-    try {
-      axios({
-        method: "post",
-        url: `${BASE_URL}/api/v1/feedback/get-form-items/${formId}`,
-      });
-    } catch (error) {}
-
-    let dummyFormMessages = [
-      {
-        userName: "Sari Sulaiman",
-        messagesHistory: [
-          {
-            userID: 1,
-            message:
-              "Permisi, saya sudah dapat akses ke kuesioner ini. Mohon bantuannya.",
-            timestamp: "3.45 PM",
-          },
-          {
-            userID: 2,
-            message:
-              "Iya selamat siang, Ibu Sari. Baik, akan kami bantu dengan segenap hati.",
-            timestamp: "3.46 PM",
-          },
-          {
-            userID: 1,
-            message: "Baiklah kalau begitu.",
-            timestamp: "3.46 PM",
-          },
-          {
-            userID: 1,
-            message: "Akan saya kabari jika sudah isi ya :)",
-            timestamp: "3.47 PM",
-          },
-          {
-            userID: 1,
-            message: "Apakah form ini akan ditutup pada tanggal 10 Oktober?",
-            timestamp: "3.47 PM",
-          },
-        ],
-        lastMessage: "Apakah form ini akan ditutup pada tanggal 10 Oktober?",
-        timestamp: "6.00 PM",
-        read: false,
-        tag: "3",
-      },
-      {
-        userName: "Alvina Putri",
-        lastMessage:
-          "Ingin bertanya untuk pertanyaan nomor 6 apakah konteksnya secara umum atau dalam biro?",
-        timestamp: "5.25 PM",
-        read: true,
-        tag: "Sent",
-      },
-      {
-        userName: "Averina Nugroho",
-        lastMessage: "Baik, nanti akan kami input pesan anda. Terima kasih!",
-        timestamp: "5.20 PM",
-        read: true,
-        tag: "Sent",
-      },
-      {
-        userName: "Jeanette Suryadi",
-        lastMessage: "Sent an attachment",
-        timestamp: "5.10 PM",
-        read: false,
-        tag: "2",
-      },
-      {
-        userName: "William Putra",
-        lastMessage:
-          "Baik, akan saya isi formnya nanti malam ya. Terima kasih.",
-        timestamp: "4.30 PM",
-        read: false,
-        tag: "1",
-      },
-      {
-        userName: "Celine Jadja",
-        lastMessage: "Maksudnya biro diisi dengan divisinya?",
-        timestamp: "4.20 PM",
-        read: false,
-        tag: "1",
-      },
-      {
-        userName: "Elvin Tanjaya",
-        lastMessage:
-          "Informasi biodata dapat disampaikan secara singkat saja Pak.",
-        timestamp: "4.20 PM",
-        read: true,
-        tag: "Sent",
-      },
-      {
-        userName: "Albertus Hadi Saputra",
-        lastMessage: "Siap Pak.",
-        timestamp: "3.15 PM",
-        read: true,
-        tag: "Sent",
-      },
-    ];
-  };
 
   const handleMessageInput = (e) => {
     setTempMessage(e.target.value);
   };
 
   const handleClickSend = () => {
-    props.handleSendNewMessage(tempMessage);
+    let newArray = formMessages;
+    let newMessage = {
+      feedbackId: formMessages.feedbackId,
+      userID: "2", // user id pemilik form
+      message: tempMessage,
+    };
+    newArray.push(newMessage);
 
-    setTempMessage("");
-    updateTextarea();
+    try {
+      axios({
+        method: "post",
+        url: `${BASE_URL}/api/v1/feedback/by-feedback-message/insert/${feedbackId}`,
+        data: newMessage,
+        headers: { "Content-Type": "application/json" }
+      }).then((res) => {
+        // find feedback by feedbackid
+        setFormMessages(newArray);
+        setTempMessage("");
+        updateTextarea();
+      })
+    } catch (error){
+      console.log(error);
+    }
   };
 
   const handleEnter = (e) => {
@@ -171,23 +92,23 @@ function Message(props) {
                 src={profilePicture}
                 alt=""
               />
-              {props.messages.userName}
+              {props.user.fullname}
             </div>
           </div>
           <div className="message-line"></div>
           <div id="message-content-wrapper">
-            {props.messages.messagesHistory.map((m) => {
+            {props.messages.map((m) => {
               return (
                 <React.Fragment>
                   <div className="message-content">
                     <div
                       className="message-content-2"
-                      id={m.userID == 1 ? "message-user-1" : "message-user-2"}
+                      id={m.userID != 2 ? "message-user-1" : "message-user-2"}
                     >
                       <div className="message-single-bubble">
                         <div id="message-single-content">{m.message}</div>
                       </div>
-                      <div id="message-single-timestamp">{m.timestamp}</div>
+                      <div id="message-single-timestamp">{m.createDateTime}</div>
                     </div>
                   </div>
                 </React.Fragment>

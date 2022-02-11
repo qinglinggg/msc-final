@@ -25,6 +25,7 @@ function Dashboard(props) {
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
+      // window.location = `/menu/${formId}`;
       body.classList.toggle("openMenu");
     });
 
@@ -35,6 +36,8 @@ function Dashboard(props) {
         }
       })
     );
+
+
     try {
       axios({
         method: "get",

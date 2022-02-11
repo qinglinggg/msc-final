@@ -1,6 +1,5 @@
 package com.mscteam.mscbackend.Form;
 
-import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

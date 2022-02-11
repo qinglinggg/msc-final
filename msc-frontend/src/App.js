@@ -217,7 +217,7 @@ class App extends React.Component {
   }
 
   handleSendNewMessage(message) {
-    let newArray = messages.messagesHistory;
+    let newArray = this.state.messages.messagesHistory;
     let newMessage = {
       userID: 2, // user id pemilik form
       message: message,
@@ -234,7 +234,7 @@ class App extends React.Component {
         <Navbar user_data={this.state.userProfiles} />
         <div className="background"></div>
         <div className="container" id="container">
-          <Menu />
+        <Menu />
           <div className="page-container" id="page-container">
             <Routes>
               <Route
@@ -247,6 +247,11 @@ class App extends React.Component {
                   />
                 }
               />
+              {/* <Route 
+                path={`menu/:formId`}
+                element={
+                  <Menu forms={this.state.forms}/>
+                }/> */}
               <Route
                 path={`/dashboard/formId/:formId`}
                 element={<Dashboard forms={this.state.forms} />}
@@ -255,7 +260,6 @@ class App extends React.Component {
                 path={`/feedback/formId/:formId`}
                 element={
                   <Feedback
-                    forms={this.state.forms}
                     formMessages_data={this.state.formMessages}
                   />
                 }
@@ -264,13 +268,18 @@ class App extends React.Component {
                 {this.state.formMessages.map((message) => {
                   count = count + 1;
                   let path = "chat-" + count;
+
+                  // coba2
+                  let user = axios.get(`${BASE_URL}/api/v1/user-profiles/${message.feedbackId}`);
+                  let feedbackMessageList = axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/${message.feedbackId}`);
+                  
                   return (
                     <Route
-                      path={`/feedback/formId/:formId/${path}`}
+                      path={`/feedback/formId/:feedbackId/${path}`}
                       element={
                         <Message
-                          messages={message}
-                          Parent={this}
+                          user={user}
+                          messages={feedbackMessageList}
                           handleSendNewMessage={this.handleSendNewMessage}
                         />
                       }

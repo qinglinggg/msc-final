@@ -5,13 +5,20 @@ import { Link, useParams } from "react-router-dom";
 // const BASE_URL = "http://localhost:8080";
 
 function Menu() {
-  const { formId } = useParams();
+
+  const {formId} = useParams();
+
+  // useEffect(() => {
+  //   let body = document.getElementById("body");
+  //   body.classList.toggle("openMenu");
+  // })
+
   return (
     <div className="menu-container" id="menu-container">
       <div className="menu-close-container">
         <ion-icon name="close-outline" id="menu-close"></ion-icon>
       </div>
-      <Link to={`/dashboard/formId/:formId`} className="sub-menu">
+      <Link to={`/dashboard/formId/${formId}`} className="sub-menu">
         Dashboard
       </Link>
       <Link to="/item1/design" className="sub-menu">
@@ -23,7 +30,7 @@ function Menu() {
       <Link to="/item1/show-results" className="sub-menu">
         Data Visualization
       </Link>
-      <Link to={`/dashboard/formId/:formId`} className="sub-menu">
+      <Link to={`/feedback/formId/${formId}`} className="sub-menu">
         Feedback
       </Link>
       <Link to="/" className="sub-menu">
