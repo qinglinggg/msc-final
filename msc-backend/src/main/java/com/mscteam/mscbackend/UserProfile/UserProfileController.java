@@ -20,36 +20,36 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/v1/user-profiles")
 @CrossOrigin("*")
 public class UserProfileController {
-    
+
     private final UserProfileService userProfileService;
 
     @Autowired
-    public UserProfileController(UserProfileService userProfileService){
+    public UserProfileController(UserProfileService userProfileService) {
         this.userProfileService = userProfileService;
     }
 
     @GetMapping
-    public List<UserProfile> getAllUserProfiles(){
+    public List<UserProfile> getAllUserProfiles() {
         return userProfileService.getAllUserProfiles();
     }
 
-    @GetMapping(value="/{id}")
-    public Optional<UserProfile> getUserProfile(@PathVariable("id") String id){
+    @GetMapping(value = "/{id}")
+    public Optional<UserProfile> getUserProfile(@PathVariable("id") String id) {
         return userProfileService.getUserProfile(id);
     }
 
-    @PostMapping(value="/insert", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public int insertUserProfile(@RequestBody UserProfile user) throws ParseException{
+    @PostMapping(value = "/insert", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public UserProfile insertUserProfile(@RequestBody UserProfile user) throws ParseException {
         return userProfileService.insertUserProfile(user);
     }
 
-    @DeleteMapping(value="/{id}")
-    public int deleteUserProfile(@PathVariable("id") String id){
+    @DeleteMapping(value = "/{id}")
+    public int deleteUserProfile(@PathVariable("id") String id) {
         return userProfileService.deleteUser(id);
     }
 
-    @PutMapping(value="/{id}")
-    public int updateUser(@PathVariable("id") String id, @RequestBody UserProfile toBeUpdated) throws ParseException{
+    @PutMapping(value = "/{id}")
+    public int updateUser(@PathVariable("id") String id, @RequestBody UserProfile toBeUpdated) throws ParseException {
         return userProfileService.updateUser(id, toBeUpdated);
     }
 }

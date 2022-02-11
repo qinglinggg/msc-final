@@ -5,13 +5,14 @@ import { Fragment } from "react";
 import Page1Items from "./Page1Items";
 import Dashboard from "./Dashboard";
 import SearchField from "react-search-field";
+import axios from "axios";
 
 class Home extends React.Component {
   constructor(props) {
     super(props);
     this.handleAddItem = this.handleAddItem.bind(this);
-    this.handleButton = this.handleButton.bind(this);
     this.searchOnChange = this.searchOnChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   state = {
@@ -33,20 +34,6 @@ class Home extends React.Component {
 
   handleAddItem() {
     this.setState({ isAdd: !this.state.isAdd });
-    // console.log(this.state.isAdd);
-  }
-
-  handleButton(obj) {
-    // console.log("msuk");
-    // obj.id = formCounter;
-    // obj.formItems = [];
-    // let currentForms = [];
-    // if (this.props.Parent.state.forms)
-    //   currentForms = this.props.Parent.state.forms;
-    // currentForms.push(obj);
-    // this.props.Parent.setState({ forms: currentForms }, () => {
-    //   console.log(this.props.Parent.state);
-    // });
   }
 
   render() {
@@ -128,12 +115,12 @@ class Home extends React.Component {
   }
 
   displayPage1() {
-    let dataShowed = this.filterData(this.props.page1_data);
+    let formsData = this.filterData(this.props.formsData);
 
     return (
       <React.Fragment>
-        {dataShowed.map((data) => (
-          <Page1Items key={data.formId} data={data} />
+        {formsData.map((data) => (
+          <Page1Items key={data.formId} data={data}/>
         ))}
         <div className="item-container">
           <div className="addNewItem" onClick={() => this.handleAddItem()}>
@@ -157,25 +144,36 @@ class Home extends React.Component {
     );
   }
 
+  handleSubmit(e, obj) {
+    let body = document.getElementById("body");
+    e.preventDefault();
+    if (obj.title == "" || obj.description == "" || obj.privacySetting == "") {
+      this.setState({ isRequired: true });
+    } else {
+      this.setState({ isRequired: false });
+      this.props.handleCreateNewForm(obj);
+    }
+  }
+
   displayPopUp() {
     let body = document.getElementById("body");
     body.classList.toggle("openPopup");
-
     let obj = {};
-    obj.name = "";
-    obj.desc = "";
-    obj.privacy = "";
-    obj.formItems = [];
+    obj.title = "";
+    obj.description = "";
+    obj.privacySetting = "";
+    obj.backgroundLink = null;
+    obj.backgroundColor = null;
 
     let nameTextarea = document.getElementById("nameInput");
-    if (nameTextarea && nameTextarea.value) obj.name = nameTextarea.value;
+    if (nameTextarea && nameTextarea.value) obj.title = nameTextarea.value;
 
     let descTextarea = document.getElementById("descInput");
-    if (descTextarea && descTextarea.value) obj.desc = descTextarea.value;
+    if (descTextarea && descTextarea.value) obj.description = descTextarea.value;
 
     let privacyTextarea = document.getElementById("privacyInput");
     if (privacyTextarea && privacyTextarea.value)
-      obj.privacy = privacyTextarea.value;
+      obj.privacySetting = privacyTextarea.value;
 
     let warningElement = (
       <React.Fragment>
@@ -191,7 +189,6 @@ class Home extends React.Component {
               className="closePopup"
               onClick={() => {
                 this.handleAddItem();
-                body.classList.toggle("openPopup");
               }}
             >
               &times;
@@ -206,15 +203,12 @@ class Home extends React.Component {
                   type="text"
                   name="name"
                   onChange={(e) => {
-                    if (e.target.value != "") obj.name = e.target.value;
-                    {
-                      console.log(obj);
-                    }
+                    if (e.target.value != "") obj.title = e.target.value;
                   }}
                 />
               </label>
               <br />
-              {this.state.isRequired && obj.name == "" ? warningElement : null}
+              {this.state.isRequired && obj.title == "" ? warningElement : null}
               <br />
               <br />
               <label>
@@ -224,15 +218,12 @@ class Home extends React.Component {
                   type="text"
                   name="desc"
                   onChange={(e) => {
-                    if (e.target.value != "") obj.desc = e.target.value;
-                    {
-                      console.log(obj);
-                    }
+                    if (e.target.value != "") obj.description = e.target.value;
                   }}
                 />
               </label>
               <br />
-              {this.state.isRequired && obj.desc == "" ? warningElement : null}
+              {this.state.isRequired && obj.description == "" ? warningElement : null}
               <br />
               <br />
               <label>
@@ -247,13 +238,10 @@ class Home extends React.Component {
                       id="anonymous"
                       value="anonymous"
                       onClick={() => {
-                        obj.privacy = "anonymous";
-                        {
-                          console.log(obj);
-                        }
+                        obj.privacySetting = "anonymous";
                       }}
                     />
-                    <label for="anonymous">Anonymous</label>
+                    <label htmlFor="anonymous">Anonymous</label>
                   </div>
                   <div>
                     <input
@@ -263,44 +251,23 @@ class Home extends React.Component {
                       id="not-anonymous"
                       value="not-anonymous"
                       onClick={() => {
-                        obj.privacy = "not anonymous";
-                        {
-                          console.log(obj);
-                        }
+                        obj.privacySetting = "not anonymous";
                       }}
                     />
-                    <label for="not-anonymous">Not Anonymous</label>
+                    <label htmlFor="not-anonymous">Not Anonymous</label>
                     <br />
                   </div>
                   <br />
                 </div>
               </label>
-              {this.state.isRequired && obj.privacy == ""
+              {this.state.isRequired && obj.privacySetting == ""
                 ? warningElement
                 : null}
               <br />
               <br />
-              <Link to="/item1/dashboard">
-                <button
-                  // onClick={() => {
-                  //   this.handleButton(obj);
-                  // }}
-                  onClick={(e) => {
-                    body.classList.toggle("openPopup");
-                    // validation
-                    console.log(obj);
-                    if (obj.name == "" || obj.desc == "" || obj.privacy == "") {
-                      this.setState({ isRequired: true });
-                      e.preventDefault();
-                    } else {
-                      this.setState({ isRequired: false });
-                      this.props.createNewForm(obj);
-                    }
-                  }}
-                >
-                  Confirm
-                </button>
-              </Link>
+              <button onClick={(e) => this.handleSubmit(e, obj)}>
+                Confirm
+              </button>
             </form>
           </div>
         </div>

@@ -1,5 +1,6 @@
 package com.mscteam.mscbackend.Form;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -9,52 +10,91 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class FormService {
-    
+
     private FormDAO formDAO;
 
     @Autowired
-    public FormService(FormDAO formDAO){
+    public FormService(FormDAO formDAO) {
         this.formDAO = formDAO;
     }
 
-    public List<Form> getAllForms(){
+    public List<Form> getAllForms() {
         return formDAO.getAllForms();
     }
 
-    public Optional<Form> getFormById(String id){
+    public Optional<Form> getFormById(String id) {
         return formDAO.getFormById(id);
     }
 
-    public int insertForm(Form form){
+    public Form insertForm(Form form) {
         return formDAO.insertForm(form);
     }
 
-    public int removeForm(String id){
+    public int removeForm(String id) {
         return formDAO.removeForm(id);
     }
 
-    public int updateForm(String id, Form toBeUpdated){
+    public int updateForm(String id, Form toBeUpdated) {
         return formDAO.updateForm(id, toBeUpdated);
     }
 
-    public int addFormItems(String id, FormItems item) {
+    public FormItems addFormItems(String id, FormItems item) {
         return formDAO.addFormItems(id, item);
+    }
+
+    public int removeFormItems(String formItemsId) {
+        return formDAO.removeFormItems(formItemsId);
     }
 
     public List<FormItems> getFormItems(String formId) {
         List<FormItems> listItems = formDAO.getFormItems(formId);
         // TODO merge and sort form items..
-        System.out.println("before: " + listItems.toString());
         Collections.sort(listItems);
-        System.out.println("after: " + listItems.toString());
         return listItems;
     }
 
-    public int addAnswerSelection(String formItemsId, FormAnswerSelection answerSelection) {
-        return formDAO.addAnswerSelection(formItemsId, answerSelection);
+    // public FormItems getFormItemsById(String formItemsId){
+    // return formDAO.getFormItemsById(formItemsId);
+    // }
+
+    public int updateFormItems(String formItemsId, FormItems toBeUpdated) {
+        return formDAO.updateFormItems(formItemsId, toBeUpdated);
+    }
+
+    Integer highestNo = 0;
+
+    public FormAnswerSelection addAnswerSelection(String formItemsId, FormAnswerSelection answerSelection) {
+        List<FormAnswerSelection> listAnswers = this.getAnswerSelection(formItemsId);
+        highestNo = 0;
+
+        listAnswers.forEach((answer) -> {
+            System.out.println(answer);
+            if (highestNo < answer.getNo()) {
+                System.out.println("answer.getNo() = " + answer.getNo());
+                highestNo = answer.getNo();
+            }
+        });
+
+        return formDAO.addAnswerSelection(formItemsId, highestNo, answerSelection);
+    }
+
+    public int updateAnswerSelection(String answerSelectionId, FormAnswerSelection toBeUpdated) {
+        return formDAO.updateAnswerSelection(answerSelectionId, toBeUpdated);
     }
 
     public List<FormAnswerSelection> getAnswerSelection(String formItemsId) {
-        return formDAO.getAnswerSelection(formItemsId);
+        List<FormAnswerSelection> listAnswers = formDAO.getAnswerSelection(formItemsId);
+        // Collections.sort(listAnswers);
+        listAnswers.sort((a1, a2) -> a1.getNo() - a2.getNo());
+        listAnswers.forEach((answer) -> System.out.println(answer));
+        return listAnswers;
+    }
+
+    public int removeAnswerSelection(String answerSelectionId) {
+        return formDAO.removeAnswerSelection(answerSelectionId);
+    }
+
+    public int removeAllAnswerSelection(String formItemsId) {
+        return formDAO.removeAllAnswerSelection(formItemsId);
     }
 }

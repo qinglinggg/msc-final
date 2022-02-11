@@ -374,8 +374,6 @@ html {
   display: grid;
   grid-template-columns: repeat(4, 0.5fr);
   grid-auto-rows: 350px;
-  align-items: center;
-  justify-items: center;
   /* border-left: var(--border-page);
   border-right: var(--border-page);
   border-bottom: var(--border-page); */
@@ -385,15 +383,33 @@ html {
 
 .item-container {
   min-height: 220px;
-  height: 250px;
-  max-height: 300px;
+  height: 270px;
   width: 200px;
+  margin: 15px;
   padding: 15px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-items: center;
   border: var(--gray-border) 1px solid;
   border-radius: 10px;
   overflow: hidden;
+}
+
+.item-container:hover {
+  cursor: pointer;
+  background-color: gray;
+  transition: 0.5s;
+}
+
+.item-container:hover .item-meta {
+  color: white;
+  transition: 0.5s;
+}
+
+.item-container:hover #item-desc {
+  color: white;
+  transition: 0.5s;
 }
 
 #item-image {
@@ -403,14 +419,17 @@ html {
 
 .item-meta {
   height: 100%;
-  margin-top: 15px;
+  width: 100%;
   color: var(--item-name);
   font-family: var(--font-roboto);
   font-size: small;
+  padding: 15px;
 }
 
 #item-name {
-  height: 40px;
+  height: fit-content;
+  margin-bottom: 5px;
+  width: 100%;
   overflow: hidden;
   font-size: medium;
   font-weight: var(--font-weight);
@@ -419,6 +438,7 @@ html {
 #item-desc {
   color: var(--item-desc);
   height: 30px;
+  width: 100%;
   overflow-x: hidden;
   overflow-y: scroll;
 }
@@ -715,7 +735,7 @@ html {
 .question {
   min-width: 550px;
   min-height: 275px;
-  height: 275px;
+  height: fit-content;
   width: 550px;
   margin: 50px;
   padding: 15px;
@@ -724,7 +744,6 @@ html {
   align-items: center;
   border: var(--gray-border) 1px solid;
   border-radius: 10px;
-  overflow-y: scroll;
   background-color: white;
 }
 
@@ -745,6 +764,12 @@ html {
 .question::-webkit-scrollbar-track-piece:end {
   background: transparent;
   margin-bottom: 15px;
+}
+
+#addQuestion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .question-area {
@@ -916,7 +941,7 @@ html {
 
 #linear-input-box {
   padding-left: 20px;
-  width: 20%;
+  width: 80px;
 }
 
 .linear-label-container {
@@ -1931,9 +1956,9 @@ html {
   color: #8e8e8e;
 }
 
-#send-icon:hover {
-  /* color: white; */
-}
+/* #send-icon:hover { */
+/* color: white; */
+/* } */
 
 #message-send {
   width: fit-content;
