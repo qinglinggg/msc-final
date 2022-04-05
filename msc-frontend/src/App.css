@@ -488,7 +488,10 @@ html {
 
 #popup-addItem {
   background-color: var(--white-use);
+  width: fit-content;
   height: fit-content;
+  max-width: 500px;
+  max-height: 500px;
   padding: 50px;
   display: flex;
   flex-direction: column;
