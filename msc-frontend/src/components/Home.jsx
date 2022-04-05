@@ -13,15 +13,15 @@ class Home extends React.Component {
     this.handleAddItem = this.handleAddItem.bind(this);
     this.searchOnChange = this.searchOnChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.updatePopupData = this.updatePopupData.bind(this);
   }
 
   state = {
     isPage1: true,
     isAdd: false,
     isRequired: false,
-
     formCounter: 0,
-    searchValue: null,
+    searchValue: null
   };
 
   handleClickPage1() {
@@ -36,63 +36,76 @@ class Home extends React.Component {
     this.setState({ isAdd: !this.state.isAdd });
   }
 
+  componentDidUpdate(prevState){
+    let body = document.getElementById("body");
+    if (this.state.isAdd == true){
+      let closePopup = document.querySelector(".closePopup");
+      console.log(closePopup);
+      if (closePopup) {
+        closePopup.addEventListener("click", () => {
+          body.classList.remove("openPopup");
+        });
+      }
+      body.classList.add("openPopup");
+    } else {
+      body.classList.remove("openPopup");
+    }
+    // this.updatePopupData();
+  }
+
   render() {
     const isPage1 = this.state.isPage1;
     let page;
-
     if (isPage1) {
       page = this.displayPage1();
     } else {
       page = this.displayPage2();
     }
-
     return (
       <React.Fragment>
         <div className="container">
-          <div className="page-container">
-            <div className="title-container">
-              <div className="page-title">Home</div>
-            </div>
-            <div id="page-content">
-              <div className="menu-bar">
-                <div id="page-selection">
-                  <div
-                    onClick={() => this.handleClickPage1()}
-                    className="page-button clicked"
-                    id="btn-page1"
-                  >
-                    Your Recent Questionnaire
-                  </div>
-                  <div
-                    onClick={() => this.handleClickPage2()}
-                    className="page-button"
-                    id="btn-page2"
-                  >
-                    Waiting to be Filled
-                  </div>
+          <div className="title-container">
+            <div className="page-title">Home</div>
+          </div>
+          <div id="page-content">
+            <div className="menu-bar">
+              <div id="page-selection">
+                <div
+                  onClick={() => this.handleClickPage1()}
+                  className="page-button clicked"
+                  id="btn-page1"
+                >
+                  Your Recent Questionnaire
                 </div>
-                <div id="page-others">
-                  <div id="page-search">
-                    <SearchField
-                      id="page-search"
-                      placeholder="Search..."
-                      value=""
-                      onChange={(value) => {
-                        console.log(value);
-                        this.searchOnChange(value);
-                      }}
-                      // searchText="Search..."
-                      classNames="test-class"
-                    />
-                  </div>
-                  <img src="" alt="" id="history-btn" />
+                <div
+                  onClick={() => this.handleClickPage2()}
+                  className="page-button"
+                  id="btn-page2"
+                >
+                  Waiting to be Filled
                 </div>
               </div>
-              <div className="list-container">{page}</div>
+              <div id="page-others">
+                <div id="page-search">
+                  <SearchField
+                    id="page-search"
+                    placeholder="Search..."
+                    value=""
+                    onChange={(value) => {
+                      console.log(value);
+                      this.searchOnChange(value);
+                    }}
+                    // searchText="Search..."
+                    classNames="test-class"
+                  />
+                </div>
+                <img src="" alt="" id="history-btn" />
+              </div>
             </div>
-            {this.state.isAdd ? this.displayPopUp() : null}
+            <div className="list-container">{page}</div>
           </div>
         </div>
+        {this.state.isAdd ? this.displayPopUp() : null}
       </React.Fragment>
     );
   }
@@ -101,7 +114,6 @@ class Home extends React.Component {
     if (!this.state.searchValue) {
       return data;
     }
-
     return data.filter((d) => {
       const dataName = d.title.toLowerCase();
       return dataName.includes(this.state.searchValue);
@@ -116,7 +128,6 @@ class Home extends React.Component {
 
   displayPage1() {
     let formsData = this.filterData(this.props.formsData);
-
     return (
       <React.Fragment>
         {formsData.map((data) => (
@@ -147,7 +158,7 @@ class Home extends React.Component {
   handleSubmit(e, obj) {
     let body = document.getElementById("body");
     e.preventDefault();
-    if (obj.title == "" || obj.description == "" || obj.privacySetting == "") {
+    if (obj['title'] == "" || obj['description'] == "" || obj['privacySetting'] == "") {
       this.setState({ isRequired: true });
     } else {
       this.setState({ isRequired: false });
@@ -155,32 +166,30 @@ class Home extends React.Component {
     }
   }
 
+  updatePopupData(){
+    let nameTextarea = document.getElementById("nameInput");
+    if (nameTextarea && nameTextarea.value != "") this.setState(this.state.obj['title'] = nameTextarea.value);
+
+    let descTextarea = document.getElementById("descInput");
+    if (descTextarea && descTextarea.value != "") this.setState(this.state.obj['description'] = descTextarea.value);
+
+    let privacyTextarea = document.getElementById("privacyInput");
+    if (privacyTextarea && privacyTextarea.value != "")
+      this.setState(this.state.obj['privacySetting'] = privacyTextarea.value);
+  }
+
   displayPopUp() {
-    let body = document.getElementById("body");
-    body.classList.toggle("openPopup");
     let obj = {};
     obj.title = "";
     obj.description = "";
     obj.privacySetting = "";
     obj.backgroundLink = null;
     obj.backgroundColor = null;
-
-    let nameTextarea = document.getElementById("nameInput");
-    if (nameTextarea && nameTextarea.value) obj.title = nameTextarea.value;
-
-    let descTextarea = document.getElementById("descInput");
-    if (descTextarea && descTextarea.value) obj.description = descTextarea.value;
-
-    let privacyTextarea = document.getElementById("privacyInput");
-    if (privacyTextarea && privacyTextarea.value)
-      obj.privacySetting = privacyTextarea.value;
-
     let warningElement = (
       <React.Fragment>
         <div id="form-warning">Please fill out the field!</div>
       </React.Fragment>
     );
-
     return (
       <React.Fragment>
         <div className="popup">
@@ -191,7 +200,7 @@ class Home extends React.Component {
                 this.handleAddItem();
               }}
             >
-              &times;
+            &times;
             </span>
             <form className="form-components">
               <h1>Make A New Questionnaire</h1>
@@ -235,7 +244,6 @@ class Home extends React.Component {
                       id="privacyInput"
                       type="radio"
                       name="privacy"
-                      id="anonymous"
                       value="anonymous"
                       onClick={() => {
                         obj.privacySetting = "anonymous";
@@ -248,7 +256,6 @@ class Home extends React.Component {
                       id="privacyInput"
                       type="radio"
                       name="privacy"
-                      id="not-anonymous"
                       value="not-anonymous"
                       onClick={() => {
                         obj.privacySetting = "not anonymous";

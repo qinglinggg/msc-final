@@ -72,9 +72,8 @@ class App extends React.Component {
 
     // MENU
 
-    let container = document.getElementById("container");
+    let pageContainer = document.getElementById("page-container");
     let background = document.querySelector(".background");
-    // let pageContainer = document.querySelector(".page-container");
     let navBar = document.getElementById("navbar");
     let body = document.getElementById("body");
     let menuClose = document.getElementById("menu-close");
@@ -100,14 +99,10 @@ class App extends React.Component {
         item.addEventListener("click", disableOpenMenu);
       });
     }
-    container.style.top = navBar.clientHeight + "px";
-    container.style.height = window.innerHeight - navBar.clientHeight + "px";
     background.style.height =
-      navBar.clientHeight + container.clientHeight + "px";
-    let newValue = container.clientHeight - 100;
-    sideMenu.style.height = newValue + "px";
+      navBar.clientHeight + pageContainer.clientHeight + "px";
+    let newValue = pageContainer.clientHeight - 100;
     sideMenu.style.left = "0";
-    sideMenu.style.top = container.style.top + "px";
   }
 
   async handleCreateNewForm(obj) {
@@ -147,99 +142,93 @@ class App extends React.Component {
     let count = 0;
     return (
       <Router>
-        <Navbar user_data={this.state.userProfiles} />
-        <div className="background"></div>
-        <div className="container" id="container">
-        <Menu />
-          <div className="page-container" id="page-container">
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <Home
-                    formsData={this.state.forms}
-                    waitingForms={this.state.waitingForms}
-                    handleCreateNewForm={this.handleCreateNewForm}
-                  />
-                }
-              />
-              {/* <Route 
-                path={`menu/:formId`}
-                element={
-                  <Menu forms={this.state.forms}/>
-                }/> */}
-              <Route
-                path={`/dashboard/formId/:formId`}
-                element={<Dashboard forms={this.state.forms} />}
-              />
-              <Route
-                path={`/item1/design`}
-                element={<Design />}
-              />
-              <Route
-                path={`/item1/invitation`}
-                element={<Invitation />}
-              />
-              <Route
-                path={`/item1/show-results`}
-                element={<DataVisualization forms={this.state.forms} formItems_data={this.state.formItems} />}
-              />
-              
-              <Route
-                path={`/feedback/formId/:formId`}
-                element={
-                  <Feedback
-                    handleSetFormMessages={this.handleSetFormMessages}
-                  />
-                }
-              />
-              <Route>
-                {this.state.formMessages ? this.state.formMessages.map((message) => {
-                  count = count + 1;
-                  let path = "chat-" + count;
-
-                  // coba2
-                  console.log(message);
-                  let user = axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/get-user/${message.feedbackId}`);
-                  let feedbackMessageList = axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/${message.feedbackId}`);
-                  
-                  return (
-                    <Route
-                      path={`/feedback/formId/:feedbackId/${path}`}
-                      element={
-                        <Message
-                          user={user}
-                          messages={feedbackMessageList}
-                          handleSendNewMessage={this.handleSendNewMessage}
-                        />
-                      }
-                    />
-                  );
-                }) : null}
-              </Route>
-
-              {/* <Route exact
-                path={"/invitation/formId=" + formData.formId }
-                component={
-                  <Invitation forms={this.state.forms} formItems_data={this.state.formItems} />
-                }
+      <Navbar user_data={this.state.userProfiles} />
+      <div className="background"></div>
+      <Menu />
+        <div className="page-container" id="page-container">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Home
+                  formsData={this.state.forms}
+                  waitingForms={this.state.waitingForms}
+                  handleCreateNewForm={this.handleCreateNewForm}
                 />
-                <Route exact
-                path={"/design/formId=" + formData.formId}
-                component={<Design forms={this.state.forms} formItems_data={this.state.formItems} />}
+              }
+            />
+            {/* <Route 
+              path={`menu/:formId`}
+              element={
+                <Menu forms={this.state.forms}/>
+              }/> */}
+            <Route
+              path={`/dashboard/formId/:formId`}
+              element={<Dashboard forms={this.state.forms} />}
+            />
+            <Route
+              path={`/item1/design`}
+              element={<Design />}
+            />
+            <Route
+              path={`/item1/invitation`}
+              element={<Invitation />}
+            />
+            <Route
+              path={`/item1/show-results`}
+              element={<DataVisualization forms={this.state.forms} formItems_data={this.state.formItems} />}
+            />
+            <Route
+              path={`/feedback/formId/:formId`}
+              element={
+                <Feedback
+                  handleSetFormMessages={this.handleSetFormMessages}
                 />
-                <Route exact
-                path={"/show-results/formId=" + formData.formId}
-                component={
-                  <DataVisualization forms={this.state.forms} formItems_data={this.state.formItems} />
-                } />
-                <Route exact
-                path={"/feedback/formId=" + formData.formId}
-                component={
-                  <Feedback forms={this.state.forms} formMessages_data={this.state.formMessages} />
-                } /> */}
-            </Routes>
-          </div>
+              }
+            />
+            <Route>
+              {this.state.formMessages ? this.state.formMessages.map((message) => {
+                count = count + 1;
+                let path = "chat-" + count;
+                // coba2
+                console.log(message);
+                let user = axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/get-user/${message.feedbackId}`);
+                let feedbackMessageList = axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/${message.feedbackId}`);    
+                return (
+                  <Route
+                    path={`/feedback/formId/:feedbackId/${path}`}
+                    element={
+                      <Message
+                        user={user}
+                        messages={feedbackMessageList}
+                        handleSendNewMessage={this.handleSendNewMessage}
+                      />
+                    }
+                  />
+                );
+              }) : null}
+            </Route>
+            {/* <Route exact
+              path={"/invitation/formId=" + formData.formId }
+              component={
+                <Invitation forms={this.state.forms} formItems_data={this.state.formItems} />
+              }
+              />
+              <Route exact
+              path={"/design/formId=" + formData.formId}
+              component={<Design forms={this.state.forms} formItems_data={this.state.formItems} />}
+              />
+              <Route exact
+              path={"/show-results/formId=" + formData.formId}
+              component={
+                <DataVisualization forms={this.state.forms} formItems_data={this.state.formItems} />
+              } />
+              <Route exact
+              path={"/feedback/formId=" + formData.formId}
+              component={
+                <Feedback forms={this.state.forms} formMessages_data={this.state.formMessages} />
+              } /> */}
+          </Routes>
         </div>
       </Router>
     );
