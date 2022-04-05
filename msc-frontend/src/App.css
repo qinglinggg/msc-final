@@ -2138,3 +2138,48 @@ html {
   color: gray;
   padding: 10px 0px 20px 0px;
 }
+
+#admin-page {
+  width: 80%;
+  height: fit-content;
+  position: relative;
+  box-shadow: 4px 5px 1px rgba(128, 128, 128, 0.5);
+  border-radius: 25px;
+  border: var(--border-page);
+  min-height: 475px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: white;
+}
+
+#admin-menu {
+  width: 25%;
+  color: black;
+  justify-content: center;
+}
+
+.admin-sub-menu {
+  display: block;
+
+}
+
+#admin-menu .admin-sub-menu {
+  text-decoration: none;
+  color: black;
+  font-size: large;
+  /* align-self: center; */
+  text-align: left;
+  padding-left: 10%;
+  margin-bottom: 7px;
+}
+
+.admin-menu-divider {
+  border: var(--border-page);
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  width: 75%;
+  color: black;
+  margin-bottom: 5%;
+}

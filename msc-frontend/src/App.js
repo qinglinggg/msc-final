@@ -22,6 +22,7 @@ import Message from "./components/Message";
 import Preview from "./components/Preview";
 import RouteDashboard from "./components/Dashboard";
 import { render } from "react-dom";
+import AdminDashboard from "./components/admin/AdminDashboard";
 
 const BASE_URL = "http://localhost:8080";
 
@@ -217,6 +218,11 @@ class App extends React.Component {
                   );
                 }) : null}
               </Route>
+
+              <Route
+                path={`/admin`}
+                element={<AdminDashboard />}
+              />
 
               {/* <Route exact
                 path={"/invitation/formId=" + formData.formId }

@@ -36,6 +36,9 @@ function Menu() {
       <Link to="/" className="sub-menu">
         Back to Home
       </Link>
+      {/* <Link to={`/admin`} className="sub-menu">
+        Admin
+      </Link> */}
     </div>
   );
 }

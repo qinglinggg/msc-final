@@ -1,5 +1,6 @@
 FROM jenkins/jenkins:lts
 USER root
+ENV http_proxy http://u072468:lingling2809@kpproxygsit:8080
 RUN apt-get update && apt-get -y install docker.io
 RUN apt-get update && apt-get -y install sudo
 RUN apt-get update && apt-get -y install docker-compose
