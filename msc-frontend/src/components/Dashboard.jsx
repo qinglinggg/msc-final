@@ -502,6 +502,9 @@ function Dashboard(props) {
       {/* kondisi kalo udah ada question, tampilin question dulu, baru AddQuestion*/}
       {/* kalo belum ada, lgsg tombol Add Question aja */}
       {/* AddQuestion -> tombol dulu baru kalo dipencet muncul menu tambahan */}
+      <div id="page-breadcrumbs">
+        Breadcrumbs
+      </div>
       <div id="page-content">
         <div className="questions-container">{displayQuestion()}</div>
       </div>
