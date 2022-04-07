@@ -36,9 +36,25 @@ class Invitation extends React.Component {
       },
     ],
     openTargetedUserEmail: false,
+    breadcrumbs: this.props.breadcrumbs,
   };
 
   componentDidMount() {
+
+    let breadcrumbs = this.state.breadcrumbs;
+    breadcrumbs.push(
+      {
+        // simpen currentformdata
+        page: "formId",
+      },
+      {
+        page: "Invitation",
+        // path: `${BASE_URL}/design/formId/:formId`,
+        path: `item1/invitation`,
+      }
+    )
+    this.setState({breadcrumbs});
+
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {

@@ -54,6 +54,7 @@ class Home extends React.Component {
   }
 
   render() {
+
     const isPage1 = this.state.isPage1;
     let page;
     if (isPage1) {

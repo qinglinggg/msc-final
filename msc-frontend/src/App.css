@@ -2154,3 +2154,233 @@ body {
   color: gray;
   padding: 10px 0px 20px 0px;
 }
+
+#admin-page {
+  width: 80%;
+  height: 480px;
+  position: relative;
+  box-shadow: 4px 5px 1px rgba(128, 128, 128, 0.5);
+  border-radius: 25px;
+  border: var(--border-page);
+  min-height: 475px;
+  display: flex;
+  flex-direction: row;
+  background-color: white;
+}
+
+#admin-menu {
+  height: 45em;
+  width: 25%;
+  /* background-color: rgb(41, 209, 167); */
+  background-color: var(--navbar-color);
+  border-radius: 25px 0px 0px 25px;
+  justify-content: center;
+  padding-top: 30px;
+  align-items: center;
+}
+
+.admin-sub-menu {
+  display: block;
+}
+
+#admin-menu .admin-sub-menu {
+  color: whitesmoke;
+  font-weight: 300;
+  font-size: large;
+  text-align: left;
+  padding-left: 10%;
+  margin-bottom: 7px;
+  cursor: pointer;
+}
+
+#admin-menu .admin-sub-menu-active {
+  color: whitesmoke;
+  font-weight: 500;
+  font-size: large;
+  text-align: left;
+  padding-left: 10%;
+  margin-bottom: 7px;
+  cursor: pointer;
+}
+
+#sub-menu-exit {
+  text-decoration: none;
+}
+
+.admin-menu-divider {
+  border: var(--border-page);
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  width: 90%;
+  color: black;
+  margin-bottom: 5%;
+  align-self: center;
+}
+
+#admin-content {
+  width: 75%;
+  height: 92%;
+  display: block;
+  padding: 20px 0px 20px 0px;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+#admin-content::-webkit-scrollbar {
+  width: 5px; /* width of the entire scrollbar */
+}
+
+#admin-content::-webkit-scrollbar-thumb {
+  border-radius: 20px; /* roundness of the scroll thumb */
+  border: 3px solid rgba(128, 128, 128, 0.233); /* creates padding around scroll thumb */
+}
+
+#admin-content::-webkit-scrollbar-track-piece:start {
+  background: transparent;
+  margin-top: 15px;
+}
+
+#admin-content::-webkit-scrollbar-track-piece:end {
+  background: transparent;
+  margin-bottom: 15px;
+}
+
+#welcome-box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#welcome-title {
+  width: fit-content;
+  height: fit-content;
+  font-size: x-large;
+  align-self: center;
+  padding: 10px;
+}
+
+#welcome-quotes {
+  width: fit-content;
+  height: fit-content;
+  font-size: large;
+  align-self: center;
+  font-style: italic;
+}
+
+
+#logging-box {
+  width: 90%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0px 15px 25px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+}
+
+#logging-datetime {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+}
+
+#logging-date {
+  font-size: small;
+  padding-right: 10px;
+  color: gray;
+  font-style: italic;
+  font-weight: 500;
+}
+
+#logging-time {
+  font-size: small;
+  font-style: italic;
+  color: gray;
+}
+
+#logging-message {
+  font-size: medium;
+}
+
+#support-box {
+  width: 90%;
+  height: fit-content;
+  margin: 15px 0px 15px 25px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: row;
+}
+
+#support-left-box {
+  height: fit-content;
+  margin-right: 5px;
+  align-self: center;
+}
+
+#support-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  object-fit: cover;
+}
+
+#support-right-box {
+  width: 90%;
+  height: fit-content;
+  margin-left: 7px;
+  align-items: center;
+}
+
+#support-divider {
+  margin: 0px 10px 0px 10px;
+  border-right: 1px solid #ddd;
+}
+
+#support-name {
+  font-size: medium;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+#support-message {
+  font-size: 15px;
+}
+
+#config-box {
+  height: 100%;
+  width: 90%;
+}
+
+.config-row {
+  width: 100%;
+  height: fit-content;
+  padding: 10px 10px 10px 20px;
+  margin: 10px 20px 10px 30px;
+  display: flex;
+  flex-direction: row;
+}
+
+.config-title {
+  font-size: medium;
+  font-weight: 400;
+  width: 30%;
+  align-self: center;
+}
+
+.config-input {
+  width: 50%;
+  border: 1px solid gainsboro;
+  padding: 15px 20px 15px 17px;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+/* added breadcrumbs */
+

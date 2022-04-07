@@ -6,6 +6,7 @@ import {
   Routes,
   Route,
   useParams,
+  Link,
 } from "react-router-dom";
 import axios from "axios";
 // import "bootstrap/dist/css/bootstrap.css";
@@ -22,6 +23,7 @@ import Message from "./components/Message";
 import Preview from "./components/Preview";
 import RouteDashboard from "./components/Dashboard";
 import { render } from "react-dom";
+import AdminDashboard from "./components/admin/AdminDashboard";
 
 const BASE_URL = "http://localhost:8080";
 
@@ -44,6 +46,13 @@ class App extends React.Component {
         title: "Survey 1",
         description: "Mengisi survey 1",
       },
+    ],
+
+    breadcrumbs: [
+      {
+        page: "Home",
+        path: "/"
+      }
     ],
 
   }
@@ -138,22 +147,131 @@ class App extends React.Component {
     this.setState({formMessages});
   }
 
+  // handleBreadcrumbs(label, path) {
+
+  //   let newBreadcrumbs = [];
+  //   if(this.state.breadcrumbs) newBreadcrumbs = [...this.state.breadcrumbs];
+
+  //   let obj = {
+  //     label: label,
+  //     path: path,
+  //   };
+    
+  //   newBreadcrumbs.push(obj);
+
+  //   this.setState({breadcrumbs: newBreadcrumbs});
+  
+  // }
+
   render() {
     let count = 0;
     return (
       <Router>
-      <Navbar user_data={this.state.userProfiles} />
-      <div className="background"></div>
-      <Menu />
-        <div className="page-container" id="page-container">
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <Home
-                  formsData={this.state.forms}
-                  waitingForms={this.state.waitingForms}
-                  handleCreateNewForm={this.handleCreateNewForm}
+        <Navbar user_data={this.state.userProfiles} />
+        <div className="background"></div>
+        <div className="container" id="container"></div>
+        <Menu 
+          breadcrumbs={this.state.breadcrumbs}
+
+        />
+          <div className="page-container" id="page-container">
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <Home
+                    formsData={this.state.forms}
+                    waitingForms={this.state.waitingForms}
+                    handleCreateNewForm={this.handleCreateNewForm}
+                    
+                  />
+                }
+              />
+              {/* <Route 
+                path={`menu/:formId`}
+                element={
+                  <Menu forms={this.state.forms}/>
+                }/> */}
+              <Route
+                path={`/dashboard/formId/:formId`}
+                element={
+                  <Dashboard 
+                    forms={this.state.forms} 
+                    breadcrumbs={this.state.breadcrumbs} 
+                  />
+                }
+              />
+              <Route
+                path={`/item1/design`}
+                element={
+                  <Design 
+                    breadcrumbs={this.state.breadcrumbs} 
+                  />
+                }
+              />
+              <Route
+                path={`/item1/invitation`}
+                element={
+                  <Invitation 
+                    breadcrumbs={this.state.breadcrumbs}
+                  />
+                }
+              />
+              <Route
+                path={`/item1/show-results`}
+                element={
+                  <DataVisualization 
+                    forms={this.state.forms} 
+                    formItems_data={this.state.formItems} 
+                    breadcrumbs={this.state.breadcrumbs}
+                  />}
+              />
+              
+              <Route
+                path={`/feedback/formId/:formId`}
+                element={
+                  <Feedback
+                    handleSetFormMessages={this.handleSetFormMessages}
+                    breadcrumbs={this.state.breadcrumbs}
+                  />
+                }
+              />
+              <Route>
+                {this.state.formMessages ? this.state.formMessages.map((message) => {
+                  count = count + 1;
+                  let path = "chat-" + count;
+
+                  // coba2
+                  console.log(message);
+                  let user = axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/get-user/${message.feedbackId}`);
+                  let feedbackMessageList = axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/${message.feedbackId}`);
+                  
+                  return (
+                    <Route
+                      path={`/feedback/formId/:feedbackId/${path}`}
+                      element={
+                        <Message
+                          user={user}
+                          messages={feedbackMessageList}
+                          handleSendNewMessage={this.handleSendNewMessage}
+                          breadcrumbs={this.state.breadcrumbs}
+                        />
+                      }
+                    />
+                  );
+                }) : null}
+              </Route>
+
+              <Route
+                path={`/admin`}
+                element={<AdminDashboard />}
+              />
+
+              {/* <Route exact
+                path={"/invitation/formId=" + formData.formId }
+                component={
+                  <Invitation forms={this.state.forms} formItems_data={this.state.formItems} />
+                }
                 />
               }
             />

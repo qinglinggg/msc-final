@@ -5,7 +5,7 @@ import { Link, useParams } from "react-router-dom";
 // const BASE_URL = "http://localhost:8080";
 
 function Menu() {
-
+  
   const {formId} = useParams();
 
   // useEffect(() => {
@@ -36,6 +36,9 @@ function Menu() {
       <Link to="/" className="sub-menu">
         Back to Home
       </Link>
+      {/* <Link to={`/admin`} className="sub-menu">
+        Admin
+      </Link> */}
     </div>
   );
 }

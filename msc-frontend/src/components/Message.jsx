@@ -10,10 +10,24 @@ function Message(props) {
   const [tempMessage, setTempMessage] = useState("");
   const [user, setUser] = useState({});
   const { feedbackId } = useParams(); // ?
+  const [breadcrumbs, setBreadcrumbs] = useState(props.breadcrumbs);
 
   const BASE_URL = "http://localhost:8080";
 
   useEffect(() => {
+
+    setBreadcrumbs(
+      breadcrumbs.push(
+        {
+          page: "formId",
+        },
+        {
+          page: "Feedback",
+          path: `${BASE_URL}/feedback/formId/:formId`,
+        }
+      )
+    )
+
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
