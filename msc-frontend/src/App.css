@@ -544,6 +544,7 @@ body {
   margin-top: 15px;
   border: 1px solid gray;
   border-radius: 15px;
+  padding: 5px 10px 5px 10px;
 }
 
 .form-components .form-options {
