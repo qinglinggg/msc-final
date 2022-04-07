@@ -169,7 +169,6 @@ class App extends React.Component {
       <Router>
         <Navbar user_data={this.state.userProfiles} />
         <div className="background"></div>
-        <div className="container" id="container"></div>
         <Menu 
           breadcrumbs={this.state.breadcrumbs}
 
@@ -267,85 +266,15 @@ class App extends React.Component {
                 element={<AdminDashboard />}
               />
 
-              {/* <Route exact
-                path={"/invitation/formId=" + formData.formId }
-                component={
-                  <Invitation forms={this.state.forms} formItems_data={this.state.formItems} />
-                }
-                />
-              }
-            />
-            {/* <Route 
-              path={`menu/:formId`}
-              element={
-                <Menu forms={this.state.forms}/>
-              }/> */}
-            <Route
-              path={`/dashboard/formId/:formId`}
-              element={<Dashboard forms={this.state.forms} />}
-            />
-            <Route
-              path={`/item1/design`}
-              element={<Design />}
-            />
-            <Route
-              path={`/item1/invitation`}
-              element={<Invitation />}
-            />
-            <Route
-              path={`/item1/show-results`}
-              element={<DataVisualization forms={this.state.forms} formItems_data={this.state.formItems} />}
-            />
-            <Route
-              path={`/feedback/formId/:formId`}
-              element={
-                <Feedback
-                  handleSetFormMessages={this.handleSetFormMessages}
-                />
-              }
-            />
-            <Route>
-              {this.state.formMessages ? this.state.formMessages.map((message) => {
-                count = count + 1;
-                let path = "chat-" + count;
-                // coba2
-                console.log(message);
-                let user = axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/get-user/${message.feedbackId}`);
-                let feedbackMessageList = axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/${message.feedbackId}`);    
-                return (
-                  <Route
-                    path={`/feedback/formId/:feedbackId/${path}`}
-                    element={
-                      <Message
-                        user={user}
-                        messages={feedbackMessageList}
-                        handleSendNewMessage={this.handleSendNewMessage}
-                      />
-                    }
+              <Route
+                path={`/preview/formId/:formId`}
+                element={
+                  <Preview 
+                    forms={this.state.forms} 
+                    breadcrumbs={this.state.breadcrumbs} 
                   />
-                );
-              }) : null}
-            </Route>
-            {/* <Route exact
-              path={"/invitation/formId=" + formData.formId }
-              component={
-                <Invitation forms={this.state.forms} formItems_data={this.state.formItems} />
-              }
+                }
               />
-              <Route exact
-              path={"/design/formId=" + formData.formId}
-              component={<Design forms={this.state.forms} formItems_data={this.state.formItems} />}
-              />
-              <Route exact
-              path={"/show-results/formId=" + formData.formId}
-              component={
-                <DataVisualization forms={this.state.forms} formItems_data={this.state.formItems} />
-              } />
-              <Route exact
-              path={"/feedback/formId=" + formData.formId}
-              component={
-                <Feedback forms={this.state.forms} formMessages_data={this.state.formMessages} />
-              } /> */}
           </Routes>
         </div>
       </Router>

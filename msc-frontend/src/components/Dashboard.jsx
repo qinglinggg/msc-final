@@ -46,7 +46,6 @@ function Dashboard(props) {
     setCurrentFormData(
       props.forms.map((formData) => {
         if (formData.formId == formId) {
-          console.log("ketemu");
           return formData;
         }
       })
@@ -93,6 +92,7 @@ function Dashboard(props) {
 
   const handleVisibility = () => {
     setOpenVisibility(!openVisibility);
+    window.location = `/preview/formId/${formId}`;
   };
 
   const handleSettings = () => {
