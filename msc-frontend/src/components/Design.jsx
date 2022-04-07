@@ -15,6 +15,7 @@ class Design extends React.Component {
   state = {
     selectedBackgroundOption: "No background",
     selectedColorOption: "White",
+    breadcrumbs: this.props.breadcrumbs,
   };
 
   backgroundOptions = [
@@ -35,6 +36,21 @@ class Design extends React.Component {
   ];
 
   componentDidMount() {
+
+    let breadcrumbs = this.state.breadcrumbs;
+    breadcrumbs.push(
+      {
+        // simpen currentformdata
+        page: "formId", 
+      },
+      {
+        page: "Design",
+        // path: `${BASE_URL}/design/formId/:formId`,
+        path: `item1/design`,
+      }
+    )
+    this.setState({breadcrumbs});
+
     this.setState({ formItems: this.props.formItems_data });
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");

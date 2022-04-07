@@ -6,6 +6,7 @@ import {
   Routes,
   Route,
   useParams,
+  Link,
 } from "react-router-dom";
 import axios from "axios";
 // import "bootstrap/dist/css/bootstrap.css";
@@ -45,6 +46,13 @@ class App extends React.Component {
         title: "Survey 1",
         description: "Mengisi survey 1",
       },
+    ],
+
+    breadcrumbs: [
+      {
+        page: "Home",
+        path: "/"
+      }
     ],
 
   }
@@ -144,6 +152,22 @@ class App extends React.Component {
     this.setState({formMessages});
   }
 
+  // handleBreadcrumbs(label, path) {
+
+  //   let newBreadcrumbs = [];
+  //   if(this.state.breadcrumbs) newBreadcrumbs = [...this.state.breadcrumbs];
+
+  //   let obj = {
+  //     label: label,
+  //     path: path,
+  //   };
+    
+  //   newBreadcrumbs.push(obj);
+
+  //   this.setState({breadcrumbs: newBreadcrumbs});
+  
+  // }
+
   render() {
     let count = 0;
     return (
@@ -151,7 +175,10 @@ class App extends React.Component {
         <Navbar user_data={this.state.userProfiles} />
         <div className="background"></div>
         <div className="container" id="container">
-        <Menu />
+        <Menu 
+          breadcrumbs={this.state.breadcrumbs}
+
+        />
           <div className="page-container" id="page-container">
             <Routes>
               <Route
@@ -161,6 +188,7 @@ class App extends React.Component {
                     formsData={this.state.forms}
                     waitingForms={this.state.waitingForms}
                     handleCreateNewForm={this.handleCreateNewForm}
+                    
                   />
                 }
               />
@@ -171,19 +199,37 @@ class App extends React.Component {
                 }/> */}
               <Route
                 path={`/dashboard/formId/:formId`}
-                element={<Dashboard forms={this.state.forms} />}
+                element={
+                  <Dashboard 
+                    forms={this.state.forms} 
+                    breadcrumbs={this.state.breadcrumbs} 
+                  />
+                }
               />
               <Route
                 path={`/item1/design`}
-                element={<Design />}
+                element={
+                  <Design 
+                    breadcrumbs={this.state.breadcrumbs} 
+                  />
+                }
               />
               <Route
                 path={`/item1/invitation`}
-                element={<Invitation />}
+                element={
+                  <Invitation 
+                    breadcrumbs={this.state.breadcrumbs}
+                  />
+                }
               />
               <Route
                 path={`/item1/show-results`}
-                element={<DataVisualization forms={this.state.forms} formItems_data={this.state.formItems} />}
+                element={
+                  <DataVisualization 
+                    forms={this.state.forms} 
+                    formItems_data={this.state.formItems} 
+                    breadcrumbs={this.state.breadcrumbs}
+                  />}
               />
               
               <Route
@@ -191,6 +237,7 @@ class App extends React.Component {
                 element={
                   <Feedback
                     handleSetFormMessages={this.handleSetFormMessages}
+                    breadcrumbs={this.state.breadcrumbs}
                   />
                 }
               />
@@ -212,6 +259,7 @@ class App extends React.Component {
                           user={user}
                           messages={feedbackMessageList}
                           handleSendNewMessage={this.handleSendNewMessage}
+                          breadcrumbs={this.state.breadcrumbs}
                         />
                       }
                     />

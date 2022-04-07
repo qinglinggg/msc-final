@@ -20,8 +20,22 @@ function Dashboard(props) {
   const [currentFormData, setCurrentFormData] = useState();
   const [timeout, setTimeout] = useState(0);
   const { formId } = useParams();
+  const [breadcrumbs, setBreadcrumbs] = useState(props.breadcrumbs);
 
   useEffect(() => {
+
+    // setBreadcrumbs(
+    //   breadcrumbs.push(
+    //     {
+    //       page: formId,
+    //     },
+    //     {
+    //       page: "Dashboard",
+    //       path: `${BASE_URL}/dashboard/formId/${formId}`,
+    //     }
+    //   )
+    // )
+
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
@@ -32,11 +46,11 @@ function Dashboard(props) {
     setCurrentFormData(
       props.forms.map((formData) => {
         if (formData.formId == formId) {
+          console.log("ketemu");
           return formData;
         }
       })
     );
-
 
     try {
       axios({
@@ -60,6 +74,7 @@ function Dashboard(props) {
     } catch (error) {
       console.log(error);
     }
+
   }, []); // run once
 
   // useEffect(() => {
@@ -69,6 +84,12 @@ function Dashboard(props) {
   //     body.classList.toggle("openMenu");
   //   });
   // });
+
+  const handleBreadcrumbs = () => {
+    let label = "Dashboard";
+    let path = "/dashboard";
+    props.handleBreadcrumbs(label, path);
+  }
 
   const handleVisibility = () => {
     setOpenVisibility(!openVisibility);
@@ -502,9 +523,15 @@ function Dashboard(props) {
       {/* kondisi kalo udah ada question, tampilin question dulu, baru AddQuestion*/}
       {/* kalo belum ada, lgsg tombol Add Question aja */}
       {/* AddQuestion -> tombol dulu baru kalo dipencet muncul menu tambahan */}
-      <div id="page-breadcrumbs">
-        Breadcrumbs
-      </div>
+      {/* <div id="page-breadcrumbs">
+        {props.breadcrumbs.map((b) => {
+          return (
+            <div id="page-breadcrumbs-items">
+              <Link ></Link>
+            </div> 
+          )
+        })}
+      </div> */}
       <div id="page-content">
         <div className="questions-container">{displayQuestion()}</div>
       </div>

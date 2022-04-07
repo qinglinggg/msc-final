@@ -33,6 +33,21 @@ class DataVisualization extends React.Component {
   ];
 
   componentDidMount() {
+
+    let breadcrumbs = this.state.breadcrumbs;
+    breadcrumbs.push(
+      {
+        // simpen currentformdata
+        page: "formId",
+      },
+      {
+        page: "Data Visualization",
+        // path: `${BASE_URL}/design/formId/:formId`,
+        path: `item1/show-results`,
+      }
+    )
+    this.setState({breadcrumbs});
+
     this.setState({ formItems: this.props.formItems_data });
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
