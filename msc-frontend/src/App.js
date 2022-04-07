@@ -147,32 +147,14 @@ class App extends React.Component {
     this.setState({formMessages});
   }
 
-  // handleBreadcrumbs(label, path) {
-
-  //   let newBreadcrumbs = [];
-  //   if(this.state.breadcrumbs) newBreadcrumbs = [...this.state.breadcrumbs];
-
-  //   let obj = {
-  //     label: label,
-  //     path: path,
-  //   };
-    
-  //   newBreadcrumbs.push(obj);
-
-  //   this.setState({breadcrumbs: newBreadcrumbs});
-  
-  // }
-
   render() {
     let count = 0;
     return (
       <Router>
         <Navbar user_data={this.state.userProfiles} />
         <div className="background"></div>
-        <div className="container" id="container"></div>
         <Menu 
           breadcrumbs={this.state.breadcrumbs}
-
         />
           <div className="page-container" id="page-container">
             <Routes>
@@ -183,15 +165,9 @@ class App extends React.Component {
                     formsData={this.state.forms}
                     waitingForms={this.state.waitingForms}
                     handleCreateNewForm={this.handleCreateNewForm}
-                    
                   />
                 }
               />
-              {/* <Route 
-                path={`menu/:formId`}
-                element={
-                  <Menu forms={this.state.forms}/>
-                }/> */}
               <Route
                 path={`/dashboard/formId/:formId`}
                 element={
