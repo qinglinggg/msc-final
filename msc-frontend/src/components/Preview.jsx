@@ -1,8 +1,11 @@
 import React, { Component, useEffect, useState } from "react";
+import axios from "axios";
 import iconMenubarGrey from "./images/menubarGrey.png";
 import { Link, useParams } from "react-router-dom";
 import iconVisibility2 from "./images/visibility2.png";
 import iconSettings from "./images/settings.png";
+
+const BASE_URL = "http://localhost:8080";
 
 function Preview(props) {
   const [openSettings, setOpenSettings] = useState(false);
@@ -46,13 +49,29 @@ function Preview(props) {
 
   const displayQuestion = () => {
     let questions = formItems;
-    let lastIndex = questions.length;
+    let length = formItems.length;
+
+    return (
+      <div className="preview-container">
+        {
+          formItems ? (
+            <div id="preview-empty-list">
+              There is no question in the list
+            </div>
+          ) : displayQuestionCard(questions, length)
+        }
+      </div>
+    )
+  }
+
+  const displayQuestionCard = (questions, length) => {
     let current = questions.find(
       (question) => question.id == index
     );
     let loadAnswerField;
+
     return (
-      <div className="preview-container">
+      <React.Fragment>
         {index == 1 ? (
           <div id="preview-back-null" />
         ) : (
@@ -64,6 +83,7 @@ function Preview(props) {
             />
           </div>
         )}
+
         <div className="preview-flex">
           <div className="preview-field">
             {index}. {current.question}
@@ -82,7 +102,7 @@ function Preview(props) {
               : null}
           </div>
         </div>
-        {index == lastIndex ? (
+        {index == length ? (
           <div id="preview-next-null" />
         ) : (
           <div id="preview-next-icon-animation">
@@ -93,7 +113,7 @@ function Preview(props) {
             />
           </div>
         )}
-      </div>
+      </React.Fragment>
     );
   }
 

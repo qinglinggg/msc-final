@@ -24,18 +24,6 @@ function Dashboard(props) {
 
   useEffect(() => {
 
-    // setBreadcrumbs(
-    //   breadcrumbs.push(
-    //     {
-    //       page: formId,
-    //     },
-    //     {
-    //       page: "Dashboard",
-    //       path: `${BASE_URL}/dashboard/formId/${formId}`,
-    //     }
-    //   )
-    // )
-
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
