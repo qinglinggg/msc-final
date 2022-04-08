@@ -25,7 +25,7 @@ import RouteDashboard from "./components/Dashboard";
 import { render } from "react-dom";
 import AdminDashboard from "./components/admin/AdminDashboard";
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://10.61.38.193:8080";
 
 class App extends React.Component {
   constructor(props) {

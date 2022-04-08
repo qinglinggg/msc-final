@@ -19,6 +19,7 @@ function DataVisualization(props) {
   const [summaryPage, setSummaryPage] = useState(null);
   const [privacyCheck, setPrivacyCheck] = useState(false);
   const [breadcrumbs, setBreadcrumbs] = useState(props.breadcrumbs);
+  let componentRef = useRef();
 
   const exportOptions = [
     { value: "pdf", label: ".pdf" },
@@ -64,11 +65,10 @@ function DataVisualization(props) {
   }
 
   const displaySummaryPage = () => {
-    const componentRef = useRef();
     return (
       <React.Fragment>
         <Summary
-          ref={(ref) => (componentRef = ref)}
+          ref={componentRef}
           formItems_data={props.formItems_data}
         />
       </React.Fragment>
@@ -106,12 +106,11 @@ function DataVisualization(props) {
   }
 
   const displayExportToPdf = () => {
-    const componentRef = useRef();
     return (
       <React.Fragment>
         <div className="preview-box">
-          <div className="preview" ref={(ref) => (componentRef = ref)}>
-            <Summary formItems_data={props.formItems_data} />
+          <div className="preview" ref={ref => componentRef = ref} >
+            <Summary formItems_data={props.formItems_data}  />
           </div>
         </div>
         <ReactToPrint

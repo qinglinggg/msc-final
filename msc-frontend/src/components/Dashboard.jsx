@@ -7,7 +7,7 @@ import iconMenubarGrey from "./images/menubarGrey.png";
 import iconVisibility from "./images/visibility.png";
 import iconSettings from "./images/settings.png";
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://10.61.38.193:8080";
 
 function Dashboard(props) {
   const [testing, setTesting] = useState(false);

@@ -2,10 +2,10 @@ import React, { Component } from "react";
 import Graph from "./functional-components/Graph";
 
 const Summary = React.forwardRef((props, ref) => {
-    let counter = 0;
-    return (
-      <React.Fragment>
-        {this.props.formItems_data.map((data) => {
+  let counter = 0;
+  return (
+    <React.Fragment>
+        {props.formItems_data.map((data) => {
           counter += 1;
           return (
             <div className="result-container">
@@ -22,9 +22,8 @@ const Summary = React.forwardRef((props, ref) => {
             </div>
           );
         })}
-      </React.Fragment>
-    );
-  }
-)
+    </React.Fragment>
+  );
+})
 
 export default Summary;
