@@ -425,6 +425,7 @@ body {
   font-family: var(--font-roboto);
   font-size: small;
   padding: 15px;
+  text-decoration: none;
 }
 
 #item-name {

@@ -56,7 +56,7 @@ class Preview extends Component {
               onClick={() => this.handleSettings()}
               src={iconSettings}
               alt=""
-            />
+            />m
             {this.state.openSettings ? this.displaySettings() : null}
           </div>
         </div>

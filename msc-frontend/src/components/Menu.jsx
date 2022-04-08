@@ -4,9 +4,9 @@ import { Link, useParams } from "react-router-dom";
 
 // const BASE_URL = "http://localhost:8080";
 
-function Menu() {
+function Menu(props) {
   
-  const {formId} = useParams();
+  // const {formId} = useParams();
 
   // useEffect(() => {
   //   let body = document.getElementById("body");
@@ -18,22 +18,22 @@ function Menu() {
       <div className="menu-close-container">
         <ion-icon name="close-outline" id="menu-close"></ion-icon>
       </div>
-      <Link to={`/dashboard/formId/${formId}`} className="sub-menu">
+      <Link className="sub-menu" to={`/dashboard/formId/${props.currentSelectedForm}`}>
         Dashboard
       </Link>
-      <Link to="/item1/design" className="sub-menu">
+      <Link className="sub-menu" to={`/design/formId/${props.currentSelectedForm}`}>
         Design
       </Link>
-      <Link to="/item1/invitation" className="sub-menu">
+      <Link className="sub-menu" to={`/invitation/formId/${props.currentSelectedForm}`}>
         Invitation
       </Link>
-      <Link to="/item1/show-results" className="sub-menu">
+      <Link className="sub-menu" to={`/show-results/formId/${props.currentSelectedForm}`}>
         Data Visualization
       </Link>
-      <Link to={`/feedback/formId/${formId}`} className="sub-menu">
+      <Link className="sub-menu" to={`/feedback/formId/${props.currentSelectedForm}`}>
         Feedback
       </Link>
-      <Link to="/" className="sub-menu">
+      <Link className="sub-menu" to={`/`}>
         Back to Home
       </Link>
       {/* <Link to={`/admin`} className="sub-menu">

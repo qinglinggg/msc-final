@@ -132,7 +132,11 @@ class Home extends React.Component {
     return (
       <React.Fragment>
         {formsData.map((data) => (
-          <Page1Items key={data.formId} data={data}/>
+          <Page1Items 
+            key={data.formId} 
+            data={data}
+            handleSetCurrentSelectedForm={this.props.handleSetCurrentSelectedForm} 
+          />
         ))}
         <div className="item-container">
           <div className="addNewItem" onClick={() => this.handleAddItem()}>

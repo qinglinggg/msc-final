@@ -32,6 +32,8 @@ class App extends React.Component {
     super(props);
     this.handleCreateNewForm = this.handleCreateNewForm.bind(this);
     this.handleSetFormMessages = this.handleSetFormMessages.bind(this);
+    this.handleCurrentSelectedForm = this.handleCurrentSelectedForm.bind(this);
+    this.handleSetCurrentSelectedForm = this.handleSetCurrentSelectedForm.bind(this);
   }
 
   state = {
@@ -55,6 +57,8 @@ class App extends React.Component {
       }
     ],
 
+    currentSelectedForm: "",
+
   }
 
   componentDidMount() {
@@ -66,6 +70,8 @@ class App extends React.Component {
       const forms = res.data;
       this.setState({ forms });
     });
+    this.setState({currentSelectedForm: ""});
+
     // axios.get(`${BASE_URL}/api/v1/waitingForms`).then(async (res) => {
     //   const waitingForms = res.data;
     //   this.setState({ waitingForms });
@@ -111,6 +117,12 @@ class App extends React.Component {
     sideMenu.style.left = "0";
   }
 
+  handleCurrentSelectedForm(formId) {
+    if(!this.state.currentSelectedForm){
+      this.setState({currentSelectedForm: formId});
+    }
+  }
+
   async handleCreateNewForm(obj) {
     let formsData = [...this.state.forms];
     try {
@@ -122,6 +134,7 @@ class App extends React.Component {
       }).then((response) => {
         formsData.push(response.data);
         this.setState({ forms: formsData });
+        this.handleSetCurrentSelectedForm(response.data.formId);
         window.location = `/dashboard/formId/${response.data.formId}`;
       });
     } catch (error) {
@@ -144,6 +157,10 @@ class App extends React.Component {
     this.setState({formMessages});
   }
 
+  handleSetCurrentSelectedForm(formId){
+    this.setState({currentSelectedForm : formId});
+  }
+
   render() {
     let count = 0;
     return (
@@ -152,6 +169,7 @@ class App extends React.Component {
         <div className="background"></div>
         <Menu 
           breadcrumbs={this.state.breadcrumbs}
+          currentSelectedForm={this.state.currentSelectedForm}
         />
           <div className="page-container" id="page-container">
             <Routes>
@@ -162,6 +180,7 @@ class App extends React.Component {
                     formsData={this.state.forms}
                     waitingForms={this.state.waitingForms}
                     handleCreateNewForm={this.handleCreateNewForm}
+                    handleSetCurrentSelectedForm={this.handleSetCurrentSelectedForm}
                   />
                 }
               />
@@ -170,12 +189,13 @@ class App extends React.Component {
                 element={
                   <Dashboard 
                     forms={this.state.forms} 
-                    breadcrumbs={this.state.breadcrumbs} 
+                    breadcrumbs={this.state.breadcrumbs}
+                    handleCurrentSelectedForm={this.handleCurrentSelectedForm}
                   />
                 }
               />
               <Route
-                path={`/item1/design`}
+                path={`/design/formId/:formId`}
                 element={
                   <Design 
                     breadcrumbs={this.state.breadcrumbs} 
@@ -183,7 +203,7 @@ class App extends React.Component {
                 }
               />
               <Route
-                path={`/item1/invitation`}
+                path={`/invitation/formId/:formId`}
                 element={
                   <Invitation 
                     breadcrumbs={this.state.breadcrumbs}
@@ -191,7 +211,7 @@ class App extends React.Component {
                 }
               />
               <Route
-                path={`/item1/show-results`}
+                path={`/show-results/formId/:formId`}
                 element={
                   <DataVisualization 
                     forms={this.state.forms} 
@@ -240,85 +260,13 @@ class App extends React.Component {
                 element={<AdminDashboard />}
               />
 
-              {/* <Route exact
+              {/* { <Route exact
                 path={"/invitation/formId=" + formData.formId }
                 component={
                   <Invitation forms={this.state.forms} formItems_data={this.state.formItems} />
                 }
                 />
-              }
-            />
-            {/* <Route 
-              path={`menu/:formId`}
-              element={
-                <Menu forms={this.state.forms}/>
-              }/> */}
-            <Route
-              path={`/dashboard/formId/:formId`}
-              element={<Dashboard forms={this.state.forms} />}
-            />
-            <Route
-              path={`/item1/design`}
-              element={<Design />}
-            />
-            <Route
-              path={`/item1/invitation`}
-              element={<Invitation />}
-            />
-            <Route
-              path={`/item1/show-results`}
-              element={<DataVisualization forms={this.state.forms} formItems_data={this.state.formItems} />}
-            />
-            <Route
-              path={`/feedback/formId/:formId`}
-              element={
-                <Feedback
-                  handleSetFormMessages={this.handleSetFormMessages}
-                />
-              }
-            />
-            <Route>
-              {this.state.formMessages ? this.state.formMessages.map((message) => {
-                count = count + 1;
-                let path = "chat-" + count;
-                // coba2
-                console.log(message);
-                let user = axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/get-user/${message.feedbackId}`);
-                let feedbackMessageList = axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/${message.feedbackId}`);    
-                return (
-                  <Route
-                    path={`/feedback/formId/:feedbackId/${path}`}
-                    element={
-                      <Message
-                        user={user}
-                        messages={feedbackMessageList}
-                        handleSendNewMessage={this.handleSendNewMessage}
-                      />
-                    }
-                  />
-                );
-              }) : null}
-            </Route>
-            {/* <Route exact
-              path={"/invitation/formId=" + formData.formId }
-              component={
-                <Invitation forms={this.state.forms} formItems_data={this.state.formItems} />
-              }
-              />
-              <Route exact
-              path={"/design/formId=" + formData.formId}
-              component={<Design forms={this.state.forms} formItems_data={this.state.formItems} />}
-              />
-              <Route exact
-              path={"/show-results/formId=" + formData.formId}
-              component={
-                <DataVisualization forms={this.state.forms} formItems_data={this.state.formItems} />
-              } />
-              <Route exact
-              path={"/feedback/formId=" + formData.formId}
-              component={
-                <Feedback forms={this.state.forms} formMessages_data={this.state.formMessages} />
-              } /> */}
+              } */}
           </Routes>
         </div>
       </Router>

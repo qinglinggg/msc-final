@@ -45,11 +45,12 @@ function Dashboard(props) {
     setCurrentFormData(
       props.forms.map((formData) => {
         if (formData.formId == formId) {
-          console.log("ketemu");
           return formData;
         }
       })
     );
+
+    props.handleCurrentSelectedForm(formId);
 
     try {
       axios({
