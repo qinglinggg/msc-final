@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useEffect, useState } from "react";
 import Menu from "./Menu";
 import iconMenubarGrey from "./images/menubarGrey.png";
 import iconLINE from "./images/iconLINE.png";
@@ -8,18 +8,23 @@ import iconLink from "./images/iconLink.png";
 import AutoHeightTextarea from "./functional-components/AutoheightTextarea";
 import TargetedUserEmail from "./functional-components/TargetedUserEmail";
 
-class Invitation extends React.Component {
-  constructor() {
-    super();
-    this.handleMenu = this.handleMenu.bind(this);
-    this.handleTargetedUserEmail = this.handleTargetedUserEmail.bind(this);
-    // this.handleTags = this.handleTags.bind(this);
-  }
+function Invitation(props) {
+  const [openMenu, setOpenMenu] = useState(false);
+  const [pageSelection, setPageSelection] = useState(true);
+  const [userInvited, setUserInvited] = useState([]);
+  const [openTargetedUserEmail, setOpenTargetedUserEmail] = useState(false);
+  const [breadcrumbs, setBreadcrumbs] = useState(props.breadcrumbs);
 
-  state = {
-    openMenu: false,
-    pageSelection: true,
-    userInvited: [
+  useEffect(() => {
+    let body = document.getElementById("body");
+    let menuBtn = document.getElementById("menu-icon");
+    menuBtn.addEventListener("click", () => {
+      body.classList.toggle("openMenu");
+    });
+  });
+
+  useEffect(() => {
+    setUserInvited([
       {
         number: 1,
         name: "Albert Cony Pramudita",
@@ -34,15 +39,9 @@ class Invitation extends React.Component {
         status: "Completed",
         datetime: "Submitted at 08/12/2021 09:30PM",
       },
-    ],
-    openTargetedUserEmail: false,
-    breadcrumbs: this.props.breadcrumbs,
-  };
-
-  componentDidMount() {
-
-    let breadcrumbs = this.state.breadcrumbs;
-    breadcrumbs.push(
+    ]);
+    let tempBreadcrumbs = breadcrumbs;
+    tempBreadcrumbs.push(
       {
         // simpen currentformdata
         page: "formId",
@@ -53,20 +52,14 @@ class Invitation extends React.Component {
         path: `item1/invitation`,
       }
     )
-    this.setState({breadcrumbs});
+    setBreadcrumbs(tempBreadcrumbs);
+  }, [])
 
-    let body = document.getElementById("body");
-    let menuBtn = document.getElementById("menu-icon");
-    menuBtn.addEventListener("click", () => {
-      body.classList.toggle("openMenu");
-    });
+  const handleMenu = () => {
+    setOpenMenu(!openMenu);
   }
 
-  handleMenu() {
-    this.setState({ openMenu: !this.state.openMenu });
-  }
-
-  displayMenu() {
+  const displayMenu = () => {
     return (
       <React.Fragment>
         <Menu />
@@ -74,11 +67,11 @@ class Invitation extends React.Component {
     );
   }
 
-  handleOpenSharePage() {
-    this.setState({ pageSelection: true });
+  const handleOpenSharePage = () => {
+    setPageSelection(true);
   }
 
-  displaySharePage() {
+  const displaySharePage = () => {
     return (
       <React.Fragment>
         <div id="invitation-share-container">
@@ -121,10 +114,10 @@ class Invitation extends React.Component {
             </div>
             <div
               id="invitation-share-privately-render"
-              onClick={() => this.handleTargetedUserEmail()}
+              onClick={() => handleTargetedUserEmail()}
             >
-              {this.state.openTargetedUserEmail ? (
-                this.displayTargetedUserEmailBox()
+              {openTargetedUserEmail ? (
+                displayTargetedUserEmailBox()
               ) : (
                 <div id="invitation-share-privately-button">
                   Type your targeted user email
@@ -137,11 +130,11 @@ class Invitation extends React.Component {
     );
   }
 
-  handleTargetedUserEmail() {
-    this.setState({ openTargetedUserEmail: true });
+  const handleTargetedUserEmail = () => {
+    setOpenTargetedUserEmail(true);
   }
 
-  displayTargetedUserEmailBox() {
+  const displayTargetedUserEmailBox = () => {
     return (
       <React.Fragment>
         <div
@@ -155,20 +148,19 @@ class Invitation extends React.Component {
     );
   }
 
-  handleOpenTrackPage() {
-    this.setState({ pageSelection: false });
+  const handleOpenTrackPage = () => {
+    setPageSelection(false);
   }
 
-  displayTrackPage() {
+  const displayTrackPage = () => {
     // for (let i = 0; i < 4; i++) {
     //   // push data asli disini
-    //   this.state.userInvited.push(i);
+    //   userInvited.push(i);
     // }
-
     return (
       <React.Fragment>
         <div id="invitation-track-container">
-          {this.state.userInvited.map((value) => {
+          {userInvited.map((value) => {
             return (
               <React.Fragment>
                 <div id="invitation-track-box">
@@ -211,24 +203,23 @@ class Invitation extends React.Component {
     );
   }
 
-  render() {
+  const displayInvitation = () => {
     let page;
-    if (this.state.pageSelection) {
-      page = this.displaySharePage();
+    if (pageSelection) {
+      page = displaySharePage();
     } else {
-      page = this.displayTrackPage();
+      page = displayTrackPage();
     }
-    // if (this.state.openTargetedUserEmail) {
-    //   this.handleTags();
+    // if (openTargetedUserEmail) {
+    //   handleTags();
     // }
-
     return (
       <React.Fragment>
         <div className="title-container" id="title-invitation">
           <div
             className="menu-icon"
             id="menu-icon"
-            onClick={() => this.handleMenu()}
+            onClick={() => handleMenu()}
           >
             <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
           </div>
@@ -239,14 +230,14 @@ class Invitation extends React.Component {
           <div className="menu-bar">
             <div id="page-selection">
               <div
-                onClick={() => this.handleOpenSharePage()}
+                onClick={() => handleOpenSharePage()}
                 className="page-button clicked"
                 id="btn-page1"
               >
                 Share
               </div>
               <div
-                onClick={() => this.handleOpenTrackPage()}
+                onClick={() => handleOpenTrackPage()}
                 className="page-button"
                 id="btn-page2"
               >
@@ -259,5 +250,7 @@ class Invitation extends React.Component {
       </React.Fragment>
     );
   }
+
+  return displayInvitation();
 }
 export default Invitation;

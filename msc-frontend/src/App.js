@@ -108,9 +108,6 @@ class App extends React.Component {
         item.addEventListener("click", disableOpenMenu);
       });
     }
-    background.style.height =
-      navBar.clientHeight + pageContainer.clientHeight + "px";
-    let newValue = pageContainer.clientHeight - 100;
     sideMenu.style.left = "0";
   }
 

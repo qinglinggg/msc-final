@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import Graph from "./functional-components/Graph";
 
-class Summary extends React.Component {
-  render() {
+const Summary = React.forwardRef((props, ref) => {
     let counter = 0;
     return (
       <React.Fragment>
@@ -26,6 +25,6 @@ class Summary extends React.Component {
       </React.Fragment>
     );
   }
-}
+)
 
 export default Summary;

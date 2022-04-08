@@ -1,29 +1,22 @@
-import React, { Component } from "react";
+import React, { Component, useEffect, useState } from "react";
 import iconMenubarGrey from "./images/menubarGrey.png";
 import Select from "react-select";
 import UploadImage from "./functional-components/UploadImage";
 import UploadImageReact from "./functional-components/UploadImageWithProgressBar-React";
 
-class Design extends React.Component {
-  constructor() {
-    super();
-    this.handleMenu = this.handleMenu.bind(this);
-    this.handleBackgroundChange = this.handleBackgroundChange.bind(this);
-    this.handleColorChange = this.handleColorChange.bind(this);
-  }
+function Design(props) {
+  const [selectedBackground, setSelectedBackground] = useState("No background");
+  const [selectedColor, setSelectedColor] = useState("White");
+  const [formItems, setFormItems] = useState();
+  const [openMenu, setOpenMenu] = useState(false);
+  const [breadcrumbs, setBreadcrumbs] = useState(props.breadcrumbs);
 
-  state = {
-    selectedBackgroundOption: "No background",
-    selectedColorOption: "White",
-    breadcrumbs: this.props.breadcrumbs,
-  };
-
-  backgroundOptions = [
+  const backgroundOptions = [
     { value: 0, label: "No background" },
     { value: 1, label: "Upload an image..." },
   ];
 
-  colorOptions = [
+  const colorOptions = [
     { value: "White", label: "White" },
     { value: "Black", label: "Black" },
     { value: "Dark Grey", label: "Dark Grey" },
@@ -35,9 +28,7 @@ class Design extends React.Component {
     { value: "Cyan", label: "Cyan" },
   ];
 
-  componentDidMount() {
-
-    let breadcrumbs = this.state.breadcrumbs;
+  useEffect (() => {
     breadcrumbs.push(
       {
         // simpen currentformdata
@@ -49,73 +40,69 @@ class Design extends React.Component {
         path: `item1/design`,
       }
     )
-    this.setState({breadcrumbs});
-
-    this.setState({ formItems: this.props.formItems_data });
+    setFormItems(props.formItems_data)
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
+  })
+
+  const handleMenu = () => {
+    setOpenMenu(!openMenu);
   }
 
-  handleMenu() {
-    this.setState({ openMenu: !this.state.openMenu });
+  const handleBackgroundChange = (data) => {
+    setSelectedBackground(data.value);
   }
 
-  handleBackgroundChange(data) {
-    this.setState({ selectedBackgroundOption: data.value });
+  const handleColorChange = (data) => {
+    setSelectedColor(data.value);
   }
 
-  handleColorChange(data) {
-    this.setState({ selectedColorOption: data.value });
-  }
-
-  render() {
-    return (
-      <React.Fragment>
-        <div className="title-container">
-          <div
-            className="menu-icon"
-            id="menu-icon"
-            onClick={() => this.handleMenu()}
-          >
-            <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
-          </div>
-          <div className="page-title">Design</div>
+  return (
+    <React.Fragment>
+      <div className="title-container">
+        <div
+          className="menu-icon"
+          id="menu-icon"
+          onClick={() => handleMenu()}
+        >
+          <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
         </div>
-        <div id="page-content">
-          <div id="design-background-container">
-            <div id="design-background-title">Choose background...</div>
-            <div id="design-background-input-container">
-              <Select
-                value={this.backgroundOptions.value}
-                options={this.backgroundOptions}
-                defaultValue={this.backgroundOptions[0]}
-                className="design-selection"
-                onChange={(data) => this.handleBackgroundChange(data)}
-              />
-              <div id="design-background-input-uploadimage">
-                {this.state.selectedBackgroundOption == 1 ? (
-                  <UploadImage />
-                ) : null}
-              </div>
+        <div className="page-title">Design</div>
+      </div>
+      <div id="page-content">
+        <div id="design-background-container">
+          <div id="design-background-title">Choose background...</div>
+          <div id="design-background-input-container">
+            <Select
+              value={backgroundOptions.value}
+              options={backgroundOptions}
+              defaultValue={backgroundOptions[0]}
+              className="design-selection"
+              onChange={(data) => handleBackgroundChange(data)}
+            />
+            <div id="design-background-input-uploadimage">
+              {selectedBackground == 1 ? (
+                <UploadImage />
+              ) : null}
             </div>
           </div>
-          <div id="design-color-container">
-            <div id="design-color-title">Choose color theme...</div>
-            <Select
-              value={this.colorOptions.value}
-              options={this.colorOptions}
-              defaultValue={this.colorOptions[0]}
-              className="design-selection"
-              onChange={(data) => this.handleColorChange(data)}
-            />
-          </div>
         </div>
-      </React.Fragment>
-    );
-  }
+        <div id="design-color-container">
+          <div id="design-color-title">Choose color theme...</div>
+          <Select
+            value={colorOptions.value}
+            options={colorOptions}
+            defaultValue={colorOptions[0]}
+            className="design-selection"
+            onChange={(data) => handleColorChange(data)}
+          />
+        </div>
+      </div>
+    </React.Fragment>
+  );
 }
 
 export default Design;

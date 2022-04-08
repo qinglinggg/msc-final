@@ -23,7 +23,6 @@ function Dashboard(props) {
   const [breadcrumbs, setBreadcrumbs] = useState(props.breadcrumbs);
 
   useEffect(() => {
-
     // setBreadcrumbs(
     //   breadcrumbs.push(
     //     {
@@ -35,7 +34,7 @@ function Dashboard(props) {
     //     }
     //   )
     // )
-
+    console.log("Test Form Id: " + formId);
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {

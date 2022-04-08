@@ -54,7 +54,6 @@ html {
   z-index: 10;
   border-radius: 25px;
   animation: slide-in 0.3s forwards;
-  align-self: center;
 }
 
 .openMenu .menu-container .sub-menu {
@@ -2383,4 +2382,3 @@ body {
 }
 
 /* added breadcrumbs */
-

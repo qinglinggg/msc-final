@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import iconMenubarGrey from "./images/menubarGrey.png";
 import iconVisibility from "./images/visibility.png";
@@ -8,34 +8,27 @@ import Summary from "./Summary.jsx";
 import Responses from "./Responses.jsx";
 import ReactToPrint from "react-to-print";
 
-class DataVisualization extends React.Component {
-  constructor(props) {
-    super(props);
-    this.handleMenu = this.handleMenu.bind(this);
-    this.handlePageSelection = this.handlePageSelection.bind(this);
-    this.handleExportSelection = this.handleExportSelection.bind(this);
-    this.displayExportToPdf = this.displayExportToPdf.bind(this);
-  }
-  state = {
-    openMenu: false,
-    openVisibility: false,
-    openSettings: false,
-    activePage: 1,
-    selectedExportOptions: "pdf",
-    summaryRef: null,
-    summaryPage: null,
-  };
+function DataVisualization(props) {
+  const [formItems, setFormItems] = useState(props.formItems_data);
+  const [openMenu, setOpenMenu] = useState(false);
+  const [openVisibility, setOpenVisibility] = useState(false);
+  const [openSettings, setOpenSettings] = useState(false);
+  const [activePage, setActivePage] = useState(1);
+  const [selectedExport, setSelectionExport] = useState("pdf");
+  const [summaryRef, setSummaryRef] = useState(null);
+  const [summaryPage, setSummaryPage] = useState(null);
+  const [privacyCheck, setPrivacyCheck] = useState(false);
+  const [breadcrumbs, setBreadcrumbs] = useState(props.breadcrumbs);
 
-  exportOptions = [
+  const exportOptions = [
     { value: "pdf", label: ".pdf" },
     { value: "csv", label: ".csv" },
     { value: "xls", label: ".xls" },
   ];
 
-  componentDidMount() {
-
-    let breadcrumbs = this.state.breadcrumbs;
-    breadcrumbs.push(
+  useEffect(() => {
+    let tempBreadcrumbs = breadcrumbs;
+    tempBreadcrumbs.push(
       {
         // simpen currentformdata
         page: "formId",
@@ -46,109 +39,50 @@ class DataVisualization extends React.Component {
         path: `item1/show-results`,
       }
     )
-    this.setState({breadcrumbs});
-
-    this.setState({ formItems: this.props.formItems_data });
+    setBreadcrumbs(tempBreadcrumbs);
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
+  }, [])
+
+  const handleSettings = () => {
+    setOpenSettings(!openSettings);
   }
 
-  handleMenu() {
-    this.setState({ openMenu: !this.state.openMenu });
+  const handleMenu = () => {
+    setOpenMenu(!openMenu);
   }
 
-  handlePageSelection(pageNumber) {
-    this.setState({ activePage: pageNumber });
+  const handlePageSelection = (pageNumber) => {
+    setActivePage(pageNumber)
   }
 
-  handleExportSelection(data) {
-    this.setState({ selectedExportOptions: data.value });
+  const handleExportSelection = (data) => {
+    setSelectionExport(data.value);
   }
 
-  render() {
-    console.log("masuk");
-    let loadPage = null;
-    if (this.state.activePage == 1) {
-      loadPage = this.displaySummaryPage();
-    } else if (this.state.activePage == 2) {
-      loadPage = this.displayResponsePage();
-    } else if (this.state.activePage == 3) {
-      loadPage = this.displayExportPage();
-    }
-    return (
-      <React.Fragment>
-        <div className="title-container">
-          <div
-            className="menu-icon"
-            id="menu-icon"
-            onClick={() => this.handleMenu()}
-          >
-            <img src={iconMenubarGrey} alt="" />
-          </div>
-          <div className="page-title" id="page-title-home">
-            Data Visualization
-          </div>
-          <div className="dashboard-icon">
-            <img src={iconVisibility} alt="" className="icon-image" />
-            <img src={iconSettings} alt="" className="icon-image" />
-            {this.state.openSettings ? this.displaySettings() : null}
-          </div>
-        </div>
-        <div className="data-visualization-container">
-          <div className="page-selection">
-            <ul>
-              <li
-                onClick={() => {
-                  this.handlePageSelection(1);
-                }}
-              >
-                SUMMARY
-              </li>
-              <li
-                onClick={() => {
-                  this.handlePageSelection(2);
-                }}
-              >
-                RESPONSES
-              </li>
-              <li
-                onClick={() => {
-                  this.handlePageSelection(3);
-                }}
-              >
-                EXPORT
-              </li>
-            </ul>
-          </div>
-          {loadPage}
-        </div>
-      </React.Fragment>
-    );
-  }
-
-  displaySummaryPage() {
-    console.log(this.props.formItems_data);
+  const displaySummaryPage = () => {
+    const componentRef = useRef();
     return (
       <React.Fragment>
         <Summary
-          ref={(ref) => (this.componentRef = ref)}
-          formItems_data={this.props.formItems_data}
+          ref={(ref) => (componentRef = ref)}
+          formItems_data={props.formItems_data}
         />
       </React.Fragment>
     );
   }
 
-  displayResponsePage() {
-    return <Responses formItems_data={this.props.formItems_data} />;
+  const displayResponsePage = () => {
+    return <Responses formItems_data={props.formItems_data} />;
   }
 
-  displayExportPage() {
+  const displayExportPage = () => {
     let button;
-    if (this.state.selectedExportOptions == "pdf") {
-      button = this.displayExportToPdf();
+    if (selectedExport == "pdf") {
+      button = displayExportToPdf();
     }
     return (
       <React.Fragment>
@@ -157,11 +91,11 @@ class DataVisualization extends React.Component {
             <div id="export-selection-text">Export your results in:</div>
             <div id="export-selection-dropdown">
               <Select
-                value={this.exportOptions.value}
-                options={this.exportOptions}
-                defaultValue={this.exportOptions[0]}
+                value={exportOptions.value}
+                options={exportOptions}
+                defaultValue={exportOptions[0]}
                 id="exportSelection"
-                onChange={(data) => this.handleExportSelection(data)}
+                onChange={(data) => handleExportSelection(data)}
               />
             </div>
           </div>
@@ -171,16 +105,17 @@ class DataVisualization extends React.Component {
     );
   }
 
-  displayExportToPdf() {
+  const displayExportToPdf = () => {
+    const componentRef = useRef();
     return (
       <React.Fragment>
         <div className="preview-box">
-          <div className="preview" ref={(ref) => (this.componentRef = ref)}>
-            <Summary formItems_data={this.props.formItems_data} />
+          <div className="preview" ref={(ref) => (componentRef = ref)}>
+            <Summary formItems_data={props.formItems_data} />
           </div>
         </div>
         <ReactToPrint
-          content={() => this.componentRef}
+          content={() => componentRef}
           trigger={() => (
             <div id="export-save-box">
               <div id="export-save-button">SAVE</div>
@@ -191,11 +126,11 @@ class DataVisualization extends React.Component {
     );
   }
 
-  displaySettings() {
+  const displaySettings = () => {
     return (
       <React.Fragment>
         <div className="popup" id="popup-addItem">
-          <span className="closePopup" onClick={() => this.handleSettings()}>
+          <span className="closePopup" onClick={() => handleSettings()}>
             &times;
           </span>
           <form className="form-components">
@@ -221,9 +156,9 @@ class DataVisualization extends React.Component {
                   name="privacy"
                   id="anonymous"
                   value="anonymous"
-                  checked={this.state.privacyCheck ? true : false}
+                  checked={privacyCheck ? true : false}
                   onClick={() => {
-                    this.setState({ privacyCheck: true });
+                    setPrivacyCheck(true);
                   }}
                 />
                 <label for="anonymous">Anonymous</label>
@@ -232,9 +167,9 @@ class DataVisualization extends React.Component {
                   name="privacy"
                   id="not-anonymous"
                   value="not-anonymous"
-                  checked={this.state.privacyCheck ? false : true}
+                  checked={privacyCheck ? false : true}
                   onClick={() => {
-                    this.setState({ privacyCheck: false });
+                    setPrivacyCheck(false);
                   }}
                 />
                 <label for="not-anonymous">Not Anonymous</label>
@@ -257,6 +192,69 @@ class DataVisualization extends React.Component {
       </React.Fragment>
     );
   }
+
+  
+  const displayDataVisualization = () => {
+    let loadPage = null;
+    if (activePage == 1) {
+      loadPage = displaySummaryPage();
+    } else if (activePage == 2) {
+      loadPage = displayResponsePage();
+    } else if (activePage == 3) {
+      loadPage = displayExportPage();
+    }
+    return (
+      <React.Fragment>
+        <div className="title-container">
+          <div
+            className="menu-icon"
+            id="menu-icon"
+            onClick={() => handleMenu()}
+          >
+            <img src={iconMenubarGrey} alt="" />
+          </div>
+          <div className="page-title" id="page-title-home">
+            Data Visualization
+          </div>
+          <div className="dashboard-icon">
+            <img src={iconVisibility} alt="" className="icon-image" />
+            <img src={iconSettings} alt="" className="icon-image" />
+            {openSettings ? displaySettings() : null}
+          </div>
+        </div>
+        <div className="data-visualization-container">
+          <div className="page-selection">
+            <ul>
+              <li
+                onClick={() => {
+                  handlePageSelection(1);
+                }}
+              >
+                SUMMARY
+              </li>
+              <li
+                onClick={() => {
+                  handlePageSelection(2);
+                }}
+              >
+                RESPONSES
+              </li>
+              <li
+                onClick={() => {
+                  handlePageSelection(3);
+                }}
+              >
+                EXPORT
+              </li>
+            </ul>
+          </div>
+          {loadPage}
+        </div>
+      </React.Fragment>
+    );
+  }
+
+  return displayDataVisualization();
 }
 
 export default DataVisualization;
