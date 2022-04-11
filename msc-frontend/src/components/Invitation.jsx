@@ -14,7 +14,7 @@ function Invitation(props) {
   const [userInvited, setUserInvited] = useState([]);
   const [openTargetedUserEmail, setOpenTargetedUserEmail] = useState(false);
   const [breadcrumbs, setBreadcrumbs] = useState(props.breadcrumbs);
-
+  const [test] = useState("https://reactjs.org/docs/hooks-reference.html#usestate");
   useEffect(() => {
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
@@ -82,7 +82,9 @@ function Invitation(props) {
               </div>
               <div id="invitation-share-publicly-innerbox-linkcontainer">
                 <img src={iconLink} alt="" />
-                <div id="invitation-share-publicly-innerbox-linkbox"></div>
+                <div id="invitation-share-publicly-innerbox-linkbox">
+                  <input type="url" id="invitation-share-publicly-innerbox-url" value={test} disabled />
+                </div>
               </div>
               <div id="invitation-share-publicly-innerbox-iconcontainer">
                 <img
