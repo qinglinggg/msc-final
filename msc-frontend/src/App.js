@@ -260,13 +260,15 @@ class App extends React.Component {
                 element={<AdminDashboard />}
               />
 
-              {/* { <Route exact
-                path={"/invitation/formId=" + formData.formId }
-                component={
-                  <Invitation forms={this.state.forms} formItems_data={this.state.formItems} />
+              <Route
+                path={`/preview/formId/:formId`}
+                element={
+                  <Preview 
+                    forms={this.state.forms} 
+                    breadcrumbs={this.state.breadcrumbs} 
+                  />
                 }
-                />
-              } */}
+              />
           </Routes>
         </div>
       </Router>

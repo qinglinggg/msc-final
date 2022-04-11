@@ -2012,11 +2012,24 @@ body {
   height: fit-content;
   border-radius: 15px;
   border: 1px solid #c4c4c4;
-  display: flex;
-  flex-direction: row;
   margin-top: 50px;
   box-shadow: 0px 0px 5px 0 #c4c4c4;
   background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#preview-empty-list {
+  width: fit-content;
+  height: 100%;
+  font-size: large;
+  font-style: italic;
+}
+
+#preview-question-list {
+  display: flex;
+  flex-direction: row;
 }
 
 #preview-back-icon-animation {
