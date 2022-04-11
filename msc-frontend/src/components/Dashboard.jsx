@@ -23,17 +23,7 @@ function Dashboard(props) {
   const [breadcrumbs, setBreadcrumbs] = useState(props.breadcrumbs);
 
   useEffect(() => {
-    // setBreadcrumbs(
-    //   breadcrumbs.push(
-    //     {
-    //       page: formId,
-    //     },
-    //     {
-    //       page: "Dashboard",
-    //       path: `${BASE_URL}/dashboard/formId/${formId}`,
-    //     }
-    //   )
-    // )
+
     console.log("Test Form Id: " + formId);
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
@@ -45,10 +35,14 @@ function Dashboard(props) {
     setCurrentFormData(
       props.forms.map((formData) => {
         if (formData.formId == formId) {
+          console.log(formData); 
           return formData;
         }
       })
     );
+      
+    let newBreadcrumbs;
+    setBreadcrumbs();
 
     props.handleCurrentSelectedForm(formId);
 
@@ -84,12 +78,6 @@ function Dashboard(props) {
   //     body.classList.toggle("openMenu");
   //   });
   // });
-
-  const handleBreadcrumbs = () => {
-    let label = "Dashboard";
-    let path = "/dashboard";
-    props.handleBreadcrumbs(label, path);
-  }
 
   const handleVisibility = () => {
     setOpenVisibility(!openVisibility);
@@ -503,7 +491,6 @@ function Dashboard(props) {
         <div className="page-title" id="page-title-home">
           Dashboard
         </div>
-        {/* <div className="title">Dashboard</div> */}
         <div className="dashboard-icon">
           <img
             className="icon-image"
@@ -532,6 +519,7 @@ function Dashboard(props) {
           )
         })}
       </div> */}
+      <div className="page-breadcrumbs">Breadcrumbs</div>
       <div id="page-content">
         <div className="questions-container">{displayQuestion()}</div>
       </div>

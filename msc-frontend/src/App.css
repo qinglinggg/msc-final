@@ -2383,3 +2383,14 @@ body {
 }
 
 /* added breadcrumbs */
+
+.page-breadcrumbs {
+  display: flex;
+  width: 100%;
+  height: fit-content;
+  margin-left: 200px;
+  padding: 15px;
+  font-size: medium;
+  justify-content: left;
+  align-self: center;
+}
