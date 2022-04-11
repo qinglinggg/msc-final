@@ -81,6 +81,7 @@ function Dashboard(props) {
 
   const handleVisibility = () => {
     setOpenVisibility(!openVisibility);
+    window.location = `/preview/formId/${formId}`;
   };
 
   const handleSettings = () => {
