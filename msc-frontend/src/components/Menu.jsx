@@ -5,6 +5,14 @@ import { Link, useParams } from "react-router-dom";
 function Menu(props) {
   const [selectedForm, setSelectedForm] = useState([]);
 
+  const handleCurrentSelection = (item) => {
+    let listSelection = document.querySelectorAll(".page-button");
+    listSelection.forEach((i) => {
+      i.classList.remove('clicked');
+    });
+    item.classList.add('clicked');
+  }
+
   useEffect(() => {
     let currentForm = localStorage.getItem("selectedForm");
     currentForm = JSON.parse(currentForm);
@@ -13,6 +21,12 @@ function Menu(props) {
     } else {
       setSelectedForm("");
     }
+    let listSelection = document.querySelectorAll(".page-button");
+    listSelection.forEach((item) => {
+      item.addEventListener('click', (e) => {
+        handleCurrentSelection(e.target);
+      })
+    });
   }, [])
 
   return (
@@ -21,22 +35,28 @@ function Menu(props) {
         <ion-icon name="close-outline" id="menu-close"></ion-icon>
       </div>
       <Link className="sub-menu" to={`/dashboard/formId/${selectedForm}`}>
-        Dashboard
+        <span className="menu-item">Dashboard</span>
+        <span className="indicator"></span>
       </Link>
       <Link className="sub-menu" to={`/design/formId/${selectedForm}`}>
-        Design
+        <span className="menu-item">Design</span>
+        <span className="indicator"></span>
       </Link>
       <Link className="sub-menu" to={`/invitation/formId/${selectedForm}`}>
-        Invitation
+        <span className="menu-item">Invitation</span>
+        <span className="indicator"></span>
       </Link>
       <Link className="sub-menu" to={`/show-results/formId/${selectedForm}`}>
-        Data Visualization
+        <span className="menu-item">Data Visualization</span>
+        <span className="indicator"></span>
       </Link>
       <Link className="sub-menu" to={`/feedback/formId/${selectedForm}`}>
-        Feedback
+        <span className="menu-item">Feedback</span>
+        <span className="indicator"></span>
       </Link>
       <Link className="sub-menu" to={`/`}>
-        Back to Home
+        <span className="menu-item">Back to Home</span>
+        <span className="indicator"></span>
       </Link>
       {/* <Link to={`/admin`} className="sub-menu">
         Admin

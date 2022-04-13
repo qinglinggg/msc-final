@@ -59,6 +59,9 @@ html {
 .openMenu .menu-container .sub-menu {
   width: 250px;
   height: fit-content;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   padding-top: 5px;
   padding-bottom: 5px;
   padding-left: 30px;
@@ -69,15 +72,27 @@ html {
   text-align: left;
 }
 
-.openMenu .menu-container .sub-menu:hover {
-  background-color: black;
-  color: var(--white-use);
+.sub-menu .menu-item {
+  width: 90%;
+}
+
+.sub-menu .indicator {
+  display: none;
+}
+
+.sub-menu:hover .indicator {
+  display: block;
+  width: 5px;
+  height: 100%;
+  background-color: var(--navbar-color);
   transition: 0.5s;
 }
 
-.openMenu .menu-container .sub-menu .active {
-  background-color: black;
-  color: var(--white-use);
+.menu-container .active .indicator {
+  display: block;
+  width: 5px;
+  height: 100%;
+  background-color: var(--navbar-color);
   transition: 0.5s;
 }
 
@@ -291,6 +306,7 @@ body {
 #page-content {
   width: 90%;
   min-width: 800px;
+  padding: 50px 0 50px 0;
   height: fit-content;
   position: relative;
   box-shadow: 4px 5px 1px rgba(128, 128, 128, 0.5);
@@ -304,6 +320,7 @@ body {
 
 .menu-bar {
   width: 100%;
+  margin-top: -50px;
   height: 60px;
   display: flex;
   flex-direction: row;
@@ -333,6 +350,11 @@ body {
 .page-button:hover {
   background-color: var(--btn-click);
   transition: 0.3s;
+}
+
+#page-selection .clicked {
+  background-color: var(--btn-click);
+  cursor: pointer;
 }
 
 #btn-page1 {
@@ -375,11 +397,9 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 0.5fr);
   grid-auto-rows: 350px;
-  /* border-left: var(--border-page);
-  border-right: var(--border-page);
-  border-bottom: var(--border-page); */
   border-radius: 0px 0px 25px 25px;
   padding: 25px;
+  overflow: hidden;
 }
 
 .item-container {
@@ -651,7 +671,6 @@ body {
   justify-content: initial;
   overflow-x: scroll;
   min-height: 480px;
-  padding: 25px;
 }
 
 .questions-container::-webkit-scrollbar {
@@ -1303,7 +1322,6 @@ body {
 /* DESIGN */
 
 #design-background-container {
-  margin-top: 40px;
   display: flex;
   flex-direction: row;
   width: 100%;

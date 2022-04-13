@@ -19,7 +19,6 @@ function DataVisualization(props) {
   const [summaryPage, setSummaryPage] = useState(null);
   const [privacyCheck, setPrivacyCheck] = useState(false);
   const [currentStep, setCurrentStep] = useState([]);
-  const [selectedPage, setSelectedPage] = useState(1);
   let componentRef = useRef();
 
   const exportOptions = [
@@ -29,11 +28,6 @@ function DataVisualization(props) {
   ];
 
   function activateLink(item) {
-    let listPage = document.querySelectorAll(".sub-page-selection");
-    listPage.forEach((i) => {
-      i.classList.remove('active');
-    });
-    item.classList.add('active');
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
     tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
     if(tempBreadcrumbs.length >= 2){
@@ -42,16 +36,19 @@ function DataVisualization(props) {
         tempBreadcrumbs.pop();
       }
     }
-    if(tempBreadcrumbs.slice(-1).page != item.innerText){
-      tempBreadcrumbs.push(
-        {
-          page: item.innerText,
-          path: window.location.href
-        }
-      );
-      setCurrentStep(tempBreadcrumbs);
-      localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
-    }
+    tempBreadcrumbs.push(
+      {
+        page: item.innerText,
+        path: window.location.href
+      }
+    );
+    setCurrentStep(tempBreadcrumbs);
+    localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
+    let listPage = document.querySelectorAll(".sub-page-selection");
+    listPage.forEach((i) => {
+      i.classList.remove('active');
+    });
+    item.classList.add('active');
   }
 
   useEffect(() => {
@@ -77,10 +74,8 @@ function DataVisualization(props) {
     });
     let listPage = document.querySelectorAll(".sub-page-selection");
     if (listPage){
-      let counter = 1;
       listPage.forEach((item) => {
-        if(counter == selectedPage) item.classList.add('active');
-        counter += 1;
+        item.addEventListener('click', (e) => activateLink(e.target));
       });
     }
   }, [])
@@ -282,7 +277,7 @@ function DataVisualization(props) {
                   handlePageSelection(1);
                   activateLink(e.target);
                 }}
-                className="sub-page-selection"
+                className="sub-page-selection active"
               >
                 SUMMARY
               </li>

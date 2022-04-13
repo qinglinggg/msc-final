@@ -33,7 +33,6 @@ class App extends React.Component {
     super(props);
     this.handleCreateNewForm = this.handleCreateNewForm.bind(this);
     this.handleSetFormMessages = this.handleSetFormMessages.bind(this);
-    this.handleMetadataChange = this.handleMetadataChange.bind(this);
   }
 
   state = {
@@ -104,10 +103,6 @@ class App extends React.Component {
     sideMenu.style.left = "0";
   }
 
-  handleMetadataChange(metadata){
-    this.setState({currentMetadata : metadata})
-  }
-
   async handleCreateNewForm(obj) {
     let formsData = [...this.state.forms];
     try {
@@ -119,8 +114,8 @@ class App extends React.Component {
       }).then((response) => {
         formsData.push(response.data);
         this.setState({ forms: formsData });
-        this.handleSetCurrentSelectedForm(response.data.formId);
-        window.location = `/dashboard/formId/${response.data.formId}/meta-data/${response.data.title}`;
+        localStorage.setItem("selectedForm", JSON.stringify(response.data));
+        window.location = `/dashboard/formId/${response.data.formId}`;
       });
     } catch (error) {
       console.log(error);
@@ -142,20 +137,13 @@ class App extends React.Component {
     this.setState({formMessages});
   }
 
-  handleSetCurrentSelectedForm(formId){
-    this.setState({currentSelectedForm : formId});
-  }
-
   render() {
     let count = 0;
     return (
       <Router>
         <Navbar user_data={this.state.userProfiles} />
         <div className="background"></div>
-        <Menu
-          currentSelectedForm={this.state.currentSelectedForm}
-          currentMetadata={this.state.currentMetadata}
-        />
+        <Menu />
           <div className="page-container" id="page-container">
             <Routes>
               <Route
@@ -165,8 +153,6 @@ class App extends React.Component {
                     formsData={this.state.forms}
                     waitingForms={this.state.waitingForms}
                     handleCreateNewForm={this.handleCreateNewForm}
-                    handleSetCurrentSelectedForm={this.handleSetCurrentSelectedForm}
-                    handleMetadataChange={this.handleMetadataChange}
                   />
                 }
               />

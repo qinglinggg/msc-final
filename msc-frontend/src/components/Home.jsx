@@ -17,23 +17,34 @@ class Home extends React.Component {
   }
 
   state = {
-    isPage1: true,
+    selectedPage: 1,
     isAdd: false,
     isRequired: false,
     formCounter: 0,
-    searchValue: null
+    searchValue: null,
+    title: "",
+    description: "",
+    privacySetting: ""
   };
 
   handleClickPage1() {
-    this.setState({ isPage1: true });
+    this.setState({ selectedPage: 1 });
   }
 
   handleClickPage2() {
-    this.setState({ isPage1: false });
+    this.setState({ selectedPage: 2 });
   }
 
   handleAddItem() {
     this.setState({ isAdd: !this.state.isAdd });
+  }
+
+  handleCurrentSelection(item) {
+    let listSelection = document.querySelectorAll(".page-button");
+    listSelection.forEach((i) => {
+      i.classList.remove('clicked');
+    });
+    item.classList.add('clicked');
   }
 
   componentDidMount() {
@@ -49,13 +60,18 @@ class Home extends React.Component {
       path: window.location.href,
     });
     localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
+    let listSelection = document.querySelectorAll(".page-button");
+    listSelection.forEach((item) => {
+      item.addEventListener('click', (e) => {
+        this.handleCurrentSelection(e.target);
+      })
+    });
   }
 
   componentDidUpdate(prevState){
     let body = document.getElementById("body");
     if (this.state.isAdd == true){
       let closePopup = document.querySelector(".closePopup");
-      console.log(closePopup);
       if (closePopup) {
         closePopup.addEventListener("click", () => {
           body.classList.remove("openPopup");
@@ -69,9 +85,9 @@ class Home extends React.Component {
   }
 
   render() {
-    const isPage1 = this.state.isPage1;
+    const selectedPage = this.state.selectedPage;
     let page;
-    if (isPage1) {
+    if (selectedPage == 1) {
       page = this.displayPage1();
     } else {
       page = this.displayPage2();
@@ -142,17 +158,12 @@ class Home extends React.Component {
 
   displayPage1() {
     let formsData = this.filterData(this.props.formsData);
-    console.log(formsData);
     return (
       <React.Fragment>
         {formsData.map((data) => (
           <Page1Items 
             key={data.formId} 
             data={data}
-            onClick={() => {
-              this.props.handleMetadataChange({title: data.title});
-              this.props.handleSetCurrentSelectedForm(data.formId);
-            }}
           />
         ))}
         <div className="item-container">
@@ -177,36 +188,38 @@ class Home extends React.Component {
     );
   }
 
-  handleSubmit(e, obj) {
+  handleSubmit(e) {
     let body = document.getElementById("body");
     e.preventDefault();
-    if (obj['title'] == "" || obj['description'] == "" || obj['privacySetting'] == "") {
-      this.setState({ isRequired: true });
+    console.log(this.state);
+    if (this.state.title == "" || this.state.description == "" || this.state.privacySetting == "") {
+      this.setState({ isRequired: true }); 
     } else {
+      console.log("testtt");
       this.setState({ isRequired: false });
+      let obj = {};
+      obj.title = this.state.title;
+      obj.description = this.state.description;
+      obj.privacySetting = this.state.privacySetting;
+      obj.backgroundLink = null;
+      obj.backgroundColor = null;
       this.props.handleCreateNewForm(obj);
     }
   }
 
   updatePopupData(){
     let nameTextarea = document.getElementById("nameInput");
-    if (nameTextarea && nameTextarea.value != "") this.setState(this.state.obj['title'] = nameTextarea.value);
+    if (nameTextarea && nameTextarea.value != "") this.setState({title: nameTextarea.value});
 
     let descTextarea = document.getElementById("descInput");
-    if (descTextarea && descTextarea.value != "") this.setState(this.state.obj['description'] = descTextarea.value);
+    if (descTextarea && descTextarea.value != "") this.setState({description: descTextarea.value});
 
     let privacyTextarea = document.getElementById("privacyInput");
     if (privacyTextarea && privacyTextarea.value != "")
-      this.setState(this.state.obj['privacySetting'] = privacyTextarea.value);
+      this.setState({privacySetting: privacyTextarea.value});
   }
 
   displayPopUp() {
-    let obj = {};
-    obj.title = "";
-    obj.description = "";
-    obj.privacySetting = "";
-    obj.backgroundLink = null;
-    obj.backgroundColor = null;
     let warningElement = (
       <React.Fragment>
         <div id="form-warning">Please fill out the field!</div>
@@ -234,12 +247,12 @@ class Home extends React.Component {
                   type="text"
                   name="name"
                   onChange={(e) => {
-                    if (e.target.value != "") obj.title = e.target.value;
+                    if (e.target.value != "") this.setState({title: e.target.value });
                   }}
                 />
               </label>
               <br />
-              {this.state.isRequired && obj.title == "" ? warningElement : null}
+              {this.state.isRequired && this.state.title == "" ? warningElement : null}
               <br />
               <br />
               <label>
@@ -249,12 +262,12 @@ class Home extends React.Component {
                   type="text"
                   name="desc"
                   onChange={(e) => {
-                    if (e.target.value != "") obj.description = e.target.value;
+                    if (e.target.value != "") this.setState({description: e.target.value});
                   }}
                 />
               </label>
               <br />
-              {this.state.isRequired && obj.description == "" ? warningElement : null}
+              {this.state.isRequired && this.state.description == "" ? warningElement : null}
               <br />
               <br />
               <label>
@@ -268,7 +281,7 @@ class Home extends React.Component {
                       name="privacy"
                       value="anonymous"
                       onClick={() => {
-                        obj.privacySetting = "anonymous";
+                        this.setState({ privacySetting: "anonymous" });
                       }}
                     />
                     <label htmlFor="anonymous">Anonymous</label>
@@ -280,7 +293,7 @@ class Home extends React.Component {
                       name="privacy"
                       value="not-anonymous"
                       onClick={() => {
-                        obj.privacySetting = "not anonymous";
+                        this.setState({privacySetting: "not anonymous"});
                       }}
                     />
                     <label htmlFor="not-anonymous">Not Anonymous</label>
@@ -289,12 +302,15 @@ class Home extends React.Component {
                   <br />
                 </div>
               </label>
-              {this.state.isRequired && obj.privacySetting == ""
+              {this.state.isRequired && this.state.privacySetting == ""
                 ? warningElement
                 : null}
               <br />
               <br />
-              <button onClick={(e) => this.handleSubmit(e, obj)}>
+              <button onClick={(e) => {
+                this.handleSubmit(e);
+                console.log(this.state.title);
+                }}>
                 Confirm
               </button>
             </form>

@@ -15,6 +15,14 @@ function Invitation(props) {
   const [openTargetedUserEmail, setOpenTargetedUserEmail] = useState(false);
   const [currentStep, setCurrentStep] = useState([]);
 
+  const handleCurrentSelection = (item) => {
+    let listSelection = document.querySelectorAll(".page-button");
+    listSelection.forEach((i) => {
+      i.classList.remove('clicked');
+    });
+    item.classList.add('clicked');
+  }
+
   useEffect(() => {
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
@@ -53,6 +61,12 @@ function Invitation(props) {
     );
     setCurrentStep(tempBreadcrumbs);
     localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
+    let listSelection = document.querySelectorAll(".page-button");
+    listSelection.forEach((item) => {
+      item.addEventListener('click', (e) => {
+        handleCurrentSelection(e.target);
+      })
+    });
   }, [])
 
   const handleMenu = () => {
@@ -244,14 +258,18 @@ function Invitation(props) {
           <div className="menu-bar">
             <div id="page-selection">
               <div
-                onClick={() => handleOpenSharePage()}
+                onClick={(e) => {
+                  handleOpenSharePage();
+                }}
                 className="page-button clicked"
                 id="btn-page1"
               >
                 Share
               </div>
               <div
-                onClick={() => handleOpenTrackPage()}
+                onClick={(e) => {
+                  handleOpenTrackPage();
+                }}
                 className="page-button"
                 id="btn-page2"
               >
