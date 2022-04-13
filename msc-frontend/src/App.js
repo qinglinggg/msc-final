@@ -26,39 +26,27 @@ import { render } from "react-dom";
 import AdminDashboard from "./components/admin/AdminDashboard";
 
 const BASE_URL = "http://10.61.38.193:8080";
+const APP_URL = "http://10.61.38.193:3001";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.handleCreateNewForm = this.handleCreateNewForm.bind(this);
     this.handleSetFormMessages = this.handleSetFormMessages.bind(this);
-    this.handleCurrentSelectedForm = this.handleCurrentSelectedForm.bind(this);
-    this.handleSetCurrentSelectedForm = this.handleSetCurrentSelectedForm.bind(this);
+    this.handleMetadataChange = this.handleMetadataChange.bind(this);
   }
 
   state = {
     userProfiles: [],
-
     // Home
     forms: [],
     formItems: ["test1", "test2"],
-    
     waitingForms: [
       {
         title: "Survey 1",
         description: "Mengisi survey 1",
       },
     ],
-
-    breadcrumbs: [
-      {
-        page: "Home",
-        path: "/"
-      }
-    ],
-
-    currentSelectedForm: "",
-
   }
 
   componentDidMount() {
@@ -70,8 +58,8 @@ class App extends React.Component {
       const forms = res.data;
       this.setState({ forms });
     });
-    this.setState({currentSelectedForm: ""});
-
+    let tempBreadcrumbs = [{ page: "/", path: `${APP_URL}` }];
+    localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
     // axios.get(`${BASE_URL}/api/v1/waitingForms`).then(async (res) => {
     //   const waitingForms = res.data;
     //   this.setState({ waitingForms });
@@ -86,7 +74,6 @@ class App extends React.Component {
     // });
 
     // MENU
-
     let pageContainer = document.getElementById("page-container");
     let background = document.querySelector(".background");
     let navBar = document.getElementById("navbar");
@@ -117,10 +104,8 @@ class App extends React.Component {
     sideMenu.style.left = "0";
   }
 
-  handleCurrentSelectedForm(formId) {
-    if(!this.state.currentSelectedForm){
-      this.setState({currentSelectedForm: formId});
-    }
+  handleMetadataChange(metadata){
+    this.setState({currentMetadata : metadata})
   }
 
   async handleCreateNewForm(obj) {
@@ -135,7 +120,7 @@ class App extends React.Component {
         formsData.push(response.data);
         this.setState({ forms: formsData });
         this.handleSetCurrentSelectedForm(response.data.formId);
-        window.location = `/dashboard/formId/${response.data.formId}`;
+        window.location = `/dashboard/formId/${response.data.formId}/meta-data/${response.data.title}`;
       });
     } catch (error) {
       console.log(error);
@@ -167,9 +152,9 @@ class App extends React.Component {
       <Router>
         <Navbar user_data={this.state.userProfiles} />
         <div className="background"></div>
-        <Menu 
-          breadcrumbs={this.state.breadcrumbs}
+        <Menu
           currentSelectedForm={this.state.currentSelectedForm}
+          currentMetadata={this.state.currentMetadata}
         />
           <div className="page-container" id="page-container">
             <Routes>
@@ -181,6 +166,7 @@ class App extends React.Component {
                     waitingForms={this.state.waitingForms}
                     handleCreateNewForm={this.handleCreateNewForm}
                     handleSetCurrentSelectedForm={this.handleSetCurrentSelectedForm}
+                    handleMetadataChange={this.handleMetadataChange}
                   />
                 }
               />
@@ -188,26 +174,20 @@ class App extends React.Component {
                 path={`/dashboard/formId/:formId`}
                 element={
                   <Dashboard 
-                    forms={this.state.forms} 
-                    breadcrumbs={this.state.breadcrumbs}
-                    handleCurrentSelectedForm={this.handleCurrentSelectedForm}
+                    forms={this.state.forms}
                   />
                 }
               />
               <Route
                 path={`/design/formId/:formId`}
                 element={
-                  <Design 
-                    breadcrumbs={this.state.breadcrumbs} 
-                  />
+                  <Design />
                 }
               />
               <Route
                 path={`/invitation/formId/:formId`}
                 element={
-                  <Invitation 
-                    breadcrumbs={this.state.breadcrumbs}
-                  />
+                  <Invitation />
                 }
               />
               <Route
@@ -215,8 +195,7 @@ class App extends React.Component {
                 element={
                   <DataVisualization 
                     forms={this.state.forms} 
-                    formItems_data={this.state.formItems} 
-                    breadcrumbs={this.state.breadcrumbs}
+                    formItems_data={this.state.formItems}
                   />}
               />
               
@@ -225,9 +204,7 @@ class App extends React.Component {
                 element={
                   <Feedback
                     handleSetFormMessages={this.handleSetFormMessages}
-                    breadcrumbs={this.state.breadcrumbs}
-                  />
-                }
+                  />}
               />
               <Route>
                 {this.state.formMessages ? this.state.formMessages.map((message) => {
@@ -247,9 +224,7 @@ class App extends React.Component {
                           user={user}
                           messages={feedbackMessageList}
                           handleSendNewMessage={this.handleSendNewMessage}
-                          breadcrumbs={this.state.breadcrumbs}
-                        />
-                      }
+                        />}
                     />
                   );
                 }) : null}

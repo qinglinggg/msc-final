@@ -13,7 +13,7 @@ function Invitation(props) {
   const [pageSelection, setPageSelection] = useState(true);
   const [userInvited, setUserInvited] = useState([]);
   const [openTargetedUserEmail, setOpenTargetedUserEmail] = useState(false);
-  const [breadcrumbs, setBreadcrumbs] = useState(props.breadcrumbs);
+  const [currentStep, setCurrentStep] = useState([]);
 
   useEffect(() => {
     let body = document.getElementById("body");
@@ -21,9 +21,6 @@ function Invitation(props) {
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
-  });
-
-  useEffect(() => {
     setUserInvited([
       {
         number: 1,
@@ -40,19 +37,22 @@ function Invitation(props) {
         datetime: "Submitted at 08/12/2021 09:30PM",
       },
     ]);
-    let tempBreadcrumbs = breadcrumbs;
+    let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
+    tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
+    if(tempBreadcrumbs.length >= 2) {
+      while(tempBreadcrumbs.slice(-1)[0].page != "Home" && tempBreadcrumbs.slice(-1)[0].page != "/"){
+        tempBreadcrumbs.pop();
+      }
+    }
+    let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
     tempBreadcrumbs.push(
       {
-        // simpen currentformdata
-        page: "formId",
-      },
-      {
-        page: "Invitation",
-        // path: `${BASE_URL}/design/formId/:formId`,
-        path: `item1/invitation`,
+        page: "Invitation - " + selectedForm['title'],
+        path: window.location.href,
       }
-    )
-    setBreadcrumbs(tempBreadcrumbs);
+    );
+    setCurrentStep(tempBreadcrumbs);
+    localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
   }, [])
 
   const handleMenu = () => {
@@ -210,9 +210,6 @@ function Invitation(props) {
     } else {
       page = displayTrackPage();
     }
-    // if (openTargetedUserEmail) {
-    //   handleTags();
-    // }
     return (
       <React.Fragment>
         <div className="title-container" id="title-invitation">
@@ -225,6 +222,23 @@ function Invitation(props) {
           </div>
           <div className="page-title">Invitation</div>
           {/* <div className="title">Dashboard</div> */}
+        </div>
+        <div className="page-breadcrumbs">
+        {
+          currentStep.map((b, idx) => {
+            if(idx > 0) {
+              return (
+                <a href={b['path']}>
+                  <span>{">"}</span>
+                  <span>{b['page']}</span>
+                </a>
+              );
+            }
+            return (
+              <a href={b['path']}>{b['page']}</a>
+            );
+          })
+        }
         </div>
         <div id="page-content">
           <div className="menu-bar">

@@ -18,7 +18,8 @@ function DataVisualization(props) {
   const [summaryRef, setSummaryRef] = useState(null);
   const [summaryPage, setSummaryPage] = useState(null);
   const [privacyCheck, setPrivacyCheck] = useState(false);
-  const [breadcrumbs, setBreadcrumbs] = useState(props.breadcrumbs);
+  const [currentStep, setCurrentStep] = useState([]);
+  const [selectedPage, setSelectedPage] = useState(1);
   let componentRef = useRef();
 
   const exportOptions = [
@@ -27,25 +28,61 @@ function DataVisualization(props) {
     { value: "xls", label: ".xls" },
   ];
 
+  function activateLink(item) {
+    let listPage = document.querySelectorAll(".sub-page-selection");
+    listPage.forEach((i) => {
+      i.classList.remove('active');
+    });
+    item.classList.add('active');
+    let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
+    tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
+    if(tempBreadcrumbs.length >= 2){
+      let selectedForm = JSON.parse(localStorage.getItem("selectedForm"))
+      while(tempBreadcrumbs.slice(-1)[0].page != `Data Visualization - ${selectedForm['title']}`){
+        tempBreadcrumbs.pop();
+      }
+    }
+    if(tempBreadcrumbs.slice(-1).page != item.innerText){
+      tempBreadcrumbs.push(
+        {
+          page: item.innerText,
+          path: window.location.href
+        }
+      );
+      setCurrentStep(tempBreadcrumbs);
+      localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
+    }
+  }
+
   useEffect(() => {
-    let tempBreadcrumbs = breadcrumbs;
+    let tempBreadcrumbs = JSON.parse(localStorage.getItem("breadcrumbs"));
+    if(tempBreadcrumbs.length >= 2) {
+      while(tempBreadcrumbs.slice(-1)[0].page != "Home" && tempBreadcrumbs.slice(-1)[0].page != "/"){
+        tempBreadcrumbs.pop();
+      }
+    }
+    let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
     tempBreadcrumbs.push(
       {
-        // simpen currentformdata
-        page: "formId",
-      },
-      {
-        page: "Data Visualization",
-        // path: `${BASE_URL}/design/formId/:formId`,
-        path: `item1/show-results`,
+        page: "Data Visualization - " + selectedForm['title'],
+        path: window.location.href,
       }
     )
-    setBreadcrumbs(tempBreadcrumbs);
+    setCurrentStep(tempBreadcrumbs);
+    localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
+    let listPage = document.querySelectorAll(".sub-page-selection");
+    if (listPage){
+      let counter = 1;
+      listPage.forEach((item) => {
+        if(counter == selectedPage) item.classList.add('active');
+        counter += 1;
+      });
+    }
   }, [])
 
   const handleSettings = () => {
@@ -192,7 +229,6 @@ function DataVisualization(props) {
     );
   }
 
-  
   const displayDataVisualization = () => {
     let loadPage = null;
     if (activePage == 1) {
@@ -221,27 +257,50 @@ function DataVisualization(props) {
             {openSettings ? displaySettings() : null}
           </div>
         </div>
+        <div className="page-breadcrumbs">
+        {
+          currentStep.map((b, idx) => {
+            if(idx > 0) {
+              return (
+                <a href={b['path']}>
+                  <span>{">"}</span>
+                  <span>{b['page']}</span>
+                </a>
+              );
+            }
+            return (
+              <a href={b['path']}>{b['page']}</a>
+            );
+          })
+        }
+        </div>
         <div className="data-visualization-container">
           <div className="page-selection">
             <ul>
               <li
-                onClick={() => {
+                onClick={(e) => {
                   handlePageSelection(1);
+                  activateLink(e.target);
                 }}
+                className="sub-page-selection"
               >
                 SUMMARY
               </li>
               <li
-                onClick={() => {
+                onClick={(e) => {
                   handlePageSelection(2);
+                  activateLink(e.target);
                 }}
+                className="sub-page-selection"
               >
                 RESPONSES
               </li>
               <li
-                onClick={() => {
+                onClick={(e) => {
                   handlePageSelection(3);
+                  activateLink(e.target);
                 }}
+                className="sub-page-selection"
               >
                 EXPORT
               </li>

@@ -3,13 +3,15 @@ import iconMenubarGrey from "./images/menubarGrey.png";
 import Select from "react-select";
 import UploadImage from "./functional-components/UploadImage";
 import UploadImageReact from "./functional-components/UploadImageWithProgressBar-React";
+import { useParams } from "react-router-dom";
 
 function Design(props) {
   const [selectedBackground, setSelectedBackground] = useState("No background");
   const [selectedColor, setSelectedColor] = useState("White");
   const [formItems, setFormItems] = useState();
   const [openMenu, setOpenMenu] = useState(false);
-  const [breadcrumbs, setBreadcrumbs] = useState(props.breadcrumbs);
+  const [currentStep, setCurrentStep] = useState([]);
+  const { formId } = useParams();
 
   const backgroundOptions = [
     { value: 0, label: "No background" },
@@ -29,24 +31,25 @@ function Design(props) {
   ];
 
   useEffect (() => {
-    breadcrumbs.push(
-      {
-        // simpen currentformdata
-        page: "formId", 
-      },
-      {
-        page: "Design",
-        // path: `${BASE_URL}/design/formId/:formId`,
-        path: `item1/design`,
-      }
-    )
     setFormItems(props.formItems_data)
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
-  })
+    let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
+    tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
+    if(tempBreadcrumbs.length >= 2) {
+      while(tempBreadcrumbs.slice(-1)[0].page != "Home" && tempBreadcrumbs.slice(-1)[0].page != "/"){
+        tempBreadcrumbs.pop();
+      }
+    }
+    let selectedForm = localStorage.getItem("selectedForm");
+    selectedForm = JSON.parse(selectedForm);
+    tempBreadcrumbs.push({page: "Design - " + selectedForm['title'], path: window.location.href});
+    setCurrentStep(tempBreadcrumbs);
+    localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
+  }, []);
 
   const handleMenu = () => {
     setOpenMenu(!openMenu);
@@ -71,6 +74,23 @@ function Design(props) {
           <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
         </div>
         <div className="page-title">Design</div>
+      </div>
+      <div className="page-breadcrumbs">
+        {
+          currentStep.map((b, idx) => {
+            if(idx > 0) {
+              return (
+                <a href={b['path']}>
+                  <span>{">"}</span>
+                  <span>{b['page']}</span>
+                </a>
+              );
+            }
+            return (
+              <a href={b['path']}>{b['page']}</a>
+            );
+          })
+        }
       </div>
       <div id="page-content">
         <div id="design-background-container">
