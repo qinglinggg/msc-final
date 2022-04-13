@@ -7,15 +7,9 @@ class Page1Items extends React.Component {
     super(props);
   }
 
-  componentDidMount() {
-    this.props.handleSetCurrentSelectedForm(this.props.data.formId);
-    console.log("componentdidmount");
-  }
-
   render() {
     return (
       <Link to={`/dashboard/formId/${this.props.data.formId}`} className="item-container">
-        {/* {console.log("test")} */}
         <img id="item-image" src={dummyItemImage} />
         <div className="item-meta">
           <div id="item-name">{this.props.data.title}</div>

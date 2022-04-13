@@ -2,35 +2,37 @@ import React, { Component } from "react";
 import react, { createRef, Fragment, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
-// const BASE_URL = "http://localhost:8080";
-
 function Menu(props) {
-  
-  // const {formId} = useParams();
+  const [selectedForm, setSelectedForm] = useState([]);
 
-  // useEffect(() => {
-  //   let body = document.getElementById("body");
-  //   body.classList.toggle("openMenu");
-  // })
+  useEffect(() => {
+    let currentForm = localStorage.getItem("selectedForm");
+    currentForm = JSON.parse(currentForm);
+    if(currentForm){
+      setSelectedForm(currentForm['formId']);
+    } else {
+      setSelectedForm("");
+    }
+  }, [])
 
   return (
     <div className="menu-container" id="menu-container">
       <div className="menu-close-container">
         <ion-icon name="close-outline" id="menu-close"></ion-icon>
       </div>
-      <Link className="sub-menu" to={`/dashboard/formId/${props.currentSelectedForm}`}>
+      <Link className="sub-menu" to={`/dashboard/formId/${selectedForm}`}>
         Dashboard
       </Link>
-      <Link className="sub-menu" to={`/design/formId/${props.currentSelectedForm}`}>
+      <Link className="sub-menu" to={`/design/formId/${selectedForm}`}>
         Design
       </Link>
-      <Link className="sub-menu" to={`/invitation/formId/${props.currentSelectedForm}`}>
+      <Link className="sub-menu" to={`/invitation/formId/${selectedForm}`}>
         Invitation
       </Link>
-      <Link className="sub-menu" to={`/show-results/formId/${props.currentSelectedForm}`}>
+      <Link className="sub-menu" to={`/show-results/formId/${selectedForm}`}>
         Data Visualization
       </Link>
-      <Link className="sub-menu" to={`/feedback/formId/${props.currentSelectedForm}`}>
+      <Link className="sub-menu" to={`/feedback/formId/${selectedForm}`}>
         Feedback
       </Link>
       <Link className="sub-menu" to={`/`}>

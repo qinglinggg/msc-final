@@ -11,39 +11,36 @@ function Feedback(props) {
   const [feedbackList, setFeedbackList] = useState([]);
   const [messageList, setMessageList] = useState([]);
   const {formId} = useParams();
-  const [breadcrumbs, setBreadcrumbs] = useState(props.breadcrumbs);
+  const [currentStep, setCurrentStep] = useState([]);
   
   const BASE_URL = "http://10.61.38.193:8080";
 
   useEffect(() => {
-
-    setBreadcrumbs(
-      breadcrumbs.push(
-        {
-          page: "formId",
-        },
-        {
-          page: "Feedback",
-          path: `${BASE_URL}/feedback/formId/:formId`,
-        }
-      )
-    )
-
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
-
     // get all feedback by formId
     axios.get(`${BASE_URL}/api/v1/feedback/by-form/${formId}`).then((res) => {
       const feedbackList = res.data;
-
       setFeedbackList(feedbackList);
       setIndex(feedbackList.length);
       props.handleSetFormMessages(feedbackList);
       // console.log(feedbackList);
     });
+    let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
+    tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
+    if(tempBreadcrumbs.length >= 2) {
+      while(tempBreadcrumbs.slice(-1)[0].page != "Home" && tempBreadcrumbs.slice(-1)[0].page != "/"){
+        tempBreadcrumbs.pop();
+      }
+    }
+    let selectedForm = localStorage.getItem("selectedForm");
+    selectedForm = JSON.parse(selectedForm);
+    tempBreadcrumbs.push({page: "Feedback - " + selectedForm['title'], path: window.location.href});
+    setCurrentStep(tempBreadcrumbs);
+    localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
   }, []);
 
   useEffect(() => {
@@ -67,7 +64,6 @@ function Feedback(props) {
                   index = index + 1;
               });
         });
-
       });
     }
   })
@@ -83,16 +79,29 @@ function Feedback(props) {
           Feedback
         </div>
       </div>
+      <div className="page-breadcrumbs">
+        {
+          currentStep.map((b, idx) => {
+            if(idx > 0) {
+              return (
+                <a href={b['path']}>
+                  <span>{">"}</span>
+                  <span>{b['page']}</span>
+                </a>
+              );
+            }
+            return (
+              <a href={b['path']}>{b['page']}</a>
+            );
+          })
+        }
+      </div>
       <div id="page-content" className="chat-content">
         <div id="chat-container">
           {messageList.map((message) => {
-            
             count = count + 1;
             let path = "chat-" + count;
-            
             // getFeedbackMessageByFeedbackId -> lastIndex
-            
-
             return (
               <React.Fragment>
                 <div id="chat-single-box">

@@ -17,35 +17,34 @@ function Dashboard(props) {
   const [formItems, setFormItems] = useState([]);
   const [optionCheck, setOptionCheck] = useState(false);
   const [formCounter, setFormCounter] = useState(0);
-  const [currentFormData, setCurrentFormData] = useState();
   const [timeout, setTimeout] = useState(0);
   const { formId } = useParams();
-  const [breadcrumbs, setBreadcrumbs] = useState(props.breadcrumbs);
+  const [currentStep, setCurrentStep] = useState([]);
 
   useEffect(() => {
-
     console.log("Test Form Id: " + formId);
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
-      // window.location = `/menu/${formId}`;
       body.classList.toggle("openMenu");
     });
-
-    setCurrentFormData(
-      props.forms.map((formData) => {
-        if (formData.formId == formId) {
-          console.log(formData); 
-          return formData;
-        }
-      })
-    );
-      
-    let newBreadcrumbs;
-    setBreadcrumbs();
-
-    props.handleCurrentSelectedForm(formId);
-
+    let formData = props.forms.map((formData) => {
+      if (formData.formId == formId) {
+        localStorage.setItem("selectedForm", JSON.stringify(formData));
+        return formData;
+      }
+    });
+    let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
+    tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
+    if(tempBreadcrumbs.length >= 2) {
+      while(tempBreadcrumbs.slice(-1)[0].page != "Home" && tempBreadcrumbs.slice(-1)[0].page != "/"){
+        tempBreadcrumbs.pop();
+      }
+    }
+    let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
+    tempBreadcrumbs.push({page: "Dashboard - " + selectedForm['title'], path: window.location.href});
+    setCurrentStep(tempBreadcrumbs);
+    localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
     try {
       axios({
         method: "get",
@@ -68,16 +67,7 @@ function Dashboard(props) {
     } catch (error) {
       console.log(error);
     }
-
   }, []); // run once
-
-  // useEffect(() => {
-  //   let body = document.getElementById("body");
-  //   let menuBtn = document.getElementById("menu-icon");
-  //   menuBtn.addEventListener("click", () => {
-  //     body.classList.toggle("openMenu");
-  //   });
-  // });
 
   const handleVisibility = () => {
     setOpenVisibility(!openVisibility);
@@ -192,7 +182,6 @@ function Dashboard(props) {
       }
       return elem;
     });
-    console.log(currentForm);
     try {
       axios({
         method: "put",
@@ -201,7 +190,6 @@ function Dashboard(props) {
         headers: { "Content-Type": "application/json" },
       }).then((res) => {
         setFormItems(tempFormItems);
-        console.log(tempFormItems);
       });
     } catch (error) {
       console.log(error);
@@ -507,19 +495,23 @@ function Dashboard(props) {
           {openSettings ? displaySettings() : null}
         </div>
       </div>
-      {/* kondisi kalo udah ada question, tampilin question dulu, baru AddQuestion*/}
-      {/* kalo belum ada, lgsg tombol Add Question aja */}
-      {/* AddQuestion -> tombol dulu baru kalo dipencet muncul menu tambahan */}
-      {/* <div id="page-breadcrumbs">
-        {props.breadcrumbs.map((b) => {
-          return (
-            <div id="page-breadcrumbs-items">
-              <Link ></Link>
-            </div> 
-          )
-        })}
-      </div> */}
-      <div className="page-breadcrumbs">Breadcrumbs</div>
+      <div className="page-breadcrumbs">
+        {
+          currentStep.map((b, idx) => {
+            if(idx > 0) {
+              return (
+                <a href={b['path']}>
+                  <span>{">"}</span>
+                  <span>{b['page']}</span>
+                </a>
+              );
+            }
+            return (
+              <a href={b['path']}>{b['page']}</a>
+            );
+          })
+        }
+      </div>
       <div id="page-content">
         <div className="questions-container">{displayQuestion()}</div>
       </div>

@@ -36,6 +36,21 @@ class Home extends React.Component {
     this.setState({ isAdd: !this.state.isAdd });
   }
 
+  componentDidMount() {
+    let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
+    tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
+    if(tempBreadcrumbs.length >= 1) {
+      while(tempBreadcrumbs.slice(-1)[0].page != "Home" && tempBreadcrumbs.slice(-1)[0].page != "/"){
+        tempBreadcrumbs.pop();
+      }
+    }
+    tempBreadcrumbs.push({
+      page: "Home",
+      path: window.location.href,
+    });
+    localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
+  }
+
   componentDidUpdate(prevState){
     let body = document.getElementById("body");
     if (this.state.isAdd == true){
@@ -54,7 +69,6 @@ class Home extends React.Component {
   }
 
   render() {
-
     const isPage1 = this.state.isPage1;
     let page;
     if (isPage1) {
@@ -93,7 +107,6 @@ class Home extends React.Component {
                     placeholder="Search..."
                     value=""
                     onChange={(value) => {
-                      console.log(value);
                       this.searchOnChange(value);
                     }}
                     // searchText="Search..."
@@ -129,13 +142,17 @@ class Home extends React.Component {
 
   displayPage1() {
     let formsData = this.filterData(this.props.formsData);
+    console.log(formsData);
     return (
       <React.Fragment>
         {formsData.map((data) => (
           <Page1Items 
             key={data.formId} 
             data={data}
-            handleSetCurrentSelectedForm={this.props.handleSetCurrentSelectedForm} 
+            onClick={() => {
+              this.props.handleMetadataChange({title: data.title});
+              this.props.handleSetCurrentSelectedForm(data.formId);
+            }}
           />
         ))}
         <div className="item-container">
