@@ -239,7 +239,7 @@ public class FormDAO {
 
     public int insertFormItemResponse(String formRespondentId, FormItemResponse formItemResponse){
         final String query = "INSERT INTO FormItemResponse (formRespondentId, formItemId, formItemResponseId, answerSelectionId, answerSelectionValue) VALUES (?,?,?,?,?)";
-        int res = jdbcTemplate.update(formRespondentId, formItemResponse.getFormItemId().toString(), formItemResponse.getFormItemResponseId().toString(), formItemResponse.getAnswerSelectionId().toString(), formItem.getAnswerSelectionValue());
+        int res = jdbcTemplate.update(formRespondentId, formItemResponse.getFormItemId().toString(), formItemResponse.getFormItemResponseId().toString(), formItemResponse.getAnswerSelectionId().toString(), formItemResponse.getAnswerSelectionValue());
         return res;
     }
 
@@ -248,7 +248,5 @@ public class FormDAO {
         int res = jdbcTemplate.update(formItemResponse.getAnswerSelectionId().toString(), formItemResponse.getAnswerSelectionValue(), formItemResponse.getFormItemResponseId().toString());
         return res;
     }
-
-
 
 }
