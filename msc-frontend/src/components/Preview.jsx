@@ -5,7 +5,7 @@ import { Link, useParams } from "react-router-dom";
 import iconVisibility2 from "./images/visibility2.png";
 import iconSettings from "./images/settings.png";
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://10.61.38.193:8080";
 
 function Preview(props) {
   const [openSettings, setOpenSettings] = useState(false);
@@ -13,6 +13,7 @@ function Preview(props) {
 
   const [index, setIndex] = useState(1);
   const [formItems, setFormItems] = useState([]);
+  const [answerSelection, setAnswerSelection] = useState([]);
   const { formId } = useParams();
 
   useEffect (() => {
@@ -27,12 +28,12 @@ function Preview(props) {
         method: "get",
         url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`,
       }).then((res) => {
-        setFormItems(res);
+        setFormItems(res.data);
       });
     } catch (error) {
       console.log(error);
     }
-  })
+  }, []);
 
   const handleNext = () => {
     setIndex(index + 1);
@@ -47,6 +48,21 @@ function Preview(props) {
     window.location = `/settings/formId/${formId}`;
   }
 
+  const getAnswerSelection = (current) => {
+    let formItemId = current.id;
+
+    try {
+      axios({
+        method: "get",
+        url: `${BASE_URL}/api/v1/forms/get-answer-selection/${formItemId}`
+      }).then((res) => {
+        setAnswerSelection(res.data);
+      })
+    } catch(error) {
+      
+    }
+  }
+
   const displayQuestion = () => {
     let questions = formItems;
     let length = formItems.length;
@@ -54,7 +70,7 @@ function Preview(props) {
     return (
       <div className="preview-container">
         {
-          formItems ? (
+          length == 0 ? (
             <div id="preview-empty-list">
               There is no question in the list
             </div>
@@ -97,11 +113,15 @@ function Preview(props) {
   //   );
   // }
 
-  const displayQuestionCard = (current, length) => {
+  const displayQuestionCard = (questions, length) => {
     let loadAnswerField;
+    let current = questions[index-1];
+    getAnswerSelection(questions[index-1]);
+    console.log(answerSelection);
+    
     return (
       <div className="preview-container">
-        {this.state.index == 1 ? (
+        {index == 1 ? (
           <div id="preview-back-null" />
         ) : (
           <div id="preview-back-icon-animation">
@@ -115,18 +135,18 @@ function Preview(props) {
 
         <div className="preview-flex">
           <div className="preview-field">
-            {index}. {current.question}
+            {index}. {current.content}
           </div>
           <div className="answer-field">
-            {current.questionType == "LS"
-              ? (loadAnswerField = loadLinearScale(current.arrayOptions))
-              : current.questionType == "MC"
+            {current.type == "LS"
+              ? (loadAnswerField = loadLinearScale(answerSelection))
+              : current.type == "MC"
               ? (loadAnswerField = loadMultipleChoice(
-                  current.arrayOptions
+                answerSelection
                 ))
-              : current.questionType == "CB"
-              ? (loadAnswerField = loadCheckbox(current.arrayOptions))
-              : current.questionType == "SA"
+              : current.type == "CB"
+              ? (loadAnswerField = loadCheckbox(answerSelection))
+              : current.type == "SA"
               ? (loadAnswerField = loadShortAnswer())
               : null}
           </div>
@@ -213,11 +233,14 @@ function Preview(props) {
     );
   };
 
-  const loadMultipleChoice = (arrayOptions) =>{
+  const loadMultipleChoice = (arrayOptions) => {
+    // console.log(arrayOptions);
+
     return (
       <React.Fragment>
         <div id="preview-multiple-choice">
-          {arrayOptions.map((options) => {
+          { 
+            arrayOptions.map((options) => {
             return (
               <div id="preview-option-container">
                 <div id="preview-input-mc-cb-container">
@@ -309,7 +332,7 @@ function Preview(props) {
           Preview
         </div>
         <div className="dashboard-icon">
-          <Link to="/item1/dashboard">
+          <Link to={`/dashboard/formId/${formId}`}>
             <img className="icon-image" src={iconVisibility2} alt="" />
           </Link>
           <img

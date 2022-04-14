@@ -224,4 +224,31 @@ public class FormDAO {
         }, id);
         return formAnswerSelections;
     }
+
+    public String insertFormRespondent(String formId, FormRespondent formRespondent){
+        final String query = "INSERT INTO FormRespondent (formRespondentId, formId, userId, submitDate) VALUES (?,?,?,?)"
+        int res = jdbcTemplate.update(formRespondent.getFormRespondentId().toString(), formId, formRespondent.getUserId().toString(), dateFormat.format(formRespondent.getSubmitDate()));
+        return formRespondent.getFormRespondentId().toString();
+    }
+
+    public String getFormRespondentByUserId(@PathVariable("formId") String formId, @RequestBody String userId){
+        final String query = "SELECT formRespondentId FROM FormRespondent WHERE formId = ? AND userId = ?"
+        String formRespondentId = (String) jdbcTemplate.query(query, String.class, formId, userId);
+        return formRespondentId;
+    }
+
+    public int insertFormItemResponse(String formRespondentId, FormItemResponse formItemResponse){
+        final String query = "INSERT INTO FormItemResponse (formRespondentId, formItemId, formItemResponseId, answerSelectionId, answerSelectionValue) VALUES (?,?,?,?,?)"
+        int res = jdbcTemplate.update(formRespondentId, formItemResponse.getFormItemId().toString(), formItemResponse.getFormItemResponseId().toString(), formItemResponse.getAnswerSelectionId().toString(), formItem.getAnswerSelectionValue());
+        return res;
+    }
+
+    public int updateFormItemResponse(String formRespondentId, FormItemResponse formItemResponse){
+        final String query = "UPDATE FormItemResponse SET answerSelectionId = ?, answerSelectionValue = ? WHERE formItemResponseId = ?"
+        int res = jdbcTemplate.update(formItemResponse.getAnswerSelectionId().toString(), formItemResponse.getAnswerSelectionValue(), formItemResponse.getFormItemResponseId().toString());
+        return res;
+    }
+
+
+
 }

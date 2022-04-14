@@ -96,4 +96,23 @@ public class FormService {
     public int removeAllAnswerSelection(String formItemsId) {
         return formDAO.removeAllAnswerSelection(formItemsId);
     }
+
+    public String insertFormRespondent(String formId, FormRespondent formRespondent){
+        return formDAO.insertFormRespondent(formId, formRespondent);
+    }
+
+    public String getFormRespondentByUserId(@PathVariable("formId") String formId, @RequestBody String userId){
+        return formDAO.getFormRespondentByUserId(formId, userId);
+    }
+
+    public int insertFormItemResponse(String formRespondentId, FormItemResponse formItemResponse){
+        return formDAO.insertFormItemResponse(formRespondentId, formItemResponse);
+    }
+
+    public int updateFormItemResponse(String formRespondentId, FormItemResponse formItemResponse){
+        return formDAO.updateFormItemResponse(formRespondentId, formItemResponse);
+    }
+
+
+
 }
