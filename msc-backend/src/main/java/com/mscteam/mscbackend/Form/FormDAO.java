@@ -231,7 +231,7 @@ public class FormDAO {
         return formRespondent.getFormRespondentId().toString();
     }
 
-    public String getFormRespondentByUserId(@PathVariable("formId") String formId, @RequestBody String userId){
+    public String getFormRespondentByUserId(String formId, String userId){
         final String query = "SELECT formRespondentId FROM FormRespondent WHERE formId = ? AND userId = ?";
         String formRespondentId = (String) jdbcTemplate.query(query, String.class, formId, userId);
         return formRespondentId;

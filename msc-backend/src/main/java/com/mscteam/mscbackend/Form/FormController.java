@@ -114,12 +114,12 @@ public class FormController {
     // Form Item Response
     
     @PostMapping(path = "/insert-response/{formRespondentId}")
-    public int insertFormItemResponse(@JsonProperty("formRespondentId") String formRespondentId, @RequestBody FormItemResponse formItemResponse){
+    public int insertFormItemResponse(@PathVariable("formRespondentId") String formRespondentId, @RequestBody FormItemResponse formItemResponse){
         return formService.insertFormItemResponse(formRespondentId, formItemResponse);
     }
 
     @PutMapping(path ="/update-response/{formRespondentId}")
-    public int updateFormItemResponse(@JsonProperty("formRespondentId") String formRespondentId, @RequestBody FormItemResponse formItemResponse){
+    public int updateFormItemResponse(@PathVariable("formRespondentId") String formRespondentId, @RequestBody FormItemResponse formItemResponse){
         return formService.updateFormItemResponse(formRespondentId, formItemResponse);
     }
 }

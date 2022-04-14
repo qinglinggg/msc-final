@@ -42,11 +42,11 @@ public class FormItemResponse {
     }
 
     public UUID getAnswerSelectionId() {
-        return this.getAnswerSelectionId;
+        return this.answerSelectionId;
     }
 
     public String getAnswerSelectionValue() {
-        return this.getAnswerSelectionValue;
+        return this.answerSelectionValue;
     }
 
     public void setAnswerSelectionValue(String answerSelectionValue){

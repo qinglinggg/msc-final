@@ -101,7 +101,7 @@ public class FormService {
         return formDAO.insertFormRespondent(formId, formRespondent);
     }
 
-    public String getFormRespondentByUserId(@PathVariable("formId") String formId, @RequestBody String userId){
+    public String getFormRespondentByUserId(String formId, String userId){
         return formDAO.getFormRespondentByUserId(formId, userId);
     }
 
