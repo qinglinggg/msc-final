@@ -9,9 +9,10 @@ public class FormRespondent {
     private UUID formRespondentId;
     private UUID formId;
     private UUID userId;
+    private Date submitDate;
 
     // get 
-    public FormRespondent(UUID formRespondentId, UUID formId, UUID userId){
+    public FormRespondent(UUID formRespondentId, UUID formId, UUID userId, Date submitDate){
         this.formRespondentId = formRespondentId;
         this.formId = formId;
         this.userId = userId;
