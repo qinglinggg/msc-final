@@ -21,7 +21,7 @@ public class FormItemResponse {
         this.answerSelectionValue = answerSelectionValue;
     }
 
-    public FormItemResponse (@JsonProperty("formRespondentId") formRespondentId, @JsonProperty("formItemId") formItemId, @JsonProperty("answerSelectionId") answerSelectionId, @JsonProperty("answerSelectionValue") answerSelectionValue){
+    public FormItemResponse (@JsonProperty("formRespondentId") UUID formRespondentId, @JsonProperty("formItemId") UUID formItemId, @JsonProperty("answerSelectionId") UUID answerSelectionId, @JsonProperty("answerSelectionValue") String answerSelectionValue){
         this.formRespondentId = formRespondentId;
         this.formItemId = formItemId;
         this.formItemResponseId = UUID.randomUUID();
@@ -49,7 +49,7 @@ public class FormItemResponse {
         return this.getAnswerSelectionValue;
     }
 
-    public String setAnswerSelectionValue(String answerSelectionValue){
+    public void setAnswerSelectionValue(String answerSelectionValue){
         this.answerSelectionValue = answerSelectionValue;
     }
 
