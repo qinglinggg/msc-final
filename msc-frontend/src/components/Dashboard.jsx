@@ -96,7 +96,7 @@ function Dashboard(props) {
       let newItem = {
         itemNumber: formCounter,
         questionContent: "",
-        questionType: "",
+        questionType: "MC",
         arrayOptions: [],
         optionCounter: 0,
       };

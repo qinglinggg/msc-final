@@ -98,4 +98,28 @@ public class FormController {
     public int removeAllAnswerSelection(@PathVariable("formItemsId") String formItemsId) {
         return formService.removeAllAnswerSelection(formItemsId);
     }
+
+    // Form Respondent
+
+    @PostMapping(path = "/insert-form-respondent/{formId}")
+    public String insertFormRespondent(@PathVariable("formId") String formId, @RequestBody FormRespondent formRespondent){
+        return formService.insertFormRespondent(formId, formRespondent);
+    }
+
+    @GetMapping(path = "/form-respondent/{formId}")
+    public String getFormRespondentByUserId(@PathVariable("formId") String formId, @RequestBody String userId){
+        return formService.getFormRespondentByUserId(formId, userId);
+    }
+
+    // Form Item Response
+    
+    @PostMapping(path = "/insert-response/{formRespondentId}")
+    public int insertFormItemResponse(@JsonProperty("formRespondentId") formRespondentId, @RequestBody FormItemResponse formItemResponse){
+        return formService.insertFormItemResponse(formRespondentId, formItemResponse);
+    }
+
+    @PutMapping(path ="/update-response/{formRespondentId}")
+    public int updateFormItemResponse(@JsonProperty("formRespondentId") formRespondentId, @RequestBody FormItemResponse formItemResponse){
+        return formService.updateFormItemResponse(formRespondentId, formItemResponse);
+    }
 }

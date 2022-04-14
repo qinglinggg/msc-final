@@ -7,6 +7,7 @@ import iconWhatsApp from "./images/iconWhatsApp.png";
 import iconLink from "./images/iconLink.png";
 import AutoHeightTextarea from "./functional-components/AutoheightTextarea";
 import TargetedUserEmail from "./functional-components/TargetedUserEmail";
+import { useParams } from "react-router-dom";
 
 function Invitation(props) {
   const [openMenu, setOpenMenu] = useState(false);
@@ -22,6 +23,11 @@ function Invitation(props) {
     });
     item.classList.add('clicked');
   }
+
+  const BASE_URL = "http://10.61.38.193:8080";
+  const { formId } = useParams();
+
+  const [formUrl] = useState(`${BASE_URL}/response/formId/${formId}`);
 
   useEffect(() => {
     let body = document.getElementById("body");
@@ -96,7 +102,9 @@ function Invitation(props) {
               </div>
               <div id="invitation-share-publicly-innerbox-linkcontainer">
                 <img src={iconLink} alt="" />
-                <div id="invitation-share-publicly-innerbox-linkbox"></div>
+                <div id="invitation-share-publicly-innerbox-linkbox">
+                  <input type="url" id="invitation-share-publicly-innerbox-url" value={formUrl} disabled />
+                </div>
               </div>
               <div id="invitation-share-publicly-innerbox-iconcontainer">
                 <img

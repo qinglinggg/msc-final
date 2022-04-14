@@ -24,6 +24,7 @@ import Preview from "./components/Preview";
 import RouteDashboard from "./components/Dashboard";
 import { render } from "react-dom";
 import AdminDashboard from "./components/admin/AdminDashboard";
+import Respondent from "./components/Respondent";
 
 const BASE_URL = "http://10.61.38.193:8080";
 const APP_URL = "http://10.61.38.193:3001";
@@ -215,12 +216,7 @@ class App extends React.Component {
                   );
                 }) : null}
               </Route>
-
-              <Route
-                path={`/admin`}
-                element={<AdminDashboard />}
-              />
-
+              
               <Route
                 path={`/preview/formId/:formId`}
                 element={
@@ -229,6 +225,22 @@ class App extends React.Component {
                     breadcrumbs={this.state.breadcrumbs} 
                   />
                 }
+              />
+
+              <Route
+                path={`/admin`}
+                element={<AdminDashboard />}
+              />
+
+              <Route
+                path={`/response/formId/:formId`}
+                element={
+                  <Respondent 
+                    // user={this.state.currentUser}
+                    user="00eb3eda-905f-43bd-b680-0597769b17b4"
+                  />
+                }
+                
               />
           </Routes>
         </div>
