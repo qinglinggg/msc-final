@@ -50,6 +50,7 @@ function Dashboard(props) {
         method: "get",
         url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`,
       }).then((res) => {
+        console.log(res);
         let currentStateData = [...formItems];
         res.data.map((data) => {
           let newItem = {
@@ -106,8 +107,9 @@ function Dashboard(props) {
         data: newItem,
         headers: { "Content-Type": "application/json" },
       }).then((res) => {
-        console.log(res.data);
+        // console.log(res);
         newItem = {
+          id: res.data.id,
           itemNumber: res.data.itemNumber,
           questionContent: res.data.content,
           questionType: res.data.type,
@@ -115,8 +117,7 @@ function Dashboard(props) {
           optionCounter: 0,
         };
         currentStateData.push(newItem);
-        setFormItems(currentStateData);
-      });
+      }).finally(() => setFormItems(currentStateData));
     } catch (error) {
       console.log(error);
     }
@@ -230,15 +231,24 @@ function Dashboard(props) {
     }
   };
 
-  const handleOptionList = (id, obj) => {
+  const handleOptionList = (id, data) => {
     // console.log("Handle Add Option: " + id);
     let tempFormItems = [...formItems];
     let currentForm = tempFormItems.filter((elem) => {
       return elem.id == id;
     });
     currentForm = currentForm[0];
-    currentForm["optionCounter"] += 1;
-    currentForm["arrayOptions"].push(obj);
+    console.log(currentForm);
+
+    currentForm["optionCounter"] = 0;
+    currentForm["arrayOptions"] = [];
+    
+    data.map((obj) => {
+      currentForm["optionCounter"] += 1;
+      currentForm["arrayOptions"].push(obj);
+    })
+
+    // console.log(currentForm["arrayOptions"]);
 
     tempFormItems = tempFormItems.map((elem) => {
       if (elem.id == id) {
@@ -364,10 +374,10 @@ function Dashboard(props) {
   };
 
   const displayQuestion = () => {
+    console.log(formItems);
     return (
       <React.Fragment>
         {formItems.map((res) => {
-          // console.log(res);
           return (
             <React.Fragment>
               <div className="separator" />

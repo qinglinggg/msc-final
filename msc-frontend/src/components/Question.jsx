@@ -31,6 +31,11 @@ function Question(props) {
   ];
 
   useEffect(() => {
+    if(props.questionData) {
+      let questionContent = document.getElementById("question-input-" + props.questionData.id);
+      questionContent.value = "";
+      if(props.questionData.questionContent) questionContent.value = props.questionData.questionContent;
+    }
     if (props.mode) {
       if (props.questionData.questionType != "") {
         setSelectedQuestionOption(props.questionData.questionType);
@@ -41,9 +46,12 @@ function Question(props) {
         method: "get",
         url: `${BASE_URL}/api/v1/forms/get-answer-selection/${props.questionData.id}`,
       }).then((res) => {
-        res.data.map((data) => {
-          props.handleOptionList(props.questionData.id, data);
-        });
+        // props.questionData.arrayOptions = [];
+        // res.data.map((data) => {
+        //   props.handleOptionList(props.questionData.id, data);
+        // });
+
+        props.handleOptionList(props.questionData.id, res.data);
       });
     }
   }, []);
@@ -57,7 +65,6 @@ function Question(props) {
             <AutoHeightTextarea
               className="question-input"
               id={textareaId}
-              value={props.questionData.questionContent}
               name="inputted-question"
               placeholder="Please type your question..."
               rows="14"
