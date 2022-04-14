@@ -1,4 +1,4 @@
-# msc-final
+# My Survey Companion
 
 Real simple, yet modern questionnaire application.
 
