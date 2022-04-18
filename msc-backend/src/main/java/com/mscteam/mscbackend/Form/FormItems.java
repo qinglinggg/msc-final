@@ -30,7 +30,7 @@ public class FormItems implements Comparable<FormItems>{
         this.itemNumber = itemNumber;
         this.questionContent = questionContent;
         this.questionType = questionType;
-        this.prevItem = -1;
+        this.prevItem = -1; // Jika -1, maka display item yang sekarang...
         this.nextItem = -1;
     }
 
