@@ -45,12 +45,13 @@ public class FormService {
         latestNum = 0;
 
         listItems.forEach((fi) -> {
-            if(latestNum < fi.getItemNumber()) {
+            if(latestNum <= fi.getItemNumber()) {
                 latestNum = fi.getItemNumber();
             }
         });
+        latestNum = latestNum + 1;
         System.out.println("Latest Number Form Item: " + latestNum);
-        item.setItemNumber(latestNum + 1);
+        item.setItemNumber(latestNum);
         return formDAO.addFormItems(id, item);
     }
 
