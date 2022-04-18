@@ -12,6 +12,8 @@ function Question(props) {
   const [selectedQuestionOption, setSelectedQuestionOption] = useState("");
   const [selectedInputOption, setSelectedInputOption] = useState(2);
   const [selectedIsOptional, setSelectedIsOptional] = useState(false);
+  const [branchingState, setBranchingState] = useState(false);
+  const [branchingSelection, setBranchingSelection] = useState([]);
   const questionOptions = [
     { value: "MC", label: "Multiple choice" },
     { value: "SA", label: "Short answer" },
@@ -46,15 +48,14 @@ function Question(props) {
         method: "get",
         url: `${BASE_URL}/api/v1/forms/get-answer-selection/${props.questionData.id}`,
       }).then((res) => {
-        // props.questionData.arrayOptions = [];
-        // res.data.map((data) => {
-        //   props.handleOptionList(props.questionData.id, data);
-        // });
-
         props.handleOptionList(props.questionData.id, res.data);
       });
     }
   }, []);
+
+  const handleShowBranching = () => {
+    setBranchingState(!branchingState);
+  }
 
   const displayQuestion = () => {
     let textareaId = "question-input-" + props.questionData.id;
@@ -68,7 +69,7 @@ function Question(props) {
               name="inputted-question"
               placeholder="Please type your question..."
               rows="14"
-              cols="10"
+              cols="5"
               wrap="soft"
               onChange={(e) => {
                 props.handleUpdateQuestionInput(props.questionData.id, e);
@@ -96,13 +97,15 @@ function Question(props) {
                   !(props.questionData.questionType == "CB" && e.value == "MC")
                 ) {
                   props.handleResetOption(props.questionData.id);
-                  // console.log("salah");
                 }
                 props.handleUpdateQuestionType(props.questionData.id, e);
                 setSelectedQuestionOption(props.questionData.questionType);
               }}
             />
           </div>
+        </div>
+        <div className="form-item-separator">
+          {branchingState ? "Branching options" : null}
         </div>
         {selectedQuestionOption == "MC" && multipleChoiceOption()}
         {selectedQuestionOption == "SA" && shortAnswerOption()}
@@ -137,7 +140,11 @@ function Question(props) {
             >
               {/* isi dari popup, konten yg mau dishow */}
               <div className="popup-wrapper">
-                <div className="popup-content">Enable branching</div>
+                <div
+                  className="popup-content"
+                  onClick={() => handleShowBranching()}>
+                  Enable branching
+                </div>
                 <div className="popup-divider"></div>
                 <div
                   className="popup-content"
@@ -201,19 +208,21 @@ function Question(props) {
                             e,
                             obj
                           );
-                        }}
-                      />
-                      <div
-                        className="dashboard-remove-options-button"
+                        }} />
+                      {branchingState ? (
+                        <Select
+                          className="branching-selection"
+                          options={branchingSelection}/>
+                      ) : null}
+                      <div className="form-item-remove"
                         onClick={() => {
                           props.handleRemoveOption(
                             props.questionData.id,
                             obj.id,
                             obj
                           );
-                        }}
-                      >
-                        <i className="fas fa-times"></i>
+                      }}>
+                        <ion-icon name="close-outline"></ion-icon>
                       </div>
                     </div>
                   </React.Fragment>

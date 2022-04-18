@@ -9,15 +9,18 @@ public class FormItems implements Comparable<FormItems>{
     private Integer itemNumber;
     private String questionContent;
     private String questionType;
-    private UUID nextFormId;
+    private int nextItem;
+    private int prevItem;
 
     // Get Items
-    public FormItems(UUID formId, UUID formItemsId, int itemNumber, String questionContent, String questionType) {
+    public FormItems(UUID formId, UUID formItemsId, int itemNumber, String questionContent, String questionType, int nextItem, int prevItem) {
         this.formId = formId;
         this.formItemsId = formItemsId;
         this.itemNumber = itemNumber;
         this.questionContent = questionContent;
         this.questionType = questionType;
+        this.nextItem = nextItem;
+        this.prevItem = prevItem;
     }
 
     // Create and Insert mode
@@ -27,6 +30,8 @@ public class FormItems implements Comparable<FormItems>{
         this.itemNumber = itemNumber;
         this.questionContent = questionContent;
         this.questionType = questionType;
+        this.prevItem = -1;
+        this.nextItem = -1;
     }
 
     public UUID getFormId() {
@@ -60,13 +65,21 @@ public class FormItems implements Comparable<FormItems>{
     public void setType(String questionType) {
         this.questionType = questionType;
     }
-
-    public UUID getNextForm() {
-        return this.nextFormId;
+    
+    public int getNextItem() {
+        return this.nextItem;
     }
 
-    public void setNextForm(UUID nextFormId) {
-        this.nextFormId = nextFormId;
+    public void setNextItem(int val) {
+        this.nextItem = val;
+    }
+
+    public int getPrevItem() {
+        return this.prevItem;
+    }
+
+    public void setPrevItem(int val) {
+        this.prevItem = val;
     }
 
     @Override

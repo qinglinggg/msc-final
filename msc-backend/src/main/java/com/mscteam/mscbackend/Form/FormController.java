@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/forms")
 @CrossOrigin("*")
 public class FormController {
-
     private FormService formService;
 
     @Autowired
@@ -70,6 +69,21 @@ public class FormController {
     @GetMapping(path = "/get-form-items/{id}")
     public List<FormItems> getFormItems(@PathVariable("id") String id) {
         return formService.getFormItems(id);
+    }
+
+    @GetMapping(path = "/get-a-form-item/{id}")
+    public FormItems getFormItemById(@PathVariable("id") String id) {
+        return formService.getFormItemById(id);
+    }
+
+    @GetMapping(path = "/get-next-item/{id}")
+    public int getNextItem(@PathVariable("id") String id) {
+        return formService.getNextItem(id);
+    }
+
+    @GetMapping(path = "/get-prev-item/{id}")
+    public int getPrevItem(@PathVariable("id") String id) {
+        return formService.getPrevItem(id);
     }
 
     @PostMapping(path = "/add-answer-selection/{formItemsId}", consumes = MediaType.APPLICATION_JSON_VALUE)

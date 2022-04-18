@@ -119,9 +119,9 @@ public class FormDAO {
     }
 
     public FormItems addFormItems(String id, FormItems item) {
-        final String query = "INSERT INTO FormItems(formId, formItemsId, itemNumber, questionContent, questionType) VALUES(?,?,?,?,?)";
+        final String query = "INSERT INTO FormItems(formId, formItemsId, itemNumber, questionContent, questionType) VALUES(?,?,?,?,?,?,?)";
         int res = jdbcTemplate.update(query, id, item.getId().toString(), item.getItemNumber(), item.getContent(),
-                item.getType());
+                item.getType(), item.getNextItem(), item.getPrevItem());
         System.out.println(item);
         return item;
     }
@@ -136,11 +136,28 @@ public class FormDAO {
             int itemNumber = Integer.parseInt(resultSet.getString("itemNumber"));
             String questionContent = resultSet.getString("questionContent");
             String questionType = resultSet.getString("questionType");
+            int nextItem = resultSet.getInt("nextItem");
+            int prevItem = resultSet.getInt("prevItem");
             return new FormItems(UUID.fromString(formId), UUID.fromString(formItemsId), itemNumber, questionContent,
                     questionType);
         }, id);
         System.out.println(formItems);
         return formItems;
+    }
+
+    public FormItems getFormItemById(String id) {
+        final String query = "SELECT * FROM FormItems WHERE formItemsId=?";
+        FormItems formItem = jdbcTemplate.queryForObject(query, (resultSet, i) -> {
+            String formId = resultSet.getString("formId");
+            String formItemsId = resultSet.getString("formItemsId");
+            int itemNumber = resultSet.getInt("itemNumber");
+            String questionContent = resultSet.getString("questionContent");
+            String questionType = resultSet.getString("questionType");
+            int nextItem = resultSet.getInt("nextItem");
+            int prevItem = resultSet.getInt("prevItem");
+            return new FormItems(UUID.fromString(formId), UUID.fromString(formItemsId), itemNumber, questionContent, 
+                questionType);
+        }, id);
     }
 
     public int removeFormItems(String formItemsId) {
@@ -159,11 +176,23 @@ public class FormDAO {
         if (toBeUpdated.getType() != "" && toBeUpdated.getType() != null) {
             if (comma == true)
                 query = query + ", ";
+            else comma = true;
             query = query + "questionType = '" + toBeUpdated.getType().toString() + "'";
+        }
+        if (toBeUpdated.getNextItem() != -1){
+            if (comma == true)
+                query = query + ", ";
+            else comma = true;
+            query = query + "nextItem = " + toBeUpdated.getNextItem();
+        }
+        if (toBeUpdated.getPrevItem() != -1){
+            if (comma == true)
+                query = query + ", ";
+            else comma = true;
+            query = query + "prevItem = " + toBeUpdated.getPrevItem();
         }
         query = query + " WHERE formItemsId = '" + formItemsId + "'";
         int res = jdbcTemplate.update(query);
-        // System.out.println(query);
         return res;
     }
 

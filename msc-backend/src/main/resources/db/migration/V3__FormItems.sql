@@ -4,5 +4,7 @@ CREATE TABLE FormItems (
     itemNumber INT NOT NULL,
     questionContent VARCHAR(255),
     questionType VARCHAR(50) NOT NULL,
+    nextItem INT NULL,
+    prevItem INT NULL,
     PRIMARY KEY(formId, formItemsId)
 )

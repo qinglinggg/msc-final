@@ -6,7 +6,6 @@ import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class FormRespondent {
-    
     private UUID formRespondentId;
     private UUID formId;
     private UUID userId;
