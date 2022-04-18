@@ -92,10 +92,9 @@ function Dashboard(props) {
 
   const handleAddItem = () => {
     let currentStateData = [...formItems];
-    setFormCounter(formCounter + 1);
     try {
       let newItem = {
-        itemNumber: formCounter,
+        itemNumber: -1,
         questionContent: "",
         questionType: "MC",
         arrayOptions: [],
