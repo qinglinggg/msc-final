@@ -50,7 +50,7 @@ public class FormService {
             }
         });
         System.out.println("Latest Number Form Item: " + latestNum);
-        item.setItemNumber(latestNum);
+        item.setItemNumber(latestNum + 1);
         return formDAO.addFormItems(id, item);
     }
 
