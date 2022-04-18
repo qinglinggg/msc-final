@@ -38,9 +38,11 @@ public class FormService {
         return formDAO.updateForm(id, toBeUpdated);
     }
 
+    Integer latestNum = 0;
+
     public FormItems addFormItems(String id, FormItems item) {
         List<FormItems> listItems = this.getFormItems(id);
-        Integer latestNum = 0;
+        latestNum = 0;
 
         listItems.forEach((fi) -> {
             if(latestNum < fi.getItemNumber()) {
