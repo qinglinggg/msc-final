@@ -204,7 +204,7 @@ public class FormDAO {
     }
 
     public int updateAnswerSelection(String answerSelectionId, FormAnswerSelection toBeUpdated) {
-        final String query = "UPDATE FormAnswerSelection SET answerSelectionValue = ?";
+        String query = "UPDATE FormAnswerSelection SET answerSelectionValue = ?";
         if (toBeUpdated.getValue() != "" && toBeUpdated.getValue() != null){
             query = query + "answerSelectionValue = '" + toBeUpdated.getValue().toString() + "'";
             comma = true;
