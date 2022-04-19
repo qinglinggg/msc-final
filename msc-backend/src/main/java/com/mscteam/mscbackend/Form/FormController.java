@@ -75,17 +75,7 @@ public class FormController {
     public FormItems getFormItemById(@PathVariable("id") String id) {
         return formService.getFormItemById(id);
     }
-
-    @GetMapping(path = "/get-next-item/{id}")
-    public int getNextItem(@PathVariable("id") String id) {
-        return formService.getNextItem(id);
-    }
-
-    @GetMapping(path = "/get-prev-item/{id}")
-    public int getPrevItem(@PathVariable("id") String id) {
-        return formService.getPrevItem(id);
-    }
-
+    
     @PostMapping(path = "/add-answer-selection/{formItemsId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public FormAnswerSelection addAnswerSelection(@PathVariable("formItemsId") String formItemsId,
             @RequestBody FormAnswerSelection answerSelection) {

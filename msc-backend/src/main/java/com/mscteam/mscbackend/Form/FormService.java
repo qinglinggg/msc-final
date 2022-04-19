@@ -74,17 +74,7 @@ public class FormService {
         FormItems item = formDAO.getFormItemById(itemId);
         return item;
     }
-
-    public int getNextItem(String itemId) {
-        FormItems item = this.getFormItemById(itemId);
-        return item.getNextItem();
-    }
-
-    public int getPrevItem(String itemId) {
-        FormItems item = this.getFormItemById(itemId);
-        return item.getPrevItem();
-    }
-
+    
     public int updateFormItems(String formItemsId, FormItems toBeUpdated) {
         return formDAO.updateFormItems(formItemsId, toBeUpdated);
     }
