@@ -154,6 +154,7 @@ public class FormDAO {
             return new FormItems(UUID.fromString(formId), UUID.fromString(formItemsId), itemNumber, questionContent, 
             questionType);
         }, id);
+        return formItem;
     }
 
     public int removeFormItems(String formItemsId) {
