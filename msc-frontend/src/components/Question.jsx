@@ -14,12 +14,43 @@ function Question(props) {
   const [selectedIsOptional, setSelectedIsOptional] = useState(false);
   const [branchingState, setBranchingState] = useState(false);
   const [branchingSelection, setBranchingSelection] = useState([]);
+
+  const resetBranchingSelection = () => {
+    setBranchingSelection([]);
+  }
+
+  useEffect(() => {
+    if(!props.formItems) return;
+    if(branchingSelection.length > 0) return;
+    let tempSelection = branchingSelection;
+    let logger = false;
+    for(let i=0; i+1<props.formItems.length; i++){
+      if (props.formItems[i].itemNumber < props.questionData.itemNumber) continue;
+      if (props.formItems[i].itemNumber == props.questionData.itemNumber && props.formItems[i].nextItem) handleShowBranching();
+      let tempLabel = "";
+      if(!logger) {
+        tempLabel = "Continue to next question";
+        logger = true;
+      } else {
+        tempLabel = `Jump to Question No.${i+1}`;
+      }
+      tempSelection.push({ value: props.formItems[i+1].itemNumber, label: tempLabel});
+    }
+    setBranchingSelection(tempSelection);
+  }, [branchingSelection]);
+
+  useEffect(() => {
+    // console.log("Reset activated.");
+    if(props.questionData) resetBranchingSelection();
+  }, [props.formItems]);
+
   const questionOptions = [
     { value: "MC", label: "Multiple choice" },
     { value: "SA", label: "Short answer" },
     { value: "CB", label: "Checkbox" },
     { value: "LS", label: "Linear scale" },
   ];
+
   const inputOptions = [
     { value: 2, label: "2" },
     { value: 3, label: "3" },
@@ -48,6 +79,7 @@ function Question(props) {
         method: "get",
         url: `${BASE_URL}/api/v1/forms/get-answer-selection/${props.questionData.id}`,
       }).then((res) => {
+        console.log(res);
         props.handleOptionList(props.questionData.id, res.data);
       });
     }
@@ -166,9 +198,7 @@ function Question(props) {
     let optionId = "question-" + props.questionData.id + "-options-" + obj.id;
     let textarea = document.getElementById(optionId);
     if (textarea) {
-      // console.log(obj);
       if (obj.value != "" && obj.value != null) {
-        // console.log("The object has value of " + obj.value);
         textarea.value = obj.value;
       } else {
         textarea.value = "";
@@ -185,7 +215,6 @@ function Question(props) {
                 let optionId =
                   "question-" + props.questionData.id + "-options-" + obj.id;
                 // this.handleUpdateTextarea(obj);
-
                 return (
                   <React.Fragment>
                     <div className="answer-selection">
@@ -205,14 +234,26 @@ function Question(props) {
                         onChange={(e) => {
                           props.handleOptionValue(
                             props.questionData.id,
-                            e,
-                            obj
+                            e, obj, false
                           );
                         }} />
                       {branchingState ? (
                         <Select
                           className="branching-selection"
-                          options={branchingSelection}/>
+                          options={branchingSelection}
+                          defaultValue={() => {
+                            // console.log(obj);
+                            if(obj.nextItem) {
+                              return obj.nextItem;
+                            }
+                          }}
+                          onChange={(e) => {
+                            // console.log(e);
+                            props.handleOptionValue(
+                              props.questionData.id,
+                              e, obj, true
+                            );
+                          }}/>
                       ) : null}
                       <div className="form-item-remove"
                         onClick={() => {
@@ -389,8 +430,8 @@ function Question(props) {
                     <div id="linear-label-select">
                       <div id="linear-label-select-box">
                         <div id="linear-label-select-value">
-                          {console.log("Current Label IDX:")}
-                          {console.log(labelIdx)}
+                          {/* {console.log("Current Label IDX:")}
+                          {console.log(labelIdx)} */}
                           {labelOptions.length > 0
                             ? labelOptions[labelIdx-1].label
                             : null}

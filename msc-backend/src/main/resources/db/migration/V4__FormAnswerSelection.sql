@@ -4,5 +4,7 @@ CREATE TABLE FormAnswerSelection (
     answerSelectionNo INT NOT NULL,
     answerSelectionLabel VARCHAR(100),
     answerSelectionValue VARCHAR(255),
+    nextItem INT NULL,
+    prevItem INT NULL,
     PRIMARY KEY(formItemsId, answerSelectionId)
 )

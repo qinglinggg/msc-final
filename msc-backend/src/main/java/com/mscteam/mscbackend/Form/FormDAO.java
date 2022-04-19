@@ -119,9 +119,9 @@ public class FormDAO {
     }
 
     public FormItems addFormItems(String id, FormItems item) {
-        final String query = "INSERT INTO FormItems(formId, formItemsId, itemNumber, questionContent, questionType) VALUES(?,?,?,?,?,?,?)";
+        final String query = "INSERT INTO FormItems(formId, formItemsId, itemNumber, questionContent, questionType) VALUES(?,?,?,?,?)";
         int res = jdbcTemplate.update(query, id, item.getId().toString(), item.getItemNumber(), item.getContent(),
-                item.getType(), item.getNextItem(), item.getPrevItem());
+                item.getType());
         System.out.println(item);
         return item;
     }
@@ -136,10 +136,8 @@ public class FormDAO {
             int itemNumber = Integer.parseInt(resultSet.getString("itemNumber"));
             String questionContent = resultSet.getString("questionContent");
             String questionType = resultSet.getString("questionType");
-            int nextItem = resultSet.getInt("nextItem");
-            int prevItem = resultSet.getInt("prevItem");
             return new FormItems(UUID.fromString(formId), UUID.fromString(formItemsId), itemNumber, questionContent,
-                    questionType);
+                questionType);
         }, id);
         System.out.println(formItems);
         return formItems;
@@ -153,10 +151,8 @@ public class FormDAO {
             int itemNumber = resultSet.getInt("itemNumber");
             String questionContent = resultSet.getString("questionContent");
             String questionType = resultSet.getString("questionType");
-            int nextItem = resultSet.getInt("nextItem");
-            int prevItem = resultSet.getInt("prevItem");
             return new FormItems(UUID.fromString(formId), UUID.fromString(formItemsId), itemNumber, questionContent, 
-                questionType);
+            questionType);
         }, id);
     }
 
@@ -179,18 +175,6 @@ public class FormDAO {
             else comma = true;
             query = query + "questionType = '" + toBeUpdated.getType().toString() + "'";
         }
-        if (toBeUpdated.getNextItem() != -1){
-            if (comma == true)
-                query = query + ", ";
-            else comma = true;
-            query = query + "nextItem = " + toBeUpdated.getNextItem();
-        }
-        if (toBeUpdated.getPrevItem() != -1){
-            if (comma == true)
-                query = query + ", ";
-            else comma = true;
-            query = query + "prevItem = " + toBeUpdated.getPrevItem();
-        }
         query = query + " WHERE formItemsId = '" + formItemsId + "'";
         int res = jdbcTemplate.update(query);
         return res;
@@ -200,10 +184,10 @@ public class FormDAO {
             FormAnswerSelection answerSelection) {
         answerSelection.setNo(answerSelectionNo + 1);
         answerSelection.setLabel("Option " + answerSelection.getNo());
-        final String query = "INSERT INTO FormAnswerSelection(formItemsId, answerSelectionId, answerSelectionNo, answerSelectionLabel, answerSelectionValue) VALUES(?,?,?,?,?)";
+        final String query = "INSERT INTO FormAnswerSelection(formItemsId, answerSelectionId, answerSelectionNo, answerSelectionLabel, answerSelectionValue, nextItem, prevItem) VALUES(?,?,?,?,?,?,?)";
         int res = jdbcTemplate.update(query, id, answerSelection.getId().toString(), answerSelection.getNo(),
                 answerSelection.getLabel(),
-                answerSelection.getValue());
+                answerSelection.getValue(), answerSelection.getNextItem(), answerSelection.getPrevItem());
         return answerSelection;
     }
 
@@ -220,22 +204,33 @@ public class FormDAO {
     }
 
     public int updateAnswerSelection(String answerSelectionId, FormAnswerSelection toBeUpdated) {
-        final String query = "UPDATE FormAnswerSelection SET answerSelectionValue = ? WHERE answerSelectionId = ?";
-        int res = jdbcTemplate.update(query, toBeUpdated.getValue().toString(), answerSelectionId);
-        // System.out.println(query);
+        final String query = "UPDATE FormAnswerSelection SET answerSelectionValue = ?";
+        if (toBeUpdated.getValue() != "" && toBeUpdated.getValue() != null){
+            query = query + "answerSelectionValue = '" + toBeUpdated.getValue().toString() + "'";
+            comma = true;
+        }
+        if (toBeUpdated.getNextItem() != -1){
+            if (comma == true)
+                query = query + ", ";
+            else comma = true;
+            query = query + "nextItem = " + toBeUpdated.getNextItem();
+        }
+        if (toBeUpdated.getPrevItem() != -1){
+            if (comma == true)
+                query = query + ", ";
+            else comma = true;
+            query = query + "prevItem = " + toBeUpdated.getPrevItem();
+        }
+        query = query + " WHERE answerSelectionId = '" + answerSelectionId + "'";
+        int res = jdbcTemplate.update(query);
         return res;
     }
 
     public int updateAnswerSelectionLabel(String answerSelectionId, Integer index) {
         Integer answerSelectionNo = index;
         String answerSelectionLabel = "Label " + index;
-
         final String query = "UPDATE FormAnswerSelection SET answerSelectionNo = ?, answerSelectionLabel = ? WHERE answerSelectionId = ?";
         int res = jdbcTemplate.update(query, answerSelectionNo, answerSelectionLabel, answerSelectionId);
-
-        // System.out.println("id: " + answerSelectionId + ", no: " + answerSelectionNo
-        // + ", label: " + answerSelectionLabel);
-        // System.out.println(res);
         return res;
     }
 
@@ -247,9 +242,10 @@ public class FormDAO {
             Integer answerSelectionNo = resultSet.getInt("answerSelectionNo");
             String answerSelectionLabel = resultSet.getString("answerSelectionLabel");
             String answerSelectionValue = resultSet.getString("answerSelectionValue");
+            int nextItem = resultSet.getInt("nextItem");
+            int prevItem = resultSet.getInt("prevItem");
             return new FormAnswerSelection(UUID.fromString(formItemsId), UUID.fromString(answerSelectionId),
-                    answerSelectionNo,
-                    answerSelectionLabel, answerSelectionValue);
+                    answerSelectionNo, answerSelectionLabel, answerSelectionValue, nextItem, prevItem);
         }, id);
         return formAnswerSelections;
     }
