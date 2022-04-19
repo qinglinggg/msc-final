@@ -38,7 +38,7 @@ public class FormService {
     }
 
     Integer latestNum = 0;
-    public int getLastItemNum(List listItems) {
+    public int getLastItemNum(List<FormItems> listItems) {
         latestNum = 0;
         listItems.forEach((fi) -> {
             if(latestNum <= fi.getItemNumber()) {
