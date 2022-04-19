@@ -47,6 +47,7 @@ public class FormService {
         });
         latestNum = latestNum + 1;
         System.out.println("Latest Number Form Item: " + latestNum);
+        return latestNum;
     }
 
     public FormItems addFormItems(String id, FormItems item) {
