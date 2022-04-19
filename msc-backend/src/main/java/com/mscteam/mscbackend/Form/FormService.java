@@ -52,9 +52,6 @@ public class FormService {
     public FormItems addFormItems(String id, FormItems item) {
         List<FormItems> listItems = this.getFormItems(id);
         int num = this.getLastItemNum();
-        if (num > 1) {
-            item.setPrevItem(num-1);
-        }
         item.setItemNumber(num);
         return formDAO.addFormItems(id, item);
     }
@@ -74,7 +71,7 @@ public class FormService {
         FormItems item = formDAO.getFormItemById(itemId);
         return item;
     }
-    
+
     public int updateFormItems(String formItemsId, FormItems toBeUpdated) {
         return formDAO.updateFormItems(formItemsId, toBeUpdated);
     }
