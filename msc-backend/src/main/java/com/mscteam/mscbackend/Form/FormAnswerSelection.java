@@ -10,15 +10,19 @@ public class FormAnswerSelection implements Comparable<FormAnswerSelection> {
     private String answerSelectionLabel;
     private String answerSelectionValue;
     private Integer answerSelectionNo;
+    private int nextItem;
+    private int prevItem;
 
     // Get Items
     public FormAnswerSelection(UUID formItemsId, UUID answerSelectionId, Integer answerSelectionNo, String answerSelectionLabel,
-            String answerSelectionValue) {
+            String answerSelectionValue, int nextItem, int prevItem) {
         this.formItemsId = formItemsId;
         this.answerSelectionId = answerSelectionId;
         this.answerSelectionNo = answerSelectionNo;
         this.answerSelectionLabel = answerSelectionLabel;
         this.answerSelectionValue = answerSelectionValue;
+        this.nextItem = nextItem;
+        this.prevItem = prevItem;
     }
 
     // Create and Insert Mode
@@ -31,6 +35,8 @@ public class FormAnswerSelection implements Comparable<FormAnswerSelection> {
         this.answerSelectionNo = answerSelectionNo;
         this.answerSelectionLabel = answerSelectionLabel;
         this.answerSelectionValue = answerSelectionValue;
+        this.prevItem = -1; // Jika -1, maka display item yang sekarang...
+        this.nextItem = -1;
     }
 
     public UUID getFormItemsId() {
@@ -63,6 +69,22 @@ public class FormAnswerSelection implements Comparable<FormAnswerSelection> {
 
     public void setNo(Integer answerSelectionNo) {
         this.answerSelectionNo = answerSelectionNo;
+    }
+
+    public int getNextItem() {
+        return this.nextItem;
+    }
+
+    public void setNextItem(int val) {
+        this.nextItem = val;
+    }
+
+    public int getPrevItem() {
+        return this.prevItem;
+    }
+
+    public void setPrevItem(int val) {
+        this.prevItem = val;
     }
 
     @Override

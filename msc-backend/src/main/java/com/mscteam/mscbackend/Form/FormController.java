@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/forms")
 @CrossOrigin("*")
 public class FormController {
-
     private FormService formService;
 
     @Autowired
@@ -72,6 +71,11 @@ public class FormController {
         return formService.getFormItems(id);
     }
 
+    @GetMapping(path = "/get-a-form-item/{id}")
+    public FormItems getFormItemById(@PathVariable("id") String id) {
+        return formService.getFormItemById(id);
+    }
+    
     @PostMapping(path = "/add-answer-selection/{formItemsId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public FormAnswerSelection addAnswerSelection(@PathVariable("formItemsId") String formItemsId,
             @RequestBody FormAnswerSelection answerSelection) {
@@ -86,7 +90,11 @@ public class FormController {
 
     @GetMapping(path = "/get-answer-selection/{formItemsId}")
     public List<FormAnswerSelection> getAnswerSelections(@PathVariable("formItemsId") String formItemsId) {
-        return formService.getAnswerSelection(formItemsId);
+        List<FormAnswerSelection> listAnswer = formService.getAnswerSelection(formItemsId);
+        for (FormAnswerSelection formAnswerSelection : listAnswer) {
+            System.out.println(formAnswerSelection.getValue() + " || " + formAnswerSelection.getNextItem());
+        }
+        return listAnswer;
     }
 
     @DeleteMapping(path = "/remove-answer-selection/{answerSelectionId}")

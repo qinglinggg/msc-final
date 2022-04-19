@@ -5,13 +5,11 @@ import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class FormItemResponse {
-    
     private UUID formRespondentId;
     private UUID formItemId;
     private UUID formItemResponseId;
     private UUID answerSelectionId;
     private String answerSelectionValue;
-
 
     public FormItemResponse (UUID formRespondentId, UUID formItemId, UUID formItemResponseId, UUID answerSelectionId, String answerSelectionValue){
         this.formRespondentId = formRespondentId;
