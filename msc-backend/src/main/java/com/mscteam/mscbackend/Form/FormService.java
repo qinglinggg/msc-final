@@ -94,7 +94,6 @@ public class FormService {
     public FormAnswerSelection addAnswerSelection(String formItemsId, FormAnswerSelection answerSelection) {
         List<FormAnswerSelection> listAnswers = this.getAnswerSelection(formItemsId);
         highestNo = 0;
-
         listAnswers.forEach((answer) -> {
             System.out.println(answer);
             if (highestNo < answer.getNo()) {
@@ -102,7 +101,6 @@ public class FormService {
                 highestNo = answer.getNo();
             }
         });
-
         return formDAO.addAnswerSelection(formItemsId, highestNo, answerSelection);
     }
 

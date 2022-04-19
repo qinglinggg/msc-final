@@ -101,7 +101,9 @@ public class FormController {
     @GetMapping(path = "/get-answer-selection/{formItemsId}")
     public List<FormAnswerSelection> getAnswerSelections(@PathVariable("formItemsId") String formItemsId) {
         List<FormAnswerSelection> listAnswer = formService.getAnswerSelection(formItemsId);
-        System.out.println(listAnswer);
+        for (FormAnswerSelection formAnswerSelection : listAnswer) {
+            System.out.println(formAnswerSelection.getValue() + " || " + formAnswerSelection.getNextItem());
+        }
         return listAnswer;
     }
 
