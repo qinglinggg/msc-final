@@ -240,8 +240,6 @@ function Dashboard(props) {
       currentForm["arrayOptions"].push(obj);
     })
 
-    // console.log(currentForm["arrayOptions"]);
-
     tempFormItems = tempFormItems.map((elem) => {
       if (elem.id == id) {
         return currentForm;

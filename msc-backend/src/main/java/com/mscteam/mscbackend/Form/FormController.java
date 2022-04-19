@@ -100,7 +100,9 @@ public class FormController {
 
     @GetMapping(path = "/get-answer-selection/{formItemsId}")
     public List<FormAnswerSelection> getAnswerSelections(@PathVariable("formItemsId") String formItemsId) {
-        return formService.getAnswerSelection(formItemsId);
+        List<FormAnswerSelection> listAnswer = formService.getAnswerSelection(formItemsId);
+        System.out.println(listAnswer);
+        return listAnswer;
     }
 
     @DeleteMapping(path = "/remove-answer-selection/{answerSelectionId}")
