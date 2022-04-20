@@ -90,14 +90,17 @@ function Question(props) {
     }
   }, []);
 
-  const handleShowBranching = () => {
-    setBranchingState(!branchingState);
+  useEffect(() => {
+    if(!prevBranchSelection.current) return;
     if (branchingState && prevBranchSelection.current.length > 0 && props.mode) {
       props.questionData.arrayOptions.forEach(obj => {
-        console.log(obj);
         props.handleOptionValue(props.questionData.id, -1, obj, true);
       });
     }
+  }, [branchingState])
+
+  const handleShowBranching = () => {
+    setBranchingState(!branchingState);
   }
 
   const displayQuestion = () => {
