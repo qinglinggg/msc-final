@@ -92,6 +92,12 @@ function Question(props) {
 
   const handleShowBranching = () => {
     setBranchingState(!branchingState);
+    if (branchingState && prevBranchSelection.current.length > 0 && props.mode) {
+      props.questionData.arrayOptions.forEach(obj => {
+        console.log(obj);
+        props.handleOptionValue(props.questionData.id, -1, obj, true);
+      });
+    }
   }
 
   const displayQuestion = () => {
@@ -180,7 +186,7 @@ function Question(props) {
                 <div
                   className="popup-content"
                   onClick={() => handleShowBranching()}>
-                  Enable branching
+                  {!branchingState ? `Enable branching` : `Disable branching`}
                 </div>
                 <div className="popup-divider"></div>
                 <div

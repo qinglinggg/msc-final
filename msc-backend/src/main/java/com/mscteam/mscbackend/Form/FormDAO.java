@@ -211,18 +211,14 @@ public class FormDAO {
             query = query + "answerSelectionValue = '" + toBeUpdated.getValue().toString() + "'";
             comma = true;
         }
-        if (toBeUpdated.getNextItem() != -1){
-            if (comma == true)
-                query = query + ", ";
-            else comma = true;
-            query = query + "nextItem = " + toBeUpdated.getNextItem();
-        }
-        if (toBeUpdated.getPrevItem() != -1){
-            if (comma == true)
-                query = query + ", ";
-            else comma = true;
-            query = query + "prevItem = " + toBeUpdated.getPrevItem();
-        }
+        if (comma == true)
+            query = query + ", ";
+        else comma = true;
+        query = query + "nextItem = " + toBeUpdated.getNextItem();
+        if (comma == true)
+            query = query + ", ";
+        else comma = true;
+        query = query + "prevItem = " + toBeUpdated.getPrevItem();
         query = query + " WHERE answerSelectionId = '" + answerSelectionId + "'";
         int res = jdbcTemplate.update(query);
         return res;
