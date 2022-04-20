@@ -321,7 +321,6 @@ function Dashboard(props) {
       currentForm = currentForm[0];
       let arrayOptions = currentForm["arrayOptions"];
       let answerSelection;
-
       arrayOptions.map((elem) => {
         if (elem.id == object.id) {
           if (nextToggle == true) elem.nextItem = value;
@@ -330,7 +329,6 @@ function Dashboard(props) {
         }
       });
       currentForm["arrayOptions"] = arrayOptions;
-
       //  answerSelectionId -> object.id
       axios({
         method: "put",
@@ -346,7 +344,7 @@ function Dashboard(props) {
         });
         setFormItems(tempFormItems);
       });
-    }, 5000);
+    }, 3000);
   };
 
   const handleOptionCount = (questionId, value) => {
