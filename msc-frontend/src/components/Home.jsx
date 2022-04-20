@@ -198,6 +198,7 @@ class Home extends React.Component {
       console.log("testtt");
       this.setState({ isRequired: false });
       let obj = {};
+      obj.authorUserId = this.props.user;
       obj.title = this.state.title;
       obj.description = this.state.description;
       obj.privacySetting = this.state.privacySetting;

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Form {
     private UUID formId;
+    private UUID authorUserId;
     private String title;
     private String description;
     private String privacySetting;
@@ -15,8 +16,9 @@ public class Form {
     private String backgroundColor;
 
     // Get Forms
-    public Form(String formId, String title, String description, String privacySetting, Date createDate, Date modifyDate) {
+    public Form(String formId, String authorUserId, String title, String description, String privacySetting, Date createDate, Date modifyDate) {
         this.formId = UUID.fromString(formId);
+        this.authorUserId = UUID.fromString(authorUserId);
         this.title = title;
         this.description = description;
         this.privacySetting = privacySetting;
@@ -27,9 +29,10 @@ public class Form {
     }
 
     // Create and Insert mode
-    public Form(@JsonProperty("title") String title, @JsonProperty("description") String description, @JsonProperty("privacySetting") String privacySetting,
+    public Form(@JsonProperty("authorUserId") String authorUserId, @JsonProperty("title") String title, @JsonProperty("description") String description, @JsonProperty("privacySetting") String privacySetting,
     @JsonProperty("backgroundLink") String backgroundLink, @JsonProperty("backgroundColor") String backgroundColor){
         this.formId = UUID.randomUUID();
+        this.authorUserId = UUID.fromString(authorUserId);
         this.title = title;
         this.description = description;
         this.privacySetting = privacySetting;
@@ -41,6 +44,10 @@ public class Form {
 
     public UUID getFormId(){
         return formId;
+    }
+
+    public UUID getAuthorUserId() {
+        return authorUserId;
     }
 
     public String getTitle(){

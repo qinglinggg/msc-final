@@ -7,14 +7,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class FeedbackMessage implements Comparable<FeedbackMessage> {
     private UUID feedbackId;
+    private UUID senderUserId;
     private UUID messageId;
     private String message;
     private Date createDateTime;
     private Integer isRead;
 
     // Get Items
-    public FeedbackMessage(UUID feedbackId, UUID messageId, String message, Date createDateTime, Integer isRead){
+    public FeedbackMessage(UUID feedbackId, UUID senderUserId, UUID messageId, String message, Date createDateTime, Integer isRead){
         this.feedbackId = feedbackId;
+        this.senderUserId = senderUserId;
         this.messageId = messageId;
         this.message = message;
         this.createDateTime = createDateTime;
@@ -22,8 +24,9 @@ public class FeedbackMessage implements Comparable<FeedbackMessage> {
     }
     
     // Create, Insert mode
-    public FeedbackMessage(@JsonProperty("feedbackId") UUID feedbackId, @JsonProperty("message") String message){
+    public FeedbackMessage(@JsonProperty("feedbackId") UUID feedbackId, @JsonProperty("userId") UUID senderUserId, @JsonProperty("message") String message){
         this.feedbackId = feedbackId;
+        this.senderUserId = senderUserId;
         this.messageId = UUID.randomUUID();
         this.message = message;
         this.createDateTime = new Date();
@@ -32,6 +35,10 @@ public class FeedbackMessage implements Comparable<FeedbackMessage> {
 
     public UUID getFeedbackId() {
         return this.feedbackId;
+    }
+
+    public UUID getSenderUserId() {
+        return this.senderUserId;
     }
 
     public UUID getMessageId() {

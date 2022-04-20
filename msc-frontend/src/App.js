@@ -151,6 +151,7 @@ class App extends React.Component {
                 path="/"
                 element={
                   <Home
+                    user={this.state.user}
                     formsData={this.state.forms}
                     waitingForms={this.state.waitingForms}
                     handleCreateNewForm={this.handleCreateNewForm}

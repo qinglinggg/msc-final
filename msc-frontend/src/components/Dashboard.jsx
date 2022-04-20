@@ -50,7 +50,7 @@ function Dashboard(props) {
         method: "get",
         url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`,
       }).then((res) => {
-        console.log(res);
+        console.log(res.data);
         let currentStateData = [...formItems];
         res.data.map((data) => {
           let newItem = {
@@ -92,6 +92,7 @@ function Dashboard(props) {
 
   const handleAddItem = () => {
     let currentStateData = [...formItems];
+    let formItemId;
     setFormCounter(formCounter + 1);
     try {
       let newItem = {
@@ -117,7 +118,11 @@ function Dashboard(props) {
           optionCounter: 0,
         };
         currentStateData.push(newItem);
-      }).finally(() => setFormItems(currentStateData));
+        formItemId = res.data.id;
+        console.log(formItemId);
+      }).finally(() => {
+        setFormItems(currentStateData);
+      });
     } catch (error) {
       console.log(error);
     }
@@ -238,15 +243,15 @@ function Dashboard(props) {
       return elem.id == id;
     });
     currentForm = currentForm[0];
-    console.log(currentForm);
 
     currentForm["optionCounter"] = 0;
     currentForm["arrayOptions"] = [];
     
-    data.map((obj) => {
-      currentForm["optionCounter"] += 1;
-      currentForm["arrayOptions"].push(obj);
-    })
+    if(data.length == 0) handleAddOption(id, null, null);
+      data.map((obj) => {
+        currentForm["optionCounter"] += 1;
+        currentForm["arrayOptions"].push(obj);
+      })
 
     // console.log(currentForm["arrayOptions"]);
 
@@ -267,6 +272,7 @@ function Dashboard(props) {
       return elem.id == id;
     });
     currentForm = currentForm[0];
+
     let obj = {};
     obj["formItemsId"] = id;
     obj["value"] = "";
@@ -374,7 +380,7 @@ function Dashboard(props) {
   };
 
   const displayQuestion = () => {
-    console.log(formItems);
+    // console.log(formItems);
     return (
       <React.Fragment>
         {formItems.map((res) => {

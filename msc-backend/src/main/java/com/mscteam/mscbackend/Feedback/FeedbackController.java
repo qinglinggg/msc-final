@@ -61,7 +61,7 @@ public class FeedbackController {
     // count tag isread
 
     @PostMapping(path="/by-feedback/insert", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public int insertFeedback(@RequestBody Feedback feedback){
+    public String insertFeedback(@RequestBody Feedback feedback){
         return feedbackService.insertFeedback(feedback);
     }
 
@@ -78,5 +78,10 @@ public class FeedbackController {
     @DeleteMapping(path="/by-feedback-message/{id}")
     public int removeFeedbackMessage(@PathVariable("id") String id){
         return feedbackService.removeFeedbackMessage(id);
+    }
+
+    @GetMapping(path="/by-form-and-user/{formId}")
+    public String getFeedbackIdByFormIdAndUserId(@PathVariable("formId") String formId, @RequestBody String userId){
+        return feedbackService.getFeedbackIdByFormIdAndUserId(formId, userId);
     }
 }

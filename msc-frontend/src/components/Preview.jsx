@@ -68,7 +68,7 @@ function Preview(props) {
     let length = formItems.length;
 
     return (
-      <div className="preview-container">
+      <div className="display-container">
         {
           length == 0 ? (
             <div id="preview-empty-list">
@@ -120,7 +120,7 @@ function Preview(props) {
     console.log(answerSelection);
     
     return (
-      <div className="preview-container">
+      <div className="display-container">
         {index == 1 ? (
           <div id="preview-back-null" />
         ) : (
@@ -135,7 +135,13 @@ function Preview(props) {
 
         <div className="preview-flex">
           <div className="preview-field">
-            {index}. {current.content}
+            <div id="preview-index">
+              {index}. { }
+            </div>
+            {current.content == '' ? 
+              <div id="preview-warning">Don't forget to type your question to see how it looks. </div> 
+              : current.content
+            }
           </div>
           <div className="answer-field">
             {current.type == "LS"
@@ -241,6 +247,7 @@ function Preview(props) {
         <div id="preview-multiple-choice">
           { 
             arrayOptions.map((options) => {
+              console.log(options);
             return (
               <div id="preview-option-container">
                 <div id="preview-input-mc-cb-container">
@@ -251,7 +258,7 @@ function Preview(props) {
                     name="options"
                   />
                   <label id="option-label" for="options">
-                    {options.value}
+                    {options.value == "" ? options.label : options.value}
                   </label>
                 </div>
               </div>
@@ -302,8 +309,8 @@ function Preview(props) {
                   name="options"
                 />
                 <label id="option-label" for="options">
-                  {options.value}
-                </label>
+                    {options.value == "" ? options.label : options.value}
+                  </label>
               </div>
             </div>
           );

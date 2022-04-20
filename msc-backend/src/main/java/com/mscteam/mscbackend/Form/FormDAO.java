@@ -24,6 +24,7 @@ public class FormDAO {
         final String query = "SELECT * FROM Form";
         List<Form> formList = jdbcTemplate.query(query, (resultSet, i) -> {
             String formId = resultSet.getString("formId");
+            String authorUserId = resultSet.getString("authorUserId");
             String title = resultSet.getString("title");
             String description = resultSet.getString("description");
             String privacySetting = resultSet.getString("privacySetting");
@@ -35,7 +36,7 @@ public class FormDAO {
             } catch (Exception e) {
                 System.out.println("[GET] Form with ID: " + formId + " has been processed.");
             }
-            return new Form(formId, title, description, privacySetting, createDate, modifyDate);
+            return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate);
         });
         return formList;
     }
@@ -44,6 +45,7 @@ public class FormDAO {
         final String query = "SELECT * FROM Form WHERE formId=?";
         Form form = jdbcTemplate.queryForObject(query, (resultSet, i) -> {
             String formId = resultSet.getString("formId");
+            String authorUserId = resultSet.getString("authorUserId");
             String title = resultSet.getString("title");
             String description = resultSet.getString("description");
             String privacySetting = resultSet.getString("privacySetting");
@@ -55,14 +57,14 @@ public class FormDAO {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return new Form(formId, title, description, privacySetting, createDate, modifyDate);
+            return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate);
         }, id);
         return Optional.ofNullable(form);
     }
 
     public Form insertForm(Form form) {
         final String query = "INSERT INTO Form VALUES (?,?,?,?,?,?)";
-        int res = jdbcTemplate.update(query, form.getFormId().toString(), form.getTitle(), form.getDescription(),
+        int res = jdbcTemplate.update(query, form.getFormId().toString(), form.getAuthorUserId(), form.getTitle(), form.getDescription(),
                 form.getPrivacySetting(), dateFormat.format(form.getCreateDate()), form.getModifyDate());
         return form;
     }
@@ -227,7 +229,7 @@ public class FormDAO {
 
     public String insertFormRespondent(String formId, FormRespondent formRespondent){
         final String query = "INSERT INTO FormRespondent (formRespondentId, formId, userId, submitDate) VALUES (?,?,?,?)";
-        int res = jdbcTemplate.update(formRespondent.getFormRespondentId().toString(), formId, formRespondent.getUserId().toString(), dateFormat.format(formRespondent.getSubmitDate()));
+        int res = jdbcTemplate.update(query, formRespondent.getFormRespondentId().toString(), formId, formRespondent.getUserId().toString(), dateFormat.format(formRespondent.getSubmitDate()));
         return formRespondent.getFormRespondentId().toString();
     }
 
@@ -242,13 +244,13 @@ public class FormDAO {
 
     public int insertFormItemResponse(String formRespondentId, FormItemResponse formItemResponse){
         final String query = "INSERT INTO FormItemResponse (formRespondentId, formItemId, formItemResponseId, answerSelectionId, answerSelectionValue) VALUES (?,?,?,?,?)";
-        int res = jdbcTemplate.update(formRespondentId, formItemResponse.getFormItemId().toString(), formItemResponse.getFormItemResponseId().toString(), formItemResponse.getAnswerSelectionId().toString(), formItemResponse.getAnswerSelectionValue());
+        int res = jdbcTemplate.update(query, formRespondentId, formItemResponse.getFormItemId().toString(), formItemResponse.getFormItemResponseId().toString(), formItemResponse.getAnswerSelectionId().toString(), formItemResponse.getAnswerSelectionValue());
         return res;
     }
 
     public int updateFormItemResponse(String formRespondentId, FormItemResponse formItemResponse){
         final String query = "UPDATE FormItemResponse SET answerSelectionId = ?, answerSelectionValue = ? WHERE formItemResponseId = ?";
-        int res = jdbcTemplate.update(formItemResponse.getAnswerSelectionId().toString(), formItemResponse.getAnswerSelectionValue(), formItemResponse.getFormItemResponseId().toString());
+        int res = jdbcTemplate.update(query, formItemResponse.getAnswerSelectionId().toString(), formItemResponse.getAnswerSelectionValue(), formItemResponse.getFormItemResponseId().toString());
         return res;
     }
 

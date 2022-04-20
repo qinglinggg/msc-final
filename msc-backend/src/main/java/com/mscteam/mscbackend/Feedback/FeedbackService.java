@@ -50,7 +50,7 @@ public class FeedbackService {
         return lastMessage;
     }
 
-    public int insertFeedback(Feedback feedback) {
+    public String insertFeedback(Feedback feedback) {
         return feedbackDAO.insertFeedback(feedback);
     }
 
@@ -66,4 +66,8 @@ public class FeedbackService {
         return feedbackDAO.removeFeedbackMessage(id);
     }
     
+    public String getFeedbackIdByFormIdAndUserId(String formId, String userId){
+        return feedbackDAO.getFeedbackIdByFormIdAndUserId(formId, userId);
+    }
+
 }
