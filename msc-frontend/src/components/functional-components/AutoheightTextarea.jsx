@@ -16,7 +16,7 @@ const AutoHeightTextarea = ({ style = defaultStyle, ...etc}) => {
   useEffect(() => {
     textareaRef.current.style.height = "0px";
     const scrollHeight = textareaRef.current.scrollHeight;
-    textareaRef.current.style.height = scrollHeight + "px";
+    textareaRef.current.style.height = scrollHeight + 5 + "px";
   }, [currentValue]);
 
   return (

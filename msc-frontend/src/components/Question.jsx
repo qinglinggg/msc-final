@@ -3,8 +3,7 @@ import Select from "react-select";
 import AutoHeightTextarea from "./functional-components/AutoheightTextarea";
 import Popup from "reactjs-popup";
 import axios from "axios";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const BASE_URL = "http://10.61.38.193:8080";
 
@@ -14,8 +13,10 @@ function Question(props) {
   const [selectedIsOptional, setSelectedIsOptional] = useState(false);
   const [branchingState, setBranchingState] = useState(false);
   const [branchingSelection, setBranchingSelection] = useState([]);
+  const prevBranchSelection = useRef();
 
   const resetBranchingSelection = () => {
+    if(branchingSelection.length > 0) prevBranchSelection.current = branchingSelection;
     setBranchingSelection([]);
   }
 
@@ -26,17 +27,22 @@ function Question(props) {
     let logger = false;
     for(let i=0; i+1<props.formItems.length; i++){
       if (props.formItems[i].itemNumber < props.questionData.itemNumber) continue;
-      if (props.formItems[i].itemNumber == props.questionData.itemNumber && props.formItems[i].nextItem) handleShowBranching();
       let tempLabel = "";
       if(!logger) {
         tempLabel = "Continue to next question";
         logger = true;
       } else {
-        tempLabel = `Jump to Question No.${i+1}`;
+        tempLabel = `Jump to Question No.${i+2}`;
       }
       tempSelection.push({ value: props.formItems[i+1].itemNumber, label: tempLabel});
     }
     setBranchingSelection(tempSelection);
+    let branch_check = false;
+    for(let x=0; x<props.questionData.arrayOptions.length; x++){
+      let currentData = props.questionData.arrayOptions[x];
+      if (currentData.nextItem != -1) branch_check = true;
+    }
+    if (branch_check && !branchingState) handleShowBranching();
   }, [branchingSelection]);
 
   useEffect(() => {
@@ -79,7 +85,6 @@ function Question(props) {
         method: "get",
         url: `${BASE_URL}/api/v1/forms/get-answer-selection/${props.questionData.id}`,
       }).then((res) => {
-        console.log(res);
         props.handleOptionList(props.questionData.id, res.data);
       });
     }
@@ -242,9 +247,19 @@ function Question(props) {
                           className="branching-selection"
                           options={branchingSelection}
                           defaultValue={() => {
-                            // console.log(obj);
-                            if(obj.nextItem) {
-                              return obj.nextItem;
+                            if(obj.nextItem != -1) {
+                              let defaultVal = null;
+                              let tempBranch = null;
+                              if (branchingSelection.length > 0) tempBranch = branchingSelection;
+                              else tempBranch = prevBranchSelection.current;
+                              if (tempBranch) tempBranch.forEach((sel) => {
+                                if(sel.value == obj.nextItem) {
+                                  defaultVal = sel;
+                                }
+                              });
+                              return defaultVal;
+                            } else {
+                              return null;
                             }
                           }}
                           onChange={(e) => {
