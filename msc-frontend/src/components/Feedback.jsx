@@ -27,7 +27,6 @@ function Feedback(props) {
       setFeedbackList(feedbackList);
       setIndex(feedbackList.length);
       props.handleSetFormMessages(feedbackList);
-      // console.log(feedbackList);
     });
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
     tempBreadcrumbs = JSON.parse(tempBreadcrumbs);

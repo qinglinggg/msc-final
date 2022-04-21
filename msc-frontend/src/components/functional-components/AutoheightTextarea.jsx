@@ -2,13 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 
 const defaultStyle = {
   resize: "none",
-  padding: "9px",
+  // padding: "9px",
   boxSizing: "border-box",
   fontSize: "15px",
-  scrollHeight: "10px",
+  scrollHeight: "10px"
 };
 // , 
-const AutoHeightTextarea = ({ style = defaultStyle, ...etc}) => {
+const AutoHeightTextarea = ({ style = defaultStyle, ...etc}, props) => {
 
   const textareaRef = React.createRef();
   const [currentValue, setCurrentValue] = useState(""); // you can manage data with it

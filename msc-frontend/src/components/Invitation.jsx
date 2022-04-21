@@ -27,7 +27,7 @@ function Invitation(props) {
   const BASE_URL = "http://10.61.38.193:8080";
   const { formId } = useParams();
 
-  const [formUrl] = useState(`${BASE_URL}/response/formId/${formId}`);
+  const [formUrl] = useState(`http://10.61.38.193:3000/response/formId/${formId}`);
 
   useEffect(() => {
     let body = document.getElementById("body");
@@ -101,10 +101,13 @@ function Invitation(props) {
                 Start sharing your questionnaire publicly!
               </div>
               <div id="invitation-share-publicly-innerbox-linkcontainer">
-                <img src={iconLink} alt="" />
+                <ion-icon id="invitation-share-publicly-innerbox-iconurl" name="link-outline" /> 
                 <div id="invitation-share-publicly-innerbox-linkbox">
                   <input type="url" id="invitation-share-publicly-innerbox-url" value={formUrl} disabled />
                 </div>
+                <ion-icon id="invitation-share-publicly-innerbox-iconcopy" name="copy-outline" 
+                  onClick={() => navigator.clipboard.writeText(`${formUrl}`)}
+                /> 
               </div>
               <div id="invitation-share-publicly-innerbox-iconcontainer">
                 <img

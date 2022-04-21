@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { Component, useEffect, useState } from 'react';
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import AutoHeightTextarea from './functional-components/AutoheightTextarea';
 
 function Respondent (props) {
@@ -14,6 +14,12 @@ function Respondent (props) {
     const [answerSelection, setAnswerSelection] = useState([]);
     const [formRespondentId, setFormRespondentId] = useState();
     const [formResponse, setFormResponse] = useState([]);
+
+    const [openChat, setOpenChat] = useState(false);
+    const [tempMessage, setTempMessage] = useState("");
+    const [feedbackId, setFeedbackId] = useState("");
+    const [feedbackMessages, setFeedbackMessages] = useState([]);
+
 
     useEffect(() => {
 
@@ -42,25 +48,25 @@ function Respondent (props) {
 
         }
 
-        try {
-            axios({
-              method: "get",
-              url: `${BASE_URL}/api/v1/forms/form-respondent/${formId}`,
-              data: props.user, // cek lagi nanti. 
-            }).then((res) => {
-              if(res) setFormRespondentId(res.data);
-              else {
-                axios({
-                  method: "post",
-                  url: `${BASE_URL}/api/v1/forms/insert-form-respondent/${formId}`
-                }).then((res) => {
-                  setFormRespondentId(res.data);
-                })
-              }
-            })
-        } catch (error) {
+        // try {
+        //     axios({
+        //       method: "get",
+        //       url: `${BASE_URL}/api/v1/forms/form-respondent/${formId}`,
+        //       data: props.user, // cek lagi nanti. 
+        //     }).then((res) => {
+        //       if(res) setFormRespondentId(res.data);
+        //       else {
+        //         axios({
+        //           method: "post",
+        //           url: `${BASE_URL}/api/v1/forms/insert-form-respondent/${formId}`
+        //         }).then((res) => {
+        //           setFormRespondentId(res.data);
+        //         })
+        //       }
+        //     })
+        // } catch (error) {
             
-        }
+        // }
 
         try {
 
@@ -87,6 +93,7 @@ function Respondent (props) {
     
     const handleNext = () => {
         setIndex(index + 1);
+        // console.log(index);
     }
     
     const handleBack = () => {
@@ -96,11 +103,11 @@ function Respondent (props) {
     const displayQuestion = () => {
         let length = formItems.length;
         return (
-            <div className="preview-container">
+            <div className="display-container">
               {
                 length == 0 ? (
                   <div id="preview-empty-list">
-                    There is no question in the list
+                    There is no question to answer, please contact the author.
                   </div>
                 ) : displayQuestionCard(length)
               }
@@ -129,7 +136,13 @@ function Respondent (props) {
     
             <div className="preview-flex">
               <div className="preview-field">
-                {index}. {current.content}
+              <div id="preview-index">
+                {index}. { }
+              </div>
+              {current.content == '' ? 
+                <div id="preview-warning">Don't forget to type your question to see how it looks. </div> 
+                : current.content
+              }
               </div>
               <div className="answer-field">
                 {current.type == "LS"
@@ -144,10 +157,10 @@ function Respondent (props) {
                   ? (loadAnswerField = loadShortAnswer(current.id))
                   : null}
               </div>
-              {index == length - 1 ? (
-                <div className="preview-submit-button" onClick={() => submitForm()}>
+              {index == length ? (
+                <Link to="/" className="preview-submit-button" onClick={() => submitForm()}>
                   Submit
-                </div>
+                </Link>
               ) : null}
             </div>
             {index == length ? (
@@ -207,7 +220,7 @@ function Respondent (props) {
                         onClick={() => setMultipleChoiceValue(formItemId, options)}
                       />
                       <label id="option-label" for="options">
-                        {options.value}
+                        {options.value == "" ? options.label : options.value}
                       </label>
                     </div>
                   </div>
@@ -298,7 +311,7 @@ function Respondent (props) {
                       onClick={() => setCheckboxValue(formItemId, options)}
                     />
                     <label id="option-label" for="options">
-                      {options.value}
+                      {options.value == "" ? options.label : options.value}
                     </label>
                   </div>
                 </div>
@@ -352,22 +365,172 @@ function Respondent (props) {
         })
 
       }
+    
+    const handleOpenChat = () => {
+      setOpenChat(!openChat);
+
+      let createNewFeedback = false;
+      // cek pernah kirim message ga
+      // get feedbackId by formId and userId
+      try {
+        axios({
+          method: "get",
+          url: `${BASE_URL}/api/v1/feedback/by-form-and-user/${formId}`,
+          data: props.user,
+        }).then((res) => {
+          if(res.data) setFeedbackId(res.data);
+          else createNewFeedback = true;
+        })
+      } catch(error) {
+        console.log(error);
+      }
+
+      if(createNewFeedback) {
+
+        let newFeedback = {
+          formId: formId,
+          userId: props.user,
+        }
+
+        // pernah, displayPreviousMessage passing feedbackId
+        // nggak, maka insert feedback
+
+        try {
+          axios({
+            method: "post",
+            url: `${BASE_URL}/api/v1/feedback/by-feedback/insert`,
+            data: newFeedback,
+          }).then((res) => {
+            // console.log(res.data);
+            setFeedbackId(res.data);
+          })
+        } catch (error){
+          console.log(error);
+        }
+      } else {
+
+        axios({
+          method: "get",
+          url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
+        }).then((res) => {
+          setFeedbackMessages(res.data);
+        })
+      }
+
+    }
+    
+    const displayChatBox = () => {
+      let chatbox = document.getElementById("respondent-chat-box");
+      if(openChat) chatbox.classList.toggle('respondent-chat-box--active');
+      else chatbox.classList.toggle('respondent-chat-box--active');
+    }
+
+    const handleMessageInput = (e) => {
+      setTempMessage(e.target.value);
+    };
+
+    const handleEnter = (e) => {
+      if (e.key === "Enter") handleClickSend();
+    };
+
+    const handleClickSend = () => {
+
+      let newMessage = {
+        feedbackId: feedbackId,
+        senderUserId: props.user,
+        message: tempMessage,
+      };
+
+      let messages = [...feedbackMessages];
+      messages.push(newMessage);
+
+      try {
+        axios({
+          method: "post",
+          data: newMessage
+        }).then(() => {
+          setFeedbackMessages(messages);
+          setTempMessage("");
+          updateTextarea();
+        })
+      } catch(error) {
+        console.log(error);
+      }
+      
+    };
+
+    const updateTextarea = () => {
+      let textarea = document.getElementById("respondent-chat-input");
+      if (textarea) {
+        textarea.value = "";
+      }
+    };
 
     return (
         <React.Fragment>
-            <div id="respondent-container">
+            <div className="respondent-container">
                 <div className="page-title" id="page-title-respondent">
                     {formMetadata.title}
                 </div>
                 <div className="page-description-respondent">
                     {formMetadata.description}
                 </div>
-                {/* <div className="page-content"> */}
+                <div className="display-container" id="display-respondent">
                     {displayQuestion()}
-                {/* </div> */}
+                </div>
+                <div id="respondent-chat">
+                  <div id="respondent-chat-box">
+                    <div id="respondent-chat-header">
+                      <div id="respondent-chat-profile-image"></div>
+                      <div id="respondent-chat-profile-name">Survey Maker</div>
+                    </div>
+                    <div id="respondent-chat-content">
+                      {feedbackMessages.map((m) => {
+                        return (
+                          <React.Fragment>
+                            <div className="message-content">
+                              <div
+                                className="message-content-2"
+                                id={m.userId != props.user ? "message-user-1" : "message-user-2"}
+                              >
+                                <div className="message-single-bubble">
+                                  <div id="message-single-content">{m.feedbackMessage}</div>
+                                </div>
+                                <div id="message-single-timestamp">{m.createDateTime}</div>
+                              </div>
+                            </div>
+                          </React.Fragment>
+                        )
+                      })}
+                    </div>
+                    <div id="respondent-chat-footer">
+                      <AutoHeightTextarea 
+                        id="respondent-chat-input"
+                        // type="text" 
+                        // value=
+                        onChange={(e) => {
+                          handleMessageInput(e);
+                        }}
+                        onKeyUp={(e) => {
+                          handleEnter(e);
+                        }}
+                        placeholder='Please type your message...'
+                      />
+                      <div id="respondent-chat-send" onClick={handleClickSend}>
+                        <ion-icon name="send-outline" id="send-icon"></ion-icon>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="respondent-chat-button-float" 
+                    onClick={() => {
+                      handleOpenChat();
+                      displayChatBox();
+                    }}
+                  >
+                    <ion-icon name={openChat ? "close" : "chatbubbles"} id="respondent-chat-icon"></ion-icon>
+                  </div>
+                </div>
             </div>
-
-        
         </React.Fragment>
     );
 }

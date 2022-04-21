@@ -64,6 +64,7 @@ public class FeedbackDAO {
         final String query = "SELECT * FROM FeedbackMessage WHERE feedbackId=?";
         List<FeedbackMessage> feedbackMessage = jdbcTemplate.query(query, (resultSet, i) -> {
             String feedbackId = resultSet.getString("feedbackId");
+            String senderUserId = resultSet.getString("senderUserId");
             String messageId = resultSet.getString("messageId");
             String message = resultSet.getString("message");
             Date createDateTime = null;
@@ -74,7 +75,7 @@ public class FeedbackDAO {
                 e.printStackTrace();
             }
             System.out.println(resultSet);
-            return new FeedbackMessage(UUID.fromString(feedbackId), UUID.fromString(messageId), message, createDateTime, isRead);
+            return new FeedbackMessage(UUID.fromString(feedbackId), UUID.fromString(senderUserId), UUID.fromString(messageId), message, createDateTime, isRead);
         }, id);
         // System.out.println(feedbackMessage);
         return feedbackMessage;
@@ -94,15 +95,15 @@ public class FeedbackDAO {
         return userProfile;
     }
 
-    public int insertFeedback(Feedback feedback){
+    public String insertFeedback(Feedback feedback){
         final String query = "INSERT INTO Feedback VALUES (?,?,?)";
         int res = jdbcTemplate.update(query, feedback.getFormId().toString(), feedback.getFeedbackId().toString(), feedback.getUserId().toString());
-        return res;
+        return feedback.getFeedbackId().toString();
     }
 
     public int insertFeedbackMessage(FeedbackMessage feedbackMessage){
         final String query = "INSERT INTO FeedbackMessage VALUES (?,?,?)";
-        int res = jdbcTemplate.update(query, feedbackMessage.getFeedbackId(), feedbackMessage.getFeedbackMessage(), feedbackMessage.getFeedbackMessage());
+        int res = jdbcTemplate.update(query, feedbackMessage.getFeedbackId(), feedbackMessage.getSenderUserId(), feedbackMessage.getFeedbackMessage());
         return res;
     }
 
@@ -116,5 +117,14 @@ public class FeedbackDAO {
         final String query = "DELETE FROM FeedbackMessage WHERE messageId=?";
         int res = jdbcTemplate.update(query, id);
         return res;
+    }
+
+    public String getFeedbackIdByFormIdAndUserId(String formId, String userId){
+        final String query = "SELECT feedbackId FROM Feedback WHERE formId = ? AND userId = ?";
+        String feedbackId = (String) jdbcTemplate.queryForObject(query, (resultSet, i) -> {
+            String resId = resultSet.getString("feedbackId");
+            return resId;
+        }, formId, userId);
+        return feedbackId;
     }
 }

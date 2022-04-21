@@ -91,6 +91,9 @@ function Dashboard(props) {
 
   const handleAddItem = () => {
     let currentStateData = [...formItems];
+    let formItemId;
+    setFormCounter(formCounter + 1);
+
     try {
       let newItem = {
         itemNumber: -1,
@@ -114,7 +117,11 @@ function Dashboard(props) {
           optionCounter: 0
         };
         currentStateData.push(newItem);
-      }).finally(() => setFormItems(currentStateData));
+        formItemId = res.data.id;
+        console.log(formItemId);
+      }).finally(() => {
+        setFormItems(currentStateData);
+      });
     } catch (error) {
       console.log(error);
     }
@@ -233,12 +240,15 @@ function Dashboard(props) {
       return elem.id == id;
     });
     currentForm = currentForm[0];
+
     currentForm["optionCounter"] = 0;
     currentForm["arrayOptions"] = [];
-    data.map((obj) => {
-      currentForm["optionCounter"] += 1;
-      currentForm["arrayOptions"].push(obj);
-    })
+    
+    if(data.length == 0) handleAddOption(id, null, null);
+      data.map((obj) => {
+        currentForm["optionCounter"] += 1;
+        currentForm["arrayOptions"].push(obj);
+      })
 
     tempFormItems = tempFormItems.map((elem) => {
       if (elem.id == id) {
@@ -257,6 +267,7 @@ function Dashboard(props) {
       return elem.id == id;
     });
     currentForm = currentForm[0];
+
     let obj = {};
     obj["formItemsId"] = id;
     obj["value"] = "";
