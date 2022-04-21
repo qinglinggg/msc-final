@@ -50,7 +50,6 @@ function Dashboard(props) {
         method: "get",
         url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`,
       }).then((res) => {
-        console.log(res.data);
         let currentStateData = [...formItems];
         res.data.map((data) => {
           let newItem = {
@@ -59,7 +58,7 @@ function Dashboard(props) {
             questionContent: data.content,
             questionType: data.type,
             arrayOptions: [],
-            optionCounter: 0,
+            optionCounter: 0
           };
           currentStateData.push(newItem);
         });
@@ -94,9 +93,10 @@ function Dashboard(props) {
     let currentStateData = [...formItems];
     let formItemId;
     setFormCounter(formCounter + 1);
+
     try {
       let newItem = {
-        itemNumber: formCounter,
+        itemNumber: -1,
         questionContent: "",
         questionType: "MC",
         arrayOptions: [],
@@ -108,14 +108,13 @@ function Dashboard(props) {
         data: newItem,
         headers: { "Content-Type": "application/json" },
       }).then((res) => {
-        // console.log(res);
         newItem = {
           id: res.data.id,
           itemNumber: res.data.itemNumber,
           questionContent: res.data.content,
           questionType: res.data.type,
           arrayOptions: [],
-          optionCounter: 0,
+          optionCounter: 0
         };
         currentStateData.push(newItem);
         formItemId = res.data.id;
@@ -139,7 +138,6 @@ function Dashboard(props) {
         url: `${BASE_URL}/api/v1/forms/remove-form-items/${deletedQuestionId}`,
       }).then((res) => {
         setFormItems(newFormItems);
-        console.log(newFormItems);
       });
     } catch (error) {
       console.log(error);
@@ -160,7 +158,6 @@ function Dashboard(props) {
       }
       return elem;
     });
-    console.log(currentForm);
     try {
       axios({
         method: "put",
@@ -253,8 +250,6 @@ function Dashboard(props) {
         currentForm["arrayOptions"].push(obj);
       })
 
-    // console.log(currentForm["arrayOptions"]);
-
     tempFormItems = tempFormItems.map((elem) => {
       if (elem.id == id) {
         return currentForm;
@@ -321,30 +316,30 @@ function Dashboard(props) {
     });
   };
 
-  const handleOptionValue = async (questionId, event, object) => {
+  const handleOptionValue = async (questionId, event, object, nextToggle) => {
     if (timeout != 0) clearTimeout(timeout);
-
-    let value = event.target.value;
-
+    let value = null;
+    if(event.target){
+      value = event.target.value;
+    } else {
+      value = event.value;
+    }
     setTimeout(() => {
       let tempFormItems = [...formItems];
       let currentForm = tempFormItems.filter((elem) => {
         return elem.id == questionId;
       });
       currentForm = currentForm[0];
-
       let arrayOptions = currentForm["arrayOptions"];
       let answerSelection;
-
       arrayOptions.map((elem) => {
         if (elem.id == object.id) {
-          elem.value = value;
+          if (nextToggle == true) elem.nextItem = value;
+          else elem.value = value;
           answerSelection = elem;
         }
       });
-
       currentForm["arrayOptions"] = arrayOptions;
-
       //  answerSelectionId -> object.id
       axios({
         method: "put",
@@ -360,7 +355,7 @@ function Dashboard(props) {
         });
         setFormItems(tempFormItems);
       });
-    }, 5000);
+    }, 3000);
   };
 
   const handleOptionCount = (questionId, value) => {
@@ -380,17 +375,18 @@ function Dashboard(props) {
   };
 
   const displayQuestion = () => {
-    // console.log(formItems);
+    let counter = 0;
     return (
       <React.Fragment>
         {formItems.map((res) => {
+          counter += 1;
           return (
             <React.Fragment>
               <div className="separator" />
               <div className="question">
                 <Question
                   key={"question-" + res.id}
-                  formItemsLength={formItems.length}
+                  formItems={formItems}
                   questionData={res}
                   mode={true}
                   arrayOptions={res["arrayOptions"]}

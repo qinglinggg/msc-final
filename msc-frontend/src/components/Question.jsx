@@ -3,8 +3,7 @@ import Select from "react-select";
 import AutoHeightTextarea from "./functional-components/AutoheightTextarea";
 import Popup from "reactjs-popup";
 import axios from "axios";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const BASE_URL = "http://10.61.38.193:8080";
 
@@ -12,12 +11,52 @@ function Question(props) {
   const [selectedQuestionOption, setSelectedQuestionOption] = useState("");
   const [selectedInputOption, setSelectedInputOption] = useState(2);
   const [selectedIsOptional, setSelectedIsOptional] = useState(false);
+  const [branchingState, setBranchingState] = useState(false);
+  const [branchingSelection, setBranchingSelection] = useState([]);
+  const prevBranchSelection = useRef();
+
+  const resetBranchingSelection = () => {
+    if(branchingSelection.length > 0) prevBranchSelection.current = branchingSelection;
+    setBranchingSelection([]);
+  }
+
+  useEffect(() => {
+    if(!props.formItems) return;
+    if(branchingSelection.length > 0) return;
+    let tempSelection = branchingSelection;
+    let logger = false;
+    for(let i=0; i+1<props.formItems.length; i++){
+      if (props.formItems[i].itemNumber < props.questionData.itemNumber) continue;
+      let tempLabel = "";
+      if(!logger) {
+        tempLabel = "Continue to next question";
+        logger = true;
+      } else {
+        tempLabel = `Jump to Question No.${i+2}`;
+      }
+      tempSelection.push({ value: props.formItems[i+1].itemNumber, label: tempLabel});
+    }
+    setBranchingSelection(tempSelection);
+    let branch_check = false;
+    for(let x=0; x<props.questionData.arrayOptions.length; x++){
+      let currentData = props.questionData.arrayOptions[x];
+      if (currentData.nextItem != -1) branch_check = true;
+    }
+    if (branch_check && !branchingState) handleShowBranching();
+  }, [branchingSelection]);
+
+  useEffect(() => {
+    // console.log("Reset activated.");
+    if(props.questionData) resetBranchingSelection();
+  }, [props.formItems]);
+
   const questionOptions = [
     { value: "MC", label: "Multiple choice" },
     { value: "SA", label: "Short answer" },
     { value: "CB", label: "Checkbox" },
     { value: "LS", label: "Linear scale" },
   ];
+
   const inputOptions = [
     { value: 2, label: "2" },
     { value: 3, label: "3" },
@@ -46,15 +85,23 @@ function Question(props) {
         method: "get",
         url: `${BASE_URL}/api/v1/forms/get-answer-selection/${props.questionData.id}`,
       }).then((res) => {
-        // props.questionData.arrayOptions = [];
-        // res.data.map((data) => {
-        //   props.handleOptionList(props.questionData.id, data);
-        // });
-
         props.handleOptionList(props.questionData.id, res.data);
       });
     }
   }, []);
+
+  useEffect(() => {
+    if(!prevBranchSelection.current) return;
+    if (branchingState && prevBranchSelection.current.length > 0 && props.mode) {
+      props.questionData.arrayOptions.forEach(obj => {
+        props.handleOptionValue(props.questionData.id, -1, obj, true);
+      });
+    }
+  }, [branchingState])
+
+  const handleShowBranching = () => {
+    setBranchingState(!branchingState);
+  }
 
   const displayQuestion = () => {
     let textareaId = "question-input-" + props.questionData.id;
@@ -68,7 +115,7 @@ function Question(props) {
               name="inputted-question"
               placeholder="Please type your question..."
               rows="14"
-              cols="10"
+              cols="5"
               wrap="soft"
               scrollHeight="10px"
               onChange={(e) => {
@@ -97,13 +144,15 @@ function Question(props) {
                   !(props.questionData.questionType == "CB" && e.value == "MC")
                 ) {
                   props.handleResetOption(props.questionData.id);
-                  // console.log("salah");
                 }
                 props.handleUpdateQuestionType(props.questionData.id, e);
                 setSelectedQuestionOption(props.questionData.questionType);
               }}
             />
           </div>
+        </div>
+        <div className="form-item-separator">
+          {branchingState ? "Branching options" : null}
         </div>
         {selectedQuestionOption == "MC" && multipleChoiceOption()}
         {selectedQuestionOption == "SA" && shortAnswerOption()}
@@ -138,7 +187,11 @@ function Question(props) {
             >
               {/* isi dari popup, konten yg mau dishow */}
               <div className="popup-wrapper">
-                <div className="popup-content">Enable branching</div>
+                <div
+                  className="popup-content"
+                  onClick={() => handleShowBranching()}>
+                  {!branchingState ? `Enable branching` : `Disable branching`}
+                </div>
                 <div className="popup-divider"></div>
                 <div
                   className="popup-content"
@@ -160,9 +213,7 @@ function Question(props) {
     let optionId = "question-" + props.questionData.id + "-options-" + obj.id;
     let textarea = document.getElementById(optionId);
     if (textarea) {
-      // console.log(obj);
       if (obj.value != "" && obj.value != null) {
-        // console.log("The object has value of " + obj.value);
         textarea.value = obj.value;
       } else {
         textarea.value = "";
@@ -179,7 +230,6 @@ function Question(props) {
                 let optionId =
                   "question-" + props.questionData.id + "-options-" + obj.id;
                 // this.handleUpdateTextarea(obj);
-
                 return (
                   <React.Fragment>
                     <div className="answer-selection">
@@ -200,22 +250,46 @@ function Question(props) {
                         onChange={(e) => {
                           props.handleOptionValue(
                             props.questionData.id,
-                            e,
-                            obj
+                            e, obj, false
                           );
-                        }}
-                      />
-                      <div
-                        className="dashboard-remove-options-button"
+                        }} />
+                      {branchingState ? (
+                        <Select
+                          className="branching-selection"
+                          options={branchingSelection}
+                          defaultValue={() => {
+                            if(obj.nextItem != -1) {
+                              let defaultVal = null;
+                              let tempBranch = null;
+                              if (branchingSelection.length > 0) tempBranch = branchingSelection;
+                              else tempBranch = prevBranchSelection.current;
+                              if (tempBranch) tempBranch.forEach((sel) => {
+                                if(sel.value == obj.nextItem) {
+                                  defaultVal = sel;
+                                }
+                              });
+                              return defaultVal;
+                            } else {
+                              return null;
+                            }
+                          }}
+                          onChange={(e) => {
+                            // console.log(e);
+                            props.handleOptionValue(
+                              props.questionData.id,
+                              e, obj, true
+                            );
+                          }}/>
+                      ) : null}
+                      <div className="form-item-remove"
                         onClick={() => {
                           props.handleRemoveOption(
                             props.questionData.id,
                             obj.id,
                             obj
                           );
-                        }}
-                      >
-                        <i className="fas fa-times"></i>
+                      }}>
+                        <ion-icon name="close-outline"></ion-icon>
                       </div>
                     </div>
                   </React.Fragment>
@@ -382,8 +456,8 @@ function Question(props) {
                     <div id="linear-label-select">
                       <div id="linear-label-select-box">
                         <div id="linear-label-select-value">
-                          {console.log("Current Label IDX:")}
-                          {console.log(labelIdx)}
+                          {/* {console.log("Current Label IDX:")}
+                          {console.log(labelIdx)} */}
                           {labelOptions.length > 0
                             ? labelOptions[labelIdx-1].label
                             : null}

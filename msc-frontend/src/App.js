@@ -9,8 +9,6 @@ import {
   Link,
 } from "react-router-dom";
 import axios from "axios";
-// import "bootstrap/dist/css/bootstrap.css";
-// import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
 import Dashboard from "./components/Dashboard";

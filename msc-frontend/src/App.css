@@ -867,6 +867,33 @@ body {
   height: 20px;
 }
 
+.form-item-separator {
+  position: relative;
+  width: fit-content;
+  height: fit-content;
+  text-align: center;
+  left: 65%;
+  font-size: small;
+  font-style: italic;
+}
+
+.branching-selection {
+  width: 200px;
+  font-size: 15px;
+}
+
+.form-item-remove {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  color: black;
+}
+
+.form-item-remove ion-icon {
+  width: 20px;
+  height: 20px;
+}
+
 /* Multiple Choice */
 
 #answer-selection-container {

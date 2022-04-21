@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class FormService {
-
     private FormDAO formDAO;
 
     @Autowired
@@ -38,7 +37,23 @@ public class FormService {
         return formDAO.updateForm(id, toBeUpdated);
     }
 
+    Integer latestNum = 0;
+    public int getLastItemNum(List<FormItems> listItems) {
+        latestNum = 0;
+        listItems.forEach((fi) -> {
+            if(latestNum <= fi.getItemNumber()) {
+                latestNum = fi.getItemNumber();
+            }
+        });
+        latestNum = latestNum + 1;
+        System.out.println("Latest Number Form Item: " + latestNum);
+        return latestNum;
+    }
+
     public FormItems addFormItems(String id, FormItems item) {
+        List<FormItems> listItems = this.getFormItems(id);
+        int num = this.getLastItemNum(listItems);
+        item.setItemNumber(num);
         return formDAO.addFormItems(id, item);
     }
 
@@ -53,9 +68,10 @@ public class FormService {
         return listItems;
     }
 
-    // public FormItems getFormItemsById(String formItemsId){
-    // return formDAO.getFormItemsById(formItemsId);
-    // }
+    public FormItems getFormItemById(String itemId) {
+        FormItems item = formDAO.getFormItemById(itemId);
+        return item;
+    }
 
     public int updateFormItems(String formItemsId, FormItems toBeUpdated) {
         return formDAO.updateFormItems(formItemsId, toBeUpdated);
@@ -66,7 +82,6 @@ public class FormService {
     public FormAnswerSelection addAnswerSelection(String formItemsId, FormAnswerSelection answerSelection) {
         List<FormAnswerSelection> listAnswers = this.getAnswerSelection(formItemsId);
         highestNo = 0;
-
         listAnswers.forEach((answer) -> {
             System.out.println(answer);
             if (highestNo < answer.getNo()) {
@@ -74,7 +89,6 @@ public class FormService {
                 highestNo = answer.getNo();
             }
         });
-
         return formDAO.addAnswerSelection(formItemsId, highestNo, answerSelection);
     }
 
@@ -112,7 +126,5 @@ public class FormService {
     public int updateFormItemResponse(String formRespondentId, FormItemResponse formItemResponse){
         return formDAO.updateFormItemResponse(formRespondentId, formItemResponse);
     }
-
-
 
 }

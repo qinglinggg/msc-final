@@ -9,7 +9,6 @@ public class FormItems implements Comparable<FormItems>{
     private Integer itemNumber;
     private String questionContent;
     private String questionType;
-    private UUID nextFormId;
 
     // Get Items
     public FormItems(UUID formId, UUID formItemsId, int itemNumber, String questionContent, String questionType) {
@@ -59,14 +58,6 @@ public class FormItems implements Comparable<FormItems>{
 
     public void setType(String questionType) {
         this.questionType = questionType;
-    }
-
-    public UUID getNextForm() {
-        return this.nextFormId;
-    }
-
-    public void setNextForm(UUID nextFormId) {
-        this.nextFormId = nextFormId;
     }
 
     @Override
