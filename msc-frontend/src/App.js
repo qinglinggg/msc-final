@@ -35,6 +35,7 @@ class App extends React.Component {
   }
 
   state = {
+    loggedInUser: "4eff2240-66d6-4505-99b0-f718af96ae33",
     userProfiles: [],
     // Home
     forms: [],
@@ -52,6 +53,11 @@ class App extends React.Component {
       const userProfiles = res.data;
       this.setState({ userProfiles });
     });
+
+    // localStorage.getItem("loggedUser");
+    // if(loggedUser) {
+
+    // }
     axios.get(`${BASE_URL}/api/v1/forms`).then((res) => {
       const forms = res.data;
       this.setState({ forms });
@@ -124,6 +130,7 @@ class App extends React.Component {
   handleSendNewMessage(message) {
     let newArray = this.state.messages.messagesHistory;
     let newMessage = {
+      // nanti diubah
       userID: 2, // user id pemilik form
       message: message,
       timestamp: "3.48 PM",
@@ -149,7 +156,7 @@ class App extends React.Component {
                 path="/"
                 element={
                   <Home
-                    user={this.state.user}
+                    loggedInUser={this.state.loggedInUser}
                     formsData={this.state.forms}
                     waitingForms={this.state.waitingForms}
                     handleCreateNewForm={this.handleCreateNewForm}

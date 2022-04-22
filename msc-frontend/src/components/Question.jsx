@@ -117,7 +117,6 @@ function Question(props) {
               rows="14"
               cols="5"
               wrap="soft"
-              scrollHeight="10px"
               onChange={(e) => {
                 props.handleUpdateQuestionInput(props.questionData.id, e);
               }}
@@ -246,7 +245,6 @@ function Question(props) {
                         placeholder={obj.label}
                         value={obj.value}
                         wrap="soft"
-                        scrollHeight="15px"
                         onChange={(e) => {
                           props.handleOptionValue(
                             props.questionData.id,

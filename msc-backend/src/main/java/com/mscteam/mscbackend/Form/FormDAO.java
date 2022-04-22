@@ -63,8 +63,8 @@ public class FormDAO {
     }
 
     public Form insertForm(Form form) {
-        final String query = "INSERT INTO Form VALUES (?,?,?,?,?,?)";
-        int res = jdbcTemplate.update(query, form.getFormId().toString(), form.getAuthorUserId(), form.getTitle(), form.getDescription(),
+        final String query = "INSERT INTO Form VALUES (?,?,?,?,?,?,?)";
+        int res = jdbcTemplate.update(query, form.getFormId().toString(), form.getAuthorUserId().toString(), form.getTitle(), form.getDescription(),
                 form.getPrivacySetting(), dateFormat.format(form.getCreateDate()), form.getModifyDate());
         return form;
     }
