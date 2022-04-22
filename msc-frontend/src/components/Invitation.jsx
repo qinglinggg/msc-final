@@ -8,6 +8,7 @@ import iconLink from "./images/iconLink.png";
 import AutoHeightTextarea from "./functional-components/AutoheightTextarea";
 import TargetedUserEmail from "./functional-components/TargetedUserEmail";
 import { useParams } from "react-router-dom";
+import Popup from "reactjs-popup";
 
 function Invitation(props) {
   const [openMenu, setOpenMenu] = useState(false);
@@ -90,6 +91,12 @@ function Invitation(props) {
   const handleOpenSharePage = () => {
     setPageSelection(true);
   }
+  
+  const handlePopupTimeout = () => {
+    setTimeout(() => {
+
+    })
+  }
 
   const displaySharePage = () => {
     return (
@@ -105,9 +112,19 @@ function Invitation(props) {
                 <div id="invitation-share-publicly-innerbox-linkbox">
                   <input type="url" id="invitation-share-publicly-innerbox-url" value={formUrl} disabled />
                 </div>
-                <ion-icon id="invitation-share-publicly-innerbox-iconcopy" name="copy-outline" 
-                  onClick={() => navigator.clipboard.writeText(`${formUrl}`)}
-                /> 
+                <Popup
+                  trigger={(open) => 
+                      <ion-icon id="invitation-share-publicly-innerbox-iconcopy" name="copy-outline" /> 
+                  }
+                  position="right center"
+                  onClick={() => {
+                    navigator.clipboard.writeText(`${formUrl}`);
+                  }}
+                >
+                  <div className="popup-wrapper">
+                    Copied to clipboard.
+                  </div>
+                </Popup>
               </div>
               <div id="invitation-share-publicly-innerbox-iconcontainer">
                 <img
