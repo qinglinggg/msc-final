@@ -52,4 +52,9 @@ public class UserProfileController {
     public int updateUser(@PathVariable("id") String id, @RequestBody UserProfile toBeUpdated) throws ParseException {
         return userProfileService.updateUser(id, toBeUpdated);
     }
+
+    @GetMapping(value = "/auth")
+    public String userAuthentication(@RequestBody UserProfile user) {
+        return userProfileService.userAuthentication(user);
+    }
 }

@@ -24,7 +24,7 @@ public class UserProfileDAO {
             String username = resultSet.getString("username");
             String fullname = resultSet.getString("fullname");
             String email = resultSet.getString("email");
-            return new UserProfile(userId, username, fullname, email, null);
+            return new UserProfile(userId, username, fullname, email, null, null);
         }));
         return userlist;
     }
@@ -36,7 +36,7 @@ public class UserProfileDAO {
             String username = resultSet.getString("username");
             String fullname = resultSet.getString("fullname");
             String email = resultSet.getString("email");
-            return new UserProfile(userId, username, fullname, email, null);
+            return new UserProfile(userId, username, fullname, email, null, null);
         }, id);
 
         return Optional.ofNullable(user);
@@ -44,9 +44,9 @@ public class UserProfileDAO {
 
     public UserProfile insertUser(UserProfile user) {
         System.out.println("UserProfileDAO start");
-        final String query = "INSERT INTO User VALUES (?,?,?,?,?)";
+        final String query = "INSERT INTO User VALUES (?,?,?,?,?,?)";
         int res = jdbcTemplate.update(query, user.getUserId().toString(), user.getUsername(), user.getFullname(),
-                user.getEmail(), user.getProfileImage());
+                user.getEmail(), user.getPassword(), user.getProfileImage());
         return user;
     }
 
@@ -98,6 +98,15 @@ public class UserProfileDAO {
         }
         query += " WHERE userId = ?";
         int res = jdbcTemplate.update(query, id);
+        return res;
+    }
+
+    public String userAuthentication(UserProfile user) {
+        final String query = "SELECT userId FROM User WHERE email = ? AND password = ?";
+        String res = (String) jdbcTemplate.queryForObject(query, (resultSet, i) -> {
+            String userId = resultSet.getString("userId");
+            return userId;
+        }, user.getEmail(), user.getPassword());
         return res;
     }
 }

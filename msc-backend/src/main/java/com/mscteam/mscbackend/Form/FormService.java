@@ -127,4 +127,8 @@ public class FormService {
         return formDAO.updateFormItemResponse(formRespondentId, formItemResponse);
     }
 
+    public List<Form> getAuthoredForms(String userId){
+        return formDAO.getAuthoredForms(userId);
+    }
+
 }

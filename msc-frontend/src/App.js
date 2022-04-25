@@ -23,6 +23,7 @@ import RouteDashboard from "./components/Dashboard";
 import { render } from "react-dom";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import Respondent from "./components/Respondent";
+import LandingPage from "./components/LandingPage";
 
 const BASE_URL = "http://10.61.38.193:8080";
 const APP_URL = "http://10.61.38.193:3001";
@@ -35,8 +36,8 @@ class App extends React.Component {
   }
 
   state = {
-    loggedInUser: "4eff2240-66d6-4505-99b0-f718af96ae33",
-    userProfiles: [],
+    loggedInUser: "",
+    userProfile: [],
     // Home
     forms: [],
     formItems: ["test1", "test2"],
@@ -49,21 +50,21 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    axios.get(`${BASE_URL}/api/v1/user-profiles`).then(async (res) => {
-      const userProfiles = res.data;
-      this.setState({ userProfiles });
-    });
+    // axios.get(`${BASE_URL}/api/v1/user-profiles`).then(async (res) => {
+    //   const userProfiles = res.data;
+    //   this.setState({ userProfiles });
+    // });
 
     // localStorage.getItem("loggedUser");
     // if(loggedUser) {
 
     // }
-    axios.get(`${BASE_URL}/api/v1/forms`).then((res) => {
-      const forms = res.data;
-      this.setState({ forms });
-    });
-    let tempBreadcrumbs = [{ page: "/", path: `${APP_URL}` }];
-    localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
+    // axios.get(`${BASE_URL}/api/v1/forms`).then((res) => {
+    //   const forms = res.data;
+    //   this.setState({ forms });
+    // });
+    // let tempBreadcrumbs = [{ page: "/", path: `${APP_URL}` }];
+    // localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
     // axios.get(`${BASE_URL}/api/v1/waitingForms`).then(async (res) => {
     //   const waitingForms = res.data;
     //   this.setState({ waitingForms });
@@ -77,35 +78,87 @@ class App extends React.Component {
     //   console.log(this.state);
     // });
 
-    // MENU
-    let pageContainer = document.getElementById("page-container");
-    let background = document.querySelector(".background");
-    let navBar = document.getElementById("navbar");
-    let body = document.getElementById("body");
-    let menuClose = document.getElementById("menu-close");
-    let sideMenu = document.getElementById("menu-container");
-    if (menuClose) {
-      menuClose.addEventListener("click", () => {
+    // // MENU
+    // let pageContainer = document.getElementById("page-container");
+    // let background = document.querySelector(".background");
+    // let navBar = document.getElementById("navbar");
+    // let body = document.getElementById("body");
+    // let menuClose = document.getElementById("menu-close");
+    // let sideMenu = document.getElementById("menu-container");
+    // if (menuClose) {
+    //   menuClose.addEventListener("click", () => {
+    //     body.classList.toggle("openMenu");
+    //   });
+    // }
+    // let subMenus = document.querySelectorAll(".sub-menu");
+    // function activateButton() {
+    //   subMenus.forEach((item) => {
+    //     item.classList.remove("active");
+    //   });
+    //   this.classList.add("active");
+    // }
+    // function disableOpenMenu() {
+    //   body.classList.toggle("openMenu");
+    // }
+    // if (subMenus) {
+    //   subMenus.forEach((item) => {
+    //     item.addEventListener("mouseover", activateButton);
+    //     item.addEventListener("click", disableOpenMenu);
+    //   });
+    // }
+    // sideMenu.style.left = "0";
+  }
+
+  componentDidUpdate(prevState) {
+    if(prevState.loggedInUser != this.state.loggedInUser && this.state.loggedInUser != ""){
+
+      // get user profile by user id
+      axios.get(`${BASE_URL}/api/v1/user-profiles/${this.state.loggedInUser}`).then(async (res) => {
+        const userProfile = res.data;
+        this.setState({ userProfile });
+      });
+
+      // get form by user id
+      // cek authoruserid udh bener blm -> dashboard
+
+      axios.get(`${BASE_URL}/api/v1/forms/owned-form/${this.state.loggedInUser}`).then((res) => {
+        const forms = res.data;
+        this.setState({ forms });
+      });
+      
+      let tempBreadcrumbs = [{ page: "/", path: `${APP_URL}` }];
+      localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
+  
+      // MENU
+      let pageContainer = document.getElementById("page-container");
+      let background = document.querySelector(".background");
+      let navBar = document.getElementById("navbar");
+      let body = document.getElementById("body");
+      let menuClose = document.getElementById("menu-close");
+      let sideMenu = document.getElementById("menu-container");
+      if (menuClose) {
+        menuClose.addEventListener("click", () => {
+          body.classList.toggle("openMenu");
+        });
+      }
+      let subMenus = document.querySelectorAll(".sub-menu");
+      function activateButton() {
+        subMenus.forEach((item) => {
+          item.classList.remove("active");
+        });
+        this.classList.add("active");
+      }
+      function disableOpenMenu() {
         body.classList.toggle("openMenu");
-      });
+      }
+      if (subMenus) {
+        subMenus.forEach((item) => {
+          item.addEventListener("mouseover", activateButton);
+          item.addEventListener("click", disableOpenMenu);
+        });
+      }
+      sideMenu.style.left = "0";
     }
-    let subMenus = document.querySelectorAll(".sub-menu");
-    function activateButton() {
-      subMenus.forEach((item) => {
-        item.classList.remove("active");
-      });
-      this.classList.add("active");
-    }
-    function disableOpenMenu() {
-      body.classList.toggle("openMenu");
-    }
-    if (subMenus) {
-      subMenus.forEach((item) => {
-        item.addEventListener("mouseover", activateButton);
-        item.addEventListener("click", disableOpenMenu);
-      });
-    }
-    sideMenu.style.left = "0";
   }
 
   async handleCreateNewForm(obj) {
@@ -143,14 +196,33 @@ class App extends React.Component {
     this.setState({formMessages});
   }
 
-  render() {
-    let count = 0;
+  handleSetLoggedInUser(userId) {
+    this.setState({ loggedInUser: userId });
+  }
+
+  authentication() {
     return (
-      <Router>
-        <Navbar user_data={this.state.userProfiles} />
+        <Routes>
+            <Route 
+              path="/"
+              element={
+              <LandingPage 
+                handleSetLoggedInUser={this.handleSetLoggedInUser}
+              />} 
+            />
+        </Routes>
+    );
+  }
+
+  appRouting() {
+    let count = 0;
+
+    return (
+      <React.Fragment>
+        <Navbar user_data={this.state.loggedInUser} />
         <div className="background"></div>
         <Menu />
-          <div className="page-container" id="page-container">
+        <div className="page-container" id="page-container">
             <Routes>
               <Route
                 path="/"
@@ -250,6 +322,17 @@ class App extends React.Component {
               />
           </Routes>
         </div>
+      </React.Fragment>
+    );
+  } 
+
+  render() {
+    return (
+      <Router>
+        { this.state.loggedInUser == "" ? 
+            this.authentication() : 
+            this.appRouting()
+        }
       </Router>
     );
   }
