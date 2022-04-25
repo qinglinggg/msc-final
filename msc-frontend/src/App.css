@@ -2689,3 +2689,92 @@ body {
   padding: 15px;
 }
 
+/* Login */
+
+#landing-page-container {
+  display: flex;
+  flex-direction: row;
+  height: 560px;
+  width: 100%;
+  background-color: rgb(153, 211, 196);
+  align-items: center;
+}
+
+#landing-page-welcome {
+  width: 50%;
+  height: fit-content;
+  margin: 56px;
+  align-self: center;
+}
+
+#landing-page-welcome-1 {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+#landing-page-welcome-2 {
+  font-size: 35px;
+  font-family: 'Signika';
+}
+
+#landing-page-login-box {
+  width: 50%;
+  height: fit-content;
+  justify-content: center;
+  margin: 56px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 15px;
+}
+
+#landing-page-login-header {
+  font-size: 25px;
+  padding-bottom: 2.0px;
+}
+
+.landing-page-login-container {
+  padding: 15px 0px 20px 0px;
+  display: flex;
+  flex-direction: column;
+}
+
+.landing-page-login-row {
+  margin-bottom: 10px;
+}
+
+.landing-page-login-title {
+  font-size: 15px;
+  font-style: italic;
+  margin: 5px 0px 5px 0px;
+}
+
+.landing-page-login-field {
+  width: 70%;
+  margin: 5px 0px 5px 0px;
+  padding: 5px 10px 5px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--gray-profileimage);
+}
+
+#landing-page-login-footer {
+  width: 100%;
+  display: flex;
+  margin-bottom: 10px;
+  /* justify-content: center; */
+}
+
+#landing-page-login-button {
+  width: 60px;
+  background-color: var(--navbar-color);
+  color: white;
+  text-align: center;
+  font-size: 13px;
+  padding: 7px 3px 7px 3px;
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+
+
+

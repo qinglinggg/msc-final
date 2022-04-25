@@ -127,4 +127,9 @@ public class FormController {
     public int updateFormItemResponse(@PathVariable("formRespondentId") String formRespondentId, @RequestBody FormItemResponse formItemResponse){
         return formService.updateFormItemResponse(formRespondentId, formItemResponse);
     }
+
+    @GetMapping(path="/owned-form/{authorUserId}")
+    public List<Form> getAuthoredForms(@PathVariable("authorUserId") String userId){
+        return formService.getAuthoredForms(userId);
+    }
 }

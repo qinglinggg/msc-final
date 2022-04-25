@@ -277,4 +277,26 @@ public class FormDAO {
         return res;
     }
 
+    public List<Form> getAuthoredForms(String userId){
+        final String query = "SELECT * FROM Form WHERE authorUserId = ?";
+        List<Form> authoredForms = jdbcTemplate.query(query, (resultSet, i) -> {
+            String formId = resultSet.getString("formId");
+            String authorUserId = resultSet.getString("authorUserId");
+            String title = resultSet.getString("title");
+            String description = resultSet.getString("description");
+            String privacySetting = resultSet.getString("privacySetting");
+            Date createDate = null;
+            Date modifyDate = null;
+            try {
+                createDate = dateFormat.parse(resultSet.getString("createDate"));
+                modifyDate = dateFormat.parse(resultSet.getString("modifyDate"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate);
+        }, userId);
+
+        return authoredForms;
+    }
+
 }

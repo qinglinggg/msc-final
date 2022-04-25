@@ -35,4 +35,8 @@ public class UserProfileService {
     public int updateUser(String id, UserProfile toBeUpdated) {
         return userProfileDAO.updateUser(id, toBeUpdated);
     }
+
+    public String userAuthentication(UserProfile user) {
+        return userProfileDAO.userAuthentication(user);
+    }
 }

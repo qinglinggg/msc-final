@@ -10,21 +10,24 @@ public class UserProfile {
     private String username;
     private String fullname;
     private String email;
+    private String password;
     private String profileImage;
 
-    public UserProfile(String userId, String username, String fullname, String email, String profileImage){
+    public UserProfile(String userId, String username, String fullname, String email, String password, String profileImage){
         this.userId = UUID.fromString(userId);
         this.username = username;
         this.fullname = fullname;
         this.email = email;
+        this.password = password;
         this.profileImage = profileImage;
     }
 
-    public UserProfile(@JsonProperty("username") String username, @JsonProperty("fullname") String fullname, @JsonProperty("email") String email, @JsonProperty("profileImage") String profileImage){
+    public UserProfile(@JsonProperty("username") String username, @JsonProperty("fullname") String fullname, @JsonProperty("email") String email, @JsonProperty("password") String password, @JsonProperty("profileImage") String profileImage){
         this.userId = UUID.randomUUID();
         this.username = username;
         this.fullname = fullname;
         this.email = email;
+        this.password = password;
         this.profileImage = profileImage;
     }
 
@@ -58,6 +61,10 @@ public class UserProfile {
 
     public String getEmail(){
         return this.email;
+    }
+
+    public String getPassword() {
+        return this.password;
     }
 
     public String getProfileImage(){
