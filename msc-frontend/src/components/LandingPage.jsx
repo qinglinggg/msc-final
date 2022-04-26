@@ -53,14 +53,27 @@ class LandingPage extends Component {
                 </div>
                 <div id="landing-page-login-box">
                     <div id="landing-page-login-header">Login</div>
+                    <div className='liner'></div>
                     <div className="landing-page-login-container">
                         <div className="landing-page-login-row">
                             <div className="landing-page-login-title">Email</div>
-                            <input type="text" className="landing-page-login-field" id="login-useremail" />
+                            <div className="landing-page-input-container">
+                                <input type="text" className="landing-page-login-field" id="login-useremail" />
+                                <span>
+                                    <span className='span-asterisk'>*</span>
+                                    <span className='span-required'> Required fields</span>
+                                </span>
+                            </div>
                         </div>
                         <div className="landing-page-login-row">
                             <div className="landing-page-login-title">Password</div>
-                            <input type="text" className="landing-page-login-field" id="login-password" />
+                            <div className="landing-page-input-container">
+                                <input type="text" className="landing-page-login-field" id="login-password" />
+                                <span>
+                                    <span className='span-asterisk'>*</span>
+                                    <span className='span-required'> Required fields</span>
+                                </span>
+                            </div>
                         </div>
                     </div>
                     <div id="landing-page-login-footer">

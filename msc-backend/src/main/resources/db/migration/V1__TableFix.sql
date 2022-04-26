@@ -4,5 +4,5 @@ CREATE TABLE User (
     fullname VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL,
     [password] VARCHAR(100) NOT NULL,
-    profileImage VARCHAR(255) NOT NULL
+    profileImage VARCHAR(255) NULL
 )
