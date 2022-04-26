@@ -37,7 +37,7 @@ public class UserProfileDAO {
             String fullname = resultSet.getString("fullname");
             String email = resultSet.getString("email");
             String image = resultSet.getString("profileImage");
-            return new UserProfile(userId, username, fullname, email, image);
+            return new UserProfile(userId, username, fullname, email, null, image);
         }, id);
 
         return Optional.ofNullable(user);
