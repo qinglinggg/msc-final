@@ -55,7 +55,7 @@ public class UserProfileController {
 
     @PostMapping(value = "/auth", consumes=MediaType.APPLICATION_JSON_VALUE)
     public String userAuthentication(@RequestBody UserProfile user) {
-        print("User authentication")
+        System.out.println("User authentication");
         return userProfileService.userAuthentication(user);
     }
 }
