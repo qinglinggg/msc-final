@@ -22,7 +22,7 @@ class LandingPage extends Component {
 
         try {
             axios({
-                method: "get",
+                method: "post",
                 data: user,
                 url: `${BASE_URL}/api/v1/user-profiles/auth`
             }).then((res) => {

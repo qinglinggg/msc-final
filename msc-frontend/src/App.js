@@ -50,6 +50,8 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    let tempUser = localStorage.getItem("loggedInUser");
+    if (tempUser) this.setState({loggedInUser: tempUser});
     // axios.get(`${BASE_URL}/api/v1/user-profiles`).then(async (res) => {
     //   const userProfiles = res.data;
     //   this.setState({ userProfiles });
@@ -197,7 +199,7 @@ class App extends React.Component {
   }
 
   handleSetLoggedInUser(userId) {
-    this.setState({ loggedInUser: userId });
+    localStorage.setItem("loggedInUser", userId);
   }
 
   authentication() {
