@@ -53,7 +53,7 @@ public class UserProfileController {
         return userProfileService.updateUser(id, toBeUpdated);
     }
 
-    @GetMapping(value = "/auth")
+    @GetMapping(value = "/auth", consumes=MediaType.APPLICATION_JSON_VALUE)
     public String userAuthentication(@RequestBody UserProfile user) {
         return userProfileService.userAuthentication(user);
     }

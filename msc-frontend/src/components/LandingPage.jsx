@@ -16,8 +16,8 @@ class LandingPage extends Component {
         let inputPassword = document.getElementById('login-password');
 
         let user = {
-            userEmail: inputUserEmail.value,
-            password: inputPassword.value
+            'email': inputUserEmail.value,
+            'password': inputPassword.value
         }
 
         try {
@@ -34,7 +34,7 @@ class LandingPage extends Component {
                 }
             })
         } catch(error) {
-
+            console.log(error);
         }
     }
 
