@@ -194,7 +194,6 @@ class Home extends React.Component {
     if (this.state.title == "" || this.state.description == "" || this.state.privacySetting == "") {
       this.setState({ isRequired: true }); 
     } else {
-      console.log("testtt");
       this.setState({ isRequired: false });
       let obj = {};
       obj.authorUserId = this.props.loggedInUser;

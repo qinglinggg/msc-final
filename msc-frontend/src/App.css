@@ -197,6 +197,7 @@ body {
   height: 70px;
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   align-items: center;
   border-radius: 0px 0px 35px 35px;
   position: absolute;
@@ -204,7 +205,7 @@ body {
 }
 
 #app-title {
-  width: 100%;
+  width: 70%;
   height: fit-content;
   color: white;
   font-size: 35px;
@@ -219,7 +220,7 @@ body {
 
 #profile-container {
   height: fit-content;
-  width: 350px;
+  width: 300px;
   margin-right: 50px;
   display: flex;
   flex-direction: row;
@@ -315,6 +316,7 @@ body {
   width: 90%;
   min-width: 800px;
   padding: 50px 0 50px 0;
+  margin: 50px 0 50px 0;
   height: fit-content;
   min-height: 300px;
   position: relative;
@@ -617,7 +619,7 @@ body {
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
-  margin-bottom: 5px;
+  margin: 25px 0 0 0;
 }
 
 #page-title-home {

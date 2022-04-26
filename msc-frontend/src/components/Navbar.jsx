@@ -7,7 +7,8 @@ const BASE_URL = "http://10.61.38.193:8080";
 
 class Navbar extends React.Component {
   state = {
-    currentUser: {}
+    currentUser: {},
+    prImage: dummyProfile,
   }
   
   componentDidMount() {
@@ -19,12 +20,11 @@ class Navbar extends React.Component {
     }).then((res) => {
       console.log(res.data);
       if(res.data) this.setState({currentUser: res.data});
+      let profileImage = document.getElementById('pr-image');
+      if(profileImage)
+        if(this.state.currentUser)
+          if(this.state.currentUser.profileImage != null && this.state.currentUser.profileImage != "") this.setState({prImage: this.state.currentUser.profileImage});
     });
-    let profileImage = document.getElementById('pr-image');
-    if(profileImage)
-      if(this.state.currentUser)
-        if(this.state.currentUser.profileImage != null && this.state.currentUser.profileImage != "") profileImage.src = this.state.currentUser.profileImage;
-        else profileImage.src = dummyProfile;
   }
 
   render() {
@@ -41,7 +41,7 @@ class Navbar extends React.Component {
               </div>
             ) : null
           }
-          <img id="pr-image" className="profile-image" />
+          <img id="pr-image" className="profile-image" src={this.state.prImage}/>
         </div>
       </nav>
     );
