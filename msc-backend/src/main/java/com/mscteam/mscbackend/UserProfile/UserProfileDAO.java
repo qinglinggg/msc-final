@@ -30,13 +30,14 @@ public class UserProfileDAO {
     }
 
     public Optional<UserProfile> getUserById(String id) {
-        final String query = "SELECT userId, username, fullname, email FROM User WHERE userId = ?";
+        final String query = "SELECT userId, username, fullname, email, profileImage FROM User WHERE userId = ?";
         UserProfile user = jdbcTemplate.queryForObject(query, (resultSet, i) -> {
             String userId = resultSet.getString("userId");
             String username = resultSet.getString("username");
             String fullname = resultSet.getString("fullname");
             String email = resultSet.getString("email");
-            return new UserProfile(userId, username, fullname, email, null, null);
+            String image = resultSet.getString("profileImage");
+            return new UserProfile(userId, username, fullname, email, image);
         }, id);
 
         return Optional.ofNullable(user);
