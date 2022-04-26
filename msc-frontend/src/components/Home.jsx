@@ -81,7 +81,6 @@ class Home extends React.Component {
     } else {
       body.classList.remove("openPopup");
     }
-    // this.updatePopupData();
   }
 
   render() {

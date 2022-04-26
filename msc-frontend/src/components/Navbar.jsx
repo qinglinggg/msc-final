@@ -1,8 +1,32 @@
+import axios from "axios";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import dummyProfile from "./images/woman.jpg";
 
+const BASE_URL = "http://10.61.38.193:8080";
+
 class Navbar extends React.Component {
+  state = {
+    currentUser: {}
+  }
+  
+  componentDidMount() {
+    let currentId = JSON.parse(localStorage.getItem("loggedInUser"));
+    console.log(currentId);
+    if(currentId) axios({
+      method: "get",
+      url: `${BASE_URL}/api/v1/user-profiles/${currentId}`
+    }).then((res) => {
+      console.log(res.data);
+      if(res.data) this.setState({currentUser: res.data});
+    });
+    let profileImage = document.getElementById('pr-image');
+    if(profileImage)
+      if(this.state.currentUser)
+        if(this.state.currentUser.profileImage != null && this.state.currentUser.profileImage != "") profileImage.src = this.state.currentUser.profileImage;
+        else profileImage.src = dummyProfile;
+  }
+
   render() {
     return (
       <nav className="navbar" id="navbar">
@@ -10,15 +34,14 @@ class Navbar extends React.Component {
           MySurveyCompanion
         </Link>
         <div id="profile-container">
-          {this.props.user_data.map((data) => {
-            return data.userId == "bdd179ea-235f-4db6-b6da-e39270da091b" ? (
+          {this.state.currentUser ? (
               <div className="profile-preview">
-                <span id="pr-username">{data.fullname}</span>
-                <span id="pr-email">{data.email}</span>
+                <span id="pr-username">{this.state.currentUser.fullname}</span>
+                <span id="pr-email">{this.state.currentUser.email}</span>
               </div>
-            ) : null;
-          })}
-          <img className="profile-image" src={dummyProfile} />
+            ) : null
+          }
+          <img id="pr-image" className="profile-image" />
         </div>
       </nav>
     );

@@ -33,11 +33,11 @@ class App extends React.Component {
     super(props);
     this.handleCreateNewForm = this.handleCreateNewForm.bind(this);
     this.handleSetFormMessages = this.handleSetFormMessages.bind(this);
+    this.handleSetLoggedInUser = this.handleSetLoggedInUser.bind(this);
   }
 
   state = {
     loggedInUser: "",
-    userProfile: [],
     // Home
     forms: [],
     formItems: ["test1", "test2"],
@@ -52,15 +52,6 @@ class App extends React.Component {
   componentDidMount() {
     let tempUser = localStorage.getItem("loggedInUser");
     if (tempUser) this.setState({loggedInUser: tempUser});
-    // axios.get(`${BASE_URL}/api/v1/user-profiles`).then(async (res) => {
-    //   const userProfiles = res.data;
-    //   this.setState({ userProfiles });
-    // });
-
-    // localStorage.getItem("loggedUser");
-    // if(loggedUser) {
-
-    // }
     // axios.get(`${BASE_URL}/api/v1/forms`).then((res) => {
     //   const forms = res.data;
     //   this.setState({ forms });
@@ -113,13 +104,6 @@ class App extends React.Component {
 
   componentDidUpdate(prevState) {
     if(prevState.loggedInUser != this.state.loggedInUser && this.state.loggedInUser != ""){
-
-      // get user profile by user id
-      axios.get(`${BASE_URL}/api/v1/user-profiles/${this.state.loggedInUser}`).then(async (res) => {
-        const userProfile = res.data;
-        this.setState({ userProfile });
-      });
-
       // get form by user id
       // cek authoruserid udh bener blm -> dashboard
 
@@ -199,7 +183,8 @@ class App extends React.Component {
   }
 
   handleSetLoggedInUser(userId) {
-    localStorage.setItem("loggedInUser", userId);
+    localStorage.setItem("loggedInUser", JSON.stringify(userId));
+    this.setState({loggedInUser : userId});
   }
 
   authentication() {
@@ -218,10 +203,9 @@ class App extends React.Component {
 
   appRouting() {
     let count = 0;
-
     return (
       <React.Fragment>
-        <Navbar user_data={this.state.loggedInUser} />
+        <Navbar />
         <div className="background"></div>
         <Menu />
         <div className="page-container" id="page-container">
