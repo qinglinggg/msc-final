@@ -66,7 +66,7 @@ public class FeedbackService {
         return feedbackDAO.removeFeedbackMessage(id);
     }
     
-    public String getFeedbackIdByFormIdAndUserId(String formId, String userId){
+    public Optional<String> getFeedbackIdByFormIdAndUserId(String formId, String userId){
         return feedbackDAO.getFeedbackIdByFormIdAndUserId(formId, userId);
     }
 

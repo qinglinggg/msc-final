@@ -176,13 +176,13 @@ class Home extends React.Component {
     // }
     return (
       <React.Fragment>
-        {formsData.map((data) => (
+        {formsData ? formsData.map((data) => (
           <Page1Items 
             key={data.formId} 
             data={data}
             handleFormDeletion={this.handleFormDeletion}
           />
-        ))}
+        )) : null}
         <div className="item-wrapper">
           <div className="item-container">
             <div className="addNewItem" onClick={() => this.handleAddItem()}>

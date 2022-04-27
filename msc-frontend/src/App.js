@@ -27,6 +27,7 @@ import LandingPage from "./components/LandingPage";
 
 const BASE_URL = "http://10.61.38.193:8080";
 const APP_URL = "http://10.61.38.193:3001";
+// const APP_URL = "http://localhost:3000";
 
 class App extends React.Component {
   constructor(props) {
@@ -245,10 +246,7 @@ class App extends React.Component {
               <Route
                 path={`/response/formId/:formId`}
                 element={
-                  <Respondent 
-                    // user={this.state.currentUser}
-                    user="00eb3eda-905f-43bd-b680-0597769b17b4"
-                  />
+                  <Respondent />
                 }
                 
               />

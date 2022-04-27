@@ -17,7 +17,7 @@ function Respondent (props) {
 
     const [openChat, setOpenChat] = useState(false);
     const [tempMessage, setTempMessage] = useState("");
-    const [feedbackId, setFeedbackId] = useState("");
+    const [feedbackId, setFeedbackId] = useState();
     const [feedbackMessages, setFeedbackMessages] = useState([]);
 
 
@@ -42,10 +42,29 @@ function Respondent (props) {
                 url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`
             }).then((res) => {
                 setFormItems(res.data);
-                console.log(res.data);
             })
         } catch (error) {
 
+        }
+
+        // let createNewFeedback = false;
+        // cek pernah kirim message ga
+        // get feedbackId by formId and userId
+        try {
+          let user = JSON.parse(localStorage.getItem("loggedInUser"));
+          console.log(user);
+          axios({
+            method: "get",
+            url: `${BASE_URL}/api/v1/feedback/by-form-and-user/${formId}`,
+            data: user,
+          }).then((res) => {
+            if(res.data){
+              setFeedbackId(res.data);
+            }
+            // else createNewFeedback = true;
+          })
+        } catch(error) {
+          console.log(error);
         }
 
         // try {
@@ -68,13 +87,22 @@ function Respondent (props) {
             
         // }
 
-        try {
-
-        } catch(error) {
-
-        }
-
     }, []);
+
+    useEffect((prevState) => {
+      if(feedbackId != undefined && prevState.feedbackId == ""){
+        try {
+          axios({
+            method: "get",
+            url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
+          }).then((res) => {
+            setFeedbackMessages(res.data);
+          })
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }, [feedbackId]);
 
     const getAnswerSelection = (current) => {
         let formItemId = current.id;
@@ -140,7 +168,7 @@ function Respondent (props) {
                 {index}. { }
               </div>
               {current.content == '' ? 
-                <div id="preview-warning">Don't forget to type your question to see how it looks. </div> 
+                <div id="preview-warning">There is no question, please contact the author. </div> 
                 : current.content
               }
               </div>
@@ -368,24 +396,11 @@ function Respondent (props) {
     
     const handleOpenChat = () => {
       setOpenChat(!openChat);
+    }
 
-      let createNewFeedback = false;
-      // cek pernah kirim message ga
-      // get feedbackId by formId and userId
-      try {
-        axios({
-          method: "get",
-          url: `${BASE_URL}/api/v1/feedback/by-form-and-user/${formId}`,
-          data: props.user,
-        }).then((res) => {
-          if(res.data) setFeedbackId(res.data);
-          else createNewFeedback = true;
-        })
-      } catch(error) {
-        console.log(error);
-      }
+    const handleCreateNewFeedback = () => {
 
-      if(createNewFeedback) {
+      if(feedbackId == "") {
 
         let newFeedback = {
           formId: formId,
@@ -407,16 +422,7 @@ function Respondent (props) {
         } catch (error){
           console.log(error);
         }
-      } else {
-
-        axios({
-          method: "get",
-          url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
-        }).then((res) => {
-          setFeedbackMessages(res.data);
-        })
       }
-
     }
     
     const displayChatBox = () => {
@@ -434,6 +440,10 @@ function Respondent (props) {
     };
 
     const handleClickSend = () => {
+
+      if(feedbackId == undefined){
+        handleCreateNewFeedback();
+      }
 
       let newMessage = {
         feedbackId: feedbackId,
@@ -516,7 +526,11 @@ function Respondent (props) {
                         }}
                         placeholder='Please type your message...'
                       />
-                      <div id="respondent-chat-send" onClick={handleClickSend}>
+                      <div id="respondent-chat-send" 
+                        onClick={() => { 
+                          handleClickSend();
+                        }}
+                      >
                         <ion-icon name="send-outline" id="send-icon"></ion-icon>
                       </div>
                     </div>

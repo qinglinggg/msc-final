@@ -119,12 +119,12 @@ public class FeedbackDAO {
         return res;
     }
 
-    public String getFeedbackIdByFormIdAndUserId(String formId, String userId){
+    public Optional<String> getFeedbackIdByFormIdAndUserId(String formId, String userId){
         final String query = "SELECT feedbackId FROM Feedback WHERE formId = ? AND userId = ?";
         String feedbackId = (String) jdbcTemplate.queryForObject(query, (resultSet, i) -> {
             String resId = resultSet.getString("feedbackId");
             return resId;
         }, formId, userId);
-        return feedbackId;
+        return Optional.ofNullable(feedbackId);
     }
 }

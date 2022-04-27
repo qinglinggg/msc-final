@@ -381,7 +381,7 @@ function Dashboard(props) {
     let counter = 0;
     return (
       <React.Fragment>
-        {formItems.map((res) => {
+        {formItems ? formItems.map((res) => {
           counter += 1;
           return (
             <React.Fragment>
@@ -406,7 +406,7 @@ function Dashboard(props) {
               </div>
             </React.Fragment>
           );
-        })}
+        }) : null}
         <div className="separator" />
         <div
           className="question"
@@ -514,6 +514,8 @@ function Dashboard(props) {
       <div className="page-breadcrumbs">
         {
           currentStep.map((b, idx) => {
+            console.log('path: ' + b['path']);
+            console.log('page: ' + b['page']);
             if(idx > 0) {
               return (
                 <a href={b['path']}>
