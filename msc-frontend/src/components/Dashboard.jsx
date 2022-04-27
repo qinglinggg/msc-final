@@ -28,10 +28,13 @@ function Dashboard(props) {
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
-    let formData = props.forms.map((formData) => {
-      if (formData.formId == formId) {
-        localStorage.setItem("selectedForm", JSON.stringify(formData));
-        return formData;
+    let loadData = JSON.parse(
+      localStorage.getItem("formLists")
+    );
+    loadData.map((data) => {
+      if (data.formId == formId) {
+        localStorage.setItem("selectedForm", JSON.stringify(data));
+        return data;
       }
     });
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");

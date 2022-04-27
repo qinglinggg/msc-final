@@ -68,7 +68,7 @@ class Home extends React.Component {
     });
   }
 
-  componentDidUpdate(prevState){
+  componentDidUpdate(){
     let body = document.getElementById("body");
     if (this.state.isAdd == true){
       let closePopup = document.querySelector(".closePopup");
@@ -156,7 +156,16 @@ class Home extends React.Component {
   }
 
   displayPage1() {
-    let formsData = this.filterData(this.props.formsData);
+    let loadData = localStorage.getItem("formLists");
+    let formsData = [];
+    if (loadData) formsData = this.filterData(JSON.parse(loadData));
+    // else {
+    //   formsData = axios.get(`${BASE_URL}/api/v1/forms/owned-form/${this.state.loggedInUser}`).then((res) => {
+    //     const forms = res.data;
+    //     localStorage.setItem("formLists", JSON.stringify(forms));
+    //   });
+    //   localStorage.setItem("formLists", JSON.stringify(formsData));
+    // }
     return (
       <React.Fragment>
         {formsData.map((data) => (

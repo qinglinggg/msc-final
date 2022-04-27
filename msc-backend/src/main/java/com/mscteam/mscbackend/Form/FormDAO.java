@@ -293,6 +293,7 @@ public class FormDAO {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            System.out.println("Checking: " + title);
             return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate);
         }, userId);
 

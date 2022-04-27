@@ -39,8 +39,6 @@ class App extends React.Component {
   state = {
     loggedInUser: "",
     // Home
-    forms: [],
-    formItems: ["test1", "test2"],
     waitingForms: [
       {
         title: "Survey 1",
@@ -51,104 +49,53 @@ class App extends React.Component {
 
   componentDidMount() {
     let tempUser = localStorage.getItem("loggedInUser");
-    if (tempUser) this.setState({loggedInUser: tempUser});
-    // axios.get(`${BASE_URL}/api/v1/forms`).then((res) => {
-    //   const forms = res.data;
-    //   this.setState({ forms });
-    // });
-    // let tempBreadcrumbs = [{ page: "/", path: `${APP_URL}` }];
-    // localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
-    // axios.get(`${BASE_URL}/api/v1/waitingForms`).then(async (res) => {
-    //   const waitingForms = res.data;
-    //   this.setState({ waitingForms });
-    //   console.log("Waiting Forms Update State:")
-    //   console.log(this.state);
-    // });
-    // axios.get(`${BASE_URL}/api/v1/formItems`).then((res) => {
-    //   const formItems = res.data;
-    //   this.setState({ formItems });
-    //   console.log("Form Items Update State:");
-    //   console.log(this.state);
-    // });
-
-    // // MENU
-    // let pageContainer = document.getElementById("page-container");
-    // let background = document.querySelector(".background");
-    // let navBar = document.getElementById("navbar");
-    // let body = document.getElementById("body");
-    // let menuClose = document.getElementById("menu-close");
-    // let sideMenu = document.getElementById("menu-container");
-    // if (menuClose) {
-    //   menuClose.addEventListener("click", () => {
-    //     body.classList.toggle("openMenu");
-    //   });
-    // }
-    // let subMenus = document.querySelectorAll(".sub-menu");
-    // function activateButton() {
-    //   subMenus.forEach((item) => {
-    //     item.classList.remove("active");
-    //   });
-    //   this.classList.add("active");
-    // }
-    // function disableOpenMenu() {
-    //   body.classList.toggle("openMenu");
-    // }
-    // if (subMenus) {
-    //   subMenus.forEach((item) => {
-    //     item.addEventListener("mouseover", activateButton);
-    //     item.addEventListener("click", disableOpenMenu);
-    //   });
-    // }
-    // sideMenu.style.left = "0";
+    if (tempUser) this.setState({loggedInUser: JSON.parse(tempUser)});
+    // get form by user id
+    // cek authoruserid udh bener blm -> dashboardSS
+    axios.get(`${BASE_URL}/api/v1/forms/owned-form/${tempUser}`).then((res) => {
+      const forms = res.data;
+      console.log(res);
+      localStorage.setItem("formLists", JSON.stringify(forms));
+    });
+    let body = document.getElementById("body");
+    // MENU
+    let pageContainer = document.getElementById("page-container");
+    let background = document.querySelector(".background");
+    let navBar = document.getElementById("navbar");
+    let menuClose = document.getElementById("menu-close");
+    let sideMenu = document.getElementById("menu-container");
+    if (menuClose) {
+      menuClose.addEventListener("click", () => {
+        body.classList.toggle("openMenu");
+      });
+    }
+    let subMenus = document.querySelectorAll(".sub-menu");
+    function activateButton() {
+      subMenus.forEach((item) => {
+        item.classList.remove("active");
+      });
+      this.classList.add("active");
+    }
+    function disableOpenMenu() {
+      body.classList.toggle("openMenu");
+    }
+    if (subMenus) {
+      subMenus.forEach((item) => {
+        item.addEventListener("mouseover", activateButton);
+        item.addEventListener("click", disableOpenMenu);
+      });
+    }
+    if (sideMenu) sideMenu.style.left = "0";
   }
 
   componentDidUpdate(prevState) {
     if(prevState.loggedInUser != this.state.loggedInUser && this.state.loggedInUser != ""){
-      // get form by user id
-      // cek authoruserid udh bener blm -> dashboard
-
-      axios.get(`${BASE_URL}/api/v1/forms/owned-form/${this.state.loggedInUser}`).then((res) => {
-        const forms = res.data;
-        this.setState({ forms });
-      });
-      
       let tempBreadcrumbs = [{ page: "/", path: `${APP_URL}` }];
       localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
-  
-      // MENU
-      let pageContainer = document.getElementById("page-container");
-      let background = document.querySelector(".background");
-      let navBar = document.getElementById("navbar");
-      let body = document.getElementById("body");
-      let menuClose = document.getElementById("menu-close");
-      let sideMenu = document.getElementById("menu-container");
-      if (menuClose) {
-        menuClose.addEventListener("click", () => {
-          body.classList.toggle("openMenu");
-        });
-      }
-      let subMenus = document.querySelectorAll(".sub-menu");
-      function activateButton() {
-        subMenus.forEach((item) => {
-          item.classList.remove("active");
-        });
-        this.classList.add("active");
-      }
-      function disableOpenMenu() {
-        body.classList.toggle("openMenu");
-      }
-      if (subMenus) {
-        subMenus.forEach((item) => {
-          item.addEventListener("mouseover", activateButton);
-          item.addEventListener("click", disableOpenMenu);
-        });
-      }
-      sideMenu.style.left = "0";
     }
   }
 
   async handleCreateNewForm(obj) {
-    let formsData = [...this.state.forms];
     try {
       await axios({
         method: "post",
@@ -156,8 +103,10 @@ class App extends React.Component {
         data: obj,
         headers: { "Content-Type": "application/json" },
       }).then((response) => {
-        formsData.push(response.data);
-        this.setState({ forms: formsData });
+        let tempList = localStorage.getItem("formLists");
+        tempList = JSON.parse(tempList);
+        tempList.push(response.data);
+        localStorage.setItem("formLists", JSON.stringify(tempList));
         localStorage.setItem("selectedForm", JSON.stringify(response.data));
         window.location = `/dashboard/formId/${response.data.formId}`;
       });
@@ -215,7 +164,6 @@ class App extends React.Component {
                 element={
                   <Home
                     loggedInUser={this.state.loggedInUser}
-                    formsData={this.state.forms}
                     waitingForms={this.state.waitingForms}
                     handleCreateNewForm={this.handleCreateNewForm}
                   />
@@ -224,9 +172,7 @@ class App extends React.Component {
               <Route
                 path={`/dashboard/formId/:formId`}
                 element={
-                  <Dashboard 
-                    forms={this.state.forms}
-                  />
+                  <Dashboard />
                 }
               />
               <Route
