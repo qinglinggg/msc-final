@@ -49,14 +49,16 @@ class App extends React.Component {
 
   componentDidMount() {
     let tempUser = localStorage.getItem("loggedInUser");
-    if (tempUser) this.setState({loggedInUser: JSON.parse(tempUser)});
-    // get form by user id
-    // cek authoruserid udh bener blm -> dashboardSS
-    axios.get(`${BASE_URL}/api/v1/forms/owned-form/${tempUser}`).then((res) => {
-      const forms = res.data;
-      console.log(res);
-      localStorage.setItem("formLists", JSON.stringify(forms));
-    });
+    if (tempUser) {
+      tempUser = JSON.parse(tempUser);
+      this.setState({loggedInUser: tempUser});
+      // get form by user id
+      // cek authoruserid udh bener blm -> dashboardSS
+      axios.get(`${BASE_URL}/api/v1/forms/owned-form/${tempUser}`).then((res) => {
+        const forms = res.data;
+        localStorage.setItem("formLists", JSON.stringify(forms));
+      });
+    }
     let body = document.getElementById("body");
     // MENU
     let pageContainer = document.getElementById("page-container");
@@ -190,8 +192,7 @@ class App extends React.Component {
               <Route
                 path={`/show-results/formId/:formId`}
                 element={
-                  <DataVisualization 
-                    forms={this.state.forms} 
+                  <DataVisualization
                     formItems_data={this.state.formItems}
                   />}
               />
@@ -230,8 +231,7 @@ class App extends React.Component {
               <Route
                 path={`/preview/formId/:formId`}
                 element={
-                  <Preview 
-                    forms={this.state.forms} 
+                  <Preview
                     breadcrumbs={this.state.breadcrumbs} 
                   />
                 }

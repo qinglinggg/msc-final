@@ -14,6 +14,7 @@ class Home extends React.Component {
     this.searchOnChange = this.searchOnChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.updatePopupData = this.updatePopupData.bind(this);
+    this.handleFormDeletion = this.handleFormDeletion.bind(this);
   }
 
   state = {
@@ -24,7 +25,8 @@ class Home extends React.Component {
     searchValue: null,
     title: "",
     description: "",
-    privacySetting: ""
+    privacySetting: "",
+    forms: []
   };
 
   handleClickPage1() {
@@ -60,6 +62,7 @@ class Home extends React.Component {
       path: window.location.href,
     });
     localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
+    this.setState({forms: JSON.parse(localStorage.getItem("formLists"))});
     let listSelection = document.querySelectorAll(".page-button");
     listSelection.forEach((item) => {
       item.addEventListener('click', (e) => {
@@ -155,10 +158,15 @@ class Home extends React.Component {
     });
   }
 
+  handleFormDeletion() {
+    let tempList = localStorage.getItem("formLists");
+    tempList = JSON.parse(tempList);
+    this.setState({forms: tempList}); 
+    console.log("deleted");
+  }
+
   displayPage1() {
-    let loadData = localStorage.getItem("formLists");
-    let formsData = [];
-    if (loadData) formsData = this.filterData(JSON.parse(loadData));
+    let formsData = this.filterData(this.state.forms);
     // else {
     //   formsData = axios.get(`${BASE_URL}/api/v1/forms/owned-form/${this.state.loggedInUser}`).then((res) => {
     //     const forms = res.data;
@@ -172,12 +180,15 @@ class Home extends React.Component {
           <Page1Items 
             key={data.formId} 
             data={data}
+            handleFormDeletion={this.handleFormDeletion}
           />
         ))}
-        <div className="item-container">
-          <div className="addNewItem" onClick={() => this.handleAddItem()}>
-            <div id="btn-addItem">+</div>
-            <div id="btn-addItem2">Add new Item</div>
+        <div className="item-wrapper">
+          <div className="item-container">
+            <div className="addNewItem" onClick={() => this.handleAddItem()}>
+              <div id="btn-addItem">+</div>
+              <div id="btn-addItem2">Add new Item</div>
+            </div>
           </div>
         </div>
       </React.Fragment>
