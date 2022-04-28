@@ -1261,7 +1261,6 @@ body {
   display: flex;
   flex-direction: column;
   margin-bottom: 30px;
-  cursor: pointer;
 }
 
 #invitation-share-privately-innerbox-desc {
@@ -1357,6 +1356,19 @@ body {
   border-radius: 10px;
   align-self: center;
   flex: 1;
+}
+
+#invitation-share-privately-invite-button {
+  display: flex;
+  align-self: center;
+  background-color: #0C9;
+  color: whitesmoke;
+  font-size: 12px;
+  font-weight: 600;
+  width: fit-content;
+  padding: 10px 15px 10px 15px;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
 #invitation-track-container {

@@ -132,4 +132,21 @@ public class FormController {
     public List<Form> getAuthoredForms(@PathVariable("authorUserId") String userId){
         return formService.getAuthoredForms(userId);
     }
+
+    // get user fullname?
+    @GetMapping(path="/get-targeted-user-list/{formId}")
+    public List<FormRespondent> getFormTargetedUserList(@PathVariable("formId") String formId){
+        return formService.getFormTargetedUserList(formId);
+    }
+
+    @PostMapping(path="/insert-targeted-user/{formId}")
+    public int insertTargetedUser(@PathVariable("formId") String formId, @RequestBody String userEmail){
+        return formService.insertTargetedUser(formId, userEmail);
+    }
+    
+    // if date == null, cek ulang di db tampilannya gimana
+    @DeleteMapping(path="/delete-targeted-user/{formId}")
+    public int deleteTargetedUser(@PathVariable("formId") String formId, @RequestBody String userEmail){
+        return formService.deleteTargetedUser(formId, userEmail);
+    }
 }

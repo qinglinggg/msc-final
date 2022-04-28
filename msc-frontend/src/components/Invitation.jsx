@@ -9,12 +9,19 @@ import AutoHeightTextarea from "./functional-components/AutoheightTextarea";
 import TargetedUserEmail from "./functional-components/TargetedUserEmail";
 import { useParams } from "react-router-dom";
 import Popup from "reactjs-popup";
+import axios from "axios";
 
 function Invitation(props) {
   const [openMenu, setOpenMenu] = useState(false);
   const [pageSelection, setPageSelection] = useState(true);
-  const [userInvited, setUserInvited] = useState([]);
+
+  const [userInvited, setUserInvited] = useState([]); // data
+  const [index, setIndex] = useState(0); // length of userinvited
+
   const [openTargetedUserEmail, setOpenTargetedUserEmail] = useState(false);
+  const [tags, setTags] = useState();
+  const [tagsElement, setTagsElement] = useState([]);
+
   const [currentStep, setCurrentStep] = useState([]);
 
   const handleCurrentSelection = (item) => {
@@ -36,22 +43,70 @@ function Invitation(props) {
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
-    setUserInvited([
-      {
-        number: 1,
-        name: "Albert Cony Pramudita",
-        email: "albert_pramudita@bca.co.id",
-        status: "Completed",
-        datetime: "Submitted at 08/12/2021 09:30PM",
-      },
-      {
-        number: 2,
-        name: "Dian Fransiska Handayani",
-        email: "dian_fransiska@bca.co.id",
-        status: "Completed",
-        datetime: "Submitted at 08/12/2021 09:30PM",
-      },
-    ]);
+
+    // setUserInvited([
+    //   {
+    //     number: 1,
+    //     name: "Albert Cony Pramudita",
+    //     email: "albert_pramudita@bca.co.id",
+    //     status: "Completed",
+    //     datetime: "Submitted at 08/12/2021 09:30PM",
+    //   },
+    //   {
+    //     number: 2,
+    //     name: "Dian Fransiska Handayani",
+    //     email: "dian_fransiska@bca.co.id",
+    //     status: "Completed",
+    //     datetime: "Submitted at 08/12/2021 09:30PM",
+    //   },
+    // ]);
+
+    // Track
+
+    let userInvitedList = [];
+
+    try {
+      axios({
+        method: "get",
+        url: `${BASE_URL}/api/v1/forms/get-targeted-user-list/${formId}`,
+      }).then((res) => {
+        if(res.data){
+          userInvitedList = res.data;
+          setIndex(index + 1);
+          userInvitedList.map((u) => {
+            u['number'] = index;
+          })
+        }
+      }) 
+    } catch(error) {
+      console.log(error);
+    }
+
+    if(userInvitedList.length > 0) {
+      userInvitedList.map((u) => {
+        try {
+          axios({
+            method: "get",
+            url: `${BASE_URL}/api/v1/user-profiles/${u.userId}`
+          }).then((res) => {
+            if(res.data){
+              u['name'] = res.data.fullname;
+              u['email'] = res.data.email;
+            }
+          })
+        } catch(error) {
+          console.log(error);
+        }
+      })
+
+      setUserInvited(userInvitedList);
+
+    }
+
+    // Share
+
+
+
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
     tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
     if(tempBreadcrumbs.length >= 2) {
@@ -80,13 +135,13 @@ function Invitation(props) {
     setOpenMenu(!openMenu);
   }
 
-  const displayMenu = () => {
-    return (
-      <React.Fragment>
-        <Menu />
-      </React.Fragment>
-    );
-  }
+  // const displayMenu = () => {
+  //   return (
+  //     <React.Fragment>
+  //       <Menu />
+  //     </React.Fragment>
+  //   );
+  // }
 
   const handleOpenSharePage = () => {
     setPageSelection(true);
@@ -176,6 +231,24 @@ function Invitation(props) {
     setOpenTargetedUserEmail(true);
   }
 
+  const handleSubmitTargetedUserEmail = () => {
+    tags.map((userEmail) => {
+      try {
+        axios({
+          method: "post",
+          url: `${BASE_URL}/api/v1/forms/${formId}`,
+          data: userEmail
+        }).then((res) => {
+          console.log("Successfully inserted");
+        })
+      } catch(error) {
+          console.log(error);
+      }
+    }, () => {
+
+    })
+  }
+
   const displayTargetedUserEmailBox = () => {
     return (
       <React.Fragment>
@@ -185,7 +258,16 @@ function Invitation(props) {
         >
           Enter your targeted user email.
         </div>
-        <TargetedUserEmail></TargetedUserEmail>
+        <TargetedUserEmail 
+          tags={tags}
+          tagsElement={tagsElement}
+          setTags={setTags}
+          setTagsElement={setTagsElement}
+        />
+        <div id="invitation-share-privately-invite-button" 
+          onClick={handleSubmitTargetedUserEmail}
+        >
+          Invite them</div>
       </React.Fragment>
     );
   }
@@ -202,7 +284,7 @@ function Invitation(props) {
     return (
       <React.Fragment>
         <div id="invitation-track-container">
-          {userInvited.map((value) => {
+          {userInvited ? userInvited.map((value) => {
             return (
               <React.Fragment>
                 <div id="invitation-track-box">
@@ -239,7 +321,7 @@ function Invitation(props) {
                 </div>
               </React.Fragment>
             );
-          })}
+          }) : <div>There is no users invited.</div>}
         </div>
       </React.Fragment>
     );

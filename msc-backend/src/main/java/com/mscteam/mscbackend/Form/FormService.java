@@ -5,16 +5,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.mscteam.mscbackend.UserProfile.UserProfileDAO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class FormService {
     private FormDAO formDAO;
+    private UserProfileDAO userProfileDAO;
 
     @Autowired
-    public FormService(FormDAO formDAO) {
+    public FormService(FormDAO formDAO, UserProfileDAO userProfileDAO) {
         this.formDAO = formDAO;
+        this.userProfileDAO = userProfileDAO;
     }
 
     public List<Form> getAllForms() {
@@ -129,6 +133,20 @@ public class FormService {
 
     public List<Form> getAuthoredForms(String userId){
         return formDAO.getAuthoredForms(userId);
+    }
+
+    public List<FormRespondent> getFormTargetedUserList(String formId){
+        return formDAO.getFormTargetedUserList(formId);
+    }
+
+    public int insertTargetedUser(String formId, String userEmail){
+        String userId = userProfileDAO.getUserByEmail(userEmail);
+        return formDAO.insertTargetedUser(formId, userId);
+    }
+
+    public int deleteTargetedUser(String formId, String userEmail){
+        String userId = userProfileDAO.getUserByEmail(userEmail);
+        return formDAO.deleteTargetedUser(formId, userId);
     }
 
 }

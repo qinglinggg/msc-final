@@ -110,4 +110,13 @@ public class UserProfileDAO {
         }, user.getEmail(), user.getPassword());
         return res;
     }
+
+    public String getUserByEmail(String userEmail) {
+        final String query = "SELECT userId FROM User WHERE email = ?";
+        String res = (String) jdbcTemplate.queryForObject(query, (resultSet, i) -> {
+            String userId = resultSet.getString("userId");
+            return userId;
+        }, userEmail);
+        return res;
+    }
 }

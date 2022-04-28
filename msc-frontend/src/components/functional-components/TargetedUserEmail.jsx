@@ -1,10 +1,16 @@
 import React, { Component } from "react";
 
 class TargetedUserEmail extends React.Component {
-  state = {
-    tags: [],
-    tagsElement: [],
-  };
+
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidUpdate(prevProps) {
+    if(prevProps.tags != this.props.tags){
+      this.handleRenderTag();
+    }
+  }
 
   handleAddTag(e) {
     console.log("Entering handle add tag");
@@ -16,11 +22,11 @@ class TargetedUserEmail extends React.Component {
       // tags -> inputan user yang sudah disimpan, terdiri dari banyak tag
 
       let tag = e.target.value.replace(/\s+/g, "").replace(",", "");
-      let tags = this.state.tags;
+      let tags = this.props.tags;
 
       if (tag.length > 1 && tag.endsWith("@bca.co.id") && !tags.includes(tag)) {
         tags.push(tag);
-        this.setState({ tags });
+        this.props.setTags(tags);
 
         this.handleRenderTag();
       } else {
@@ -31,17 +37,17 @@ class TargetedUserEmail extends React.Component {
   }
 
   handleRenderTag() {
-    console.log("Entering HANDLE RENDER TAG BOX");
 
-    let tags = this.state.tags;
+    let tags = this.props.tags;
     let newTagElement = [];
 
     console.log("Tag(s) : " + tags);
 
     // setiap ada perubahan, state tagsElement selalu dikosongkan lalu dipush ulang mengikuti updatean dari state tags
 
-    this.setState({ tagsElement: [] }, () => {
-      tags.forEach((tag, index) => {
+    this.props.setTagsElement([]);
+
+    tags.forEach((tag, index) => {
         console.log("ITERATION " + index);
         console.log("Tag : " + tag);
 
@@ -57,29 +63,21 @@ class TargetedUserEmail extends React.Component {
             ></i>
           </li>
         );
-      });
-
-      this.setState({
-        tagsElement: newTagElement,
-      });
     });
+
+    this.props.setTagsElement(newTagElement);
+
   }
 
   handleRemoveTag(tag) {
     console.log("Tag wanted to be removed: " + tag);
     console.log("Tag(s) before removed: " + this.state.tags);
 
-    this.setState(
-      {
-        tags: this.state.tags.filter((element) => {
-          return element != tag;
-        }),
-      },
-      () => {
-        console.log("Current tags, after removed: " + this.state.tags);
-        this.handleRenderTag();
-      }
-    );
+    let filteredTag = this.props.tags.filter((element) => {
+      return element != tag;
+    })
+
+    this.props.setTags(filteredTag);
   }
 
   render() {

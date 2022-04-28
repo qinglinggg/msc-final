@@ -10,21 +10,24 @@ public class FormRespondent {
     private UUID formId;
     private UUID userId;
     private Date submitDate;
+    private Integer isTargeted;
 
     // get 
-    public FormRespondent(UUID formRespondentId, UUID formId, UUID userId, Date submitDate){
-        this.formRespondentId = formRespondentId;
-        this.formId = formId;
-        this.userId = userId;
+    public FormRespondent(String formRespondentId, String formId, String userId, Date submitDate, Integer isTargeted){
+        this.formRespondentId = UUID.fromString(formRespondentId);
+        this.formId = UUID.fromString(formId);
+        this.userId = UUID.fromString(userId);
         this.submitDate = submitDate;
+        this.isTargeted = isTargeted;
     }
 
     // create
-    public FormRespondent(@JsonProperty("formRespondentId") UUID formRespondentId, @JsonProperty("formId") UUID formId, @JsonProperty("userId") UUID userId){
+    public FormRespondent(@JsonProperty("formId") String formId, @JsonProperty("userId") String userId, @JsonProperty("isTargeted") Integer isTargeted){
         this.formRespondentId = UUID.randomUUID();
-        this.formId = formId;
-        this.userId = userId;
+        this.formId = UUID.fromString(formId);
+        this.userId = UUID.fromString(userId);
         this.submitDate = setSubmitDate();
+        this.isTargeted = isTargeted;
     }
 
     public UUID getFormRespondentId() {
@@ -46,6 +49,14 @@ public class FormRespondent {
     public Date setSubmitDate() {
         Date date = new Date();
         return date;
+    }
+
+    public Integer getIsTargeted() {
+        return this.isTargeted;
+    }
+
+    public void setIsTargeted(Integer isTargeted) {
+        this.isTargeted = isTargeted;
     }
 
 }
