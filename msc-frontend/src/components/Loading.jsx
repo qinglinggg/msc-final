@@ -4,13 +4,13 @@ class Loading extends Component {
     render() { 
         return (
             <div className="loading-screen">
-                <div class="lds-ring">
+                <div className="lds-ring">
                     <div></div>
                     <div></div>
                     <div></div>
                     <div></div>
                 </div>
-                <span>Memuat data responden...</span>
+                <span>{this.props.text}</span>
             </div>
         );
     }

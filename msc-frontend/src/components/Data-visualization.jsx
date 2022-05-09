@@ -6,7 +6,7 @@ import iconSettings from "./images/settings.png";
 import Select from "react-select";
 import axios from "axios";
 import Summary from "./Summary.jsx";
-import Responses from "./Responses.jsx";
+import Responses from "./Responses";
 import ReactToPrint from "react-to-print";
 import Loading from "./Loading";
 
@@ -33,6 +33,7 @@ function DataVisualization(props) {
   ];
 
   function activateLink(item) {
+    setInLoading(true);
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
     tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
     if(tempBreadcrumbs.length >= 2){
@@ -56,19 +57,19 @@ function DataVisualization(props) {
     item.classList.add('active');
   }
 
-  function processData() {
+  async function processData() {
     let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
     let listOfFormItems = [];
     let count = [];
-    axios({
+    await axios({
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-form-items/${selectedForm.formId}`
     }).then((res) => {
       listOfFormItems = res.data;
-      listOfFormItems.map((item) => {
+      listOfFormItems.map(async (item) => {
         console.log("Masuk ke prosesData:");
         console.log(item);
-        axios({
+        await axios({
           method: "get",
           url: `${BASE_URL}/api/v1/forms/get-response/${item.id}`
         }).then((response) => {
@@ -91,9 +92,31 @@ function DataVisualization(props) {
         });
       });
       setTimeout(() => setInLoading(false), 3000);
-      return listOfFormItems, count;
     });
+    return listOfFormItems, count;
+  }
 
+  async function processResponses() {
+    let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
+    let listOfFormItems = [];
+    let responseData = [];
+    await axios({
+      method: "get",
+      url: `${BASE_URL}/api/v1/forms/get-form-items/${selectedForm.formId}`
+    }).then((res) => {
+      listOfFormItems = res.data;
+      listOfFormItems.map(async (item) => {
+        await axios({
+          method: "get",
+          url: `${BASE_URL}/api/v1/forms/get-response/${item.id}`
+        }).then((response) => {
+          let currentRes = response.data;
+          responseData.push(currentRes);
+        });
+      });
+      setTimeout(() => setInLoading(false), 3000);
+    });
+    return listOfFormItems, responseData;
   }
 
   useEffect(() => {
@@ -142,14 +165,14 @@ function DataVisualization(props) {
   }
 
   const displaySummaryPage = () => {
-    let listOfFormItems, count = processData();
+    let listOfFormItems, countData = processData();
     return (
       <React.Fragment>
-        {inLoading ? (<Loading/>) : (
+        {inLoading ? (<Loading text="Memuat data ringkasan..."/>) : (
         <Summary
           ref={componentRef}
           data={listOfFormItems}
-          count={count}
+          countData={countData}
         />
         )}
       </React.Fragment>
@@ -157,7 +180,14 @@ function DataVisualization(props) {
   }
 
   const displayResponsePage = () => {
-    return <Responses formItems_data={props.formItems_data} />;
+    let listOfFormItems, responseData = processResponses();
+    return (
+      <React.Fragment>
+        {inLoading ? (<Loading text="Memuat data responden..."/>) : (
+          <Responses data={listOfFormItems} responseData={responseData} />
+        )}
+      </React.Fragment>
+    );
   }
 
   const displayExportPage = () => {
