@@ -33,7 +33,9 @@ class Page1Items extends React.Component {
     return (
       <div className="item-wrapper">
         <Link to={`/dashboard/formId/${this.props.data.formId}`} className="item-container">
-          <img id="item-image" src={dummyItemImage} />
+          <div className="item-img">
+            <img id="item-image" src={dummyItemImage} />
+          </div>
           <div className="item-meta">
             <div id="item-name">{this.props.data.title}</div>
             <div id="item-desc">
