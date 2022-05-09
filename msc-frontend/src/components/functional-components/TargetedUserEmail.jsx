@@ -71,7 +71,7 @@ class TargetedUserEmail extends React.Component {
 
   handleRemoveTag(tag) {
     console.log("Tag wanted to be removed: " + tag);
-    console.log("Tag(s) before removed: " + this.state.tags);
+    console.log("Tag(s) before removed: " + this.props.tags);
 
     let filteredTag = this.props.tags.filter((element) => {
       return element != tag;
@@ -84,7 +84,7 @@ class TargetedUserEmail extends React.Component {
     return (
       <div id="invitation-share-privately-emailbox">
         <ul id="invitation-share-privately-emails">
-          {this.state.tagsElement}
+          {this.props.tagsElement}
           <input
             type="text"
             className="inputText"
