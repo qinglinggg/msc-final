@@ -27,6 +27,24 @@ function Menu(props) {
         handleCurrentSelection(e.target);
       })
     });
+    let body = document.getElementById("body");
+    let subMenus = document.querySelectorAll(".sub-menu");
+    function activateButton() {
+      subMenus.forEach((item) => {
+        item.classList.remove("active");
+      });
+      this.classList.add("active");
+    }
+    function disableOpenMenu() {
+      console.log("Toggle menu check");
+      body.classList.toggle("openMenu");
+    }
+    if (subMenus) {
+      subMenus.forEach((item) => {
+        item.addEventListener("mouseover", activateButton);
+        item.addEventListener("click", disableOpenMenu);
+      });
+    }
   }, [])
 
   return (

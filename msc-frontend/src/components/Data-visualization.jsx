@@ -4,9 +4,13 @@ import iconMenubarGrey from "./images/menubarGrey.png";
 import iconVisibility from "./images/visibility.png";
 import iconSettings from "./images/settings.png";
 import Select from "react-select";
+import axios from "axios";
 import Summary from "./Summary.jsx";
 import Responses from "./Responses.jsx";
 import ReactToPrint from "react-to-print";
+import Loading from "./Loading";
+
+const BASE_URL = "http://10.61.38.193:8080";
 
 function DataVisualization(props) {
   const [formItems, setFormItems] = useState(props.formItems_data);
@@ -19,6 +23,7 @@ function DataVisualization(props) {
   const [summaryPage, setSummaryPage] = useState(null);
   const [privacyCheck, setPrivacyCheck] = useState(false);
   const [currentStep, setCurrentStep] = useState([]);
+  const [inLoading, setInLoading] = useState(true);
   let componentRef = useRef();
 
   const exportOptions = [
@@ -49,6 +54,46 @@ function DataVisualization(props) {
       i.classList.remove('active');
     });
     item.classList.add('active');
+  }
+
+  function processData() {
+    let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
+    let listOfFormItems = [];
+    let count = [];
+    axios({
+      method: "get",
+      url: `${BASE_URL}/api/v1/forms/get-form-items/${selectedForm.formId}`
+    }).then((res) => {
+      listOfFormItems = res.data;
+      listOfFormItems.map((item) => {
+        console.log("Masuk ke prosesData:");
+        console.log(item);
+        axios({
+          method: "get",
+          url: `${BASE_URL}/api/v1/forms/get-response/${item.id}`
+        }).then((response) => {
+          let resData = response.data;
+          let listOfAnswers = [];
+          resData.forEach(ri => {
+            console.log("Response Item:");
+            console.log(ri);
+            let validator = true;
+            listOfAnswers.forEach(a => {
+              if(a === ri.answerSelectionValue) validator = false;
+            });
+            if (validator) listOfAnswers.push(ri.answerSelectionValue);
+          });
+          for(let i=0; i < listOfAnswers; i++) count.push(0);
+          resData.forEach(ri => {
+            let idxSelector = resData.findIndex(ri);
+            count[idxSelector] += 1;
+          })
+        });
+      });
+      setTimeout(() => setInLoading(false), 3000);
+      return listOfFormItems, count;
+    });
+
   }
 
   useEffect(() => {
@@ -97,12 +142,16 @@ function DataVisualization(props) {
   }
 
   const displaySummaryPage = () => {
+    let listOfFormItems, count = processData();
     return (
       <React.Fragment>
+        {inLoading ? (<Loading/>) : (
         <Summary
           ref={componentRef}
-          formItems_data={props.formItems_data}
+          data={listOfFormItems}
+          count={count}
         />
+        )}
       </React.Fragment>
     );
   }

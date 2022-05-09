@@ -72,22 +72,6 @@ class App extends React.Component {
         body.classList.toggle("openMenu");
       });
     }
-    let subMenus = document.querySelectorAll(".sub-menu");
-    function activateButton() {
-      subMenus.forEach((item) => {
-        item.classList.remove("active");
-      });
-      this.classList.add("active");
-    }
-    function disableOpenMenu() {
-      body.classList.toggle("openMenu");
-    }
-    if (subMenus) {
-      subMenus.forEach((item) => {
-        item.addEventListener("mouseover", activateButton);
-        item.addEventListener("click", disableOpenMenu);
-      });
-    }
     if (sideMenu) sideMenu.style.left = "0";
   }
 

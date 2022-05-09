@@ -18,7 +18,6 @@ class Navbar extends React.Component {
       method: "get",
       url: `${BASE_URL}/api/v1/user-profiles/${currentId}`
     }).then((res) => {
-      console.log(res.data);
       if(res.data) this.setState({currentUser: res.data});
       let profileImage = document.getElementById('pr-image');
       if(profileImage)
