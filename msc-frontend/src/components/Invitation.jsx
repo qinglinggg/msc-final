@@ -19,7 +19,7 @@ function Invitation(props) {
   const [index, setIndex] = useState(0); // length of userinvited
 
   const [openTargetedUserEmail, setOpenTargetedUserEmail] = useState(false);
-  const [tags, setTags] = useState();
+  const [tags, setTags] = useState([]);
   const [tagsElement, setTagsElement] = useState([]);
 
   const [currentStep, setCurrentStep] = useState([]);
