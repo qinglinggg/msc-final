@@ -19,7 +19,7 @@ function Invitation(props) {
   const [index, setIndex] = useState(0); // length of userinvited
 
   const [openTargetedUserEmail, setOpenTargetedUserEmail] = useState(false);
-  const [tags, setTags] = useState();
+  const [tags, setTags] = useState([]);
   const [tagsElement, setTagsElement] = useState([]);
 
   const [currentStep, setCurrentStep] = useState([]);
@@ -62,9 +62,7 @@ function Invitation(props) {
     // ]);
 
     // Track
-
     let userInvitedList = [];
-
     try {
       axios({
         method: "get",
@@ -81,7 +79,6 @@ function Invitation(props) {
     } catch(error) {
       console.log(error);
     }
-
     if(userInvitedList.length > 0) {
       userInvitedList.map((u) => {
         try {
@@ -98,15 +95,8 @@ function Invitation(props) {
           console.log(error);
         }
       })
-
       setUserInvited(userInvitedList);
-
     }
-
-    // Share
-
-
-
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
     tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
     if(tempBreadcrumbs.length >= 2) {
