@@ -29,7 +29,6 @@ function Menu(props) {
     });
     let body = document.getElementById("body");
     let subMenus = document.querySelectorAll(".sub-menu");
-    console.log(subMenus);
     function activateButton() {
       subMenus.forEach((item) => {
         item.classList.remove("active");

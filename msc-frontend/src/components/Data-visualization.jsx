@@ -63,6 +63,7 @@ function DataVisualization(props) {
       url: `${BASE_URL}/api/v1/forms/get-form-items/${selectedForm.formId}`
     }).then((res) => {
       let listOfFormItems = res.data;
+      let count = [];
       listOfFormItems.map((item) => {
         console.log("Masuk ke prosesData:");
         console.log(item);
@@ -79,7 +80,6 @@ function DataVisualization(props) {
             });
             if (validator) listOfAnswers.push(ri.answerSelectionValue);
           });
-          let count = [];
           for(let i=0; i < listOfAnswers; i++) count.push(0);
           resData.forEach(ri => {
             let idxSelector = resData.findIndex(ri);
