@@ -58,12 +58,13 @@ function DataVisualization(props) {
 
   function processData() {
     let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
+    let listOfFormItems = [];
+    let count = [];
     axios({
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-form-items/${selectedForm.formId}`
     }).then((res) => {
-      let listOfFormItems = res.data;
-      let count = [];
+      listOfFormItems = res.data;
       listOfFormItems.map((item) => {
         console.log("Masuk ke prosesData:");
         console.log(item);
@@ -74,6 +75,8 @@ function DataVisualization(props) {
           let resData = response.data;
           let listOfAnswers = [];
           resData.forEach(ri => {
+            console.log("Response Item:");
+            console.log(ri);
             let validator = true;
             listOfAnswers.forEach(a => {
               if(a === ri.answerSelectionValue) validator = false;
@@ -90,6 +93,7 @@ function DataVisualization(props) {
       setTimeout(() => setInLoading(false), 3000);
       return listOfFormItems, count;
     });
+
   }
 
   useEffect(() => {

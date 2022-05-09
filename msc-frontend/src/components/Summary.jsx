@@ -3,9 +3,10 @@ import Graph from "./functional-components/Graph";
 
 const Summary = React.forwardRef((props, ref) => {
   let counter = 0;
+  let tempArr = [];
   return (
     <React.Fragment>
-        {props.data.map((item) => {
+        {tempArr.map((item) => {
           counter += 1;
           return (
             <div className="result-container">
