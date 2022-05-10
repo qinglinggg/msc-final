@@ -578,21 +578,24 @@ body {
 .form-components {
   width: fit-content;
   height: fit-content;
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
 }
 
 .form-components h1 {
-  font-size: 20px;
+  font-size: 25px;
   width: 100%;
   text-align: center;
+  font-family: var(--font-roboto);
 }
 
 .form-components label {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: fit-content;
+  /* justify-content: center; */
+  width: 100%;
+  font-size: 17px;
+  font-style: italic;
 }
 
 .form-components label > span {
@@ -603,11 +606,23 @@ body {
 .form-components label > input {
   width: 350px;
   height: 25px;
-  font-size: medium;
+  font-size: 15px;
   margin-top: 15px;
   border: 1px solid gray;
   border-radius: 15px;
-  padding: 5px 10px 5px 10px;
+  padding: 7px 11px 7px 11px;
+}
+
+.form-components label > div > div {
+  width: 100%;
+  display: flex;
+  flex-direction: row !important;
+  padding: 5px;
+}
+
+.form-components label > div > div > label {
+  font-size: 15px;
+  font-style: normal;
 }
 
 .form-components .form-options {
@@ -617,6 +632,22 @@ body {
   flex-direction: column;
   justify-content: space-around;
   align-items: flex-start;
+}
+
+#confirm-button {
+  display: flex;
+  justify-content: center;
+  width: 20%;
+  padding: 7px 5px 7px 5px;
+  border: 1px solid var(--gray-profileimage);
+  text-decoration: none !important;
+  font-weight: 500;
+  color: black;
+  border-radius: 10px;
+  font-size: 13px;
+  color: white;
+  background-color: var(--navbar-color);
+
 }
 
 .form-options input {

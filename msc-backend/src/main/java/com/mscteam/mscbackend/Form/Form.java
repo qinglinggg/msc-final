@@ -37,7 +37,7 @@ public class Form {
         this.description = description;
         this.privacySetting = privacySetting;
         this.setCreateDate();
-        this.modifyDate = null;
+        this.setModifyDate();
         this.backgroundLink = backgroundLink;
         this.backgroundColor = backgroundColor;
     }
