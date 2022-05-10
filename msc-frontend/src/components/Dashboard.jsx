@@ -419,6 +419,26 @@ function Dashboard(props) {
     );
   };
 
+  const updateForm = () => {
+    let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
+    selectedForm.title = document.getElementById("input-title").value;
+    selectedForm.description = document.getElementById("input-desc").value;
+    selectedForm.privacySetting = privacyCheck;
+
+    try {
+      axios({
+        method: "put",
+        data: selectedForm,
+        url: `${BASE_URL}/api/v1/forms/${formId}`
+      }).then((res) => {
+        localStorage.setItem("selectedForm", JSON.stringify(selectedForm));
+      })
+    } catch(error) {
+      console.log(error);
+    }
+    
+  }
+
   const displaySettings = () => {
     return (
       <React.Fragment>
@@ -431,13 +451,13 @@ function Dashboard(props) {
             <br />
             <label>
               Name
-              <input className="form-alignright" type="text" name="name" />
+              <input className="form-alignright" id="input-title" type="text" name="name" />
             </label>
             <br />
             <br />
             <label>
               Description
-              <input className="form-alignright" type="text" name="desc" />
+              <input className="form-alignright" id="input-desc" type="text" name="desc" />
             </label>
             <br />
             <br />
@@ -472,13 +492,11 @@ function Dashboard(props) {
             </label>
             <br />
             <br />
-            {/* <input
-              type="submit"
-              value="Confirm"
-              onClick={() => this.handleClickConfirm.bind(this)}
-            /> */}
-            <Link to="/item1/dashboard">
-              <button>Confirm</button>
+            <Link to={`/dashboard/formId/${formId}`}>
+              <button onClick={() => {
+                updateForm();
+                handleSettings();
+              }}>Confirm</button>
             </Link>
           </form>
         </div>

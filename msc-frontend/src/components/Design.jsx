@@ -4,10 +4,13 @@ import Select from "react-select";
 import UploadImage from "./functional-components/UploadImage";
 import UploadImageReact from "./functional-components/UploadImageWithProgressBar-React";
 import { useParams } from "react-router-dom";
+import axios from "axios";
+
+const BASE_URL = "http://10.61.38.193:8080";
 
 function Design(props) {
   const [selectedBackground, setSelectedBackground] = useState("No background");
-  const [selectedColor, setSelectedColor] = useState("White");
+  const [selectedColor, setSelectedColor] = useState("Default");
   const [formItems, setFormItems] = useState();
   const [openMenu, setOpenMenu] = useState(false);
   const [currentStep, setCurrentStep] = useState([]);
@@ -19,10 +22,11 @@ function Design(props) {
   ];
 
   const colorOptions = [
-    { value: "White", label: "White" },
+    { value: "Default", label: "Default"},
+    // { value: "White", label: "White" },
     { value: "Black", label: "Black" },
     { value: "Dark Grey", label: "Dark Grey" },
-    { value: "Grey", label: "Grey" },
+    // { value: "Grey", label: "Grey" },
     { value: "Red", label: "Red" },
     { value: "Green", label: "Green" },
     { value: "Blue", label: "Blue" },
@@ -44,8 +48,11 @@ function Design(props) {
         tempBreadcrumbs.pop();
       }
     }
+
     let selectedForm = localStorage.getItem("selectedForm");
     selectedForm = JSON.parse(selectedForm);
+    console.log(selectedForm);
+
     tempBreadcrumbs.push({page: "Design - " + selectedForm['title'], path: window.location.href});
     setCurrentStep(tempBreadcrumbs);
     localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
@@ -60,7 +67,24 @@ function Design(props) {
   }
 
   const handleColorChange = (data) => {
-    setSelectedColor(data.value);
+
+    let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
+    selectedForm.backgroundColor = data.value;
+    localStorage.setItem("selectedForm", JSON.stringify(selectedForm));
+
+    /* backend : update selectedcolor */
+    try {
+      axios({
+        method: "put",
+        data: selectedForm,
+        url: `${BASE_URL}/api/v1/forms/${formId}`
+      }).then((res) => {
+        setSelectedColor(data.value);
+      })
+    } catch(error) {
+      console.log(error);
+    }
+    
   }
 
   return (
