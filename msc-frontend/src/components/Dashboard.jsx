@@ -72,6 +72,20 @@ function Dashboard(props) {
     }
   }, []); // run once
 
+  useEffect(() => {
+    let body = document.getElementById("body");
+    let closePopup = document.querySelector(".closePopup");
+
+    console.log(openSettings);
+    if(openSettings == false){
+      // if(closePopup) {
+        body.classList.remove("openPopup");
+      // }
+    } else {
+      body.classList.add("openPopup");
+    }
+  }, [openSettings])
+
   const handleVisibility = () => {
     setOpenVisibility(!openVisibility);
     window.location = `/preview/formId/${formId}`;
@@ -497,6 +511,7 @@ function Dashboard(props) {
             <br />
             <br />
             <div 
+              className="button"
               onClick={() => {
                 updateForm();
                 handleSettings();
@@ -533,6 +548,7 @@ function Dashboard(props) {
           />
           <img
             className="icon-image"
+            id="icon-settings"
             onClick={() => handleSettings()}
             src={iconSettings}
             alt=""

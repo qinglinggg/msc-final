@@ -5,9 +5,9 @@ import AutoHeightTextarea from './functional-components/AutoheightTextarea';
 
 import dummyProfile from "./images/woman.jpg";
 
-function Respondent (props) {
+const BASE_URL = "http://10.61.38.193:8080";
 
-    const BASE_URL = "http://10.61.38.193:8080";
+function Respondent (props) {
     const { formId } = useParams();
 
     const [index, setIndex] = useState(1);
@@ -28,6 +28,11 @@ function Respondent (props) {
 
 
     useEffect(() => {
+
+
+      // localStorage.setItem("selectedForm", JSON.parse(selectedForm));
+
+      console.log("formId : " + formId + " is rendered.");
 
         try {
             axios({

@@ -571,7 +571,8 @@ body {
 }
 
 #popup-addItem {
-  background-color: var(--white-use);
+  /* background-color: var(--white-use); */
+  background-color: rgb(213, 243, 213);
   width: fit-content;
   height: fit-content;
   display: flex;
@@ -580,6 +581,7 @@ body {
   justify-content: center;
   border-radius: 25px;
   padding: 25px;
+  z-index: 10;
 }
 
 .closePopup {
@@ -610,14 +612,15 @@ body {
   flex-direction: column;
   /* justify-content: center; */
   width: 100%;
+  height: fit-content;
   font-size: 17px;
   font-style: italic;
 }
 
-.form-components label > span {
+/* .form-components label > span {
   font-size: 15px;
   width: 100%;
-}
+} */
 
 .form-components label > input {
   width: 350px;
@@ -648,6 +651,14 @@ body {
   flex-direction: column;
   justify-content: space-around;
   align-items: flex-start;
+}
+
+.button {
+  width: 100%;
+  display: flex;
+  align-self: center;
+  justify-content: center;
+  margin-bottom: 15px;
 }
 
 #confirm-button {
