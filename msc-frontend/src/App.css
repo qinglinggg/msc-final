@@ -304,6 +304,10 @@ body {
   justify-content: center;
   font-family: var(--font-roboto);
   padding: 100px 0px 70px 0px;
+  background-color: rgb(231, 231, 231);
+
+  /* test */
+  /* background-color: rgb(248, 174, 186); */
 }
 
 .page-title {
@@ -2614,7 +2618,7 @@ body {
 /* Respondent */
 
 .respondent-container {
-  margin-left: 10px;
+  /* margin-left: 10px; */
   width: 100%;
   height: 100%;
   display: flex;

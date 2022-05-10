@@ -221,7 +221,7 @@ class Home extends React.Component {
       obj.description = this.state.description;
       obj.privacySetting = this.state.privacySetting;
       obj.backgroundLink = null;
-      obj.backgroundColor = null;
+      obj.backgroundColor = "Default";
       this.props.handleCreateNewForm(obj);
     }
   }

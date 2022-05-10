@@ -38,8 +38,8 @@ class App extends React.Component {
   }
 
   state = {
+    allForms: [],
     loggedInUser: "",
-    // Home
     waitingForms: [
       {
         title: "Survey 1",
@@ -73,6 +73,12 @@ class App extends React.Component {
       });
     }
     if (sideMenu) sideMenu.style.left = "0";
+
+    // form routing
+    axios.get(`${BASE_URL}/api/v1/forms/`).then((res) => {
+      this.setState({allForms : res.data});
+    })
+
   }
 
   componentDidUpdate(prevState) {
@@ -135,6 +141,25 @@ class App extends React.Component {
             />
         </Routes>
     );
+  }
+
+  formRouting() {
+
+    return (
+      <Routes>
+        { this.state.allForms ? 
+          this.state.allForms.map((form) => {
+            return (
+              <Route 
+                path={`/response/formId/${form.formId}`}
+                element={<Respondent/>}
+              />
+            );
+          })
+         : console.log("gak masuk")
+        } 
+      </Routes>
+    )
   }
 
   appRouting() {
@@ -226,15 +251,8 @@ class App extends React.Component {
                 path={`/admin`}
                 element={<AdminDashboard />}
               />
-
-              <Route
-                path={`/response/formId/:formId`}
-                element={
-                  <Respondent />
-                }
-                
-              />
           </Routes>
+          {this.formRouting()}
         </div>
       </React.Fragment>
     );

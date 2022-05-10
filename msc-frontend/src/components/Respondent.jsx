@@ -3,6 +3,8 @@ import React, { Component, useEffect, useState } from 'react';
 import { Link, useParams } from "react-router-dom";
 import AutoHeightTextarea from './functional-components/AutoheightTextarea';
 
+import dummyProfile from "./images/woman.jpg";
+
 function Respondent (props) {
 
     const BASE_URL = "http://10.61.38.193:8080";
@@ -14,11 +16,15 @@ function Respondent (props) {
     const [answerSelection, setAnswerSelection] = useState([]);
     const [formRespondentId, setFormRespondentId] = useState();
     const [formResponse, setFormResponse] = useState([]);
-
     const [openChat, setOpenChat] = useState(false);
     const [tempMessage, setTempMessage] = useState("");
     const [feedbackId, setFeedbackId] = useState();
     const [feedbackMessages, setFeedbackMessages] = useState([]);
+
+    // DESIGN
+    const [primaryColor, setPrimaryColor] = useState("Default");
+    const [secondaryColor, setSecondaryColor] = useState("Default");
+    const [bgLink, setBgLink] = useState("./images/woman.jpg");
 
 
     useEffect(() => {
@@ -29,12 +35,12 @@ function Respondent (props) {
                 url: `${BASE_URL}/api/v1/forms/${formId}`
             }).then((res) => {
                 setFormMetadata(res.data);
+                localStorage.setItem("selectedForm", JSON.stringify(res.data));
                 console.log(res.data);
             })
         } catch (error) {
-
+          console.log(error);
         }
-
 
         try {
             axios({
@@ -44,8 +50,15 @@ function Respondent (props) {
                 setFormItems(res.data);
             })
         } catch (error) {
-
+          console.log(error);
         }
+
+        // DESIGN
+
+        responsePageTheme();
+
+
+        // CHAT
 
         // let createNewFeedback = false;
         // cek pernah kirim message ga
@@ -103,6 +116,65 @@ function Respondent (props) {
         }
       }
     }, [feedbackId]);
+
+    useEffect(() => {
+
+      let navbar = document.getElementById("navbar");
+      let chatHeader = document.getElementById("respondent-chat-header");
+      let chatIcon = document.getElementById("respondent-chat-button-float");
+      let background = document.getElementById("page-container");
+
+      navbar.style.backgroundColor = primaryColor;
+      chatHeader.style.backgroundColor = primaryColor;
+      chatIcon.style.backgroundColor = primaryColor;
+      if(bgLink == "") background.style.backgroundColor = secondaryColor;
+      else {
+        background.style.backgroundImage = bgLink;
+        background.style.backgroundSize = "cover";
+      }
+
+      return () => {
+        navbar.style.backgroundColor = "";
+        chatHeader.style.backgroundColor = "";
+        chatIcon.style.backgroundColor = "";
+        background.style.backgroundColor = "";
+        background.style.backgroundImage = "";
+        background.style.backgroundSize = "";
+      }
+
+    }, [bgLink, primaryColor]);
+
+    const responsePageTheme = () => {
+      let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
+      let selectedColor = selectedForm.backgroundColor;
+
+      if(selectedColor == "Black"){
+        setPrimaryColor(selectedColor);
+        setSecondaryColor("grey");
+      } if(selectedColor == "Dark Grey"){
+        setPrimaryColor("darkgrey");
+        setSecondaryColor("whitesmoke");
+      } if(selectedColor == "Red") {
+        setPrimaryColor("rgb(202, 52, 52)");
+        setSecondaryColor("rgb(212, 131, 131)");
+      } if(selectedColor == "Green") {
+        setPrimaryColor("rgb(99, 180, 99)");
+        setSecondaryColor("rgb(206, 241, 206)");
+      } if(selectedColor == "Blue") {
+        setPrimaryColor("rgb(38, 95, 216)");
+        setSecondaryColor("lightblue");
+      } if(selectedColor == "Cyan"){
+        setPrimaryColor("rgb(7, 197, 197)");
+        setSecondaryColor("rgb(155, 233, 233)");
+      } if(selectedColor == "Pink"){
+        setPrimaryColor("rgb(248, 174, 186)");
+        setSecondaryColor("rgb(245, 233, 239)");
+      }
+
+      setBgLink(`url('${dummyProfile}')`);
+      // setBgLink(selectedForm.backgroundLink);
+
+    }
 
     const getAnswerSelection = (current) => {
         let formItemId = current.id;
@@ -186,7 +258,7 @@ function Respondent (props) {
                   : null}
               </div>
               {index == length ? (
-                <Link to="/" className="preview-submit-button" onClick={() => submitForm()}>
+                <Link to="/" className="preview-submit-button" style={{ backgroundColor: primaryColor }} onClick={() => submitForm()}>
                   Submit
                 </Link>
               ) : null}
@@ -476,6 +548,57 @@ function Respondent (props) {
       }
     };
 
+    const respondentChat = () => {
+      return (
+        <div id="respondent-chat-box">
+          <div id="respondent-chat-header">
+            <div id="respondent-chat-profile-image"></div>
+            <div id="respondent-chat-profile-name">Survey Maker</div>
+          </div>
+          <div id="respondent-chat-content">
+            {feedbackMessages.map((m) => {
+              return (
+                <React.Fragment>
+                  <div className="message-content">
+                    <div
+                      className="message-content-2"
+                      id={m.userId != props.user ? "message-user-1" : "message-user-2"}
+                    >
+                      <div className="message-single-bubble">
+                        <div id="message-single-content">{m.feedbackMessage}</div>
+                      </div>
+                      <div id="message-single-timestamp">{m.createDateTime}</div>
+                    </div>
+                  </div>
+                </React.Fragment>
+              )
+            })}
+          </div>
+          <div id="respondent-chat-footer">
+            <AutoHeightTextarea 
+              id="respondent-chat-input"
+              // type="text" 
+              // value=
+              onChange={(e) => {
+                handleMessageInput(e);
+              }}
+              onKeyUp={(e) => {
+                handleEnter(e);
+              }}
+              placeholder='Please type your message...'
+            />
+            <div id="respondent-chat-send" 
+              onClick={() => { 
+                handleClickSend();
+              }}
+            >
+              <ion-icon name="send-outline" id="send-icon"></ion-icon>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
         <React.Fragment>
             <div className="respondent-container">
@@ -489,52 +612,7 @@ function Respondent (props) {
                     {displayQuestion()}
                 </div>
                 <div id="respondent-chat">
-                  <div id="respondent-chat-box">
-                    <div id="respondent-chat-header">
-                      <div id="respondent-chat-profile-image"></div>
-                      <div id="respondent-chat-profile-name">Survey Maker</div>
-                    </div>
-                    <div id="respondent-chat-content">
-                      {feedbackMessages.map((m) => {
-                        return (
-                          <React.Fragment>
-                            <div className="message-content">
-                              <div
-                                className="message-content-2"
-                                id={m.userId != props.user ? "message-user-1" : "message-user-2"}
-                              >
-                                <div className="message-single-bubble">
-                                  <div id="message-single-content">{m.feedbackMessage}</div>
-                                </div>
-                                <div id="message-single-timestamp">{m.createDateTime}</div>
-                              </div>
-                            </div>
-                          </React.Fragment>
-                        )
-                      })}
-                    </div>
-                    <div id="respondent-chat-footer">
-                      <AutoHeightTextarea 
-                        id="respondent-chat-input"
-                        // type="text" 
-                        // value=
-                        onChange={(e) => {
-                          handleMessageInput(e);
-                        }}
-                        onKeyUp={(e) => {
-                          handleEnter(e);
-                        }}
-                        placeholder='Please type your message...'
-                      />
-                      <div id="respondent-chat-send" 
-                        onClick={() => { 
-                          handleClickSend();
-                        }}
-                      >
-                        <ion-icon name="send-outline" id="send-icon"></ion-icon>
-                      </div>
-                    </div>
-                  </div>
+                  {respondentChat()}
                   <div id="respondent-chat-button-float" 
                     onClick={() => {
                       handleOpenChat();

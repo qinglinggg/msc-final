@@ -115,6 +115,15 @@ public class FormDAO {
             }
             query += " modifyDate = '" + dateFormat.format(toBeUpdated.getModifyDate()) + "'";
         }
+        if(toBeUpdated.getBackgroundColor() != "" && toBeUpdated.getBackgroundColor() != null){
+            if (firstCheck == false) {
+                query += "";
+                firstCheck = true;
+            } else {
+                query += ",";
+            }
+            query += " backgroundColor = '" + toBeUpdated.getBackgroundColor() + "'";
+        }
         query += "WHERE formId = ?";
         int res = jdbcTemplate.update(query, id);
         return res;
