@@ -464,40 +464,51 @@ function Dashboard(props) {
             <label>
               Respondent Privacy
               <div className="form-alignright">
-                <input
-                  type="radio"
-                  name="privacy"
-                  id="anonymous"
-                  value="anonymous"
-                  checked={privacyCheck ? true : false}
-                  onClick={() => {
-                    setPrivacyCheck(!privacyCheck);
-                  }}
-                />
-                <label for="anonymous">Anonymous</label>
-                <input
-                  type="radio"
-                  name="privacy"
-                  id="not-anonymous"
-                  value="not-anonymous"
-                  checked={privacyCheck ? false : true}
-                  onClick={() => {
-                    setPrivacyCheck(!privacyCheck);
-                  }}
-                />
-                <label for="not-anonymous">Not Anonymous</label>
+                <div>
+                  <input
+                    type="radio"
+                    name="privacy"
+                    id="anonymous"
+                    value="anonymous"
+                    checked={privacyCheck ? true : false}
+                    onClick={() => {
+                      setPrivacyCheck(!privacyCheck);
+                    }}
+                  />
+                  <label for="anonymous">Anonymous</label>
+                </div>
+                <div>
+                  <input
+                    type="radio"
+                    name="privacy"
+                    id="not-anonymous"
+                    value="not-anonymous"
+                    checked={privacyCheck ? false : true}
+                    onClick={() => {
+                      setPrivacyCheck(!privacyCheck);
+                    }}
+                  />
+                  <label for="not-anonymous">Not Anonymous</label>
+                </div>
                 <br />
               </div>
               <br />
             </label>
             <br />
             <br />
-            <Link to={`/dashboard/formId/${formId}`}>
-              <button onClick={() => {
+            <div 
+              onClick={() => {
                 updateForm();
                 handleSettings();
-              }}>Confirm</button>
-            </Link>
+              }}
+            >
+              <Link 
+                to={`/dashboard/formId/${formId}`}
+                id="confirm-button"
+              >
+                Confirm
+              </Link>
+            </div>
           </form>
         </div>
       </React.Fragment>
