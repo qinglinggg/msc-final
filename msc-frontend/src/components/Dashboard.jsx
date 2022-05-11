@@ -82,7 +82,6 @@ function Dashboard(props) {
   useEffect(() => {
     let body = document.getElementById("body");
     let closePopup = document.querySelector(".closePopup");
-
     if(openSettings == false){
       // if(closePopup) {
         body.classList.remove("openPopup");
@@ -141,7 +140,6 @@ function Dashboard(props) {
         };
         currentStateData.push(newItem);
         formItemId = res.data.id;
-        console.log(formItemId);
       }).finally(() => {
         setFormItems(currentStateData);
       });
@@ -174,7 +172,6 @@ function Dashboard(props) {
     });
     currentForm = currentForm[0];
     currentForm["questionContent"] = event.target.value;
-    console.log(currentForm);
     tempFormItems = tempFormItems.map((elem) => {
       if (questionId == elem.id) {
         return currentForm;
@@ -189,7 +186,6 @@ function Dashboard(props) {
         headers: { "Content-Type": "application/json" },
       }).then((res) => {
         setFormItems(tempFormItems);
-        console.log(tempFormItems);
       });
     } catch (error) {
       console.log(error);
@@ -569,8 +565,6 @@ function Dashboard(props) {
       <div className="page-breadcrumbs">
         {
           currentStep.map((b, idx) => {
-            console.log('path: ' + b['path']);
-            console.log('page: ' + b['page']);
             if(idx > 0) {
               return (
                 <a href={b['path']}>
