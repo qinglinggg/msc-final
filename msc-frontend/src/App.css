@@ -2346,7 +2346,7 @@ body {
 
 #preview-option-container {
   display: flex;
-  min-width: 9%;
+  /* min-width: 9%; */
   width: fit-content;
   height: fit-content;
   justify-content: center;

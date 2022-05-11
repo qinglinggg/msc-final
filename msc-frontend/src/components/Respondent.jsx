@@ -8,7 +8,7 @@ import dummyProfile from "./images/woman.jpg";
 const BASE_URL = "http://10.61.38.193:8080";
 
 function Respondent (props) {
-    const { formId } = useParams();
+    let { formId } = useParams();
 
     const [index, setIndex] = useState(1);
     const [formMetadata, setFormMetadata] = useState([]);
@@ -28,13 +28,13 @@ function Respondent (props) {
 
 
     useEffect(() => {
-
+      console.log("test masuk");
 
       // localStorage.setItem("selectedForm", JSON.parse(selectedForm));
 
       console.log("formId : " + formId + " is rendered.");
 
-        try {
+        try { 
             axios({
                 method: "get",
                 url: `${BASE_URL}/api/v1/forms/${formId}`

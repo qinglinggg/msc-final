@@ -147,17 +147,10 @@ class App extends React.Component {
 
     return (
       <Routes>
-        { this.state.allForms ? 
-          this.state.allForms.map((form) => {
-            return (
-              <Route 
-                path={`/response/formId/${form.formId}`}
-                element={<Respondent/>}
-              />
-            );
-          })
-         : console.log("gak masuk")
-        } 
+        <Route 
+          path={`/response/formId/:formId}`}
+          element={<Respondent/>}
+        />
       </Routes>
     )
   }
@@ -251,8 +244,14 @@ class App extends React.Component {
                 path={`/admin`}
                 element={<AdminDashboard />}
               />
+
+              <Route 
+                path={`/response/formId/:formId`}
+                element={<Respondent/>}
+              />
+              
           </Routes>
-          {this.formRouting()}
+          {/* {this.formRouting()} */}
         </div>
       </React.Fragment>
     );

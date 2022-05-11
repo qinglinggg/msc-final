@@ -12,14 +12,18 @@ const BASE_URL = "http://10.61.38.193:8080";
 function Dashboard(props) {
   const [testing, setTesting] = useState(false);
   const [openVisibility, setOpenVisibility] = useState(false);
-  const [openSettings, setOpenSettings] = useState(false);
-  const [privacyCheck, setPrivacyCheck] = useState(true);
+  
   const [formItems, setFormItems] = useState([]);
   const [optionCheck, setOptionCheck] = useState(false);
   const [formCounter, setFormCounter] = useState(0);
   const [timeout, setTimeout] = useState(0);
   const { formId } = useParams();
   const [currentStep, setCurrentStep] = useState([]);
+
+  const [openSettings, setOpenSettings] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [privacyCheck, setPrivacyCheck] = useState(false);
 
   useEffect(() => {
     console.log("Test Form Id: " + formId);
@@ -45,6 +49,9 @@ function Dashboard(props) {
       }
     }
     let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
+    setTitle(selectedForm.title);
+    setDescription(selectedForm.description);
+    setPrivacyCheck(selectedForm.privacyCheck);
     tempBreadcrumbs.push({page: "Dashboard - " + selectedForm['title'], path: window.location.href});
     setCurrentStep(tempBreadcrumbs);
     localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
@@ -76,7 +83,6 @@ function Dashboard(props) {
     let body = document.getElementById("body");
     let closePopup = document.querySelector(".closePopup");
 
-    console.log(openSettings);
     if(openSettings == false){
       // if(closePopup) {
         body.classList.remove("openPopup");
@@ -454,6 +460,10 @@ function Dashboard(props) {
   }
 
   const displaySettings = () => {
+
+    let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
+    console.log(selectedForm);
+
     return (
       <React.Fragment>
         <div className="popup" id="popup-addItem">
@@ -465,13 +475,13 @@ function Dashboard(props) {
             <br />
             <label>
               Name
-              <input className="form-alignright" id="input-title" type="text" name="name" />
+              <input className="form-alignright" id="input-title" type="text" name="name" value={title}/>
             </label>
             <br />
             <br />
             <label>
               Description
-              <input className="form-alignright" id="input-desc" type="text" name="desc" />
+              <input className="form-alignright" id="input-desc" type="text" name="desc" value={selectedForm.description}/>
             </label>
             <br />
             <br />
