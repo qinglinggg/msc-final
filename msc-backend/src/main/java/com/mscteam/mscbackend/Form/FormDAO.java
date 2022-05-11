@@ -178,15 +178,14 @@ public class FormDAO {
 
     public int updateFormItems(String formItemsId, FormItems toBeUpdated) {
         String query = "UPDATE FormItems SET ";
-        query = query + "questionContent = '" + toBeUpdated.getContent().toString() + "'";
+        if (toBeUpdated.getContent() != "" && toBeUpdated.getContent() != null) {
+            query = query + "questionContent = '" + toBeUpdated.getContent().toString() + "'";
+        }
         if (toBeUpdated.getType() != "" && toBeUpdated.getType() != null) {
             query = query + ", questionType = '" + toBeUpdated.getType().toString() + "'";
         }
         if (toBeUpdated.getIsRequired() != null) {
-            if (comma == true)
-                query = query + ", ";
-            else comma = true;
-            query = query + "isRequired = " + toBeUpdated.getIsRequired();
+            query = query + ", isRequired = " + toBeUpdated.getIsRequired();
         }
         query = query + " WHERE formItemsId = '" + formItemsId + "'";
         int res = jdbcTemplate.update(query);
