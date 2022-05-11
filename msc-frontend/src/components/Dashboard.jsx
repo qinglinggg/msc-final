@@ -70,8 +70,8 @@ function Dashboard(props) {
             questionContent: data.content,
             questionType: data.type,
             arrayOptions: [],
-            optionCounter: 0
-            // isRequired
+            optionCounter: 0,
+            isRequired: data.isRequired
           };
           currentStateData.push(newItem);
         });
