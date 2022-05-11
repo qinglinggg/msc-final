@@ -2,27 +2,26 @@ import React, { useEffect, useRef, useState } from "react";
 
 const defaultStyle = {
   resize: "none",
-  // padding: "9px",
   boxSizing: "border-box",
   fontSize: "15px",
-  scrollHeight: "10px"
+  height: "25px"
 };
 // , 
 const AutoHeightTextarea = ({ style = defaultStyle, ...etc}, props) => {
 
   const textareaRef = React.createRef();
-  const [currentValue, setCurrentValue] = useState(""); // you can manage data with it
 
-  useEffect(() => {
-    textareaRef.current.style.height = "0px";
-    const scrollHeight = textareaRef.current.scrollHeight;
-    textareaRef.current.style.height = scrollHeight + 5 + "px";
-  }, [currentValue]);
+  const autoResize = (el) => {
+    el.target.style.height = "25px";
+    el.target.style.height = (el.target.scrollHeight)+"px";
+    console.log("Scroll height: " + el.target.scrollHeight);
+  }
 
   return (
     <textarea
       ref={textareaRef}
       style={style}
+      onInput={(e) => autoResize(e)}
       {...etc}
     />
   );

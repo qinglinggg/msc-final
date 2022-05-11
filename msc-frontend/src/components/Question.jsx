@@ -46,7 +46,6 @@ function Question(props) {
   }, [branchingSelection]);
 
   useEffect(() => {
-    // console.log("Reset activated.");
     if(props.questionData) resetBranchingSelection();
   }, [props.formItems]);
 
@@ -69,8 +68,13 @@ function Question(props) {
     { value: 10, label: "10" },
   ];
 
+  const autoResizeContent = (el) => {
+    el.style.height = "25px";
+    el.style.height = (el.scrollHeight)+"px";
+    console.log("Auto Scroll height: " + el.scrollHeight);
+  }
+
   useEffect(() => {
-    // console.log("Entering questionData.id " + props.questionData.id);
     if(props.questionData) {
       let questionContent = document.getElementById("question-input-" + props.questionData.id);
       questionContent.value = "";
@@ -90,6 +94,34 @@ function Question(props) {
       });
     }
   }, []);
+
+  useEffect(() => {
+    let stateLogger = JSON.parse(localStorage.getItem("stateLoggerQuestion"));
+    if(props.questionData && !stateLogger) {
+      let questionContent = document.getElementById("question-input-" + props.questionData.id);
+      questionContent.value = "";
+      if(props.questionData.questionContent) {
+        questionContent.value = props.questionData.questionContent;
+        questionContent.style.minHeight = "15px";
+        autoResizeContent(questionContent);
+        localStorage.setItem("stateLoggerQuestion", true);
+      }
+    }
+  }, [props.questionData]);
+
+  useEffect(() => {
+    let stateLogger = JSON.parse(localStorage.getItem("stateLoggerAnswer"));
+    if(props.arrayOptions && !stateLogger) {
+      props.arrayOptions.map((obj) => {
+        let optionId =
+        "question-" + props.questionData.id + "-options-" + obj.id;
+        let el = document.getElementById(optionId);
+        console.log("test");
+        autoResizeContent(el);
+        localStorage.setItem("stateLoggerAnswer", true);
+      })
+    }
+  }, [props.arrayOptions])
 
   useEffect(() => {
     if(!prevBranchSelection.current) return;
@@ -219,18 +251,6 @@ function Question(props) {
         </div>
       </React.Fragment>
     );
-  };
-
-  const handleUpdateTextarea = (obj) => {
-    let optionId = "question-" + props.questionData.id + "-options-" + obj.id;
-    let textarea = document.getElementById(optionId);
-    if (textarea) {
-      if (obj.value != "" && obj.value != null) {
-        textarea.value = obj.value;
-      } else {
-        textarea.value = "";
-      }
-    }
   };
 
   const multipleChoiceOption = () => {
