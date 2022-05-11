@@ -79,6 +79,10 @@ function Question(props) {
       let questionContent = document.getElementById("question-input-" + props.questionData.id);
       questionContent.value = "";
       if(props.questionData.questionContent) questionContent.value = props.questionData.questionContent;
+      if(props.questionData.isRequired){
+        if(props.questionData.isRequired == 1) setSelectedIsRequired(true);
+        else setSelectedIsRequired(false);
+      }
     }
     if (props.mode) {
       if (props.questionData.questionType != "") {
@@ -102,7 +106,7 @@ function Question(props) {
       questionContent.value = "";
       if(props.questionData.questionContent) {
         questionContent.value = props.questionData.questionContent;
-        questionContent.style.minHeight = "15px";
+        questionContent.style.height = "25px";
         autoResizeContent(questionContent);
         localStorage.setItem("stateLoggerQuestion", true);
       }
