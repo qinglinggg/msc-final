@@ -176,16 +176,9 @@ public class FormDAO {
 
     public int updateFormItems(String formItemsId, FormItems toBeUpdated) {
         String query = "UPDATE FormItems SET ";
-        Boolean comma = false;
-        if (toBeUpdated.getContent() != "" && toBeUpdated.getContent() != null) {
-            query = query + "questionContent = '" + toBeUpdated.getContent().toString() + "'";
-            comma = true;
-        }
+        query = query + "questionContent = '" + toBeUpdated.getContent().toString() + "'";
         if (toBeUpdated.getType() != "" && toBeUpdated.getType() != null) {
-            if (comma == true)
-                query = query + ", ";
-            else comma = true;
-            query = query + "questionType = '" + toBeUpdated.getType().toString() + "'";
+            query = query + ", questionType = '" + toBeUpdated.getType().toString() + "'";
         }
         query = query + " WHERE formItemsId = '" + formItemsId + "'";
         int res = jdbcTemplate.update(query);
@@ -217,19 +210,9 @@ public class FormDAO {
 
     public int updateAnswerSelection(String answerSelectionId, FormAnswerSelection toBeUpdated) {
         String query = "UPDATE FormAnswerSelection SET ";
-        Boolean comma = false;
-        if (toBeUpdated.getValue() != "" && toBeUpdated.getValue() != null){
-            query = query + "answerSelectionValue = '" + toBeUpdated.getValue().toString() + "'";
-            comma = true;
-        }
-        if (comma == true)
-            query = query + ", ";
-        else comma = true;
-        query = query + "nextItem = " + toBeUpdated.getNextItem();
-        if (comma == true)
-            query = query + ", ";
-        else comma = true;
-        query = query + "prevItem = " + toBeUpdated.getPrevItem();
+        query = query + "answerSelectionValue = '" + toBeUpdated.getValue().toString() + "'";
+        if(toBeUpdated.getNextItem() > 0) query = query + ", nextItem = " + toBeUpdated.getNextItem();
+        if(toBeUpdated.getPrevItem() > 0) query = query + ", prevItem = " + toBeUpdated.getPrevItem();
         query = query + " WHERE answerSelectionId = '" + answerSelectionId + "'";
         int res = jdbcTemplate.update(query);
         return res;
