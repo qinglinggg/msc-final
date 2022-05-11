@@ -49,12 +49,14 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    // Inisialisasi untuk dashboard item refresh...
+    localStorage.setItem("stateLoggerQuestion", false);
+    localStorage.setItem("stateLoggerAnswer", false);
+    // ------------------------------------------
     let tempUser = localStorage.getItem("loggedInUser");
     if (tempUser) {
       tempUser = JSON.parse(tempUser);
       this.setState({loggedInUser: tempUser});
-      // get form by user id
-      // cek authoruserid udh bener blm -> dashboardSS
       axios.get(`${BASE_URL}/api/v1/forms/owned-form/${tempUser}`).then((res) => {
         const forms = res.data;
         localStorage.setItem("formLists", JSON.stringify(forms));
