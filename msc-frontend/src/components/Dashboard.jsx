@@ -185,6 +185,8 @@ function Dashboard(props) {
         data: currentForm,
         headers: { "Content-Type": "application/json" },
       }).then((res) => {
+        console.log("Check null:");
+        console.log(res.data);
         setFormItems(tempFormItems);
       });
     } catch (error) {

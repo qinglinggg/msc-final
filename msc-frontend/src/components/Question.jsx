@@ -111,7 +111,8 @@ function Question(props) {
         let optionId =
         "question-" + props.questionData.id + "-options-" + obj.id;
         let el = document.getElementById(optionId);
-        console.log("test");
+        el.value = obj.value;
+        console.log(obj.value);
         autoResizeContent(el);
         localStorage.setItem("stateLoggerAnswer", true);
       })
@@ -259,7 +260,6 @@ function Question(props) {
                         id={optionId}
                         type="text"
                         placeholder={obj.label}
-                        value={obj.value}
                         wrap="soft"
                         onChange={(e) => {
                           props.handleOptionValue(
@@ -359,7 +359,6 @@ function Question(props) {
                       type="text"
                       placeholder={obj.label}
                       wrap="soft"
-                      value={obj.value}
                       onChange={(e) => {
                         props.handleOptionValue(props.questionData.id, e, obj);
                       }}
@@ -457,7 +456,6 @@ function Question(props) {
                         type="text"
                         placeholder="Insert label..."
                         wrap="soft"
-                        value={object.value}
                         onChange={(e) => {
                           props.handleOptionValue(
                             props.questionData.id,
@@ -517,13 +515,6 @@ function Question(props) {
           className="inputText"
           name="shortanswer-field"
           placeholder="The answer will be on here..."
-          // value={
-          //   "Input your answer..."
-          //   // props.questionData.arrayOptions[0].value
-          // }
-          // onChange={(e) =>
-          //   props.handleOptionValue(props.questionData.id, e, { id: 1 })
-          // }
           disabled
         />
       </div>
