@@ -130,9 +130,9 @@ public class FormDAO {
     }
 
     public FormItems addFormItems(String id, FormItems item) {
-        final String query = "INSERT INTO FormItems(formId, formItemsId, itemNumber, questionContent, questionType) VALUES(?,?,?,?,?)";
+        final String query = "INSERT INTO FormItems(formId, formItemsId, itemNumber, questionContent, questionType, isRequired) VALUES(?,?,?,?,?,?)";
         int res = jdbcTemplate.update(query, id, item.getId().toString(), item.getItemNumber(), item.getContent(),
-                item.getType());
+                item.getType(), item.getIsRequired());
         System.out.println(item);
         return item;
     }
@@ -144,11 +144,12 @@ public class FormDAO {
             System.out.println(query);
             String formId = resultSet.getString("formId");
             String formItemsId = resultSet.getString("formItemsId");
-            int itemNumber = Integer.parseInt(resultSet.getString("itemNumber"));
+            Integer itemNumber = Integer.parseInt(resultSet.getString("itemNumber"));
             String questionContent = resultSet.getString("questionContent");
             String questionType = resultSet.getString("questionType");
+            Integer isRequired = Integer.parseInt(resultSet.getString("isRequired"));
             return new FormItems(UUID.fromString(formId), UUID.fromString(formItemsId), itemNumber, questionContent,
-                questionType);
+                questionType, isRequired);
         }, id);
         System.out.println(formItems);
         return formItems;
@@ -162,8 +163,9 @@ public class FormDAO {
             int itemNumber = resultSet.getInt("itemNumber");
             String questionContent = resultSet.getString("questionContent");
             String questionType = resultSet.getString("questionType");
+            Integer isRequired = Integer.parseInt(resultSet.getString("isRequired"));
             return new FormItems(UUID.fromString(formId), UUID.fromString(formItemsId), itemNumber, questionContent, 
-            questionType);
+            questionType, isRequired);
         }, id);
         return formItem;
     }
@@ -179,6 +181,12 @@ public class FormDAO {
         query = query + "questionContent = '" + toBeUpdated.getContent().toString() + "'";
         if (toBeUpdated.getType() != "" && toBeUpdated.getType() != null) {
             query = query + ", questionType = '" + toBeUpdated.getType().toString() + "'";
+        }
+        if (toBeUpdated.getIsRequired() != null) {
+            if (comma == true)
+                query = query + ", ";
+            else comma = true;
+            query = query + "isRequired = " + toBeUpdated.getIsRequired();
         }
         query = query + " WHERE formItemsId = '" + formItemsId + "'";
         int res = jdbcTemplate.update(query);

@@ -9,14 +9,17 @@ public class FormItems implements Comparable<FormItems>{
     private Integer itemNumber;
     private String questionContent;
     private String questionType;
+    private Integer isRequired;
+
 
     // Get Items
-    public FormItems(UUID formId, UUID formItemsId, int itemNumber, String questionContent, String questionType) {
+    public FormItems(UUID formId, UUID formItemsId, int itemNumber, String questionContent, String questionType, Integer isRequired) {
         this.formId = formId;
         this.formItemsId = formItemsId;
         this.itemNumber = itemNumber;
         this.questionContent = questionContent;
         this.questionType = questionType;
+        this.isRequired = isRequired;
     }
 
     // Create and Insert mode
@@ -26,6 +29,7 @@ public class FormItems implements Comparable<FormItems>{
         this.itemNumber = itemNumber;
         this.questionContent = questionContent;
         this.questionType = questionType;
+        this.isRequired = 0;
     }
 
     public UUID getFormId() {
@@ -58,6 +62,14 @@ public class FormItems implements Comparable<FormItems>{
 
     public void setType(String questionType) {
         this.questionType = questionType;
+    }
+
+    public Integer getIsRequired(){
+        return this.isRequired;
+    }
+
+    public void setIsRequired(Integer isRequired){
+        this.isRequired = isRequired;
     }
 
     @Override

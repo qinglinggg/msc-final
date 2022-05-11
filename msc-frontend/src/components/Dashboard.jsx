@@ -61,6 +61,8 @@ function Dashboard(props) {
         url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`,
       }).then((res) => {
         let currentStateData = [...formItems];
+        console.log("get-form-items: ");
+        console.log(res.data);
         res.data.map((data) => {
           let newItem = {
             id: data.id,
@@ -69,6 +71,7 @@ function Dashboard(props) {
             questionType: data.type,
             arrayOptions: [],
             optionCounter: 0
+            // isRequired
           };
           currentStateData.push(newItem);
         });
@@ -130,13 +133,15 @@ function Dashboard(props) {
         data: newItem,
         headers: { "Content-Type": "application/json" },
       }).then((res) => {
+        console.log(res.data);
         newItem = {
           id: res.data.id,
           itemNumber: res.data.itemNumber,
           questionContent: res.data.content,
           questionType: res.data.type,
           arrayOptions: [],
-          optionCounter: 0
+          optionCounter: 0,
+          // isRequired: 0,
         };
         currentStateData.push(newItem);
         formItemId = res.data.id;
@@ -220,6 +225,35 @@ function Dashboard(props) {
       console.log(error);
     }
   };
+
+  const handleUpdateQuestionIsRequired = (questionId, value) => {
+    let tempFormItems = [...formItems];
+    let currentForm = tempFormItems.filter((elem) => {
+      return elem.id == questionId;
+    })
+    currentForm = currentForm[0];
+    console.log("isRequired value is " + value);
+    currentForm["isRequired"] = value;
+    tempFormItems = tempFormItems.map((elem) => {
+      if(elem.id == questionId){
+        return currentForm;
+      }
+      return elem;
+    })
+    try {
+      axios({
+        method: "put",
+        data: currentForm,
+        url: `${BASE_URL}/api/v1/forms/update-form-items/${questionId}`,
+        headers: { "Content-Type": "application/json" },
+      }).then((res) => {
+        setFormItems(tempFormItems);
+        console.log(tempFormItems);
+      })
+    } catch(error) {
+      console.log(error);
+    }
+  }
 
   const handleResetOption = (id, iterCount, finalCount) => {
     let tempFormItems = [...formItems];
@@ -417,6 +451,7 @@ function Dashboard(props) {
                   handleOptionValue={handleOptionValue}
                   handleUpdateQuestionInput={handleUpdateQuestionInput}
                   handleUpdateQuestionType={handleUpdateQuestionType}
+                  handleUpdateQuestionIsRequired={handleUpdateQuestionIsRequired}
                   handleResetOption={handleResetOption}
                   handleOptionCount={handleOptionCount}
                   handleOptionList={handleOptionList}

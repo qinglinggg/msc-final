@@ -10,7 +10,7 @@ const BASE_URL = "http://10.61.38.193:8080";
 function Question(props) {
   const [selectedQuestionOption, setSelectedQuestionOption] = useState("");
   const [selectedInputOption, setSelectedInputOption] = useState(2);
-  const [selectedIsOptional, setSelectedIsOptional] = useState(false);
+  const [selectedIsRequired, setSelectedIsRequired] = useState(false);
   const [branchingState, setBranchingState] = useState(false);
   const [branchingSelection, setBranchingSelection] = useState([]);
   const prevBranchSelection = useRef();
@@ -75,6 +75,11 @@ function Question(props) {
   }
 
   useEffect(() => {
+    if(props.questionData) {
+      let questionContent = document.getElementById("question-input-" + props.questionData.id);
+      questionContent.value = "";
+      if(props.questionData.questionContent) questionContent.value = props.questionData.questionContent;
+    }
     if (props.mode) {
       if (props.questionData.questionType != "") {
         setSelectedQuestionOption(props.questionData.questionType);
@@ -126,10 +131,29 @@ function Question(props) {
         props.handleOptionValue(props.questionData.id, -1, obj, true);
       });
     }
-  }, [branchingState])
+  }, [branchingState]);
+
+  // useEffect((prevState) => {
+  //   if(prevState.selectedIsRequired != selectedIsRequired){
+  //     let value;
+  //     if(selectedIsRequired) value = 1;
+  //     else value = 0;
+  //     props.handleUpdateQuestionIsRequired(props.questionData.id, value);
+  //   }
+  // }, [selectedIsRequired]);
 
   const handleShowBranching = () => {
     setBranchingState(!branchingState);
+  }
+
+  const handleIsRequired = () => {
+    // boolean -> int
+    let value = !selectedIsRequired;
+    if(value) value = 1;
+    else value = 0;
+    props.handleUpdateQuestionIsRequired(props.questionData.id, value);
+
+    setSelectedIsRequired(!selectedIsRequired);
   }
 
   const displayQuestion = () => {
@@ -190,19 +214,12 @@ function Question(props) {
           <div className="question-isOptional-spacer"></div>
           <div className="question-isOptional-container">
             <div className="question-isOptional-icon">
-              {selectedIsOptional ? (
                 <i
-                  className="fa fa-check-circle-o"
-                  onClick={() => setSelectedIsOptional(false)}
+                  className={selectedIsRequired ? "fa fa-check-circle-o" : "fa fa-circle-o"}
+                  onClick={handleIsRequired}
                 />
-              ) : (
-                <i
-                  className="fa fa-circle-o"
-                  onClick={() => setSelectedIsOptional(true)}
-                />
-              )}
             </div>
-            <div className="question-isOptional-text">is Optional?</div>
+            <div className="question-isOptional-text">is Required?</div>
           </div>
           <div
             className="question-settings"
