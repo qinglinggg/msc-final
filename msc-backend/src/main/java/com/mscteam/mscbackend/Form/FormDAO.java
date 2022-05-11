@@ -170,6 +170,19 @@ public class FormDAO {
         return formItem;
     }
 
+    public List<FormItemResponse> getFormItemResponse(String formItemsId) {
+        final String query = "SELECT * FROM FormItemResponse WHERE formItemsId = ?";
+        List<FormItemResponse> formItemResponses = jdbcTemplate.query(query, (resultSet, i) -> {
+            String formRespondentId = resultSet.getString("formRespondentId");
+            String id = resultSet.getString("formItemsId");
+            String formItemResponseId = resultSet.getString("formItemResponseId");
+            String answerSelectionId = resultSet.getString("answerSelectionId");
+            String answerSelectionValue = resultSet.getString("answerSelectionValue");
+            return new FormItemResponse(UUID.fromString(formRespondentId), UUID.fromString(formItemsId), UUID.fromString(formItemResponseId), UUID.fromString(answerSelectionId), answerSelectionValue);
+        });
+        return formItemResponses;
+    }
+
     public int removeFormItems(String formItemsId) {
         final String query = "DELETE FROM FormItems WHERE formItemsId=?";
         int res = jdbcTemplate.update(query, formItemsId);

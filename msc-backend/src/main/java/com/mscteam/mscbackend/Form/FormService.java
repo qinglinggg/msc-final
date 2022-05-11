@@ -77,6 +77,10 @@ public class FormService {
         return item;
     }
 
+    public List<FormItemResponse> getFormItemResponse(String formItemsId){
+        return formDAO.getFormItemResponse(formItemsId);
+    }
+
     public int updateFormItems(String formItemsId, FormItems toBeUpdated) {
         return formDAO.updateFormItems(formItemsId, toBeUpdated);
     }

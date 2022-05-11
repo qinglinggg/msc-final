@@ -24,7 +24,7 @@ function Respondent (props) {
     // DESIGN
     const [primaryColor, setPrimaryColor] = useState("Default");
     const [secondaryColor, setSecondaryColor] = useState("Default");
-    const [bgLink, setBgLink] = useState("./images/woman.jpg");
+    const [bgLink, setBgLink] = useState("");
 
 
     useEffect(() => {
@@ -85,25 +85,29 @@ function Respondent (props) {
           console.log(error);
         }
 
-        // try {
-        //     axios({
-        //       method: "get",
-        //       url: `${BASE_URL}/api/v1/forms/form-respondent/${formId}`,
-        //       data: props.user, // cek lagi nanti. 
-        //     }).then((res) => {
-        //       if(res) setFormRespondentId(res.data);
-        //       else {
-        //         axios({
-        //           method: "post",
-        //           url: `${BASE_URL}/api/v1/forms/insert-form-respondent/${formId}`
-        //         }).then((res) => {
-        //           setFormRespondentId(res.data);
-        //         })
-        //       }
-        //     })
-        // } catch (error) {
-            
-        // }
+        try {
+            axios({
+              method: "get",
+              url: `${BASE_URL}/api/v1/forms/form-respondent/${formId}`,
+              data: props.user, // cek lagi nanti. 
+            }).then((res) => {
+              if(res) setFormRespondentId(res.data);
+              else {
+                let newFormRespondent = {
+                  userId: props.user,
+                  isTargeted: 0,
+                }
+                axios({
+                  method: "post",
+                  url: `${BASE_URL}/api/v1/forms/insert-form-respondent/${formId}`
+                }).then((res) => {
+                  setFormRespondentId(res.data);
+                })
+              }
+            })
+        } catch (error) {
+            console.log(error);
+        }
 
     }, []);
 
@@ -445,31 +449,32 @@ function Respondent (props) {
 
       }
     
-      const loadShortAnswer = (formItemId) => {
-        return (
-          <React.Fragment>
-            <div id="preview-short-answer">
-              <AutoHeightTextarea id="preview-sa-text" placeholder="Your answer" onChange={(e) => setShortAnswerValue(formItemId, e.target.value)}></AutoHeightTextarea>
-            </div>
-          </React.Fragment>
-        );
-      }
+    const loadShortAnswer = (formItemId) => {
+      return (
+        <React.Fragment>
+          <div id="preview-short-answer">
+            <AutoHeightTextarea id="preview-sa-text" placeholder="Your answer" onChange={(e) => setShortAnswerValue(formItemId, e.target.value)}></AutoHeightTextarea>
+          </div>
+        </React.Fragment>
+      );
+    }
 
-      const submitForm = () => {
+    const submitForm = () => {
+      console.log("submit Form: ");
+      console.log(formResponse);
+      formResponse.map((response) => {
+        try {
+          axios({
+            method: "post",
+            url: `${BASE_URL}/api/v1/forms/insert-response/${formRespondentId}`,
+            data: response
+          })
+        } catch(error) {
+          console.log(error);
+        }
+      })
 
-        formResponse.map((response) => {
-          try {
-            axios({
-              method: "post",
-              url: `${BASE_URL}/api/v1/forms/insert-response/${formRespondentId}`,
-              data: response
-            })
-          } catch(error) {
-            console.log(error);
-          }
-        })
-
-      }
+    }
     
     const handleOpenChat = () => {
       setOpenChat(!openChat);
