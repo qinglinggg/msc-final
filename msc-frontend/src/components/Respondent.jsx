@@ -73,7 +73,7 @@ function Respondent (props) {
       // }
       try {
           axios({
-            method: "get",
+            method: "post",
             url: `${BASE_URL}/api/v1/forms/form-respondent/${formId}`,
             data: userId, // cek lagi nanti. 
           }).then((res) => {
@@ -305,10 +305,10 @@ function Respondent (props) {
                         id={"options-"+formItemId+"-"+innerIdx}
                         type="radio"
                         name={"options-"+formItemId}
-                        defaultChecked={formResponse[index-1] && options.value == formResponse[index-1].answerSelectionValue}
+                        checked={formResponse[index-1] && options.value == formResponse[index-1].answerSelectionValue}
                         onClick={() => setMultipleChoiceValue(index, formItemId, options)}
                       />
-                      <label id="option-label" htmlFor={"options-"+formItemId+"-"+innerIdx}>
+                      <label id={"option-label"+"-"+innerIdx} htmlFor={"options-"+formItemId+"-"+innerIdx}>
                         {options.value == "" ? options.label : options.value}
                       </label>
                     </div>
