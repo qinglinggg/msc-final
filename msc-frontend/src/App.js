@@ -49,10 +49,6 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    // Inisialisasi untuk dashboard item refresh...
-    localStorage.setItem("stateLoggerQuestion", false);
-    localStorage.setItem("stateLoggerAnswer", false);
-    // ------------------------------------------
     let tempUser = localStorage.getItem("loggedInUser");
     if (tempUser) {
       tempUser = JSON.parse(tempUser);

@@ -100,22 +100,20 @@ function Question(props) {
   }, []);
 
   useEffect(() => {
-    let stateLogger = JSON.parse(localStorage.getItem("stateLoggerQuestion"));
-    if(props.questionData && !stateLogger) {
+    if(props.questionData) {
       let questionContent = document.getElementById("question-input-" + props.questionData.id);
       questionContent.value = "";
       if(props.questionData.questionContent) {
         questionContent.value = props.questionData.questionContent;
         questionContent.style.height = "25px";
         autoResizeContent(questionContent);
-        localStorage.setItem("stateLoggerQuestion", true);
       }
     }
   }, [props.questionData]);
 
   useEffect(() => {
-    let stateLogger = JSON.parse(localStorage.getItem("stateLoggerAnswer"));
-    if(props.arrayOptions && !stateLogger) {
+    if(!props.arrayOptions) return;
+    if(props.arrayOptions.length > 0) {
       props.arrayOptions.map((obj) => {
         let optionId =
         "question-" + props.questionData.id + "-options-" + obj.id;
@@ -123,8 +121,7 @@ function Question(props) {
         el.value = obj.value;
         console.log(obj.value);
         autoResizeContent(el);
-        localStorage.setItem("stateLoggerAnswer", true);
-      })
+      });
     }
   }, [props.arrayOptions])
 
