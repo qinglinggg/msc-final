@@ -121,9 +121,7 @@ function Preview(props) {
     
     return (
       <div className="display-container">
-        {index == 1 ? (
-          <div id="preview-back-null" />
-        ) : (
+        {index == 1 ? null : (
           <div id="preview-back-icon-animation">
             <ion-icon
               name="chevron-back-outline"
@@ -157,9 +155,7 @@ function Preview(props) {
               : null}
           </div>
         </div>
-        {index == length ? (
-          <div id="preview-next-null" />
-        ) : (
+        {index == length ? null : (
           <div id="preview-next-icon-animation">
             <ion-icon
               name="chevron-forward-outline"

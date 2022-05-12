@@ -2208,8 +2208,15 @@ body {
   box-shadow: 0px 0px 5px 0 #c4c4c4;
   background-color: white;
   display: flex;
+  flex-direction: row;
   justify-content: center;
-  /* align-items: center; */
+  align-items: center;
+}
+
+#display-respondent {
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 #preview-empty-list {
@@ -2233,18 +2240,28 @@ body {
   align-self: center;
   display: flex;
   justify-content: center;
+  border: .5px solid gray;
+  border-radius: 25px;
+  position: absolute;
+  left: 12.5%;
+  animation: fade-on-left 1s;
+}
+
+@keyframes fade-on-left {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 #preview-back-icon-animation:hover {
   background-color: var(--gray-profileimage);
   border-radius: 25px;
   cursor: pointer;
-}
-
-#preview-back-null {
-  width: 30px;
-  height: 30px;
-  padding: 0px 15px 0px 30px;
 }
 
 #preview-back-icon {
@@ -2257,23 +2274,16 @@ body {
   width: fit-content;
   height: fit-content;
   margin: 15px 5px 5px 5px;
-  padding: 10px 15px 10px 15px;
+  padding: 10px 25px 10px 25px;
   align-self: center;
   justify-content: center;
   cursor: pointer;
-
   font-size: medium;
   font-weight: bold;
   text-decoration: none;
   color: white;
   background-color: var(--navbar-color);
   border-radius: 15px;
-}
-
-#preview-next-null {
-  width: 30px;
-  height: 30px;
-  padding: 0px 30px 0px 15px;
 }
 
 #preview-next-icon-animation {
@@ -2285,6 +2295,22 @@ body {
   display: flex;
   justify-content: center;
   z-index: 1000;
+  border: .5px solid gray;
+  border-radius: 25px;
+  position: absolute;
+  right: 12.5%;
+  animation: fade-on-right 1s;
+}
+
+@keyframes fade-on-right {
+  0% {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0px);
+    opacity: 1;
+  }
 }
 
 #preview-next-icon-animation:hover {
@@ -2302,18 +2328,21 @@ body {
 .preview-flex {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   padding: 50px 15px 20px 15px;
-  width: 95%;
+  width: 80%;
   height: 100%;
 }
 
 .preview-field {
+  width: 100%;
   display: flex;
   flex-direction: row;
   font-size: 15px;
   font-family: var(--font-roboto);
   margin-bottom: 15px;
-  text-align: justify;
+  text-align: left;
 }
 
 #preview-index {

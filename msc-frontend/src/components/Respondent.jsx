@@ -26,90 +26,90 @@ function Respondent (props) {
     const [secondaryColor, setSecondaryColor] = useState("Default");
     const [bgLink, setBgLink] = useState("");
 
-
     useEffect(() => {
-      console.log("test masuk");
-
-      // localStorage.setItem("selectedForm", JSON.parse(selectedForm));
-
       console.log("formId : " + formId + " is rendered.");
-
-        try { 
-            axios({
-                method: "get",
-                url: `${BASE_URL}/api/v1/forms/${formId}`
-            }).then((res) => {
-                setFormMetadata(res.data);
-                localStorage.setItem("selectedForm", JSON.stringify(res.data));
-                console.log(res.data);
-            })
-        } catch (error) {
-          console.log(error);
-        }
-
-        try {
-            axios({
-                method: "get",
-                url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`
-            }).then((res) => {
-                setFormItems(res.data);
-            })
-        } catch (error) {
-          console.log(error);
-        }
-
-        // DESIGN
-
-        responsePageTheme();
-
-
-        // CHAT
-
-        // let createNewFeedback = false;
-        // cek pernah kirim message ga
-        // get feedbackId by formId and userId
-        try {
-          let user = JSON.parse(localStorage.getItem("loggedInUser"));
-          console.log(user);
+      try { 
+          axios({
+              method: "get",
+              url: `${BASE_URL}/api/v1/forms/${formId}`
+          }).then((res) => {
+              setFormMetadata(res.data);
+              localStorage.setItem("selectedForm", JSON.stringify(res.data));
+              console.log(res.data);
+          })
+      } catch (error) {
+        console.log(error);
+      }
+      try {
+          axios({
+              method: "get",
+              url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`
+          }).then((res) => {
+              setFormItems(res.data);
+          })
+      } catch (error) {
+        console.log(error);
+      }
+      // DESIGN
+      responsePageTheme();
+      // CHAT
+      // let createNewFeedback = false;
+      // cek pernah kirim message ga
+      // get feedbackId by formId and userId
+      let userId = JSON.parse(localStorage.getItem("loggedInUser"));
+      // try {
+      //   axios({
+      //     method: "get",
+      //     url: `${BASE_URL}/api/v1/feedback/by-form-and-user/${formId}`,
+      //     data: userId,
+      //   }).then((res) => {
+      //     if(res.data){
+      //       setFeedbackId(res.data);
+      //     }
+      //     // else createNewFeedback = true;
+      //   })
+      // } catch(error) {
+      //   console.log(error);
+      // }
+      try {
           axios({
             method: "get",
-            url: `${BASE_URL}/api/v1/feedback/by-form-and-user/${formId}`,
-            data: user,
+            url: `${BASE_URL}/api/v1/forms/form-respondent/${formId}`,
+            data: userId, // cek lagi nanti. 
           }).then((res) => {
-            if(res.data){
-              setFeedbackId(res.data);
-            }
-            // else createNewFeedback = true;
-          })
-        } catch(error) {
-          console.log(error);
-        }
-
-        try {
-            axios({
-              method: "get",
-              url: `${BASE_URL}/api/v1/forms/form-respondent/${formId}`,
-              data: props.user, // cek lagi nanti. 
-            }).then((res) => {
-              if(res) setFormRespondentId(res.data);
-              else {
-                let newFormRespondent = {
-                  userId: props.user,
-                  isTargeted: 0,
-                }
-                axios({
-                  method: "post",
-                  url: `${BASE_URL}/api/v1/forms/insert-form-respondent/${formId}`
-                }).then((res) => {
-                  setFormRespondentId(res.data);
-                })
+            console.log("Mencari Form Responden User")
+            if(res) setFormRespondentId(res.data);
+            else {
+              let newFormRespondent = {
+                userId: userId,
+                isTargeted: 0,
               }
-            })
-        } catch (error) {
-            console.log(error);
-        }
-
+              axios({
+                method: "post",
+                url: `${BASE_URL}/api/v1/forms/insert-form-respondent/${formId}`
+              }).then((res) => {
+                setFormRespondentId(res.data);
+              })
+            }
+          })
+      } catch (error) {
+          console.log(error);
+      }
     }, []);
+
+    useEffect(() => {
+      if(!formItems) return;
+      let loadData = JSON.parse(localStorage.getItem("tempFormResponse"));
+      if (loadData) setFormResponse(loadData);
+      else {
+        let tempData = [];
+        formItems.map(() => {
+          console.log("test");
+          tempData.push({});
+        });
+        setFormResponse(tempData);
+      }
+    }, [formItems])
 
     useEffect((prevState) => {
       if(feedbackId != undefined && prevState.feedbackId == ""){
@@ -127,7 +127,6 @@ function Respondent (props) {
     }, [feedbackId]);
 
     useEffect(() => {
-
       let navbar = document.getElementById("navbar");
       let chatHeader = document.getElementById("respondent-chat-header");
       let chatIcon = document.getElementById("respondent-chat-button-float");
@@ -152,6 +151,10 @@ function Respondent (props) {
       }
 
     }, [bgLink, primaryColor]);
+
+    useEffect(() => {
+      localStorage.setItem("tempFormResponse", JSON.stringify(formResponse));
+    }, [formResponse])
 
     const responsePageTheme = () => {
       let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
@@ -179,15 +182,12 @@ function Respondent (props) {
         setPrimaryColor("rgb(248, 174, 186)");
         setSecondaryColor("rgb(245, 233, 239)");
       }
-
-      setBgLink(`url('${dummyProfile}')`);
-      // setBgLink(selectedForm.backgroundLink);
-
+      // setBgLink(`url('${dummyProfile}')`);
+      setBgLink(selectedForm.backgroundLink);
     }
 
     const getAnswerSelection = (current) => {
         let formItemId = current.id;
-    
         try {
           axios({
             method: "get",
@@ -196,7 +196,7 @@ function Respondent (props) {
             setAnswerSelection(res.data);
           })
         } catch(error) {
-          
+          console.log(error);
         }
     }
     
@@ -210,30 +210,28 @@ function Respondent (props) {
     }
      
     const displayQuestion = () => {
-        let length = formItems.length;
-        return (
-            <div className="display-container">
-              {
-                length == 0 ? (
-                  <div id="preview-empty-list">
-                    There is no question to answer, please contact the author.
-                  </div>
-                ) : displayQuestionCard(length)
-              }
-            </div>
-          )
+      let length = formItems.length;
+      return (
+          <div className="display-container">
+            {
+              length == 0 ? (
+                <div id="preview-empty-list">
+                  There is no question to answer, please contact the author.
+                </div>
+              ) : displayQuestionCard(length)
+            }
+          </div>
+        )
     }
 
     const displayQuestionCard = (length) => {
         let loadAnswerField;
         let current = formItems[index-1];
         getAnswerSelection(formItems[index-1]);
-
         return (
           <React.Fragment>
-            {index == 1 ? (
-              <div id="preview-back-null" />
-            ) : (
+            {index == 1 ? 
+              null : (
               <div id="preview-back-icon-animation">
                 <ion-icon
                   name="chevron-back-outline"
@@ -242,14 +240,14 @@ function Respondent (props) {
                 />
               </div>
             )}
-    
             <div className="preview-flex">
+              Selected option: {formResponse && formResponse[index-1] ? formResponse[index-1].answerSelectionValue : null}
               <div className="preview-field">
               <div id="preview-index">
-                {index}. { }
+              {index}.
               </div>
               {current.content == '' ? 
-                <div id="preview-warning">There is no question, please contact the author. </div> 
+                <div id="preview-warning">There is no question, please contact the author.</div> 
                 : current.content
               }
               </div>
@@ -257,24 +255,15 @@ function Respondent (props) {
                 {current.type == "LS"
                   ? (loadAnswerField = loadLinearScale(current.id, answerSelection))
                   : current.type == "MC"
-                  ? (loadAnswerField = loadMultipleChoice(
-                    current.id, answerSelection
-                    ))
+                  ? (loadAnswerField = loadMultipleChoice(index, current.id, answerSelection))
                   : current.type == "CB"
                   ? (loadAnswerField = loadCheckbox(current.id, answerSelection))
                   : current.type == "SA"
                   ? (loadAnswerField = loadShortAnswer(current.id))
                   : null}
               </div>
-              {index == length ? (
-                <Link to="/" className="preview-submit-button" style={{ backgroundColor: primaryColor }} onClick={() => submitForm()}>
-                  Submit
-                </Link>
-              ) : null}
             </div>
-            {index == length ? (
-              <div id="preview-next-null" />
-            ) : (
+            {index == length ? null : (
               <div id="preview-next-icon-animation">
                 <ion-icon
                   name="chevron-forward-outline"
@@ -287,48 +276,39 @@ function Respondent (props) {
         );
       }
 
-      const setMultipleChoiceValue = (formItemId, selectedAnswerSelection) => {
-
+      const setMultipleChoiceValue = (index, formItemId, selectedAnswerSelection) => {
         // find formitemid yg sama, dihapus. push yg baru.
-
         let responses = [...formResponse];
-
-        let deletePrevChoice = responses.filter((choice) => {
-          return choice.formItemId != formItemId;
-        });
-
         let formItemResponse = {
           formRespondentId: formRespondentId,
           formItemId: formItemId,
           answerSelectionId: selectedAnswerSelection.id,
           answerSelectionValue: selectedAnswerSelection.value,
         }
-
-        deletePrevChoice.push(formItemResponse);
-
-        setFormResponse(deletePrevChoice);
-
+        responses[index-1] = formItemResponse;
+        console.log("Set Multiple Choice Value:");
+        console.log(responses[index-1].answerSelectionValue);
+        setFormResponse(responses);
       }
 
-      const loadMultipleChoice = (formItemId, arrayOptions) => {
-
-    
+      const loadMultipleChoice = (index, formItemId, arrayOptions) => {
         return (
           <React.Fragment>
             <div id="preview-multiple-choice">
               { 
-                arrayOptions.map((options) => {
+                arrayOptions.map((options, innerIdx) => {
                 return (
                   <div id="preview-option-container">
                     <div id="preview-input-mc-cb-container">
                       <input
                         className="answerSelection"
-                        id="option-mc-cb"
+                        id={"options-"+formItemId+"-"+innerIdx}
                         type="radio"
-                        name="options"
-                        onClick={() => setMultipleChoiceValue(formItemId, options)}
+                        name={"options-"+formItemId}
+                        defaultChecked={formResponse[index-1] && options.value == formResponse[index-1].answerSelectionValue}
+                        onClick={() => setMultipleChoiceValue(index, formItemId, options)}
                       />
-                      <label id="option-label" for="options">
+                      <label id="option-label" htmlFor={"options-"+formItemId+"-"+innerIdx}>
                         {options.value == "" ? options.label : options.value}
                       </label>
                     </div>
@@ -341,24 +321,18 @@ function Respondent (props) {
       }
 
       const setLinearScaleValue = (formItemId, selectedAnswerSelection) => {
-
         let responses = [...formResponse];
-
         let deletePrevChoice = responses.filter((choice) => {
           return choice.formItemId != formItemId;
         });
-
         let formItemResponse = {
           formRespondentId: formRespondentId,
           formItemId: formItemId,
           answerSelectionId: selectedAnswerSelection.id,
           answerSelectionValue: selectedAnswerSelection.value,
         }
-
         deletePrevChoice.push(formItemResponse);
-
         setFormResponse(deletePrevChoice);
-
       }
 
       const loadLinearScale = (formItemId, arrayOptions) => {
@@ -389,20 +363,15 @@ function Respondent (props) {
       }
 
       const setCheckboxValue = (formItemId, selectedAnswerSelection) => {
-
         let responses = [...formResponse];
-
         let formItemResponse = {
           formRespondentId: formRespondentId,
           formItemId: formItemId,
           answerSelectionId: selectedAnswerSelection.id,
           answerSelectionValue: selectedAnswerSelection.value,
         }
-
         responses.push(formItemResponse);
-
         setFormResponse(responses);
-
       }
     
       const loadCheckbox = (formItemId, arrayOptions) => {
@@ -431,22 +400,17 @@ function Respondent (props) {
       }
 
       const setShortAnswerValue = (formItemId, value) => {
-
         let responses = [...formResponse];
-
         let prevAnswer = responses.filter((r) => {
           return r.formItemId != formItemId;
         })
-
         let formItemResponse = {
           formRespondentId: formRespondentId,
           formItemId: formItemId,
           answerSelectionId: 1,
           answerSelectionValue: value,
         }
-
         prevAnswer.push(formItemResponse);        
-
       }
     
     const loadShortAnswer = (formItemId) => {
@@ -468,6 +432,8 @@ function Respondent (props) {
             method: "post",
             url: `${BASE_URL}/api/v1/forms/insert-response/${formRespondentId}`,
             data: response
+          }).then(() => {
+            localStorage.setItem("tempFormResponse", JSON.stringify([]));
           })
         } catch(error) {
           console.log(error);
@@ -481,17 +447,13 @@ function Respondent (props) {
     }
 
     const handleCreateNewFeedback = () => {
-
       if(feedbackId == "") {
-
         let newFeedback = {
           formId: formId,
           userId: props.user,
         }
-
         // pernah, displayPreviousMessage passing feedbackId
         // nggak, maka insert feedback
-
         try {
           axios({
             method: "post",
@@ -522,20 +484,16 @@ function Respondent (props) {
     };
 
     const handleClickSend = () => {
-
       if(feedbackId == undefined){
         handleCreateNewFeedback();
       }
-
       let newMessage = {
         feedbackId: feedbackId,
         senderUserId: props.user,
         message: tempMessage,
       };
-
       let messages = [...feedbackMessages];
       messages.push(newMessage);
-
       try {
         axios({
           method: "post",
@@ -548,7 +506,6 @@ function Respondent (props) {
       } catch(error) {
         console.log(error);
       }
-      
     };
 
     const updateTextarea = () => {
@@ -619,7 +576,12 @@ function Respondent (props) {
                     {formMetadata.description}
                 </div>
                 <div className="display-container" id="display-respondent">
-                    {displayQuestion()}
+                  {displayQuestion()}
+                  {index == formItems.length ? (
+                    <Link to="/" className="preview-submit-button" style={{ backgroundColor: primaryColor }} onClick={() => submitForm()}>
+                      Submit Form
+                    </Link>
+                  ) : null}
                 </div>
                 <div id="respondent-chat">
                   {respondentChat()}
