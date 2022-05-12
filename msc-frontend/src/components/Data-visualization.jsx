@@ -66,14 +66,13 @@ function DataVisualization(props) {
       url: `${BASE_URL}/api/v1/forms/get-form-items/${selectedForm.formId}`
     }).then((res) => {
       listOfFormItems = res.data;
-      listOfFormItems.map((item) => {
+      listOfFormItems.map(async (item) => {
         console.log("Masuk ke prosesData:");
         console.log(item);
-        axios({
+        await axios({
           method: "get",
           url: `${BASE_URL}/api/v1/forms/get-response/${item.id}`
         }).then((response) => {
-          console.log("list of answers");
           let resData = response.data;
           let listOfAnswers = [];
           resData.forEach(ri => {

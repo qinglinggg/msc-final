@@ -24,7 +24,7 @@ function Respondent (props) {
     // DESIGN
     const [primaryColor, setPrimaryColor] = useState("Default");
     const [secondaryColor, setSecondaryColor] = useState("Default");
-    const [bgLink, setBgLink] = useState("");
+    const [bgLink, setBgLink] = useState("./images/woman.jpg");
 
     useEffect(() => {
       console.log("formId : " + formId + " is rendered.");
@@ -413,15 +413,15 @@ function Respondent (props) {
         prevAnswer.push(formItemResponse);        
       }
     
-    const loadShortAnswer = (formItemId) => {
-      return (
-        <React.Fragment>
-          <div id="preview-short-answer">
-            <AutoHeightTextarea id="preview-sa-text" placeholder="Your answer" onChange={(e) => setShortAnswerValue(formItemId, e.target.value)}></AutoHeightTextarea>
-          </div>
-        </React.Fragment>
-      );
-    }
+      const loadShortAnswer = (formItemId) => {
+        return (
+          <React.Fragment>
+            <div id="preview-short-answer">
+              <AutoHeightTextarea id="preview-sa-text" placeholder="Your answer" onChange={(e) => setShortAnswerValue(formItemId, e.target.value)}></AutoHeightTextarea>
+            </div>
+          </React.Fragment>
+        );
+      }
 
     const submitForm = () => {
       console.log("submit Form: ");
@@ -440,7 +440,19 @@ function Respondent (props) {
         }
       })
 
-    }
+        formResponse.map((response) => {
+          try {
+            axios({
+              method: "post",
+              url: `${BASE_URL}/api/v1/forms/insert-response/${formRespondentId}`,
+              data: response
+            })
+          } catch(error) {
+            console.log(error);
+          }
+        })
+
+      }
     
     const handleOpenChat = () => {
       setOpenChat(!openChat);
