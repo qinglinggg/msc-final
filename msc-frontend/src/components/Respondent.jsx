@@ -55,8 +55,6 @@ function Respondent (props) {
       // CHAT
       // let createNewFeedback = false;
       // cek pernah kirim message ga
-      // get feedbackId by formId and userId
-      let userId = localStorage.getItem("loggedInUser");
       // try {
       //   axios({
       //     method: "get",
@@ -71,9 +69,9 @@ function Respondent (props) {
       // } catch(error) {
       //   console.log(error);
       // }
+      // get feedbackId by formId and userId
+      let userId = localStorage.getItem("loggedInUser");
       if(userId) {
-        console.log("check post");
-        userId = JSON.parse(localStorage.getItem("loggedInUser")); 
         axios({
           method: "post",
           url: `${BASE_URL}/api/v1/forms/form-respondent/${formId}`,

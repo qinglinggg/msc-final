@@ -119,11 +119,11 @@ public class FormController {
 
     @PostMapping(path = "/form-respondent/{formId}", consumes=MediaType.APPLICATION_JSON_VALUE)
     public String getFormRespondentByUserId(@PathVariable("formId") String formId, @RequestBody String userId){
+        System.out.println("Check ResponseBody:" + userId);
         return formService.getFormRespondentByUserId(formId, userId);
     }
 
     // Form Item Response
-    
     @PostMapping(path = "/insert-response/{formRespondentId}")
     public int insertFormItemResponse(@PathVariable("formRespondentId") String formRespondentId, @RequestBody FormItemResponse formItemResponse){
         return formService.insertFormItemResponse(formRespondentId, formItemResponse);
