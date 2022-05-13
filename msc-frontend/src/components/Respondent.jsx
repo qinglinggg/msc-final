@@ -72,6 +72,7 @@ function Respondent (props) {
       // get feedbackId by formId and userId
       let userId = localStorage.getItem("loggedInUser");
       if(userId) {
+        userId = {"userId": userId}
         axios({
           method: "post",
           url: `${BASE_URL}/api/v1/forms/form-respondent/${formId}`,
