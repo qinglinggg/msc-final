@@ -117,7 +117,7 @@ public class FormController {
         return formService.insertFormRespondent(formId, formRespondent);
     }
 
-    @GetMapping(path = "/form-respondent/{formId}")
+    @PostMapping(path = "/form-respondent/{formId}", consumes=MediaType.APPLICATION_JSON_VALUE)
     public String getFormRespondentByUserId(@PathVariable("formId") String formId, @RequestBody String userId){
         return formService.getFormRespondentByUserId(formId, userId);
     }

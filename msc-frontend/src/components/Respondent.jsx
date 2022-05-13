@@ -56,7 +56,7 @@ function Respondent (props) {
       // let createNewFeedback = false;
       // cek pernah kirim message ga
       // get feedbackId by formId and userId
-      let userId = JSON.parse(localStorage.getItem("loggedInUser"));
+      let userId = localStorage.getItem("loggedInUser");
       // try {
       //   axios({
       //     method: "get",
@@ -71,29 +71,29 @@ function Respondent (props) {
       // } catch(error) {
       //   console.log(error);
       // }
-      try {
-          axios({
-            method: "post",
-            url: `${BASE_URL}/api/v1/forms/form-respondent/${formId}`,
-            data: userId, // cek lagi nanti. 
-          }).then((res) => {
-            console.log("Mencari Form Responden User")
-            if(res) setFormRespondentId(res.data);
-            else {
-              let newFormRespondent = {
-                userId: userId,
-                isTargeted: 0,
-              }
-              axios({
-                method: "post",
-                url: `${BASE_URL}/api/v1/forms/insert-form-respondent/${formId}`
-              }).then((res) => {
-                setFormRespondentId(res.data);
-              })
+      if(userId) {
+        console.log("check post");
+        userId = JSON.parse(localStorage.getItem("loggedInUser")); 
+        axios({
+          method: "post",
+          url: `${BASE_URL}/api/v1/forms/form-respondent/${formId}`,
+          data: userId, // cek lagi nanti. 
+        }).then((res) => {
+          console.log("Mencari Form Responden User")
+          if(res) setFormRespondentId(res.data);
+          else {
+            let newFormRespondent = {
+              userId: userId,
+              isTargeted: 0,
             }
-          })
-      } catch (error) {
-          console.log(error);
+            axios({
+              method: "post",
+              url: `${BASE_URL}/api/v1/forms/insert-form-respondent/${formId}`
+            }).then((res) => {
+              setFormRespondentId(res.data);
+            })
+          }
+        });
       }
     }, []);
 
