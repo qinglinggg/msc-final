@@ -1,5 +1,6 @@
 package com.mscteam.mscbackend.Form;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -118,8 +119,8 @@ public class FormController {
     }
 
     @PostMapping(path = "/form-respondent/{formId}")
-    public String getFormRespondentByUserId(@PathVariable("formId") String formId, @RequestBody Map<String, String> map){
-        String userId = map["userId"];
+    public String getFormRespondentByUserId(@PathVariable("formId") String formId, @RequestBody HashMap<String, String> map){
+        String userId = map.get("userId");
         System.out.println("Check ResponseBody: " + userId);
         return formService.getFormRespondentByUserId(formId, userId);
     }
