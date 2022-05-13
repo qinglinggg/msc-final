@@ -1752,6 +1752,9 @@ body {
   width: 100%;
   height: fit-content;
   margin: 15px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .graph-section > .graph {
@@ -1762,6 +1765,11 @@ body {
 
 .graph-section > .sub-graph {
   margin-bottom: 30px;
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: medium;
 }
 
 #export-container {
