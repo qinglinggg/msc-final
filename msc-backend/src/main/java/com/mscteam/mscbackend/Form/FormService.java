@@ -123,7 +123,7 @@ public class FormService {
         return formDAO.insertFormRespondent(formId, formRespondent);
     }
 
-    public String getFormRespondentByUserId(String formId, String userId){
+    public Optional<String> getFormRespondentByUserId(String formId, String userId){
         return formDAO.getFormRespondentByUserId(formId, userId);
     }
 

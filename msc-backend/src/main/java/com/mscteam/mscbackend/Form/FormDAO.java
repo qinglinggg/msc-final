@@ -266,13 +266,12 @@ public class FormDAO {
         return formRespondent.getFormRespondentId().toString();
     }
 
-    public String getFormRespondentByUserId(String formId, String userId){
+    public Optional<String> getFormRespondentByUserId(String formId, String userId){
         final String query = "SELECT formRespondentId FROM FormRespondent WHERE formId = ? AND userId = ?";
         System.out.println("in");
-        String formRespondentId = jdbcTemplate.queryForObject(query, (resultSet, i) -> {
+        Optional<String> formRespondentId = jdbcTemplate.queryForObject(query, (resultSet, i) -> {
             String resId = resultSet.getString("formRespondentId");
-            if (resId == null) resId = "";
-            return resId;
+            return Optional.ofNullable(resId);
         }, formId, userId);
         System.out.println("out");
         return formRespondentId;
