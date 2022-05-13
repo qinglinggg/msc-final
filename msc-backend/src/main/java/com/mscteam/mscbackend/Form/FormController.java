@@ -119,8 +119,8 @@ public class FormController {
 
     @PostMapping(path = "/form-respondent/{formId}")
     public String getFormRespondentByUserId(@PathVariable("formId") String formId, @RequestBody Map<String, String> map){
-        String userId = map['userId'];
-        System.out.println("Check ResponseBody:" + userId);
+        String userId = map["userId"];
+        System.out.println("Check ResponseBody: " + userId);
         return formService.getFormRespondentByUserId(formId, userId);
     }
 
