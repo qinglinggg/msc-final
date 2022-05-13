@@ -34,7 +34,7 @@ public class FormDAO {
                 createDate = dateFormat.parse(resultSet.getString("createDate"));
                 modifyDate = dateFormat.parse(resultSet.getString("modifyDate"));
             } catch (Exception e) {
-                System.out.println("[GET] Form with ID: " + formId + " has been processed.");
+                
             }
             return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate);
         });
@@ -55,7 +55,7 @@ public class FormDAO {
                 createDate = dateFormat.parse(resultSet.getString("createDate"));
                 modifyDate = dateFormat.parse(resultSet.getString("modifyDate"));
             } catch (Exception e) {
-                e.printStackTrace();
+                
             }
             return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate);
         }, id);
@@ -301,7 +301,7 @@ public class FormDAO {
                 createDate = dateFormat.parse(resultSet.getString("createDate"));
                 modifyDate = dateFormat.parse(resultSet.getString("modifyDate"));
             } catch (Exception e) {
-                e.printStackTrace();
+                
             }
             System.out.println("Checking: " + title);
             return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate);
