@@ -13,17 +13,16 @@ import Loading from "./Loading";
 const BASE_URL = "http://10.61.38.193:8080";
 
 function DataVisualization(props) {
-  const [formItems, setFormItems] = useState(props.formItems_data);
   const [openMenu, setOpenMenu] = useState(false);
-  const [openVisibility, setOpenVisibility] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
   const [activePage, setActivePage] = useState(1);
   const [selectedExport, setSelectionExport] = useState("pdf");
-  const [summaryRef, setSummaryRef] = useState(null);
-  const [summaryPage, setSummaryPage] = useState(null);
   const [privacyCheck, setPrivacyCheck] = useState(false);
   const [currentStep, setCurrentStep] = useState([]);
   const [inLoading, setInLoading] = useState(true);
+  const [itemList, setItemList] = useState([]);
+  const [countData, setCountData] = useState([]);
+  const [answerList, setAnswerList] = useState([]);
   let componentRef = useRef();
 
   const exportOptions = [
@@ -60,38 +59,43 @@ function DataVisualization(props) {
   async function processData() {
     let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
     let listOfFormItems = [];
+    let tempAnswerList = []
     let count = [];
+    for(let i; i < listOfFormItems.length; i++) {
+      count.push(i);
+      tempAnswerList.push(i);
+    }
     await axios({
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-form-items/${selectedForm.formId}`
     }).then((res) => {
       listOfFormItems = res.data;
-      listOfFormItems.map((item) => {
-        console.log("Masuk ke prosesData:");
-        console.log(item);
-        axios({
+      for(let i=0; i < listOfFormItems.length; i++) count.push([]);
+      listOfFormItems.map(async (item, fi) => {
+        await axios({
           method: "get",
           url: `${BASE_URL}/api/v1/forms/get-response/${item.id}`
         }).then((response) => {
-          console.log("list of answers");
           let resData = response.data;
           let listOfAnswers = [];
           resData.forEach(ri => {
-            console.log("Response Item:");
-            console.log(ri);
             let validator = true;
             listOfAnswers.forEach(a => {
               if(a === ri.answerSelectionValue) validator = false;
             });
             if (validator) listOfAnswers.push(ri.answerSelectionValue);
           });
-          for(let i=0; i < listOfAnswers; i++) count.push(0);
-          resData.forEach(ri => {
-            let idxSelector = resData.findIndex(ri);
-            count[idxSelector] += 1;
-          })
+          tempAnswerList[fi] = listOfAnswers;
+          if(count[fi].length == 0) for(let i=0; i < listOfAnswers.length; i++) count[fi].push(0);
+          resData.forEach((ri, idx) => {
+            count[fi][idx] += 1;
+          });
         });
       });
+    }).finally(() => {
+      setItemList(listOfFormItems);
+      setAnswerList(tempAnswerList);
+      setCountData(count);
       setTimeout(() => setInLoading(false), 3000);
     });
     return listOfFormItems, count;
@@ -149,6 +153,11 @@ function DataVisualization(props) {
     }
   }, [])
 
+  useEffect(() => {
+    if (activePage == 1) processData();
+    else if (activePage == 2) processResponses();
+  }, [activePage]);
+
   const handleSettings = () => {
     setOpenSettings(!openSettings);
   }
@@ -166,13 +175,13 @@ function DataVisualization(props) {
   }
 
   const displaySummaryPage = () => {
-    let listOfFormItems, countData = processData();
     return (
       <React.Fragment>
         {inLoading ? (<Loading text="Memuat data ringkasan..."/>) : (
         <Summary
           ref={componentRef}
-          data={listOfFormItems}
+          data={itemList}
+          answerList={answerList}
           countData={countData}
         />
         )}

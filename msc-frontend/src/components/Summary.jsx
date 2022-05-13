@@ -6,22 +6,32 @@ const Summary = React.forwardRef((props, ref) => {
   let tempArr = [];
   return (
     <React.Fragment>
-      {tempArr.map((item, i) => {
+      {props.data ? props.data.map((item, i) => {
         counter += 1;
         return (
           <div className="result-container">
             <div className="question-field">
-              {counter}. {item.question}
+              {counter}. {item.content}
             </div>
             <div className="graph-section">
               <div className="graph">
-                <Graph Question={item.question} count={counter} />
+                <Graph question={item.question} answerList={props.answerList[i]} count={counter} countData={props.countData[i]} />
               </div>
-              <div className="sub-graph">Count Data: {props.countData[i]}</div>
+              <div className="sub-graph">
+                <ul>
+                { props.countData[i] ? props.countData[i].map((countSum, ci) => {
+                  return (
+                    <li>{ props.answerList[i][ci] } : { countSum }</li>
+                  );
+                }) : (
+                  <span>No answer found</span>
+                )}
+                </ul>
+              </div>
             </div>
           </div>
         );
-      })}
+      }) : null}
       {counter === 0 ? (
         <span className="no-response">There is no response yet.</span>
       ) : null}
