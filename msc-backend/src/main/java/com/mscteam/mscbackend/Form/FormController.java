@@ -113,7 +113,7 @@ public class FormController {
 
     // Form Respondent
 
-    @PostMapping(path = "/insert-form-respondent/{formId}")
+    @PostMapping(path = "/insert-form-respondent/{formId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public String insertFormRespondent(@PathVariable("formId") String formId, @RequestBody FormRespondent formRespondent){
         return formService.insertFormRespondent(formId, formRespondent);
     }

@@ -70,25 +70,31 @@ function Respondent (props) {
       //   console.log(error);
       // }
       // get feedbackId by formId and userId
-      let userId = localStorage.getItem("loggedInUser");
+      let userId = JSON.parse(localStorage.getItem("loggedInUser"));
       if(userId) {
-        userId = {"userId": userId}
+        let userId_data = {"userId": userId}
         axios({
           method: "post",
           url: `${BASE_URL}/api/v1/forms/form-respondent/${formId}`,
-          data: userId, // cek lagi nanti. 
+          data: userId_data, // cek lagi nanti. 
         }).then((res) => {
-          console.log("Mencari Form Responden User")
-          if(res) setFormRespondentId(res.data);
+          console.log("Mencari Form Responden User");
+          console.log(res.data && res.data.length > 0 ? true : false);
+          if(res.data && res.data.length > 0) setFormRespondentId(res.data);
           else {
+            console.log("masuk res");
             let newFormRespondent = {
+              formId: formId,
               userId: userId,
               isTargeted: 0,
             }
+            console.log(newFormRespondent);
             axios({
               method: "post",
-              url: `${BASE_URL}/api/v1/forms/insert-form-respondent/${formId}`
+              url: `${BASE_URL}/api/v1/forms/insert-form-respondent/${formId}`,
+              data: newFormRespondent
             }).then((res) => {
+              console.log("inserted");
               setFormRespondentId(res.data);
             });
           }
@@ -280,7 +286,7 @@ function Respondent (props) {
         let responses = [...formResponse];
         let formItemResponse = {
           formRespondentId: formRespondentId,
-          formItemId: formItemId,
+          formItemsId: formItemId,
           answerSelectionId: selectedAnswerSelection.id,
           answerSelectionValue: selectedAnswerSelection.value,
         }
@@ -326,7 +332,7 @@ function Respondent (props) {
         });
         let formItemResponse = {
           formRespondentId: formRespondentId,
-          formItemId: formItemId,
+          formItemsId: formItemId,
           answerSelectionId: selectedAnswerSelection.id,
           answerSelectionValue: selectedAnswerSelection.value,
         }
@@ -365,7 +371,7 @@ function Respondent (props) {
         let responses = [...formResponse];
         let formItemResponse = {
           formRespondentId: formRespondentId,
-          formItemId: formItemId,
+          formItemsId: formItemId,
           answerSelectionId: selectedAnswerSelection.id,
           answerSelectionValue: selectedAnswerSelection.value,
         }
@@ -405,7 +411,7 @@ function Respondent (props) {
         })
         let formItemResponse = {
           formRespondentId: formRespondentId,
-          formItemId: formItemId,
+          formItemsId: formItemId,
           answerSelectionId: 1,
           answerSelectionValue: value,
         }

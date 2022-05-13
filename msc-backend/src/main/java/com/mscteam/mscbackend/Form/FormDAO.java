@@ -261,8 +261,8 @@ public class FormDAO {
     }
 
     public String insertFormRespondent(String formId, FormRespondent formRespondent){
-        final String query = "INSERT INTO FormRespondent (formRespondentId, formId, userId, submitDate) VALUES (?,?,?,?)";
-        int res = jdbcTemplate.update(query, formRespondent.getFormRespondentId().toString(), formId, formRespondent.getUserId().toString(), dateFormat.format(formRespondent.getSubmitDate()));
+        final String query = "INSERT INTO FormRespondent (formRespondentId, formId, userId, submitDate, isTargeted) VALUES (?,?,?,?,?)";
+        int res = jdbcTemplate.update(query, formRespondent.getFormRespondentId().toString(), formId, formRespondent.getUserId().toString(), dateFormat.format(formRespondent.getSubmitDate()), formRespondent.getIsTargeted());
         return formRespondent.getFormRespondentId().toString();
     }
 
