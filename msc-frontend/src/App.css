@@ -2373,7 +2373,7 @@ body {
   width: 100%;
   display: flex;
   flex-direction: row;
-  font-size: 15px;
+  font-size: large;
   font-family: var(--font-roboto);
   margin-bottom: 15px;
   text-align: left;
@@ -2392,6 +2392,8 @@ body {
   width: 100%;
   height: fit-content;
   margin: 20px;
+  padding-left: 25px;
+  font-size: medium;
 }
 
 #preview-linear-scale {
