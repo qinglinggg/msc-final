@@ -78,11 +78,9 @@ function Respondent (props) {
           url: `${BASE_URL}/api/v1/forms/form-respondent/${formId}`,
           data: userId_data, // cek lagi nanti. 
         }).then((res) => {
-          console.log("Mencari Form Responden User");
           console.log(res.data && res.data.length > 0 ? true : false);
-          if(res.data && res.data.length > 0) setFormRespondentId(res.data);
+          if(res.data && res.data.length > 0) setFormRespondentId(res.data[0]);
           else {
-            console.log("masuk res");
             let newFormRespondent = {
               formId: formId,
               userId: userId,
@@ -94,13 +92,17 @@ function Respondent (props) {
               url: `${BASE_URL}/api/v1/forms/insert-form-respondent/${formId}`,
               data: newFormRespondent
             }).then((res) => {
-              console.log("inserted");
-              setFormRespondentId(res.data);
+              setFormRespondentId(res.data[0]);
             });
           }
         });
       }
     }, []);
+
+    useEffect(() => {
+      console.log("ID Candidate:");
+      console.log(formRespondentId);
+    }, [formRespondentId]);
 
     useEffect(() => {
       if(!formItems) return;

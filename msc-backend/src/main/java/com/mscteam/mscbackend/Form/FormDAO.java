@@ -179,7 +179,7 @@ public class FormDAO {
             String answerSelectionId = resultSet.getString("answerSelectionId");
             String answerSelectionValue = resultSet.getString("answerSelectionValue");
             return new FormItemResponse(UUID.fromString(formRespondentId), UUID.fromString(formItemsId), UUID.fromString(formItemResponseId), UUID.fromString(answerSelectionId), answerSelectionValue);
-        });
+        }, formItemsId);
         return formItemResponses;
     }
 
