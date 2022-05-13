@@ -566,6 +566,20 @@ function Respondent (props) {
       );
     }
 
+    const displayOnSubmission = () => {
+      return (
+        <React.Fragment>
+          {formRespondentId ? (
+            <Link to="/" className="preview-submit-button" style={{ backgroundColor: primaryColor }} onClick={() => submitForm()}>
+              Submit Form
+            </Link>
+          ) : (
+            <div className="preview-submit-button" style={{ backgroundColor: "gray" }} onClick={() => submitForm()}>Submit Form (Unable to connect)</div>
+          )}
+        </React.Fragment>
+      )
+    }
+
     return (
         <React.Fragment>
             <div className="respondent-container">
@@ -578,9 +592,7 @@ function Respondent (props) {
                 <div className="display-container" id="display-respondent">
                   {displayQuestion()}
                   {index == formItems.length ? (
-                    <Link to="/" className="preview-submit-button" style={{ backgroundColor: primaryColor }} onClick={() => submitForm()}>
-                      Submit Form
-                    </Link>
+                    displayOnSubmission()
                   ) : null}
                 </div>
                 <div id="respondent-chat">
