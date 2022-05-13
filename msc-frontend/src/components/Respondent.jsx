@@ -90,7 +90,7 @@ function Respondent (props) {
               url: `${BASE_URL}/api/v1/forms/insert-form-respondent/${formId}`
             }).then((res) => {
               setFormRespondentId(res.data);
-            })
+            });
           }
         });
       }
