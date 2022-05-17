@@ -77,6 +77,11 @@ public class FormController {
         return formService.getFormItemById(id);
     }
     
+    @GetMapping(path = "/get-response/{formItemsId}")
+    public List<FormItemResponse> getFormItemResponse(@PathVariable("formItemsId") String formItemsId){
+        return formService.getFormItemResponse(formItemsId);
+    }
+    
     @PostMapping(path = "/add-answer-selection/{formItemsId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public FormAnswerSelection addAnswerSelection(@PathVariable("formItemsId") String formItemsId,
             @RequestBody FormAnswerSelection answerSelection) {
