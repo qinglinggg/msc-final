@@ -61,7 +61,31 @@ function Invitation(props) {
     //   },
     // ]);
 
-    // Track
+    let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
+    tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
+    if(tempBreadcrumbs.length >= 2) {
+      while(tempBreadcrumbs.slice(-1)[0].page != "Home" && tempBreadcrumbs.slice(-1)[0].page != "/"){
+        tempBreadcrumbs.pop();
+      }
+    }
+    let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
+    tempBreadcrumbs.push(
+      {
+        page: "Invitation - " + selectedForm['title'],
+        path: window.location.href,
+      }
+    );
+    setCurrentStep(tempBreadcrumbs);
+    localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
+    let listSelection = document.querySelectorAll(".page-button");
+    listSelection.forEach((item) => {
+      item.addEventListener('click', (e) => {
+        handleCurrentSelection(e.target);
+      })
+    });
+  }, []);
+
+  useEffect(() => {
     let userInvitedList = [];
     try {
       axios({
@@ -71,6 +95,8 @@ function Invitation(props) {
         if(res.data){
           userInvitedList = res.data;
           // setIndex(index + 1);
+          console.log("---- userInvitedList");
+          console.log(userInvitedList);
           let index = 0;
           userInvitedList.map((u) => {
             index++;
@@ -99,56 +125,14 @@ function Invitation(props) {
       })
       setUserInvited(userInvitedList);
     }
-    let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
-    tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
-    if(tempBreadcrumbs.length >= 2) {
-      while(tempBreadcrumbs.slice(-1)[0].page != "Home" && tempBreadcrumbs.slice(-1)[0].page != "/"){
-        tempBreadcrumbs.pop();
-      }
-    }
-    let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
-    tempBreadcrumbs.push(
-      {
-        page: "Invitation - " + selectedForm['title'],
-        path: window.location.href,
-      }
-    );
-    setCurrentStep(tempBreadcrumbs);
-    localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
-    let listSelection = document.querySelectorAll(".page-button");
-    listSelection.forEach((item) => {
-      item.addEventListener('click', (e) => {
-        handleCurrentSelection(e.target);
-      })
-    });
-  }, [])
-
-  // useEffect((prevState) => {
-  //   if(prevState.userInvitedList != userInvitedList){
-      
-  //   }
-  // }, [userInvitedList]);
+  }, [userInvited]);
 
   const handleMenu = () => {
     setOpenMenu(!openMenu);
   }
 
-  // const displayMenu = () => {
-  //   return (
-  //     <React.Fragment>
-  //       <Menu />
-  //     </React.Fragment>
-  //   );
-  // }
-
   const handleOpenSharePage = () => {
     setPageSelection(true);
-  }
-  
-  const handlePopupTimeout = () => {
-    setTimeout(() => {
-
-    })
   }
 
   const displaySharePage = () => {
@@ -230,7 +214,6 @@ function Invitation(props) {
   }
 
   const handleSubmitTargetedUserEmail = () => {
-    let flag = 0;
     tags.map((userEmail) => {
       try {
         axios({
@@ -239,15 +222,12 @@ function Invitation(props) {
           data: userEmail,
           headers: { "Content-Type": "text/plain" },
         }).then((res) => {
-          flag = 1;
+          setTags([]);
+          setTagsElement([]);
           console.log("Successfully inserted");
         })
       } catch(error) {
           console.log(error);
-      }
-    }, () => {
-      if(flag == 1){
-        // set user invited list
       }
     })
   }
