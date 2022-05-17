@@ -230,21 +230,16 @@ function Invitation(props) {
   }
 
   const handleSubmitTargetedUserEmail = () => {
-    console.log("tags: ");
-    console.log(tags);
-
     let flag = 0;
-
     tags.map((userEmail) => {
       try {
         axios({
           method: "post",
           url: `${BASE_URL}/api/v1/forms/insert-targeted-user/${formId}`,
           data: userEmail,
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "text/plain" },
         }).then((res) => {
           flag = 1;
-
           console.log("Successfully inserted");
         })
       } catch(error) {
