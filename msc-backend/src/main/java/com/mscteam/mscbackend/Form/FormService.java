@@ -159,8 +159,13 @@ public class FormService {
     public int deleteTargetedUser(String formId, String userEmail){
         List<String> userId = userProfileDAO.getUserByEmail(userEmail);
         String resId = "";
-        if(userId != null) resId = userId.get(0);
-        return formDAO.deleteTargetedUser(formId, resId);
+        if(userId != null){
+            resId = userId.get(0);
+            List<String> formRespondentId = formDAO.getFormRespondentByUserId(formId, resId);
+            if(formRespondentId != null) return formDAO.deleteTargetedUser(formId, resId, 1);
+        }
+        
+        return formDAO.deleteTargetedUser(formId, resId, 0);
     }
 
 }

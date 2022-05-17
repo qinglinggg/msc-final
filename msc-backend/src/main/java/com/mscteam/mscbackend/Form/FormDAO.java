@@ -337,8 +337,11 @@ public class FormDAO {
         return res;
     }
 
-    public int deleteTargetedUser(String formId, String userId){
-        final String query = "DELETE FROM FormRespondent WHERE formId = ? AND userId = ? AND submitDate IS NULL";
+    public int deleteTargetedUser(String formId, String userId, Integer alreadySubmitted){
+        String query = "";
+        if(alreadySubmitted == 0) query = "DELETE FROM FormRespondent WHERE formId = ? AND userId = ? AND submitDate IS NULL";
+        else if(alreadySubmitted == 1) query = "UPDATE FormRespondent SET isTargeted = 0 WHERE formId = ? AND userId ?";
+        
         int res = jdbcTemplate.update(query, formId, userId);
         return res;
     }
