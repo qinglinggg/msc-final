@@ -175,4 +175,8 @@ public class FormService {
         return -1;
     }
 
+    public int forceDeleteFormRespondent(String formId, String userId){
+        return formDAO.forceDeleteFormRespondent(formId, userId);
+    }
+
 }

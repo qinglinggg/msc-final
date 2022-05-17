@@ -156,4 +156,9 @@ public class FormController {
     public int deleteTargetedUser(@PathVariable("formId") String formId, @RequestBody String userEmail){
         return formService.deleteTargetedUser(formId, userEmail);
     }
+
+    @DeleteMapping(path="/force-delete-form-respondent/{formId}")
+    public int forceDeleteFormRespondent(@PathVariable("formId") String formId, @RequestBody String userId){
+        return formService.forceDeleteFormRespondent(formId, userId);
+    }
 }

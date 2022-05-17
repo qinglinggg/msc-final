@@ -344,4 +344,11 @@ public class FormDAO {
         return res;
     }
 
+    // cuma untuk keperluan postman
+    public int forceDeleteFormRespondent(String formId, String userId){
+        final String query = "DELETE FROM FormRespondent WHERE formId = ? AND userId = ?";
+        int res = jdbcTemplate.update(query, formId, userId);
+        return res;
+    }
+
 }
