@@ -71,7 +71,6 @@ function Question(props) {
   const autoResizeContent = (el) => {
     el.style.height = "25px";
     el.style.height = (el.scrollHeight)+"px";
-    console.log("Auto Scroll height: " + el.scrollHeight);
   }
 
   useEffect(() => {
@@ -120,7 +119,6 @@ function Question(props) {
         let el = document.getElementById(optionId);
         if(el){
           el.value = obj.value;
-          console.log(obj.value);
           autoResizeContent(el);
         }
       });
@@ -429,8 +427,6 @@ function Question(props) {
     for (let i = 0; i < props.questionData.optionCounter; i++) {
       labelOptions.push({ value: i+1, label: i+1 });
     }
-
-    console.log(props.questionData.arrayOptions);
     return (
       <React.Fragment>
         <div className="linear-container">

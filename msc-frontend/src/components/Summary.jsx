@@ -13,22 +13,7 @@ const Summary = React.forwardRef((props, ref) => {
             <div className="question-field">
               {counter}. {item.content}
             </div>
-            <div className="graph-section">
-              <div className="graph">
-                <Graph question={item.question} answerList={props.answerList[i]} count={counter} countData={props.countData[i]} />
-              </div>
-              <div className="sub-graph">
-                <ul>
-                { props.countData[i] ? props.countData[i].map((countSum, ci) => {
-                  return (
-                    <li>{ props.answerList[i][ci] } : { countSum }</li>
-                  );
-                }) : (
-                  <span>No answer found</span>
-                )}
-                </ul>
-              </div>
-            </div>
+            <Graph question={item.question} type={item.type} answerList={props.answerList[i]} count={counter} countData={props.countData[i]} />
           </div>
         );
       }) : null}
