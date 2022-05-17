@@ -144,13 +144,17 @@ public class FormService {
     }
 
     public int insertTargetedUser(String formId, String userEmail){
-        String userId = userProfileDAO.getUserByEmail(userEmail);
-        return formDAO.insertTargetedUser(formId, userId);
+        List<String> userId = userProfileDAO.getUserByEmail(userEmail);
+        String resId = "";
+        if(userId != null) resId = userId.get(0);
+        return formDAO.insertTargetedUser(formId, resId);
     }
 
     public int deleteTargetedUser(String formId, String userEmail){
-        String userId = userProfileDAO.getUserByEmail(userEmail);
-        return formDAO.deleteTargetedUser(formId, userId);
+        List<String> userId = userProfileDAO.getUserByEmail(userEmail);
+        String resId = "";
+        if(userId != null) resId = userId.get(0);
+        return formDAO.deleteTargetedUser(formId, resId);
     }
 
 }
