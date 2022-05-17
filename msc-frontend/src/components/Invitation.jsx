@@ -70,8 +70,10 @@ function Invitation(props) {
       }).then((res) => {
         if(res.data){
           userInvitedList = res.data;
-          setIndex(index + 1);
+          // setIndex(index + 1);
+          let index = 0;
           userInvitedList.map((u) => {
+            index++;
             u['number'] = index;
           })
         }
@@ -120,6 +122,12 @@ function Invitation(props) {
       })
     });
   }, [])
+
+  useEffect((prevState) => {
+    if(prevState.userInvitedList != userInvitedList){
+      
+    }
+  }, [userInvitedList]);
 
   const handleMenu = () => {
     setOpenMenu(!openMenu);
@@ -222,20 +230,30 @@ function Invitation(props) {
   }
 
   const handleSubmitTargetedUserEmail = () => {
+    console.log("tags: ");
+    console.log(tags);
+
+    let flag = 0;
+
     tags.map((userEmail) => {
       try {
         axios({
           method: "post",
-          url: `${BASE_URL}/api/v1/forms/${formId}`,
-          data: userEmail
+          url: `${BASE_URL}/api/v1/forms/insert-targeted-user/${formId}`,
+          data: userEmail,
+          headers: { "Content-Type": "application/json" },
         }).then((res) => {
+          flag = 1;
+
           console.log("Successfully inserted");
         })
       } catch(error) {
           console.log(error);
       }
     }, () => {
-
+      if(flag == 1){
+        // set user invited list
+      }
     })
   }
 

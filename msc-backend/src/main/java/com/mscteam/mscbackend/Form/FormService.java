@@ -126,6 +126,10 @@ public class FormService {
     public int insertFormItemResponse(String formRespondentId, FormItemResponse formItemResponse){
         return formDAO.insertFormItemResponse(formRespondentId, formItemResponse);
     }
+    
+    public List<FormItemResponse> getFormItemResponse(String formItemId) {
+        return formDAO.getFormItemResponse(formItemId);
+    }
 
     public int updateFormItemResponse(String formRespondentId, FormItemResponse formItemResponse){
         return formDAO.updateFormItemResponse(formRespondentId, formItemResponse);

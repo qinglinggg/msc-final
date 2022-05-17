@@ -118,9 +118,11 @@ function Question(props) {
         let optionId =
         "question-" + props.questionData.id + "-options-" + obj.id;
         let el = document.getElementById(optionId);
-        el.value = obj.value;
-        console.log(obj.value);
-        autoResizeContent(el);
+        if(el){
+          el.value = obj.value;
+          console.log(obj.value);
+          autoResizeContent(el);
+        }
       });
     }
   }, [props.arrayOptions])
