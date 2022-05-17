@@ -152,8 +152,9 @@ public class FormService {
             // check if user already invited
             List<String> formRespondentId = formDAO.getFormRespondentByUserId(formId, resId);
             if(formRespondentId != null) return -1;
-        }
-        return formDAO.insertTargetedUser(formId, resId);
+            return formDAO.insertTargetedUser(formId, resId);
+        } 
+        return -1;
     }
 
     public int deleteTargetedUser(String formId, String userEmail){
@@ -163,9 +164,10 @@ public class FormService {
             resId = userId.get(0);
             List<String> formRespondentId = formDAO.getFormRespondentByUserId(formId, resId);
             if(formRespondentId != null) return formDAO.deleteTargetedUser(formId, resId, 1);
+            return formDAO.deleteTargetedUser(formId, resId, 0);
         }
         
-        return formDAO.deleteTargetedUser(formId, resId, 0);
+        return -1;
     }
 
 }
