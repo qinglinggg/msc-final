@@ -123,6 +123,21 @@ function Invitation(props) {
           console.log(error);
         }
       })
+      userInvitedList.map((u) => {
+        // get form respondent
+        try {
+          axios({
+            method: "get",
+            url: `${BASE_URL}/api/v1/forms/`
+          }).then((res) => {
+            if(res.data){
+              console.log(res.data);
+            }
+          })
+        } catch(error) {
+          console.log(error);
+        }
+      })
       setUserInvited(userInvitedList);
     }
   }, [userInvited]);
