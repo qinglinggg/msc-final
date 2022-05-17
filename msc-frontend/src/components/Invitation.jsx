@@ -123,11 +123,11 @@ function Invitation(props) {
     });
   }, [])
 
-  useEffect((prevState) => {
-    if(prevState.userInvitedList != userInvitedList){
+  // useEffect((prevState) => {
+  //   if(prevState.userInvitedList != userInvitedList){
       
-    }
-  }, [userInvitedList]);
+  //   }
+  // }, [userInvitedList]);
 
   const handleMenu = () => {
     setOpenMenu(!openMenu);
