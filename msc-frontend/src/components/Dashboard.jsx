@@ -508,13 +508,25 @@ function Dashboard(props) {
             <br />
             <label>
               Name
-              <input className="form-alignright" id="input-title" type="text" name="name" value={title}/>
+              <input className="form-alignright" 
+                id="input-title" 
+                type="text" 
+                name="name" 
+                value={title}
+                onChange={(e) => setTitle(e.value)}
+              />
             </label>
             <br />
             <br />
             <label>
               Description
-              <input className="form-alignright" id="input-desc" type="text" name="desc" value={selectedForm.description}/>
+              <input className="form-alignright" 
+                id="input-desc" 
+                type="text" 
+                name="desc" 
+                value={description}
+                onChange={(e) => setDescription(e.value)}
+              />
             </label>
             <br />
             <br />

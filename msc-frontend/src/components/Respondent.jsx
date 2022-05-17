@@ -16,6 +16,8 @@ function Respondent (props) {
     const [answerSelection, setAnswerSelection] = useState([]);
     const [formRespondentId, setFormRespondentId] = useState();
     const [formResponse, setFormResponse] = useState([]);
+    const [next, setNext] = useState(true);
+
     const [openChat, setOpenChat] = useState(false);
     const [tempMessage, setTempMessage] = useState("");
     const [feedbackId, setFeedbackId] = useState();
@@ -24,7 +26,7 @@ function Respondent (props) {
     // DESIGN
     const [primaryColor, setPrimaryColor] = useState("Default");
     const [secondaryColor, setSecondaryColor] = useState("Default");
-    const [bgLink, setBgLink] = useState("");
+    const [bgLink, setBgLink] = useState("./images/woman.jpg");
 
     useEffect(() => {
       console.log("formId : " + formId + " is rendered.");
@@ -46,6 +48,8 @@ function Respondent (props) {
               url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`
           }).then((res) => {
               setFormItems(res.data);
+              console.log("USEEFFECT()");
+              console.log(res.data);
           })
       } catch (error) {
         console.log(error);
@@ -207,13 +211,59 @@ function Respondent (props) {
         }
     }
     
+    // const validateAnswer = () => {
+    //   console.log("entered validate answer...");
+    //   let current = formItems[index-1];
+    //   // console.log(current);
+    //   let requiredField = document.getElementById("required-field");
+
+    //   if(!formResponse[index-1]){
+    //     console.log("this is a required question!");
+    //     requiredField.innerHTML = "* This is a required question!";
+    //     return false;
+    //   } 
+    //   if(requiredField){
+    //     if(current.isRequired && formResponse[index-1].answerSelectionValue == ""){
+    //       console.log("kok masuk sini");
+    //       console.log("this is a required question!");
+    //       requiredField.innerHTML = "* This is a required question!";
+    //       return false;
+    //     } else {
+    //       console.log("kosongin is required");
+    //       requiredField.innerHTML = "";
+    //       return true;
+    //     }
+    //   }
+    // }
+
+    useEffect(() => {
+      console.log("entering validate answer...");
+      let length = formItems.length;
+      if(index <= length){
+        let current = formItems[index-1];
+        let requiredField = document.getElementById("required-field");
+
+        if(current.isRequired){
+          if(!formResponse[index-1] || formResponse[index-1].answerSelectionValue == ""){
+            console.log("this is a required question!");
+            requiredField.innerHTML = "* This is a required question!";
+            setNext(false);
+          } else {
+            console.log("kosongin is required");
+            requiredField.innerHTML = "";
+            setNext(true);
+          }
+        }
+
+      }
+    }, [index, formResponse])
+
     const handleNext = () => {
-        setIndex(index + 1);
-        // console.log(index);
+      if(next) setIndex(index + 1);
     }
     
     const handleBack = () => {
-        setIndex(index - 1);
+      setIndex(index - 1);
     }
      
     const displayQuestion = () => {
@@ -233,8 +283,12 @@ function Respondent (props) {
 
     const displayQuestionCard = (length) => {
         let loadAnswerField;
-        let current = formItems[index-1];
-        getAnswerSelection(formItems[index-1]);
+        let current;
+        if(index <= length){
+          current = formItems[index-1];
+          getAnswerSelection(formItems[index-1]); 
+        }
+
         return (
           <React.Fragment>
             {index == 1 ? 
@@ -248,29 +302,49 @@ function Respondent (props) {
               </div>
             )}
             <div className="preview-flex">
-              Selected option: {formResponse && formResponse[index-1] ? formResponse[index-1].answerSelectionValue : null}
-              <div className="preview-field">
-              <div id="preview-index">
-              {index}.
-              </div>
-              {current.content == '' ? 
-                <div id="preview-warning">There is no question, please contact the author.</div> 
-                : current.content
-              }
-              </div>
-              <div className="answer-field">
-                {current.type == "LS"
-                  ? (loadAnswerField = loadLinearScale(current.id, answerSelection))
-                  : current.type == "MC"
-                  ? (loadAnswerField = loadMultipleChoice(index, current.id, answerSelection))
-                  : current.type == "CB"
-                  ? (loadAnswerField = loadCheckbox(current.id, answerSelection))
-                  : current.type == "SA"
-                  ? (loadAnswerField = loadShortAnswer(current.id))
-                  : null}
-              </div>
+              {index <= length ? (
+                <React.Fragment>
+                  Selected option: {formResponse && formResponse[index-1] ? formResponse[index-1].answerSelectionValue : null}
+                  <div className="preview-field">
+                    <div id="preview-index">
+                      {index}.
+                    </div>
+                    {current.content == '' ? 
+                      <div id="preview-warning">
+                        There is no question, please contact the author.
+                      </div> 
+                      : current.content
+                    }
+                  </div>
+                  <div className="answer-field">
+                    {current.type == "LS"
+                      ? (loadAnswerField = loadLinearScale(current.id, answerSelection))
+                      : current.type == "MC"
+                      ? (loadAnswerField = loadMultipleChoice(index, current.id, answerSelection))
+                      : current.type == "CB"
+                      ? (loadAnswerField = loadCheckbox(current.id, answerSelection))
+                      : current.type == "SA"
+                      ? (loadAnswerField = loadShortAnswer(current.id))
+                      : null}
+                  </div>
+                  <div id="required-field" />
+                </React.Fragment>
+              ) : (
+                <div className="respondent-endpage" >
+                  <div className="respondent-endpage-title" style={{ backgroundColor: primaryColor }}>Congratulations!</div>
+                  <div className="respondent-endpage-description">You are at the end of the form. Click the button below to submit your answer! :)</div>
+                  {/* {readyToSubmit ? */}
+                    <Link to="/" className="preview-submit-button" style={{ backgroundColor: primaryColor }} onClick={() => submitForm()}>
+                      Submit Form
+                    </Link>
+                    {/* : <div className="preview-submit-button" style={{ backgroundColor: primaryColor }}>
+                      Submit Form
+                    </div> */}
+                  {/* } */}
+                </div>
+              )}
             </div>
-            {index == length ? null : (
+            {index > length ? null : (
               <div id="preview-next-icon-animation">
                 <ion-icon
                   name="chevron-forward-outline"
@@ -285,17 +359,32 @@ function Respondent (props) {
 
       const setMultipleChoiceValue = (index, formItemId, selectedAnswerSelection) => {
         // find formitemid yg sama, dihapus. push yg baru.
+        
+        console.log(selectedAnswerSelection);
+        let id;
+        let value;
         let responses = [...formResponse];
+
+        if(responses[index-1] && responses[index-1].answerSelectionValue == selectedAnswerSelection.value){
+          id = "";
+          value = "";
+        } else {
+          id = selectedAnswerSelection.id;
+          value = selectedAnswerSelection.value;
+        }
+
         let formItemResponse = {
           formRespondentId: formRespondentId,
-          formItemsId: formItemId,
-          answerSelectionId: selectedAnswerSelection.id,
-          answerSelectionValue: selectedAnswerSelection.value,
+          formItemId: formItemId,
+          answerSelectionId: id,
+          answerSelectionValue: value,
         }
         responses[index-1] = formItemResponse;
         console.log("Set Multiple Choice Value:");
-        console.log(responses[index-1].answerSelectionValue);
+        console.log(value);
         setFormResponse(responses);
+
+        // validateAnswer();
       }
 
       const loadMultipleChoice = (index, formItemId, arrayOptions) => {
@@ -305,7 +394,7 @@ function Respondent (props) {
               { 
                 arrayOptions.map((options, innerIdx) => {
                 return (
-                  <div id="preview-option-container">
+                  <div className="preview-option-container" id="preview-option-mc-cb-container">
                     <div id="preview-input-mc-cb-container">
                       <input
                         className="answerSelection"
@@ -348,7 +437,7 @@ function Respondent (props) {
             <div id="preview-linear-scale">
               {arrayOptions.map((options) => {
                 return (
-                  <div id="preview-option-container">
+                  <div className="preview-option-container" id="preview-option-ls-container">
                     <div id="preview-input-ls-container">
                       <input
                         className="answerSelection"
@@ -357,7 +446,10 @@ function Respondent (props) {
                         name="options"
                         onClick={() => setLinearScaleValue(formItemId, options)}
                       />
-                      <label id="option-ls-label" for="options">
+                      <label className="option-ls-desc" id="option-ls-no" for="options">
+                        {options.no}
+                      </label>
+                      <label className="option-ls-desc" id="option-ls-value" for="options">
                         {options.value}
                       </label>
                     </div>
@@ -386,7 +478,7 @@ function Respondent (props) {
           <React.Fragment>
             {arrayOptions.map((options) => {
               return (
-                <div id="preview-option-container">
+                <div className="preview-option-container" id="preview-option-mc-cb-container">
                   <div id="preview-input-mc-cb-container">
                     <input
                       className="answerSelection"
@@ -420,15 +512,15 @@ function Respondent (props) {
         prevAnswer.push(formItemResponse);        
       }
     
-    const loadShortAnswer = (formItemId) => {
-      return (
-        <React.Fragment>
-          <div id="preview-short-answer">
-            <AutoHeightTextarea id="preview-sa-text" placeholder="Your answer" onChange={(e) => setShortAnswerValue(formItemId, e.target.value)}></AutoHeightTextarea>
-          </div>
-        </React.Fragment>
-      );
-    }
+      const loadShortAnswer = (formItemId) => {
+        return (
+          <React.Fragment>
+            <div id="preview-short-answer">
+              <AutoHeightTextarea id="preview-sa-text" placeholder="Your answer" onChange={(e) => setShortAnswerValue(formItemId, e.target.value)}></AutoHeightTextarea>
+            </div>
+          </React.Fragment>
+        );
+      }
 
     const submitForm = () => {
       console.log("submit Form: ");
@@ -446,6 +538,17 @@ function Respondent (props) {
           console.log(error);
         }
       })
+        // formResponse.map((response) => {
+        //   try {
+        //     axios({
+        //       method: "post",
+        //       url: `${BASE_URL}/api/v1/forms/insert-response/${formRespondentId}`,
+        //       data: response
+        //     })
+        //   } catch(error) {
+        //     console.log(error);
+        //   }
+        // });
 
     }
     
