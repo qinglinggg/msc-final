@@ -430,6 +430,8 @@ function Question(props) {
     for (let i = 0; i < props.questionData.optionCounter; i++) {
       labelOptions.push({ value: i+1, label: i+1 });
     }
+
+    console.log(props.questionData.arrayOptions);
     return (
       <React.Fragment>
         <div className="linear-container">
