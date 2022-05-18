@@ -159,7 +159,7 @@ public class FormService {
                 return -1;
             }
             System.out.println("formRespondentId is null");
-            return formDAO.insertTargetedUser(formId, resRespondentId);
+            return formDAO.insertTargetedUser(formId, resUserId);
         } 
         return -1;
     }
