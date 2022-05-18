@@ -43,7 +43,6 @@ function Invitation(props) {
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
-
     setUserInvited([
       {
         number: 1,
@@ -60,7 +59,6 @@ function Invitation(props) {
         datetime: "Submitted at 08/12/2021 09:30PM",
       },
     ]);
-
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
     tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
     if(tempBreadcrumbs.length >= 2) {
@@ -83,7 +81,6 @@ function Invitation(props) {
         handleCurrentSelection(e.target);
       })
     });
-
     let userInvitedList = [];
     try {
       axios({
@@ -132,6 +129,7 @@ function Invitation(props) {
       })
       setUserInvited(userInvitedList);
     }
+  }, []);
 
   // useEffect((prevState) => {
   //   // insert or delete
