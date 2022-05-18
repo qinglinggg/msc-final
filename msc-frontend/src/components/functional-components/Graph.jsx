@@ -99,7 +99,7 @@ class Graph extends React.Component {
             }
           },
           formatter: function(value) {
-            let calculateVal = (value / totalCount) * 100
+            let calculateVal = Math.round((value / totalCount) * 100);
             return calculateVal + '%\n' + value + " votes";
           }
         },
