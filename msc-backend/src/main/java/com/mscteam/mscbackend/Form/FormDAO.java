@@ -336,12 +336,14 @@ public class FormDAO {
         return res;
     }
 
-    public int deleteTargetedUser(String formId, String userId, Integer alreadySubmitted){
+    public int deleteTargetedUser(String formRespondentId, FormRespondent targetedUser){
         String query = "";
-        if(alreadySubmitted == 0) query = "DELETE FROM FormRespondent WHERE formId = ? AND userId = ? AND submitDate IS NULL";
-        else if(alreadySubmitted == 1) query = "UPDATE FormRespondent SET isTargeted = 0 WHERE formId = ? AND userId = ?";
-        
-        int res = jdbcTemplate.update(query, formId, userId);
+        if(targetedUser.getSubmitDate() == null) {
+            query = "DELETE FROM FormRespondent WHERE formRespondentId = ? AND submitDate IS NULL";
+        } else {
+            query = "UPDATE FormRespondent SET isTargeted = 0 WHERE formRespondentId = ?";
+        }
+        int res = jdbcTemplate.update(query, formRespondentId);
         return res;
     }
     // cuma untuk keperluan testing
@@ -349,24 +351,6 @@ public class FormDAO {
         final String query = "DELETE FROM FormRespondent WHERE formId = ? AND userId = ?";
         int res = jdbcTemplate.update(query, formId, userId);
         return res;
-    }
-
-    public FormRespondent getFormRespondentInfo(String formId, String userId){
-        final String query = "SELECT * FROM FormRespondent WHERE formId = ? AND userId = ?";
-        FormRespondent respondent = (FormRespondent) jdbcTemplate.queryForObject(query, (resultSet, i) -> {
-            String formRespondentId = resultSet.getString("formRespondentId");
-            // String formId = resultSet.getString("formId");
-            // String userId = resultSet.getString("userId");
-            Date submitDate = null;
-            try {
-                submitDate = dateFormat.parse(resultSet.getString("submitDate"));
-            } catch (Exception e) {
-                System.out.println("error");
-            }
-            Integer isTargeted = resultSet.getInt("isTargeted");
-            return new FormRespondent(formRespondentId, formId, userId, submitDate, isTargeted);
-        }, formId, userId);
-        return respondent;
     }
 
 }

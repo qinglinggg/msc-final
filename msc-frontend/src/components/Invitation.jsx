@@ -44,22 +44,22 @@ function Invitation(props) {
       body.classList.toggle("openMenu");
     });
 
-    // setUserInvited([
-    //   {
-    //     number: 1,
-    //     name: "Albert Cony Pramudita",
-    //     email: "albert_pramudita@bca.co.id",
-    //     status: "Completed",
-    //     datetime: "Submitted at 08/12/2021 09:30PM",
-    //   },
-    //   {
-    //     number: 2,
-    //     name: "Dian Fransiska Handayani",
-    //     email: "dian_fransiska@bca.co.id",
-    //     status: "Completed",
-    //     datetime: "Submitted at 08/12/2021 09:30PM",
-    //   },
-    // ]);
+    setUserInvited([
+      {
+        number: 1,
+        name: "Albert Cony Pramudita",
+        email: "albert_pramudita@bca.co.id",
+        status: "Completed",
+        datetime: "Submitted at 08/12/2021 09:30PM",
+      },
+      {
+        number: 2,
+        name: "Dian Fransiska Handayani",
+        email: "dian_fransiska@bca.co.id",
+        status: "Completed",
+        datetime: "Submitted at 08/12/2021 09:30PM",
+      },
+    ]);
 
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
     tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
@@ -94,6 +94,17 @@ function Invitation(props) {
           userInvitedList = res.data;
           console.log("---- userInvitedList, inside res.data:");
           console.log(userInvitedList);
+          let index = 0;
+          userInvitedList.map((u) => {
+            index++;
+            if(!u.submitDate){
+              u['status'] = "Invited";
+              u['datetime'] = "-";
+            } else {
+              u['status'] = "Completed"
+              u['datetime'] = "Submitted at " + u.submitDate;
+            }
+          })
         }
       }) 
     } catch(error) {
@@ -110,31 +121,9 @@ function Invitation(props) {
             if(res.data){
               index++;
               u['number'] = index;
-              u['userId'] = u.userId;
+              // u['userId'] = u.userId;
               u['name'] = res.data.fullname;
               u['email'] = res.data.email;
-            }
-          })
-        } catch(error) {
-          console.log(error);
-        }
-      })
-      userInvitedList.map((u) => {
-        // get form respondent
-        try {
-          axios({
-            method: "get",
-            url: `${BASE_URL}/api/v1/forms/get-respondent-info/${formId}`
-          }).then((res) => {
-            if(res.data){
-              console.log(res.data);
-              // if(!res.data.submitDate){
-              //   u['status'] = "Invited";
-              //   u['datetime'] = "-";
-              // } else {
-              //   u['status'] = "Completed"
-              //   u['datetime'] = "Submitted at " + res.data.submitDate;
-              // }
             }
           })
         } catch(error) {
@@ -257,18 +246,28 @@ function Invitation(props) {
     })
   }
 
-  const handleDeleteTargetedUserEmail = (email) => {
+  const handleDeleteTargetedUserEmail = (obj) => {
+    console.log("delete on process");
+    let deletedUser = {
+      formRespondentId: obj.formRespondentId,
+      formId: obj.formId,
+      userId: obj.userId,
+      submitDate: obj.submitDate,
+      isTargeted: obj.isTargeted,
+    }
     try {
       axios({
         method: "delete",
-        url: `${BASE_URL}/api/v1/forms/delete-targeted-user/${formId}`,
-        data: email,
-        headers: { "Content-Type": "text/plain" },
+        url: `${BASE_URL}/api/v1/forms/delete-targeted-user/${obj.formRespondentId}`,
+        data: deletedUser,
+        headers: { "Content-Type": "application/json" },
       }).then((res) => {
+      console.log(userInvited);
         let tempInvitedList = userInvited.filter((u) => {
           return u.email != email;
         })
         setUserInvited(tempInvitedList);
+        console.log(tempInvitedList);
       })
     } catch(error) {
       console.log(error);
@@ -344,10 +343,9 @@ function Invitation(props) {
                   >
                     {value.datetime}
                   </div>
-                  <div>
-                    <ion-icon name="trash-outline" 
-                      onClick={handleDeleteTargetedUserEmail(value.email)}/>
-                  </div>
+                  <ion-icon name="trash-outline" id="invitation-track-trash-icon"
+                    onClick={(e) => handleDeleteTargetedUserEmail(value)}
+                  />
                 </div>
               </React.Fragment>
             );

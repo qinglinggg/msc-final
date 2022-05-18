@@ -162,25 +162,13 @@ public class FormService {
         return -1;
     }
 
-    public int deleteTargetedUser(String formId, String userEmail){
-        List<String> userId = userProfileDAO.getUserByEmail(userEmail);
-        String resId = "";
-        if(userId != null){
-            resId = userId.get(0);
-            List<String> formRespondentId = formDAO.getFormRespondentByUserId(formId, resId);
-            if(formRespondentId != null) return formDAO.deleteTargetedUser(formId, resId, 1);
-            return formDAO.deleteTargetedUser(formId, resId, 0);
-        }
-        
-        return -1;
+    public int deleteTargetedUser(String formRespondentId, FormRespondent targetedUser){
+        return formDAO.deleteTargetedUser(formRespondentId, targetedUser);
     }
 
     public int forceDeleteFormRespondent(String formId, String userId){
         return formDAO.forceDeleteFormRespondent(formId, userId);
     }
 
-    public FormRespondent getFormRespondentInfo(String formId, String userId){
-        return formDAO.getFormRespondentInfo(formId, userId);
-    }
 
 }

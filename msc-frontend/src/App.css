@@ -1489,6 +1489,13 @@ body {
   font-style: italic;
 }
 
+#invitation-track-trash-icon {
+  width: 20px;
+  height: 20px;
+  align-self: center;
+  cursor: pointer;
+}
+
 /* DESIGN */
 
 #design-background-container {

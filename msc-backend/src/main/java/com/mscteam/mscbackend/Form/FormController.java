@@ -151,9 +151,9 @@ public class FormController {
         return formService.insertTargetedUser(formId, userEmail);
     }
     
-    @DeleteMapping(path="/delete-targeted-user/{formId}")
-    public int deleteTargetedUser(@PathVariable("formId") String formId, @RequestBody String userEmail){
-        return formService.deleteTargetedUser(formId, userEmail);
+    @DeleteMapping(path="/delete-targeted-user/{formRespondentId}")
+    public int deleteTargetedUser(@PathVariable("formRespondentId") String formRespondentId, @RequestBody FormRespondent targetedUser){
+        return formService.deleteTargetedUser(formRespondentId, targetedUser);
     }
 
     // cuma untuk keperluan testing
@@ -162,8 +162,4 @@ public class FormController {
         return formService.forceDeleteFormRespondent(formId, userId);
     }
 
-    @GetMapping(path="/get-respondent-info/{formId}")
-    public FormRespondent getFormRespondentInfo(@PathVariable("formId") String formId, @RequestBody String userId){
-        return formService.getFormRespondentInfo(formId, userId);
-    }
 }
