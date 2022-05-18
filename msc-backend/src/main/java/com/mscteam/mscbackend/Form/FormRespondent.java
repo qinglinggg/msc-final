@@ -26,7 +26,11 @@ public class FormRespondent {
         this.formRespondentId = UUID.randomUUID();
         this.formId = UUID.fromString(formId);
         this.userId = UUID.fromString(userId);
-        this.submitDate = setSubmitDate();
+        if(isTargeted == 1){
+            this.submitDate = null;
+        } else {
+            this.submitDate = setSubmitDate();
+        }
         this.isTargeted = isTargeted;
     }
 

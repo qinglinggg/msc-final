@@ -144,17 +144,32 @@ public class FormService {
     }
 
     public int insertTargetedUser(String formId, String userEmail){
+        // Get User Email
         List<String> userId = userProfileDAO.getUserByEmail(userEmail);
-        String resId = "";
-        if(userId != null) resId = userId.get(0);
-        return formDAO.insertTargetedUser(formId, resId);
+        String resUserId = "";
+        if(userId != null){
+            resUserId = userId.get(0);
+            System.out.println("userEmail " + userEmail + " with resId = " + resUserId);
+            // check if user already invited
+            List<String> formRespondentId = formDAO.getFormRespondentByUserId(formId, resUserId);
+            if(formRespondentId.size() > 0){
+                String resRespondentId = formRespondentId.get(0);
+                System.out.println("formRespondentId is not null, the value is " + resRespondentId);
+                return -1;
+            }
+            System.out.println("formRespondentId is null");
+            return formDAO.insertTargetedUser(formId, resUserId);
+        } 
+        return -1;
     }
 
-    public int deleteTargetedUser(String formId, String userEmail){
-        List<String> userId = userProfileDAO.getUserByEmail(userEmail);
-        String resId = "";
-        if(userId != null) resId = userId.get(0);
-        return formDAO.deleteTargetedUser(formId, resId);
+    public int deleteTargetedUser(String formRespondentId, FormRespondent targetedUser){
+        return formDAO.deleteTargetedUser(formRespondentId, targetedUser);
     }
+
+    public int forceDeleteFormRespondent(String formId, String userId){
+        return formDAO.forceDeleteFormRespondent(formId, userId);
+    }
+
 
 }

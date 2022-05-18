@@ -9,14 +9,14 @@ import AutoHeightTextarea from "./functional-components/AutoheightTextarea";
 import TargetedUserEmail from "./functional-components/TargetedUserEmail";
 import { useParams } from "react-router-dom";
 import Popup from "reactjs-popup";
-import axios from "axios";
+import axios, { Axios } from "axios";
 
 function Invitation(props) {
   const [openMenu, setOpenMenu] = useState(false);
   const [pageSelection, setPageSelection] = useState(true);
 
   const [userInvited, setUserInvited] = useState([]); // data
-  const [index, setIndex] = useState(0); // length of userinvited
+  const [index, setIndex] = useState(0); // length of userinvited, saved progress
 
   const [openTargetedUserEmail, setOpenTargetedUserEmail] = useState(false);
   const [tags, setTags] = useState([]);
@@ -44,61 +44,23 @@ function Invitation(props) {
       body.classList.toggle("openMenu");
     });
 
-    // setUserInvited([
-    //   {
-    //     number: 1,
-    //     name: "Albert Cony Pramudita",
-    //     email: "albert_pramudita@bca.co.id",
-    //     status: "Completed",
-    //     datetime: "Submitted at 08/12/2021 09:30PM",
-    //   },
-    //   {
-    //     number: 2,
-    //     name: "Dian Fransiska Handayani",
-    //     email: "dian_fransiska@bca.co.id",
-    //     status: "Completed",
-    //     datetime: "Submitted at 08/12/2021 09:30PM",
-    //   },
-    // ]);
+    setUserInvited([
+      {
+        number: 1,
+        name: "Albert Cony Pramudita",
+        email: "albert_pramudita@bca.co.id",
+        status: "Completed",
+        datetime: "Submitted at 08/12/2021 09:30PM",
+      },
+      {
+        number: 2,
+        name: "Dian Fransiska Handayani",
+        email: "dian_fransiska@bca.co.id",
+        status: "Completed",
+        datetime: "Submitted at 08/12/2021 09:30PM",
+      },
+    ]);
 
-    // Track
-    let userInvitedList = [];
-    try {
-      axios({
-        method: "get",
-        url: `${BASE_URL}/api/v1/forms/get-targeted-user-list/${formId}`,
-      }).then((res) => {
-        if(res.data){
-          userInvitedList = res.data;
-          // setIndex(index + 1);
-          let index = 0;
-          userInvitedList.map((u) => {
-            index++;
-            u['number'] = index;
-          })
-        }
-      }) 
-    } catch(error) {
-      console.log(error);
-    }
-    if(userInvitedList.length > 0) {
-      userInvitedList.map((u) => {
-        try {
-          axios({
-            method: "get",
-            url: `${BASE_URL}/api/v1/user-profiles/${u.userId}`
-          }).then((res) => {
-            if(res.data){
-              u['name'] = res.data.fullname;
-              u['email'] = res.data.email;
-            }
-          })
-        } catch(error) {
-          console.log(error);
-        }
-      })
-      setUserInvited(userInvitedList);
-    }
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
     tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
     if(tempBreadcrumbs.length >= 2) {
@@ -121,34 +83,69 @@ function Invitation(props) {
         handleCurrentSelection(e.target);
       })
     });
-  }, [])
+
+    let userInvitedList = [];
+    try {
+      axios({
+        method: "get",
+        url: `${BASE_URL}/api/v1/forms/get-targeted-user-list/${formId}`,
+      }).then((res) => {
+        if(res.data){
+          userInvitedList = res.data;
+          console.log("---- userInvitedList, inside res.data:");
+          console.log(userInvitedList);
+          let index = 0;
+          userInvitedList.map((u) => {
+            index++;
+            if(!u.submitDate){
+              u['status'] = "Invited";
+              u['datetime'] = "-";
+            } else {
+              u['status'] = "Completed"
+              u['datetime'] = "Submitted at " + u.submitDate;
+            }
+          })
+        }
+      }) 
+    } catch(error) {
+      console.log(error);
+    }
+    if(userInvitedList.length > 0) {
+      let index = 0;
+      userInvitedList.map((u) => {
+        try {
+          axios({
+            method: "get",
+            url: `${BASE_URL}/api/v1/user-profiles/${u.userId}`
+          }).then((res) => {
+            if(res.data){
+              index++;
+              u['number'] = index;
+              // u['userId'] = u.userId;
+              u['name'] = res.data.fullname;
+              u['email'] = res.data.email;
+            }
+          })
+        } catch(error) {
+          console.log(error);
+        }
+      })
+      setUserInvited(userInvitedList);
+    }
 
   // useEffect((prevState) => {
-  //   if(prevState.userInvitedList != userInvitedList){
-      
+  //   // insert or delete
+  //   if(userInvited){
+
   //   }
-  // }, [userInvitedList]);
+  // }, [userInvited]);
 
   const handleMenu = () => {
     setOpenMenu(!openMenu);
   }
 
-  // const displayMenu = () => {
-  //   return (
-  //     <React.Fragment>
-  //       <Menu />
-  //     </React.Fragment>
-  //   );
-  // }
-
   const handleOpenSharePage = () => {
     setPageSelection(true);
-  }
-  
-  const handlePopupTimeout = () => {
-    setTimeout(() => {
-
-    })
   }
 
   const displaySharePage = () => {
@@ -204,7 +201,8 @@ function Invitation(props) {
             <div id="invitation-share-divider-line"></div>
           </div>
           <div id="invitation-share-privately-box">
-            <div className="invitation-share-privately-innerbox">
+            <div className="invitation-share-privately-innerbox"
+              id="invitation-share-privately-innerbox-title">
               Share it privately.
             </div>
             <div
@@ -230,7 +228,6 @@ function Invitation(props) {
   }
 
   const handleSubmitTargetedUserEmail = () => {
-    let flag = 0;
     tags.map((userEmail) => {
       try {
         axios({
@@ -239,28 +236,56 @@ function Invitation(props) {
           data: userEmail,
           headers: { "Content-Type": "text/plain" },
         }).then((res) => {
-          flag = 1;
+          setTags([]);
+          setTagsElement([]);
           console.log("Successfully inserted");
         })
       } catch(error) {
           console.log(error);
       }
-    }, () => {
-      if(flag == 1){
-        // set user invited list
-      }
     })
+  }
+
+  const handleDeleteTargetedUserEmail = (obj) => {
+    console.log("delete on process");
+    let deletedUser = {
+      formRespondentId: obj.formRespondentId,
+      formId: obj.formId,
+      userId: obj.userId,
+      submitDate: obj.submitDate,
+      isTargeted: obj.isTargeted,
+    }
+    try {
+      axios({
+        method: "delete",
+        url: `${BASE_URL}/api/v1/forms/delete-targeted-user/${obj.formRespondentId}`,
+        data: deletedUser,
+        headers: { "Content-Type": "application/json" },
+      }).then((res) => {
+      console.log(userInvited);
+        let tempInvitedList = userInvited.filter((u) => {
+          return u.email != obj.email;
+        })
+        setUserInvited(tempInvitedList);
+        console.log(tempInvitedList);
+      })
+    } catch(error) {
+      console.log(error);
+    }
   }
 
   const displayTargetedUserEmailBox = () => {
     return (
       <React.Fragment>
-        <div
-          className="invitation-share-privately-innerbox"
-          id="invitation-share-privately-innerbox-desc"
-        >
-          Enter your targeted user email.
+        <div className="invitation-share-privately-innerbox">
+          <div id="invitation-share-privately-innerbox-desc">
+            Enter your targeted user email.
+          </div>
+          <div id="invitation-share-privately-innerbox-desc2">
+            Notes: you may seperated each email with comma (,) or simply by pressing spacebar.
+          </div>
         </div>
+        
         <TargetedUserEmail 
           tags={tags}
           tagsElement={tagsElement}
@@ -321,6 +346,9 @@ function Invitation(props) {
                   >
                     {value.datetime}
                   </div>
+                  <ion-icon name="trash-outline" id="invitation-track-trash-icon"
+                    onClick={(e) => handleDeleteTargetedUserEmail(value)}
+                  />
                 </div>
               </React.Fragment>
             );
@@ -329,6 +357,7 @@ function Invitation(props) {
       </React.Fragment>
     );
   }
+
 
   const displayInvitation = () => {
     let page;

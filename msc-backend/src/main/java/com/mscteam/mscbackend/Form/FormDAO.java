@@ -268,12 +268,10 @@ public class FormDAO {
 
     public List<String> getFormRespondentByUserId(String formId, String userId){
         final String query = "SELECT formRespondentId FROM FormRespondent WHERE formId = ? AND userId = ?";
-        System.out.println("in");
         List<String> formRespondentId = jdbcTemplate.query(query, (resultSet, i) -> {
             String resId = resultSet.getString("formRespondentId");
             return resId;
         }, formId, userId);
-        System.out.println("out");
         return formRespondentId;
     }
 
@@ -331,14 +329,30 @@ public class FormDAO {
     }
 
     public int insertTargetedUser(String formId, String userId){
+        System.out.println("masuk insertTargetedUser");
         FormRespondent targetedUser = new FormRespondent(formId, userId, 1);
+        Date submitDate = targetedUser.getSubmitDate();
+        String resultDate = "";
+        if(submitDate != null) resultDate = dateFormat.format(targetedUser.getSubmitDate());
+        else resultDate = null;
         final String query = "INSERT INTO FormRespondent VALUES (?,?,?,?,?)";
-        int res = jdbcTemplate.update(query, targetedUser.getFormRespondentId().toString(), targetedUser.getFormId().toString(), targetedUser.getUserId().toString(), dateFormat.format(targetedUser.getSubmitDate()), targetedUser.getIsTargeted());
+        int res = jdbcTemplate.update(query, targetedUser.getFormRespondentId().toString(), targetedUser.getFormId().toString(), targetedUser.getUserId().toString(), resultDate, targetedUser.getIsTargeted());
         return res;
     }
 
-    public int deleteTargetedUser(String formId, String userId){
-        final String query = "DELETE FROM FormRespondent WHERE formId = ? AND userId = ? AND submitDate IS NULL";
+    public int deleteTargetedUser(String formRespondentId, FormRespondent targetedUser){
+        String query = "";
+        if(targetedUser.getSubmitDate() == null) {
+            query = "DELETE FROM FormRespondent WHERE formRespondentId = ? AND submitDate IS NULL";
+        } else {
+            query = "UPDATE FormRespondent SET isTargeted = 0 WHERE formRespondentId = ?";
+        }
+        int res = jdbcTemplate.update(query, formRespondentId);
+        return res;
+    }
+    // cuma untuk keperluan testing
+    public int forceDeleteFormRespondent(String formId, String userId){
+        final String query = "DELETE FROM FormRespondent WHERE formId = ? AND userId = ?";
         int res = jdbcTemplate.update(query, formId, userId);
         return res;
     }

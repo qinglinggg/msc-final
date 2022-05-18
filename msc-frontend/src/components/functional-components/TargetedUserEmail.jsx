@@ -15,7 +15,8 @@ class TargetedUserEmail extends React.Component {
   handleAddTag(e) {
     console.log("Entering handle add tag");
 
-    if (e.code == "Space" || e.key == ",") {
+    console.log(e.key);
+    if (e.key == " " || e.key == ",") {
       // cleaned input tag
 
       // tag -> inputan baru dari user
