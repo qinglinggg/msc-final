@@ -264,7 +264,7 @@ function Invitation(props) {
       }).then((res) => {
       console.log(userInvited);
         let tempInvitedList = userInvited.filter((u) => {
-          return u.email != email;
+          return u.email != obj.email;
         })
         setUserInvited(tempInvitedList);
         console.log(tempInvitedList);
