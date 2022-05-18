@@ -128,7 +128,7 @@ function Invitation(props) {
         try {
           axios({
             method: "get",
-            url: `${BASE_URL}/api/v1/forms/`
+            url: `${BASE_URL}/api/v1/forms/get-respondent-info/${formId}`
           }).then((res) => {
             if(res.data){
               console.log(res.data);

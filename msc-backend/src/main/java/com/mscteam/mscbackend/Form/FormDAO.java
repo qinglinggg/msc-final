@@ -343,12 +343,29 @@ public class FormDAO {
         int res = jdbcTemplate.update(query, formId, userId);
         return res;
     }
-
-    // cuma untuk keperluan postman
+    // cuma untuk keperluan testing
     public int forceDeleteFormRespondent(String formId, String userId){
         final String query = "DELETE FROM FormRespondent WHERE formId = ? AND userId = ?";
         int res = jdbcTemplate.update(query, formId, userId);
         return res;
+    }
+
+    public FormRespondent getFormRespondentInfo(String formId, String userId){
+        final String query = "SELECT * FROM FormRespondent WHERE formId = ? AND userId = ?";
+        FormRespondent respondent = (FormRespondent) jdbcTemplate.queryForObject(query, (resultSet, i) -> {
+            String formRespondentId = resultSet.getString("formRespondentId");
+            // String formId = resultSet.getString("formId");
+            // String userId = resultSet.getString("userId");
+            Date submitDate = null;
+            try {
+                submitDate = dateFormat.parse(resultSet.getString("submitDate"));
+            } catch (Exception e) {
+                System.out.println("error");
+            }
+            Integer isTargeted = resultSet.getInt("isTargeted");
+            return new FormRespondent(formRespondentId, formId, userId, submitDate, isTargeted);
+        }, formId, userId);
+        return respondent;
     }
 
 }

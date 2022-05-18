@@ -151,14 +151,19 @@ public class FormController {
         return formService.insertTargetedUser(formId, userEmail);
     }
     
-    // if date == null, cek ulang di db tampilannya gimana
     @DeleteMapping(path="/delete-targeted-user/{formId}")
     public int deleteTargetedUser(@PathVariable("formId") String formId, @RequestBody String userEmail){
         return formService.deleteTargetedUser(formId, userEmail);
     }
 
+    // cuma untuk keperluan testing
     @DeleteMapping(path="/force-delete-form-respondent/{formId}")
     public int forceDeleteFormRespondent(@PathVariable("formId") String formId, @RequestBody String userId){
         return formService.forceDeleteFormRespondent(formId, userId);
+    }
+
+    @GetMapping(path="/get-respondent-info/{formId}")
+    public FormRespondent getFormRespondentInfo(@PathVariable("formId") String formId, @RequestBody String userId){
+        return formService.getFormRespondentInfo(formId, userId);
     }
 }
