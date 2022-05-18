@@ -9,14 +9,14 @@ import AutoHeightTextarea from "./functional-components/AutoheightTextarea";
 import TargetedUserEmail from "./functional-components/TargetedUserEmail";
 import { useParams } from "react-router-dom";
 import Popup from "reactjs-popup";
-import axios from "axios";
+import axios, { Axios } from "axios";
 
 function Invitation(props) {
   const [openMenu, setOpenMenu] = useState(false);
   const [pageSelection, setPageSelection] = useState(true);
 
   const [userInvited, setUserInvited] = useState([]); // data
-  const [index, setIndex] = useState(0); // length of userinvited
+  const [index, setIndex] = useState(0); // length of userinvited, saved progress
 
   const [openTargetedUserEmail, setOpenTargetedUserEmail] = useState(false);
   const [tags, setTags] = useState([]);
@@ -83,9 +83,7 @@ function Invitation(props) {
         handleCurrentSelection(e.target);
       })
     });
-  }, []);
 
-  useEffect(() => {
     let userInvitedList = [];
     try {
       axios({
@@ -94,20 +92,15 @@ function Invitation(props) {
       }).then((res) => {
         if(res.data){
           userInvitedList = res.data;
-          // setIndex(index + 1);
-          console.log("---- userInvitedList");
+          console.log("---- userInvitedList, inside res.data:");
           console.log(userInvitedList);
-          let index = 0;
-          userInvitedList.map((u) => {
-            index++;
-            u['number'] = index;
-          })
         }
       }) 
     } catch(error) {
       console.log(error);
     }
     if(userInvitedList.length > 0) {
+      let index = 0;
       userInvitedList.map((u) => {
         try {
           axios({
@@ -115,6 +108,9 @@ function Invitation(props) {
             url: `${BASE_URL}/api/v1/user-profiles/${u.userId}`
           }).then((res) => {
             if(res.data){
+              index++;
+              u['number'] = index;
+              u['userId'] = u.userId;
               u['name'] = res.data.fullname;
               u['email'] = res.data.email;
             }
@@ -132,6 +128,13 @@ function Invitation(props) {
           }).then((res) => {
             if(res.data){
               console.log(res.data);
+              // if(!res.data.submitDate){
+              //   u['status'] = "Invited";
+              //   u['datetime'] = "-";
+              // } else {
+              //   u['status'] = "Completed"
+              //   u['datetime'] = "Submitted at " + res.data.submitDate;
+              // }
             }
           })
         } catch(error) {
@@ -140,7 +143,14 @@ function Invitation(props) {
       })
       setUserInvited(userInvitedList);
     }
-  }, [userInvited]);
+  }, []);
+
+  // useEffect((prevState) => {
+  //   // insert or delete
+  //   if(userInvited){
+
+  //   }
+  // }, [userInvited]);
 
   const handleMenu = () => {
     setOpenMenu(!openMenu);
@@ -247,6 +257,24 @@ function Invitation(props) {
     })
   }
 
+  const handleDeleteTargetedUserEmail = (email) => {
+    try {
+      axios({
+        method: "delete",
+        url: `${BASE_URL}/api/v1/forms/delete-targeted-user/${formId}`,
+        data: email,
+        headers: { "Content-Type": "text/plain" },
+      }).then((res) => {
+        let tempInvitedList = userInvited.filter((u) => {
+          return u.email != email;
+        })
+        setUserInvited(tempInvitedList);
+      })
+    } catch(error) {
+      console.log(error);
+    }
+  }
+
   const displayTargetedUserEmailBox = () => {
     return (
       <React.Fragment>
@@ -316,6 +344,10 @@ function Invitation(props) {
                   >
                     {value.datetime}
                   </div>
+                  <div>
+                    <ion-icon name="trash-outline" 
+                      onClick={handleDeleteTargetedUserEmail(value.email)}/>
+                  </div>
                 </div>
               </React.Fragment>
             );
@@ -324,6 +356,7 @@ function Invitation(props) {
       </React.Fragment>
     );
   }
+
 
   const displayInvitation = () => {
     let page;

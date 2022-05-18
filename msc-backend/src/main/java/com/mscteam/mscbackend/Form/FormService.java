@@ -153,7 +153,7 @@ public class FormService {
             // check if user already invited
             List<String> formRespondentId = formDAO.getFormRespondentByUserId(formId, resId);
             if(formRespondentId != null){
-                System.out.println("formRespondentId is not null");
+                System.out.println("formRespondentId is not null, the value is " + formRespondentId);
                 return -1;
             }
             System.out.println("formRespondentId is null");
