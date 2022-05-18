@@ -1309,12 +1309,32 @@ body {
 
 .invitation-share-privately-innerbox {
   font-family: var(--font-roboto);
-  font-size: 1.5em;
   font-display: medium;
   align-self: left;
   padding-left: 5%;
+}
+
+#invitation-share-privately-innerbox-title {
+  font-size: 1.5em;
   padding-top: 2.5%;
-  padding-bottom: 2.5%;
+  margin-bottom: 2.5%;
+}
+
+#invitation-share-privately-innerbox-desc {
+  color: rgb(204, 204, 204);
+  padding-top: 0;
+  font-weight: bold;
+  font-size: 1.4em;
+  padding-top: 0.5%;
+  padding-bottom: 1%;
+}
+
+#invitation-share-privately-innerbox-desc2 {
+  color: rgb(204, 204, 204);
+  padding-top: 0;
+  font-weight: 400;
+  font-size: 1.3em;
+  padding-bottom: 1.5%;
 }
 
 #invitation-share-privately-render {
@@ -1323,13 +1343,6 @@ body {
   display: flex;
   flex-direction: column;
   margin-bottom: 30px;
-}
-
-#invitation-share-privately-innerbox-desc {
-  color: rgb(204, 204, 204);
-  padding-top: 0;
-  font-weight: bold;
-  font-size: 1.3em;
 }
 
 #invitation-share-privately-button {
@@ -1346,6 +1359,7 @@ body {
   padding-bottom: 1%;
   border-radius: 10px;
   width: fit-content;
+  cursor: pointer;
 }
 
 #invitation-share-privately-emailbox {

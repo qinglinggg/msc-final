@@ -202,7 +202,8 @@ function Invitation(props) {
             <div id="invitation-share-divider-line"></div>
           </div>
           <div id="invitation-share-privately-box">
-            <div className="invitation-share-privately-innerbox">
+            <div className="invitation-share-privately-innerbox"
+              id="invitation-share-privately-innerbox-title">
               Share it privately.
             </div>
             <div
@@ -277,12 +278,15 @@ function Invitation(props) {
   const displayTargetedUserEmailBox = () => {
     return (
       <React.Fragment>
-        <div
-          className="invitation-share-privately-innerbox"
-          id="invitation-share-privately-innerbox-desc"
-        >
-          Enter your targeted user email.
+        <div className="invitation-share-privately-innerbox">
+          <div id="invitation-share-privately-innerbox-desc">
+            Enter your targeted user email.
+          </div>
+          <div id="invitation-share-privately-innerbox-desc2">
+            Notes: you may seperated each email with comma (,) or simply by pressing spacebar.
+          </div>
         </div>
+        
         <TargetedUserEmail 
           tags={tags}
           tagsElement={tagsElement}

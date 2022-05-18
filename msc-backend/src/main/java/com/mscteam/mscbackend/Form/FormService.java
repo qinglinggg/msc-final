@@ -147,15 +147,14 @@ public class FormService {
         // Get User Email
         List<String> userId = userProfileDAO.getUserByEmail(userEmail);
         String resUserId = "";
-        String resRespondentId = "";
         if(userId != null){
             resUserId = userId.get(0);
             System.out.println("userEmail " + userEmail + " with resId = " + resUserId);
             // check if user already invited
             List<String> formRespondentId = formDAO.getFormRespondentByUserId(formId, resUserId);
             if(formRespondentId.size() > 0){
-                resRespondentId = formRespondentId.get(0);
-                System.out.println("formRespondentId is not null, the value is " + formRespondentId);
+                String resRespondentId = formRespondentId.get(0);
+                System.out.println("formRespondentId is not null, the value is " + resRespondentId);
                 return -1;
             }
             System.out.println("formRespondentId is null");
