@@ -86,9 +86,11 @@ function DataVisualization(props) {
             if (validator) listOfAnswers.push(ri.answerSelectionValue);
           });
           tempAnswerList[fi] = listOfAnswers;
-          if(count[fi].length == 0) for(let i=0; i < listOfAnswers.length; i++) count[fi].push(0);
-          resData.forEach((ri, idx) => {
-            count[fi][idx] += 1;
+          if(count[fi].length === 0) for(let i=0; i < listOfAnswers.length; i++) count[fi].push(0);
+          resData.forEach((ri) => {
+            listOfAnswers.map((a, idx) => {
+              if (ri.answerSelectionValue == a) count[fi][idx] += 1;
+            })
           });
         });
       });

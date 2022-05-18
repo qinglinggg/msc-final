@@ -26,7 +26,7 @@ function Dashboard(props) {
   const [privacyCheck, setPrivacyCheck] = useState(false);
 
   useEffect(() => {
-    console.log("Test Form Id: " + formId);
+    // console.log("Test Form Id: " + formId);
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
@@ -61,8 +61,6 @@ function Dashboard(props) {
         url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`,
       }).then((res) => {
         let currentStateData = [...formItems];
-        console.log("get-form-items: ");
-        console.log(res.data);
         res.data.map((data) => {
           let newItem = {
             id: data.id,
@@ -118,7 +116,6 @@ function Dashboard(props) {
     let currentStateData = [...formItems];
     let formItemId;
     setFormCounter(formCounter + 1);
-
     try {
       let newItem = {
         itemNumber: -1,
@@ -133,7 +130,6 @@ function Dashboard(props) {
         data: newItem,
         headers: { "Content-Type": "application/json" },
       }).then((res) => {
-        console.log(res.data);
         newItem = {
           id: res.data.id,
           itemNumber: res.data.itemNumber,
@@ -190,8 +186,6 @@ function Dashboard(props) {
         data: currentForm,
         headers: { "Content-Type": "application/json" },
       }).then((res) => {
-        console.log("Check null:");
-        console.log(res.data);
         setFormItems(tempFormItems);
       });
     } catch (error) {
@@ -232,7 +226,6 @@ function Dashboard(props) {
       return elem.id == questionId;
     })
     currentForm = currentForm[0];
-    console.log("isRequired value is " + value);
     currentForm["isRequired"] = value;
     tempFormItems = tempFormItems.map((elem) => {
       if(elem.id == questionId){
@@ -248,12 +241,11 @@ function Dashboard(props) {
         headers: { "Content-Type": "application/json" },
       }).then((res) => {
         setFormItems(tempFormItems);
-        console.log(tempFormItems);
       })
     } catch(error) {
       console.log(error);
     }
-  }
+  };
 
   const handleResetOption = (id, iterCount, finalCount) => {
     let tempFormItems = [...formItems];
@@ -493,10 +485,7 @@ function Dashboard(props) {
   }
 
   const displaySettings = () => {
-
     let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
-    console.log(selectedForm);
-
     return (
       <React.Fragment>
         <div className="popup" id="popup-addItem">
