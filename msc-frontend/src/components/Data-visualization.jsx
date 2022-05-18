@@ -132,7 +132,7 @@ function DataVisualization(props) {
   useEffect(() => {
     let tempBreadcrumbs = JSON.parse(localStorage.getItem("breadcrumbs"));
     if(tempBreadcrumbs.length >= 2) {
-      while(tempBreadcrumbs.slice(-1)[0].page != "Home" && tempBreadcrumbs.slice(-1)[0].page != "/"){
+      while(tempBreadcrumbs.slice(-1)[0] && tempBreadcrumbs.slice(-1)[0].page != "Home" && tempBreadcrumbs.slice(-1)[0].page != "/"){
         tempBreadcrumbs.pop();
       }
     }

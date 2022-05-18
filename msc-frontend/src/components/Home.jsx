@@ -53,7 +53,7 @@ class Home extends React.Component {
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
     tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
     if(tempBreadcrumbs.length >= 1) {
-      while(tempBreadcrumbs.slice(-1)[0].page != "/"){
+      while(tempBreadcrumbs.slice(-1)[0] && tempBreadcrumbs.slice(-1)[0].page != "/"){
         tempBreadcrumbs.pop();
       }
     }
