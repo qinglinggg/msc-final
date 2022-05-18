@@ -321,11 +321,29 @@ public class FormDAO {
             } catch (Exception e) {
                 System.out.println("dateFormat.parse is failed");
             }
-            Integer isTargeted = 1;
+            Integer isTargeted = resultSet.getInt("isTargeted");
             return new FormRespondent(formRespondentId, formId, userId, submitDate, isTargeted);
         }, formId);
 
         return formTargetedUserList;
+    }
+
+    public List<FormRespondent> getInvitedFormList(String userId){
+        final String query = "SELECT * FROM FormRespondent WHERE userId = ? AND isTargeted = 1";
+        List<FormRespondent> invitedFormList = jdbcTemplate.query(query, (resultSet, i) -> {
+            String formRespondentId = resultSet.getString("formRespondentId");
+            String formId = resultSet.getString("formId");
+            Date submitDate = null;
+            try {
+                submitDate = dateFormat.parse(resultSet.getString("submitDate"));
+            } catch (Exception e) {
+                System.out.println("dateFormat.parse is failed");
+            }
+            Integer isTargeted = resultSet.getInt("isTargeted");
+            return new FormRespondent(formRespondentId, formId, userId, submitDate, isTargeted); 
+        });
+
+        return invitedFormList;
     }
 
     public int insertTargetedUser(String formId, String userId){

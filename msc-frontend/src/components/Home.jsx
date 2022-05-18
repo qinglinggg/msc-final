@@ -26,7 +26,8 @@ class Home extends React.Component {
     title: "",
     description: "",
     privacySetting: "",
-    forms: []
+    forms: [],
+    invitedForms: []
   };
 
   handleClickPage1() {
@@ -63,6 +64,7 @@ class Home extends React.Component {
     });
     localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
     this.setState({forms: JSON.parse(localStorage.getItem("formLists"))});
+    this.setState({invitedForms: JSON.parse(localStorage.getItem("invitedFormLists"))});
     let listSelection = document.querySelectorAll(".page-button");
     listSelection.forEach((item) => {
       item.addEventListener('click', (e) => {
@@ -196,11 +198,11 @@ class Home extends React.Component {
   }
 
   displayPage2() {
-    let dataShowed = this.filterData(this.props.waitingForms);
+    let invitedFormsData = this.filterData(this.state.invitedForms);
 
     return (
       <React.Fragment>
-        {dataShowed.map((data) => (
+        {invitedFormsData.map((data) => (
           <Page1Items key={data.formId} data={data} />
         ))}
       </React.Fragment>
