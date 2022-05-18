@@ -48,8 +48,6 @@ function Respondent (props) {
               url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`
           }).then((res) => {
               setFormItems(res.data);
-              console.log("USEEFFECT()");
-              console.log(res.data);
           })
       } catch (error) {
         console.log(error);
@@ -90,7 +88,6 @@ function Respondent (props) {
               userId: userId,
               isTargeted: 0,
             }
-            console.log(newFormRespondent);
             axios({
               method: "post",
               url: `${BASE_URL}/api/v1/forms/insert-form-respondent/${formId}`,
@@ -114,9 +111,10 @@ function Respondent (props) {
       if (loadData) setFormResponse(loadData);
       else {
         let tempData = [];
-        formItems.map(() => {
-          console.log("test");
-          tempData.push({});
+        formItems.map((fi) => {
+          console.log(fi)
+          if (fi.type == "CB") tempData.push([]);
+          else tempData.push({});
         });
         setFormResponse(tempData);
       }
@@ -210,31 +208,6 @@ function Respondent (props) {
           console.log(error);
         }
     }
-    
-    // const validateAnswer = () => {
-    //   console.log("entered validate answer...");
-    //   let current = formItems[index-1];
-    //   // console.log(current);
-    //   let requiredField = document.getElementById("required-field");
-
-    //   if(!formResponse[index-1]){
-    //     console.log("this is a required question!");
-    //     requiredField.innerHTML = "* This is a required question!";
-    //     return false;
-    //   } 
-    //   if(requiredField){
-    //     if(current.isRequired && formResponse[index-1].answerSelectionValue == ""){
-    //       console.log("kok masuk sini");
-    //       console.log("this is a required question!");
-    //       requiredField.innerHTML = "* This is a required question!";
-    //       return false;
-    //     } else {
-    //       console.log("kosongin is required");
-    //       requiredField.innerHTML = "";
-    //       return true;
-    //     }
-    //   }
-    // }
 
     useEffect(() => {
       console.log("entering validate answer...");
@@ -242,7 +215,6 @@ function Respondent (props) {
       if(index <= length){
         let current = formItems[index-1];
         let requiredField = document.getElementById("required-field");
-
         if(current.isRequired){
           if(!formResponse[index-1] || formResponse[index-1].answerSelectionValue == ""){
             console.log("this is a required question!");
@@ -254,7 +226,6 @@ function Respondent (props) {
             setNext(true);
           }
         }
-
       }
     }, [index, formResponse])
 
@@ -288,7 +259,6 @@ function Respondent (props) {
           current = formItems[index-1];
           getAnswerSelection(formItems[index-1]); 
         }
-
         return (
           <React.Fragment>
             {index == 1 ? 
@@ -304,7 +274,7 @@ function Respondent (props) {
             <div className="preview-flex">
               {index <= length ? (
                 <React.Fragment>
-                  Selected option: {formResponse && formResponse[index-1] ? formResponse[index-1].answerSelectionValue : null}
+                  {/* Selected option: {formResponse && formResponse[index-1] ? formResponse[index-1].answerSelectionValue : null} */}
                   <div className="preview-field">
                     <div id="preview-index">
                       {index}.
@@ -322,7 +292,7 @@ function Respondent (props) {
                       : current.type == "MC"
                       ? (loadAnswerField = loadMultipleChoice(index, current.id, answerSelection))
                       : current.type == "CB"
-                      ? (loadAnswerField = loadCheckbox(current.id, answerSelection))
+                      ? (loadAnswerField = loadCheckbox(index, current.id, answerSelection))
                       : current.type == "SA"
                       ? (loadAnswerField = loadShortAnswer(current.id))
                       : null}
@@ -333,14 +303,7 @@ function Respondent (props) {
                 <div className="respondent-endpage" >
                   <div className="respondent-endpage-title" style={{ backgroundColor: primaryColor }}>Congratulations!</div>
                   <div className="respondent-endpage-description">You are at the end of the form. Click the button below to submit your answer! :)</div>
-                  {/* {readyToSubmit ? */}
-                    <Link to="/" className="preview-submit-button" style={{ backgroundColor: primaryColor }} onClick={() => submitForm()}>
-                      Submit Form
-                    </Link>
-                    {/* : <div className="preview-submit-button" style={{ backgroundColor: primaryColor }}>
-                      Submit Form
-                    </div> */}
-                  {/* } */}
+                  { displayOnSubmission() }
                 </div>
               )}
             </div>
@@ -358,13 +321,9 @@ function Respondent (props) {
       }
 
       const setMultipleChoiceValue = (index, formItemId, selectedAnswerSelection) => {
-        // find formitemid yg sama, dihapus. push yg baru.
-        
-        console.log(selectedAnswerSelection);
         let id;
         let value;
         let responses = [...formResponse];
-
         if(responses[index-1] && responses[index-1].answerSelectionValue == selectedAnswerSelection.value){
           id = "";
           value = "";
@@ -372,10 +331,9 @@ function Respondent (props) {
           id = selectedAnswerSelection.id;
           value = selectedAnswerSelection.value;
         }
-
         let formItemResponse = {
           formRespondentId: formRespondentId,
-          formItemId: formItemId,
+          formItemsId: formItemId,
           answerSelectionId: id,
           answerSelectionValue: value,
         }
@@ -383,8 +341,6 @@ function Respondent (props) {
         console.log("Set Multiple Choice Value:");
         console.log(value);
         setFormResponse(responses);
-
-        // validateAnswer();
       }
 
       const loadMultipleChoice = (index, formItemId, arrayOptions) => {
@@ -461,33 +417,63 @@ function Respondent (props) {
         );
       }
 
-      const setCheckboxValue = (formItemId, selectedAnswerSelection) => {
+      const setCheckboxValue = (index, formItemId, selectedAnswerSelection) => {
+        let id = selectedAnswerSelection.id;
+        let value = selectedAnswerSelection.value;
         let responses = [...formResponse];
+        if(responses[index-1] && responses[index-1].length > 0){
+          let selectedResponse = responses[index-1];
+          let removeSelectedId = "";
+          selectedResponse.map((resp) => {
+            if(resp.answerSelectionValue == selectedAnswerSelection.value) {
+              removeSelectedId = resp.answerSelectionId;
+            }
+          });
+          if(removeSelectedId) {
+            console.log("test delete");
+            responses[index-1] = selectedResponse.filter((resp) => resp.answerSelectionId != removeSelectedId);
+            setFormResponse(responses);
+            return;
+          }
+        }
+        console.log(selectedAnswerSelection);
+        if(!responses[index-1]) responses[index-1] = [];
         let formItemResponse = {
           formRespondentId: formRespondentId,
           formItemsId: formItemId,
-          answerSelectionId: selectedAnswerSelection.id,
-          answerSelectionValue: selectedAnswerSelection.value,
+          answerSelectionId: id,
+          answerSelectionValue: value,
         }
-        responses.push(formItemResponse);
+        console.log(responses[index-1]);
+        responses[index-1].push(formItemResponse);
         setFormResponse(responses);
       }
+
+      const multipleChecked = (index, options) => {
+        let selectedResponse = formResponse[index-1];
+        let checker = false;
+        selectedResponse.map((resp) => {
+          if(resp.answerSelectionValue == options.value) checker = true;
+        });
+        return checker;
+      }
     
-      const loadCheckbox = (formItemId, arrayOptions) => {
+      const loadCheckbox = (index, formItemId, arrayOptions) => {
         return (
           <React.Fragment>
-            {arrayOptions.map((options) => {
+            {arrayOptions.map((options, innerIdx) => {
               return (
                 <div className="preview-option-container" id="preview-option-mc-cb-container">
                   <div id="preview-input-mc-cb-container">
                     <input
                       className="answerSelection"
-                      id="option-mc-cb"
+                      id={"options-"+formItemId+"-"+innerIdx}
                       type="checkbox"
-                      name="options"
-                      onClick={() => setCheckboxValue(formItemId, options)}
+                      name={"options-"+formItemId}
+                      checked={formResponse[index-1] && multipleChecked(index, options)}
+                      onClick={() => setCheckboxValue(index, formItemId, options)}
                     />
-                    <label id="option-label" for="options">
+                    <label id={"option-label"+"-"+innerIdx} htmlFor={"options-"+formItemId+"-"+innerIdx}>
                       {options.value == "" ? options.label : options.value}
                     </label>
                   </div>
@@ -522,20 +508,38 @@ function Respondent (props) {
         );
       }
 
-    const submitForm = () => {
+    const submitForm = async () => {
       console.log("submit Form: ");
       console.log(formResponse);
-      formResponse.map((response) => {
-        try {
-          axios({
-            method: "post",
-            url: `${BASE_URL}/api/v1/forms/insert-response/${formRespondentId}`,
-            data: response
-          }).then(() => {
-            localStorage.setItem("tempFormResponse", JSON.stringify([]));
-          })
-        } catch(error) {
-          console.log(error);
+      formResponse.map(async(response) => {
+        if(!Array.isArray(response)) {
+          try {
+            console.log("Item biasa:");
+            console.log(response);
+            await axios({
+              method: "post",
+              url: `${BASE_URL}/api/v1/forms/insert-response/${formRespondentId}`,
+              data: response
+            }).then(() => {
+              localStorage.setItem("tempFormResponse", JSON.stringify([]));
+            })
+          } catch(error) {
+            console.log(error);
+          }
+        } else {
+          response.map(async (respItem, respIndex) => {
+            console.log("Item checkbox:");
+            console.log(respItem);
+            try {
+              await axios({
+                method: "post",
+                url: `${BASE_URL}/api/v1/forms/insert-response/${formRespondentId}`,
+                data: respItem
+              }).then(() => {if(respIndex == response.length - 1) localStorage.setItem("tempFormResponse", JSON.stringify([]))});
+            } catch(error) {
+              console.log(error);
+            }
+          });
         }
       })
         // formResponse.map((response) => {
@@ -701,9 +705,6 @@ function Respondent (props) {
                 </div>
                 <div className="display-container" id="display-respondent">
                   {displayQuestion()}
-                  {index == formItems.length ? (
-                    displayOnSubmission()
-                  ) : null}
                 </div>
                 <div id="respondent-chat">
                   {respondentChat()}

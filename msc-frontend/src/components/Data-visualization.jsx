@@ -37,7 +37,7 @@ function DataVisualization(props) {
     tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
     if(tempBreadcrumbs.length >= 2){
       let selectedForm = JSON.parse(localStorage.getItem("selectedForm"))
-      while(tempBreadcrumbs.slice(-1)[0].page != `Data Visualization - ${selectedForm['title']}`){
+      while(tempBreadcrumbs.slice(-1)[0] && tempBreadcrumbs.slice(-1)[0].page != `Data Visualization - ${selectedForm['title']}`){
         tempBreadcrumbs.pop();
       }
     }
@@ -83,10 +83,13 @@ function DataVisualization(props) {
             listOfAnswers.forEach(a => {
               if(a === ri.answerSelectionValue) validator = false;
             });
-            if (validator) listOfAnswers.push(ri.answerSelectionValue);
+            if (validator && item.type != "SA") listOfAnswers.push(ri.answerSelectionValue);
+            else if(item.type == "SA") listOfAnswers.push(ri.answerSelectionValue);
           });
           tempAnswerList[fi] = listOfAnswers;
           if(count[fi].length === 0) for(let i=0; i < listOfAnswers.length; i++) count[fi].push(0);
+          console.log(count[fi].length);
+          if(item.type == "SA") return;
           resData.forEach((ri) => {
             listOfAnswers.map((a, idx) => {
               if (ri.answerSelectionValue == a) count[fi][idx] += 1;
@@ -98,7 +101,7 @@ function DataVisualization(props) {
       setItemList(listOfFormItems);
       setAnswerList(tempAnswerList);
       setCountData(count);
-      setTimeout(() => setInLoading(false), 3000);
+      setTimeout(() => setInLoading(false), 2000);
     });
     return listOfFormItems, count;
   }
