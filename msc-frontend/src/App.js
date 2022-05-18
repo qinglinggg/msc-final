@@ -57,6 +57,10 @@ class App extends React.Component {
         const forms = res.data;
         localStorage.setItem("formLists", JSON.stringify(forms));
       });
+      axios.get(`${BASE_URL}/api/v1/forms/invited-form/${tempUser}`).then((res) => {
+        const invitedForms = res.data;
+        localStorage.setItem("invitedFormLists", JSON.stringify(invitedForms));
+      })
     }
     let body = document.getElementById("body");
     // MENU
@@ -167,7 +171,7 @@ class App extends React.Component {
                 element={
                   <Home
                     loggedInUser={this.state.loggedInUser}
-                    waitingForms={this.state.waitingForms}
+                    // waitingForms={this.state.waitingForms}
                     handleCreateNewForm={this.handleCreateNewForm}
                   />
                 }

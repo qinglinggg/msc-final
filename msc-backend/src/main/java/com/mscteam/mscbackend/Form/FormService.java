@@ -139,6 +139,20 @@ public class FormService {
         return formDAO.getAuthoredForms(userId);
     }
 
+    public List<Form> getInvitedForms(String userId){
+        List<FormRespondent> invitedFormList = formDAO.getInvitedFormList(userId);
+        List<Form> invitedFormMetadata = new ArrayList<>();
+        if(invitedFormList.size() > 0){
+            for(int i=0; i<invitedFormList.size(); i++){
+                String formId = invitedFormList.get(i).getFormId().toString();
+                Optional<Form> form = formDAO.getFormById(formId);
+                if(form.isPresent()) invitedFormMetadata.add(form.get());
+            }
+            return invitedFormMetadata;
+        }
+        return null;
+    }
+
     public List<FormRespondent> getFormTargetedUserList(String formId){
         return formDAO.getFormTargetedUserList(formId);
     }
@@ -146,9 +160,8 @@ public class FormService {
     public int insertTargetedUser(String formId, String userEmail){
         // Get User Email
         List<String> userId = userProfileDAO.getUserByEmail(userEmail);
-        String resUserId = "";
-        if(userId != null){
-            resUserId = userId.get(0);
+        if(userId.size() > 0){
+            String resUserId = userId.get(0);
             System.out.println("userEmail " + userEmail + " with resId = " + resUserId);
             // check if user already invited
             List<String> formRespondentId = formDAO.getFormRespondentByUserId(formId, resUserId);

@@ -43,22 +43,24 @@ function Invitation(props) {
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
-    setUserInvited([
-      {
-        number: 1,
-        name: "Albert Cony Pramudita",
-        email: "albert_pramudita@bca.co.id",
-        status: "Completed",
-        datetime: "Submitted at 08/12/2021 09:30PM",
-      },
-      {
-        number: 2,
-        name: "Dian Fransiska Handayani",
-        email: "dian_fransiska@bca.co.id",
-        status: "Completed",
-        datetime: "Submitted at 08/12/2021 09:30PM",
-      },
-    ]);
+
+    // setUserInvited([
+    //   {
+    //     number: 1,
+    //     name: "Albert Cony Pramudita",
+    //     email: "albert_pramudita@bca.co.id",
+    //     status: "Completed",
+    //     datetime: "Submitted at 08/12/2021 09:30PM",
+    //   },
+    //   {
+    //     number: 2,
+    //     name: "Dian Fransiska Handayani",
+    //     email: "dian_fransiska@bca.co.id",
+    //     status: "Completed",
+    //     datetime: "Submitted at 08/12/2021 09:30PM",
+    //   },
+    // ]);
+
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
     tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
     if(tempBreadcrumbs.length >= 2) {
@@ -87,6 +89,7 @@ function Invitation(props) {
         method: "get",
         url: `${BASE_URL}/api/v1/forms/get-targeted-user-list/${formId}`,
       }).then((res) => {
+        console.log(res);
         if(res.data){
           userInvitedList = res.data;
           console.log("---- userInvitedList, inside res.data:");
@@ -102,41 +105,48 @@ function Invitation(props) {
               u['datetime'] = "Submitted at " + u.submitDate;
             }
           })
+          setUserInvited(userInvitedList);
         }
       }) 
     } catch(error) {
       console.log(error);
     }
-    if(userInvitedList.length > 0) {
-      let index = 0;
-      userInvitedList.map((u) => {
-        try {
-          axios({
-            method: "get",
-            url: `${BASE_URL}/api/v1/user-profiles/${u.userId}`
-          }).then((res) => {
-            if(res.data){
-              index++;
-              u['number'] = index;
-              // u['userId'] = u.userId;
-              u['name'] = res.data.fullname;
-              u['email'] = res.data.email;
-            }
-          })
-        } catch(error) {
-          console.log(error);
-        }
-      })
-      setUserInvited(userInvitedList);
-    }
+
   }, []);
 
-  // useEffect((prevState) => {
-  //   // insert or delete
-  //   if(userInvited){
-
-  //   }
-  // }, [userInvited]);
+  useEffect(() => {
+    // insert or delete
+    if(userInvited){
+      if(userInvited.length > 0) {
+        let index = 0;
+        let userInvitedList = userInvited;
+        userInvitedList.map((u) => {
+          if(u['number'] && u['name'] && u['email']) return;
+          try {
+            axios({
+              method: "get",
+              url: `${BASE_URL}/api/v1/user-profiles/${u.userId}`
+            }).then((res) => {
+              if(res.data){
+                index++;
+                u['number'] = index;
+                u['name'] = res.data.fullname;
+                u['email'] = res.data.email;
+              }
+            })
+          } catch(error) {
+            console.log(error);
+          }
+        })
+        // userInvitedList.sort(function(a, b) { 
+        //   if(a.number - b.number) return a - b;
+        //   else return b - a;
+        // });
+        setUserInvited(userInvitedList);
+        console.log(userInvitedList);
+      }
+    }
+  }, [userInvited]);
 
   const handleMenu = () => {
     setOpenMenu(!openMenu);

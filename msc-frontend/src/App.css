@@ -1470,6 +1470,7 @@ body {
   justify-content: space-evenly;
   margin-bottom: 15px;
   background-color: rgba(224, 224, 224, 0.233);
+  padding: 0 5px 0 5px;
 }
 
 .invitation-track-innerbox {
@@ -1479,27 +1480,28 @@ body {
   align-self: center;
   font-family: var(--font-roboto);
   font-size: small;
+  word-break: break-all;
 }
 
 #invitation-track-innerbox-number {
-  min-width: 25px;
+  width: 25px;
 }
 
 #invitation-track-innerbox-name {
-  min-width: 180px;
+  width: 180px;
 }
 
 #invitation-track-innerbox-email {
-  min-width: 180px;
+  width: 230px;
 }
 
 #invitation-track-innerbox-status {
   /* Not Opened, Opened, Submitted */
-  min-width: 100px;
+  width: 100px;
 }
 
 #invitation-track-innerbox-datetime {
-  min-width: 200px;
+  width: 150px;
   font-style: italic;
 }
 
