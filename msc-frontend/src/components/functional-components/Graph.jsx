@@ -1,4 +1,7 @@
 import React, { Component } from "react";
+import Chart from "chart.js/auto";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+
 var charts = {};
 
 class Graph extends React.Component {
@@ -7,6 +10,8 @@ class Graph extends React.Component {
     super(props);
     this.resetGraph = this.resetGraph.bind(this);
     this.generateColor = this.generateColor.bind(this);
+    this.showCountedLabels = this.showCountedLabels.bind(this);
+    this.showListedAnswers = this.showListedAnswers.bind(this);
   }
 
   state = {
@@ -57,29 +62,45 @@ class Graph extends React.Component {
     if (canvas != null) {
       canvas = canvas.getContext("2d");
     }
-    if (typeof charts[count] != "undefined") {
-      charts[count].destroy();
+    try {
+      let chartStatus = Chart.getChart("graph-" + count);
+      if (chartStatus != undefined) chartStatus.destroy();
+    } catch(e) {
+      console.log("Failed to destroy chart");
     }
-    charts[count] = new window.Chart(canvas, {
+    // Chart.register(ChartDataLabels);
+    // Chart.defaults.set('plugins.datalabels', {
+    //   anchor: 'end',
+    //   align: 'end',
+    //   color: 'white'
+    // });
+    charts[count] = new Chart(canvas, {
       type: this.state.type,
       data: data,
       options: this.state.optionData,
+      plugins: [ChartDataLabels]
     });
   }
 
   componentDidMount() {
+    let totalCount = 0;
+    this.props.countData.map((val) => {
+      totalCount += val;
+    });
     let tempOpt = {
       plugins: {
         responsive: true,
         maintainAspectRatio: true,
         datalabels: {
-          anchor: 'end',
-          align: 'end',
-          formatter: (val) => (`${val}%`),
           labels: {
             value: {
-              color: 'white'
+              color: 'white',
+              textAlign: 'center'
             }
+          },
+          formatter: function(value) {
+            let calculateVal = (value / totalCount) * 100
+            return calculateVal + '%\n' + value + " votes";
           }
         },
         legend: {
@@ -100,9 +121,34 @@ class Graph extends React.Component {
     };
     this.setState({optionData : tempOpt});
     if(this.props.type == "MC") this.setState({type : "pie"}, () => this.resetGraph());
-    else if(this.props.type == "CB") this.setState({type : "bar"}, () => this.resetGraph());
-    else if(this.props.type == "SA") this.setState({type : "doughnut"}, () => this.resetGraph());
-    else if(this.props.type == "LS") this.setState({type : "radar"}, () => this.resetGraph());
+    else if(this.props.type == "CB") this.setState({type : "doughnut"}, () => this.resetGraph());
+    else if(this.props.type == "SA") this.setState({type : "N/A"}, () => this.resetGraph());
+    else if(this.props.type == "LS") this.setState({type : "bar"}, () => this.resetGraph());
+  }
+
+  showCountedLabels() {
+    return this.props.countData.map((countSum, ci) => {
+      return (
+        <React.Fragment>
+            <div className="item-subgraph" id={"item-subgraph-" + this.props.count + ci}>
+              <span id={"color-subgraph-" + this.props.count + ci} className="item-color"></span>
+              <span className="item-text">{ this.props.answerList[ci] } : { countSum }</span>
+            </div>
+        </React.Fragment>
+      );
+    });
+  }
+
+  showListedAnswers() {
+    return this.props.answerList.map((ans, ai) => {
+      return (
+        <div className="shortanswer-list">
+          <div className="shortanswer-item">
+            { ans }
+          </div>
+        </div>
+      )
+    });
   }
 
   render() {
@@ -111,21 +157,12 @@ class Graph extends React.Component {
         { this.props.countData.length > 0 ?
         (
         <div className="graph-section">
-          <canvas id={"graph-" + this.props.count} className="graph-chart"></canvas>
+          { this.state.type != "N/A" ? (<canvas id={"graph-" + this.props.count} className="graph-chart"></canvas>) : null}
           <div className="sub-graph">
-            { this.props.countData.map((countSum, ci) => {
-              return (
-                <React.Fragment>
-                    <div className="item-subgraph" id={"item-subgraph-" + this.props.count + ci}>
-                      <span id={"color-subgraph-" + this.props.count + ci} className="item-color"></span>
-                      <span className="item-text">{ this.props.answerList[ci] } : { countSum }</span>
-                    </div>
-                </React.Fragment>
-              );
-            })}
+            { this.state.type != "N/A" ? this.showCountedLabels() : null}
           </div>
         </div>
-        ) : 
+        ) :
         (
         <div className="graph-section">No answer found for this question...</div>
         )
