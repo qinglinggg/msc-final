@@ -9,7 +9,7 @@ class PageItems extends React.Component {
   constructor(props) {
     super(props);
   }
-
+  
   async refreshFormList() {
     let tempUser = JSON.parse(localStorage.getItem("loggedInUser"));
     if (tempUser)

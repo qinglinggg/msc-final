@@ -145,7 +145,7 @@ public class FormController {
         return formService.getInvitedFormRespondent(userId);
     }
 
-    @GetMapping(path="/invited-form/{userId}")
+    @PostMapping(path="/invited-form/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<Form> getInvitedForms(@PathVariable("userId") String userId, @RequestBody List<FormRespondent> invitedData){
         return formService.getInvitedForms(userId, invitedData);
     }
