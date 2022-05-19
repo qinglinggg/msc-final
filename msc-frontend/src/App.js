@@ -61,13 +61,12 @@ class App extends React.Component {
       console.log(tempInvitedForms);
       if(tempInvitedForms){
         axios({
-          method: "get",
+          method: "post",
           url: `${BASE_URL}/api/v1/forms/invited-form/${tempUser}`,
           data: tempInvitedForms,
           headers: {"Content-Type": "application/json"}
         }).then((res) => {
           let index = 0;
-          console.log("masuk");
           const invitedForms = res.data;
           invitedForms.map((form) => {
             form['formRespondentId'] = tempInvitedForms[index].formRespondentId;

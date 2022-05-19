@@ -1,5 +1,6 @@
 package com.mscteam.mscbackend.Form;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.UUID;
 
@@ -11,14 +12,16 @@ public class FormRespondent {
     private UUID userId;
     private Date submitDate;
     private Integer isTargeted;
+    private Long inviteDate;
 
     // get 
-    public FormRespondent(String formRespondentId, String formId, String userId, Date submitDate, Integer isTargeted){
+    public FormRespondent(String formRespondentId, String formId, String userId, Date submitDate, Integer isTargeted, Long inviteDate){
         this.formRespondentId = UUID.fromString(formRespondentId);
         this.formId = UUID.fromString(formId);
         this.userId = UUID.fromString(userId);
         this.submitDate = submitDate;
         this.isTargeted = isTargeted;
+        this.inviteDate = inviteDate;
     }
 
     // create
@@ -28,8 +31,11 @@ public class FormRespondent {
         this.userId = UUID.fromString(userId);
         if(isTargeted == 1){
             this.submitDate = null;
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            this.inviteDate = timestamp.getTime();
         } else {
             this.submitDate = setSubmitDate();
+            this.inviteDate = null;
         }
         this.isTargeted = isTargeted;
     }
@@ -63,4 +69,16 @@ public class FormRespondent {
         this.isTargeted = isTargeted;
     }
 
+    public Long getInviteDate() {
+        return this.inviteDate;
+    }
+
+    public void setInviteDate(Long inviteDate) {
+        this.inviteDate = inviteDate;
+    }
+
+    public String inviteDateToTimestamp()  {
+        Timestamp timestamp = new Timestamp(inviteDate);
+        return timestamp.toString();
+    }
 }

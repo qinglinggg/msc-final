@@ -323,7 +323,8 @@ public class FormDAO {
                 System.out.println("dateFormat.parse is failed");
             }
             Integer isTargeted = resultSet.getInt("isTargeted");
-            return new FormRespondent(formRespondentId, formId, userId, submitDate, isTargeted);
+            Long inviteDate = resultSet.getLong("inviteDate");
+            return new FormRespondent(formRespondentId, formId, userId, submitDate, isTargeted, inviteDate);
         }, formId);
 
         return formTargetedUserList;
@@ -341,7 +342,8 @@ public class FormDAO {
                 System.out.println("dateFormat.parse is failed");
             }
             Integer isTargeted = resultSet.getInt("isTargeted");
-            return new FormRespondent(formRespondentId, formId, userId, submitDate, isTargeted); 
+            Long inviteDate = resultSet.getLong("inviteDate");
+            return new FormRespondent(formRespondentId, formId, userId, submitDate, isTargeted, inviteDate); 
         }, userId);
 
         return invitedFormList;
@@ -354,8 +356,9 @@ public class FormDAO {
         String resultDate = "";
         if(submitDate != null) resultDate = dateFormat.format(targetedUser.getSubmitDate());
         else resultDate = null;
-        final String query = "INSERT INTO FormRespondent VALUES (?,?,?,?,?)";
-        int res = jdbcTemplate.update(query, targetedUser.getFormRespondentId().toString(), targetedUser.getFormId().toString(), targetedUser.getUserId().toString(), resultDate, targetedUser.getIsTargeted());
+        final String query = "INSERT INTO FormRespondent VALUES (?,?,?,?,?,?)";
+        String inviteDateQuery = "TO_TIMESTAMP('" + targetedUser.inviteDateToTimestamp() + "', 'YYYY-MM-DD HH24:MI:SS.FF')";
+        int res = jdbcTemplate.update(query, targetedUser.getFormRespondentId().toString(), targetedUser.getFormId().toString(), targetedUser.getUserId().toString(), resultDate, targetedUser.getIsTargeted(), inviteDateQuery);
         return res;
     }
 
