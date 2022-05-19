@@ -342,7 +342,7 @@ public class FormDAO {
             }
             Integer isTargeted = resultSet.getInt("isTargeted");
             return new FormRespondent(formRespondentId, formId, userId, submitDate, isTargeted); 
-        });
+        }, userId);
 
         return invitedFormList;
     }

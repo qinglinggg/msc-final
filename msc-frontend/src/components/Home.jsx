@@ -2,7 +2,7 @@ import react from "react";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Fragment } from "react";
-import Page1Items from "./Page1Items";
+import PageItems from "./PageItems";
 import Dashboard from "./Dashboard";
 import SearchField from "react-search-field";
 import axios from "axios";
@@ -183,10 +183,11 @@ class Home extends React.Component {
     return (
       <React.Fragment>
         {formsData ? formsData.map((data) => (
-          <Page1Items 
+          <PageItems 
             key={data.formId} 
             data={data}
             handleFormDeletion={this.handleFormDeletion}
+            currentPage={1}
           />
         )) : null}
         <div className="item-wrapper">
@@ -207,8 +208,11 @@ class Home extends React.Component {
     return (
       <React.Fragment>
         {invitedFormsData ? invitedFormsData.map((data) => (
-          
-          <Page1Items key={data.formId} data={data} />
+          <PageItems 
+            key={data.formId} 
+            data={data} 
+            currentPage={2} 
+          />
         )) : null}
       </React.Fragment>
     );
