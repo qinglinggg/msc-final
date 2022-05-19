@@ -718,7 +718,9 @@ body {
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
+  white-space: nowrap;
   margin: 25px 0 0 0;
+  overflow: hidden;
 }
 
 #page-title-home {
@@ -2325,6 +2327,42 @@ body {
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.inner-display-container {
+  width: 85%;
+  min-height: 300px;
+  height: fit-content;
+  border-radius: 15px;
+  border: 2px solid #c4c4c4;
+  margin: 50px 0px 50px 0px;
+  padding: 20px;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+@keyframes show-transition {
+  0% {
+    transform: translateX(500px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes hide-transition {
+  0% {
+    transform: translateX(-500px);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
 #display-respondent {
@@ -2351,15 +2389,16 @@ body {
   height: 40px;
   margin: 0px 10px 0px 25px;
   padding: 3px 6px 3px 5px;
-  align-self: center;
   display: flex;
   justify-content: center;
   border: .5px solid gray;
   border-radius: 25px;
   position: absolute;
-  left: 12.5%;
-  animation: hide-on-left 1s;
+  left: 10%;
   opacity: 0;
+  z-index: 1000;
+  top: 45%;
+  animation: hide-on-left 1s;
 }
 
 .display-container:hover #preview-back-icon-animation {
@@ -2422,15 +2461,15 @@ body {
   height: 40px;
   margin: 0px 25px 0px 10px;
   padding: 3px 5px 3px 6px;
-  align-self: center;
   display: flex;
   justify-content: center;
-  z-index: 1000;
   border: .5px solid gray;
   border-radius: 25px;
   position: absolute;
-  right: 12.5%;
+  right: 10%;
   opacity: 0;
+  z-index: 1000;
+  top: 45%;
   animation: hide-on-right 1s;
 }
 
@@ -2441,7 +2480,7 @@ body {
 
 @keyframes fade-on-right {
   0% {
-    transform: translateX(100px);
+    transform: translateX(100%);
     opacity: 0;
   }
   100% {
@@ -2452,7 +2491,7 @@ body {
 
 @keyframes hide-on-right {
   0% {
-    transform: translateX(0px);
+    transform: translate(0);
     opacity: 1;
   }
   100% {
@@ -2869,7 +2908,8 @@ body {
   display: flex;
   flex-direction: row;
   width: 70%;
-  height: fit-content;
+  min-width: 500px;
+  height: 20px;
   padding: 15px 25px 15px 25px;
   justify-content: left;
   align-self: center;
@@ -2877,6 +2917,7 @@ body {
   border: var(--border-page);
   border-radius: 25px;
   margin-bottom: 25px;
+  overflow: hidden;
 }
 
 .page-breadcrumbs a {
@@ -2887,6 +2928,10 @@ body {
 
 .page-breadcrumbs span {
   margin-right: 15px;
+  font-size: medium;
+  height: 10px;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 /* Respondent */
