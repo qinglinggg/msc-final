@@ -60,6 +60,7 @@ class App extends React.Component {
       let tempInvitedForms = [];
       axios.get(`${BASE_URL}/api/v1/forms/invited-form-respondent/${tempUser}`).then((res) => {
         tempInvitedForms = res.data;
+        console.log(tempInvitedForms);
       })
       let invitedForms = [];
       if(tempInvitedForms.length > 0){

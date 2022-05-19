@@ -5,7 +5,7 @@ import Popup from "reactjs-popup";
 import axios from "axios";
 
 const BASE_URL = "http://10.61.38.193:8080";
-class Page1Items extends React.Component {
+class PageItems extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -43,7 +43,8 @@ class Page1Items extends React.Component {
             </div>
           </div>
         </Link>
-        <Popup
+        {this.props.currentPage == 1 ? 
+          <Popup
             trigger={(open) => 
             <div className="item-footer">
               <i className="fa fa-ellipsis-v"></i>
@@ -51,20 +52,21 @@ class Page1Items extends React.Component {
             }
             position="right center"
           >
-          <div className="popup-wrapper">
-            <div
-              className="popup-content"
-              onClick={() => {
-                this.processDeletion();
-              }}
-            >
-              Delete this form
+            <div className="popup-wrapper">
+              <div
+                className="popup-content"
+                onClick={() => {
+                  this.processDeletion();
+                }}
+              >
+                Delete this form
+              </div>
             </div>
-          </div>
-        </Popup>
+          </Popup> 
+        : false }
       </div>
     );
   }
 }
 
-export default Page1Items;
+export default PageItems;
