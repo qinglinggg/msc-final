@@ -4,6 +4,7 @@ import Graph from "./functional-components/Graph";
 const Summary = React.forwardRef((props, ref) => {
   let counter = 0;
   let tempArr = [];
+
   return (
     <React.Fragment>
       {props.data ? props.data.map((item, i) => {
@@ -13,7 +14,7 @@ const Summary = React.forwardRef((props, ref) => {
             <div className="question-field">
               {counter}. {item.content}
             </div>
-            <Graph question={item.question} type={item.type} answerList={props.answerList[i]} count={counter} countData={props.countData[i]} />
+            <Graph question={item.content} type={item.type} answerList={props.answerList[i]} count={counter} countData={props.countData[i]} />
           </div>
         );
       }) : null}

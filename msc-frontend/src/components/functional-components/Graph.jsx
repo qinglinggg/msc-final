@@ -91,6 +91,11 @@ class Graph extends React.Component {
       plugins: {
         responsive: true,
         maintainAspectRatio: true,
+        title: {
+          display: true,
+          text: 'Persentase data dari ' + totalCount + ' pilihan responden',
+          position: 'bottom'
+        },
         datalabels: {
           labels: {
             value: {
@@ -140,15 +145,19 @@ class Graph extends React.Component {
   }
 
   showListedAnswers() {
-    return this.props.answerList.map((ans, ai) => {
-      return (
-        <div className="shortanswer-list">
+    return (
+      <div className="shortanswer-list">
+      {
+      this.props.answerList.map((ans, ai) => {
+        return (
           <div className="shortanswer-item">
-            { ans }
+            <span>{ ans }</span>
           </div>
-        </div>
-      )
-    });
+        )
+      })
+    }
+    </div>
+    )
   }
 
   render() {
@@ -157,10 +166,15 @@ class Graph extends React.Component {
         { this.props.countData.length > 0 ?
         (
         <div className="graph-section">
-          { this.state.type != "N/A" ? (<canvas id={"graph-" + this.props.count} className="graph-chart"></canvas>) : null}
-          <div className="sub-graph">
-            { this.state.type != "N/A" ? this.showCountedLabels() : null}
-          </div>
+          { this.state.type != "N/A" ?
+          (
+          <React.Fragment>
+            <canvas id={"graph-" + this.props.count} className="graph-chart"></canvas>
+            <div className="sub-graph">
+              { this.showCountedLabels() }
+            </div>
+          </React.Fragment>
+          ) : this.showListedAnswers()}
         </div>
         ) :
         (

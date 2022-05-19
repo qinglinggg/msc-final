@@ -118,7 +118,9 @@ function Question(props) {
         "question-" + props.questionData.id + "-options-" + obj.id;
         let el = document.getElementById(optionId);
         if(el){
-          el.value = obj.value;
+          console.log(props.questionData);
+          if (props.questionData.questionType != "LS") el.value = obj.value;
+          else el.value = obj.label;
           autoResizeContent(el);
         }
       });
@@ -471,7 +473,9 @@ function Question(props) {
                         type="text"
                         placeholder={object.label}
                         wrap="soft"
+                        defaultValue={object.label ? object.label : null}
                         onChange={(e) => {
+                          console.log(object);
                           props.handleOptionLabel(
                             props.questionData.id,
                             e,

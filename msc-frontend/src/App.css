@@ -1827,6 +1827,57 @@ body {
   text-align: left;
 }
 
+.shortanswer-list {
+  width: 90%;
+  height: fit-content;
+  max-height: 200px;
+  background-color: rgb(78, 78, 78);
+  overflow-x: hidden;
+  overflow-y: scroll;
+  border-radius: 15px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.shortanswer-list::-webkit-scrollbar {
+  width: 5px;
+  border-right: 5px solid transparent;
+  background-clip: padding-box;
+}
+
+.shortanswer-list::-webkit-scrollbar-button {
+  display: none;
+}
+
+.shortanswer-list::-webkit-scrollbar-track {
+  border-radius: 15px;
+  background-color: transparent;
+  margin: 10px;
+}
+
+.shortanswer-list::-webkit-scrollbar-thumb {
+  width: 90%;
+  background-color: gray;
+  border-radius: 15px;
+}
+
+.shortanswer-list::-webkit-scrollbar-thumb:hover {
+  background-color: white;
+}
+
+.shortanswer-item {
+  width: 50%;
+  background-color: #00ff6a;
+  padding: 15px;
+  border-radius: 15px;
+  font-size: small;
+  margin: 5px;
+  color: black;
+}
+
 #export-container {
   width: 80%;
   height: fit-content;
@@ -2533,11 +2584,10 @@ body {
 .option-ls-desc {
   font-size: 15px;
   width: fit-content;
-  max-width: 80px;
   display: flex;
   /* flex-wrap: wrap; */
   text-align: center;
-  margin-bottom: 10px;
+  margin-top: 15px;
 }
 
 /* #option-ls-no {
