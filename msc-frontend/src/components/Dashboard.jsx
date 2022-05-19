@@ -287,23 +287,19 @@ function Dashboard(props) {
       return elem.id == id;
     });
     currentForm = currentForm[0];
-
     currentForm["optionCounter"] = 0;
     currentForm["arrayOptions"] = [];
-    
     if(data.length == 0) handleAddOption(id, null, null);
       data.map((obj) => {
         currentForm["optionCounter"] += 1;
         currentForm["arrayOptions"].push(obj);
       })
-
     tempFormItems = tempFormItems.map((elem) => {
       if (elem.id == id) {
         return currentForm;
       }
       return elem;
     });
-
     setFormItems(tempFormItems);
   };
 
@@ -314,7 +310,6 @@ function Dashboard(props) {
       return elem.id == id;
     });
     currentForm = currentForm[0];
-
     let obj = {};
     obj["formItemsId"] = id;
     obj["value"] = "";
@@ -405,6 +400,45 @@ function Dashboard(props) {
     }, 3000);
   };
 
+  const handleOptionLabel = async (questionId, event, object, index) => {
+    if (timeout != 0) clearTimeout(timeout);
+    let value = event.target.value;
+    if(value.length <= 0) value = "Label " + index;
+    setTimeout(() => {
+      let tempFormItems = [...formItems];
+      let currentForm = tempFormItems.filter((elem) => {
+        return elem.id == questionId;
+      });
+      currentForm = currentForm[0];
+      let arrayOptions = currentForm["arrayOptions"];
+      let answerSelection;
+      arrayOptions.map((elem) => {
+        console.log(elem);
+        if (elem.id == object.id) {
+          elem.label = value;
+          elem.value = index;
+          answerSelection = elem;
+        }
+      });
+      currentForm["arrayOptions"] = arrayOptions;
+      //  answerSelectionId -> object.id
+      axios({
+        method: "put",
+        url: `${BASE_URL}/api/v1/forms/update-answer-selection/${object.id}`,
+        data: answerSelection,
+        headers: { "Content-Type": "application/json" },
+      }).then((res) => {
+        tempFormItems = tempFormItems.map((elem) => {
+          if (elem.id == questionId) {
+            return currentForm;
+          }
+          return elem;
+        });
+        setFormItems(tempFormItems);
+      });
+    }, 3000);
+  };
+
   const handleOptionCount = (questionId, value) => {
     let tempFormItems = [...formItems];
     let currentForm = tempFormItems.filter((elem) => {
@@ -441,6 +475,7 @@ function Dashboard(props) {
                   handleAddOption={handleAddOption}
                   handleRemoveOption={handleRemoveOption}
                   handleOptionValue={handleOptionValue}
+                  handleOptionLabel={handleOptionLabel}
                   handleUpdateQuestionInput={handleUpdateQuestionInput}
                   handleUpdateQuestionType={handleUpdateQuestionType}
                   handleUpdateQuestionIsRequired={handleUpdateQuestionIsRequired}
@@ -469,7 +504,6 @@ function Dashboard(props) {
     selectedForm.title = document.getElementById("input-title").value;
     selectedForm.description = document.getElementById("input-desc").value;
     selectedForm.privacySetting = privacyCheck;
-
     try {
       axios({
         method: "put",

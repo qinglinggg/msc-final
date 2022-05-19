@@ -378,7 +378,7 @@ function Question(props) {
                       placeholder={obj.label}
                       wrap="soft"
                       onChange={(e) => {
-                        props.handleOptionValue(props.questionData.id, e, obj);
+                        props.handleOptionValue(props.questionData.id, e, obj, false);
                       }}
                     />
                     <div
@@ -422,7 +422,6 @@ function Question(props) {
   };
 
   const linearScaleOption = () => {
-    let labelIdx = 0;
     let labelOptions = [];
     for (let i = 0; i < props.questionData.optionCounter; i++) {
       labelOptions.push({ value: i+1, label: i+1 });
@@ -443,7 +442,6 @@ function Question(props) {
                       return option;
                     }
                   })
-                  // inputOptions[0].value
                 }
                 defaultValue={inputOptions[0]}
                 id="questionSelection"
@@ -460,10 +458,9 @@ function Question(props) {
               Label
             </div>
             <div className="linear-label-loop">
-              {props.questionData.arrayOptions.map((object) => {
+              {props.questionData.arrayOptions.map((object, idx) => {
                 let optionId =
                   "question-" + props.questionData.id + "-options-" + object.id;
-                labelIdx = labelIdx + 1;
                 return (
                   <div className="linear-label-row">
                     <div className="linear-label-userinput">
@@ -472,13 +469,14 @@ function Question(props) {
                         id={optionId}
                         className="inputText"
                         type="text"
-                        placeholder="Insert label..."
+                        placeholder={object.label}
                         wrap="soft"
                         onChange={(e) => {
-                          props.handleOptionValue(
+                          props.handleOptionLabel(
                             props.questionData.id,
                             e,
-                            object
+                            object,
+                            idx+1
                           );
                         }}
                       />
@@ -489,7 +487,7 @@ function Question(props) {
                           {/* {console.log("Current Label IDX:")}
                           {console.log(labelIdx)} */}
                           {labelOptions.length > 0
-                            ? labelOptions[labelIdx-1].label
+                            ? labelOptions[idx].value
                             : null}
                         </div>
                       </div>

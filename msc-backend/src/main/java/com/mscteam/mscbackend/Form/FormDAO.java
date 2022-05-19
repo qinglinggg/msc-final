@@ -229,6 +229,7 @@ public class FormDAO {
     public int updateAnswerSelection(String answerSelectionId, FormAnswerSelection toBeUpdated) {
         String query = "UPDATE FormAnswerSelection SET ";
         query = query + "answerSelectionValue = '" + toBeUpdated.getValue().toString() + "'";
+        if(toBeUpdated.getLabel() != null && toBeUpdated.getLabel() != "") query = query + ", answerSelectionLabel = '" + toBeUpdated.getLabel().toString() + "'";
         if(toBeUpdated.getNextItem() > 0) query = query + ", nextItem = " + toBeUpdated.getNextItem();
         if(toBeUpdated.getPrevItem() > 0) query = query + ", prevItem = " + toBeUpdated.getPrevItem();
         query = query + " WHERE answerSelectionId = '" + answerSelectionId + "'";

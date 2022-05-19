@@ -370,6 +370,7 @@ function Respondent (props) {
       answerSelectionValue: selectedAnswerSelection.value,
     }
     responses[index-1] = formItemResponse;
+    // console.log(responses[index-1]);
     setFormResponse(responses);
   }
 
@@ -378,6 +379,7 @@ function Respondent (props) {
       <React.Fragment>
         <div id="preview-linear-scale">
           {arrayOptions.map((options, innerIdx) => {
+            console.log(options);
             return (
               <div className="preview-option-container" id="preview-option-ls-container">
                 <div id="preview-input-ls-container">
@@ -429,7 +431,6 @@ function Respondent (props) {
       answerSelectionId: id,
       answerSelectionValue: value,
     }
-    console.log(responses[index-1]);
     responses[index-1].push(formItemResponse);
     setFormResponse(responses);
   }
