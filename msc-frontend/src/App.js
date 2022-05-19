@@ -39,13 +39,8 @@ class App extends React.Component {
 
   state = {
     allForms: [],
+    rawInvitedFormLists: [],
     loggedInUser: "",
-    waitingForms: [
-      {
-        title: "Survey 1",
-        description: "Mengisi survey 1",
-      },
-    ],
   }
 
   componentDidMount() {
@@ -57,32 +52,36 @@ class App extends React.Component {
         const forms = res.data;
         localStorage.setItem("formLists", JSON.stringify(forms));
       });
-      let tempInvitedForms = [];
       axios.get(`${BASE_URL}/api/v1/forms/invited-form-respondent/${tempUser}`).then((res) => {
-        tempInvitedForms = res.data;
-        console.log(tempInvitedForms);
-      })
-      let invitedForms = [];
-      if(tempInvitedForms.length > 0){
-        try {
-          axios({
-            method: "GET",
-            url: `${BASE_URL}/api/v1/forms/invited-form/${tempUser}`,
-            data: tempInvitedForms
-          }).then((res) => {
-            invitedForms = res.data;
-          })
-        } catch(error) {
+        const invitedForms = res.data;
+        localStorage.setItem("rawInvitedFormLists", JSON.stringify(invitedForms));
+        // this.setState({rawInvitedFormLists : invitedForms});
+      });
+      let tempInvitedForms = JSON.parse(localStorage.getItem("rawInvitedFormLists"));
+      // let tempInvitedForms = localStorage.getItem("rawInvitedFormLists");
+      console.log(tempInvitedForms);
+      if(tempInvitedForms){
+        axios({
+          method: "get",
+          url: `${BASE_URL}/api/v1/forms/invited-form/${tempUser}`,
+          data: tempInvitedForms,
+          headers: {"Content-Type": "application/json"}
+        }).then((res) => {
+          let index = 0;
+          console.log("masuk");
+          const invitedForms = res.data;
+          invitedForms.map((form) => {
+            form['formRespondentId'] = tempInvitedForms[index].formRespondentId;
+            form['submitDate'] = tempInvitedForms[index].submitDate;
+            index++;
+          });
+          console.log(invitedForms);
+          localStorage.setItem("invitedFormLists", JSON.stringify(invitedForms));
+        }).catch((error) => {
           console.log(error);
-        }
-        let index = 0;
-        invitedForms.map((form) => {
-          form['formRespondentId'] = tempInvitedForms[index].formRespondentId;
-          form['submitDate'] = tempInvitedForms[index].submitDate;
-          index++;
         });
       }
-      localStorage.setItem("invitedFormLists", JSON.stringify(invitedForms));
+      
     }
     let body = document.getElementById("body");
     // MENU
@@ -110,6 +109,37 @@ class App extends React.Component {
       let tempBreadcrumbs = [{ page: "/", path: `${APP_URL}` }];
       localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
     }
+
+    // if(prevState.rawInvitedFormLists != this.state.rawInvitedFormLists){
+    //   console.log("componentDidUpdate");
+    //   let tempUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    //   if(tempUser){
+    //     let tempInvitedForms = localStorage.getItem("rawInvitedFormLists");
+    //     try {
+    //       axios({
+    //         method: "get",
+    //         url: `${BASE_URL}/api/v1/forms/invited-form/${tempUser}`,
+    //         data: tempInvitedForms,
+    //         // headers: {"Content-Type": "application/json"}
+    //       }).then((res) => {
+    //         let index = 0;
+    //         console.log("masuk");
+    //         const invitedForms = res.data;
+    //         invitedForms.map((form) => {
+    //           form['formRespondentId'] = tempInvitedForms[index].formRespondentId;
+    //           form['submitDate'] = tempInvitedForms[index].submitDate;
+    //           index++;
+    //         });
+    //         console.log(invitedForms);
+    //         localStorage.setItem("invitedFormLists", JSON.stringify(invitedForms));
+    //       })
+    //     } catch (error) {
+    //       console.log(error);
+    //     }
+        
+    //   }
+    // }
+
   }
 
   async handleCreateNewForm(obj) {
