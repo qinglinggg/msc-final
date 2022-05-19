@@ -136,6 +136,10 @@ class Home extends React.Component {
                 <img src="" alt="" id="history-btn" />
               </div>
             </div>
+            {this.state.selectedPage == 2 && !this.state.invitedForms ?
+              <div className="home-form-is-null">You're not invited to fill any form yet. Feel free to continue your work!</div>
+              : null
+            }
             <div className="list-container">{page}</div>
           </div>
         </div>
@@ -202,9 +206,10 @@ class Home extends React.Component {
 
     return (
       <React.Fragment>
-        {invitedFormsData.map((data) => (
+        {invitedFormsData ? invitedFormsData.map((data) => (
+          
           <Page1Items key={data.formId} data={data} />
-        ))}
+        )) : null}
       </React.Fragment>
     );
   }

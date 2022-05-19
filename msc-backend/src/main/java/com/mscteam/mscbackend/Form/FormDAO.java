@@ -328,7 +328,7 @@ public class FormDAO {
         return formTargetedUserList;
     }
 
-    public List<FormRespondent> getInvitedFormList(String userId){
+    public List<FormRespondent> getInvitedFormRespondent(String userId){
         final String query = "SELECT * FROM FormRespondent WHERE userId = ? AND isTargeted = 1";
         List<FormRespondent> invitedFormList = jdbcTemplate.query(query, (resultSet, i) -> {
             String formRespondentId = resultSet.getString("formRespondentId");

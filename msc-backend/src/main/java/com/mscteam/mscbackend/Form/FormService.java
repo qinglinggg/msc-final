@@ -67,7 +67,6 @@ public class FormService {
 
     public List<FormItems> getFormItems(String formId) {
         List<FormItems> listItems = formDAO.getFormItems(formId);
-        // TODO merge and sort form items..
         Collections.sort(listItems);
         return listItems;
     }
@@ -139,18 +138,18 @@ public class FormService {
         return formDAO.getAuthoredForms(userId);
     }
 
-    public List<Form> getInvitedForms(String userId){
-        List<FormRespondent> invitedFormList = formDAO.getInvitedFormList(userId);
+    public List<FormRespondent> getInvitedFormRespondent(String userId){
+        return formDAO.getInvitedFormRespondent(userId);
+    }
+
+    public List<Form> getInvitedForms(String userId, List<FormRespondent> invitedData){
         List<Form> invitedFormMetadata = new ArrayList<>();
-        if(invitedFormList.size() > 0){
-            for(int i=0; i<invitedFormList.size(); i++){
-                String formId = invitedFormList.get(i).getFormId().toString();
-                Optional<Form> form = formDAO.getFormById(formId);
-                if(form.isPresent()) invitedFormMetadata.add(form.get());
-            }
-            return invitedFormMetadata;
+        for(int i=0; i<invitedData.size(); i++){
+            String formId = invitedData.get(i).getFormId().toString();
+            Optional<Form> form = formDAO.getFormById(formId);
+            if(form.isPresent()) invitedFormMetadata.add(form.get());
         }
-        return null;
+        return invitedFormMetadata;
     }
 
     public List<FormRespondent> getFormTargetedUserList(String formId){
