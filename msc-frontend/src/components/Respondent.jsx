@@ -96,6 +96,10 @@ function Respondent (props) {
         }
       });
     }
+    let displayContainer = document.querySelector('.inner-display-container');
+    displayContainer.addEventListener('webkitAnimationEnd', () => {
+      displayContainer.style.animation = '';
+    })
   }, []);
 
   useEffect(() => {
@@ -220,17 +224,23 @@ function Respondent (props) {
   }, [index, formResponse])
 
   const handleNext = () => {
-    if(next) setIndex(index + 1);
+    if(next) {
+      setIndex(index + 1);
+      let displayContainer = document.querySelector('.inner-display-container');
+      displayContainer.style.animation = 'show-transition 1s forwards';
+    }
   }
     
   const handleBack = () => {
     setIndex(index - 1);
+    let displayContainer = document.querySelector('.inner-display-container');
+    displayContainer.style.animation = 'hide-transition 1s forwards';
   }
      
   const displayQuestion = () => {
     let length = formItems.length;
     return (
-        <div className="display-container">
+        <div className="inner-display-container">
           {
             length == 0 ? (
               <div id="preview-empty-list">
@@ -251,16 +261,6 @@ function Respondent (props) {
       }
       return (
         <React.Fragment>
-          {index == 1 ? 
-            null : (
-            <div id="preview-back-icon-animation">
-              <ion-icon
-                name="chevron-back-outline"
-                id="preview-back-icon"
-                onClick={handleBack}
-              />
-            </div>
-          )}
           <div className="preview-flex">
             {index <= length ? (
               <React.Fragment>
@@ -297,15 +297,6 @@ function Respondent (props) {
               </div>
             )}
           </div>
-          {index > length ? null : (
-            <div id="preview-next-icon-animation">
-              <ion-icon
-                name="chevron-forward-outline"
-                id="preview-next-icon"
-                onClick={handleNext}
-              />
-            </div>
-          )}
         </React.Fragment>
       );
     }
@@ -678,7 +669,26 @@ function Respondent (props) {
                   {formMetadata.description}
               </div>
               <div className="display-container" id="display-respondent">
+                {index == 1 ? 
+                  null : (
+                  <div id="preview-back-icon-animation">
+                    <ion-icon
+                      name="chevron-back-outline"
+                      id="preview-back-icon"
+                      onClick={handleBack}
+                    />
+                  </div>
+                )}
                 {displayQuestion()}
+                {index > formItems.length ? null : (
+                  <div id="preview-next-icon-animation">
+                    <ion-icon
+                      name="chevron-forward-outline"
+                      id="preview-next-icon"
+                      onClick={handleNext}
+                    />
+                  </div>
+                )}
               </div>
               <div id="respondent-chat">
                 {respondentChat()}
