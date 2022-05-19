@@ -418,10 +418,10 @@ function Dashboard(props) {
           elem.label = value;
           elem.value = index;
           answerSelection = elem;
+          return answerSelection;
         }
+        return elem;
       });
-      currentForm["arrayOptions"] = arrayOptions;
-      //  answerSelectionId -> object.id
       axios({
         method: "put",
         url: `${BASE_URL}/api/v1/forms/update-answer-selection/${object.id}`,

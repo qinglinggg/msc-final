@@ -392,10 +392,7 @@ function Respondent (props) {
                     onClick={() => setLinearScaleValue(index, formItemId, options)}
                   />
                   <label className="option-ls-desc" id={"option-label"+"-"+innerIdx} htmlFor={"options-"+formItemId+"-"+innerIdx}>
-                    {options.no}
-                  </label>
-                  <label className="option-ls-desc" id={"option-label"+"-"+innerIdx} htmlFor={"options-"+formItemId+"-"+innerIdx}>
-                    {options.value}
+                    {options.label ? options.label : options.no}
                   </label>
                 </div>
               </div>
@@ -475,11 +472,10 @@ function Respondent (props) {
     let formItemResponse = {
       formRespondentId: formRespondentId,
       formItemsId: formItemId,
-      answerSelectionId: answerSelection.id,
+      answerSelectionId: answerSelection[0].id,
       answerSelectionValue: value,
     }
     responses[index-1] = formItemResponse;
-    console.log(responses);
     setFormResponse(responses);
   }
     
