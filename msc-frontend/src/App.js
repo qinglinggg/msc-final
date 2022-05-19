@@ -57,10 +57,31 @@ class App extends React.Component {
         const forms = res.data;
         localStorage.setItem("formLists", JSON.stringify(forms));
       });
-      axios.get(`${BASE_URL}/api/v1/forms/invited-form/${tempUser}`).then((res) => {
-        const invitedForms = res.data;
-        localStorage.setItem("invitedFormLists", JSON.stringify(invitedForms));
+      let tempInvitedForms = [];
+      axios.get(`${BASE_URL}/api/v1/forms/invited-form-respondent/${tempUser}`).then((res) => {
+        tempInvitedForms = res.data;
       })
+      let invitedForms = [];
+      if(tempInvitedForms.length > 0){
+        try {
+          axios({
+            method: "GET",
+            url: `${BASE_URL}/api/v1/forms/invited-form/${tempUser}`,
+            data: tempInvitedForms
+          }).then((res) => {
+            invitedForms = res.data;
+          })
+        } catch(error) {
+          console.log(error);
+        }
+        let index = 0;
+        invitedForms.map((form) => {
+          form['formRespondentId'] = tempInvitedForms[index].formRespondentId;
+          form['submitDate'] = tempInvitedForms[index].submitDate;
+          index++;
+        });
+      }
+      localStorage.setItem("invitedFormLists", JSON.stringify(invitedForms));
     }
     let body = document.getElementById("body");
     // MENU
