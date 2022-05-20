@@ -39,7 +39,7 @@ class PageItems extends React.Component {
   render() {
     return (
       <div className="item-wrapper" id="item-bg" >
-        <Link to={`/dashboard/formId/${this.props.data.formId}`} className="item-container">
+        <Link to={this.props.currentPage == 1 ? `/dashboard/formId/${this.props.data.formId}` : `/response/formId/${this.props.data.formId}`} className="item-container">
           <div className="item-img">
             <img id="item-image" src={dummyItemImage} />
           </div>

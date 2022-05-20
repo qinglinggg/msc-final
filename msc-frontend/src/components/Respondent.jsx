@@ -49,6 +49,7 @@ function Respondent (props) {
             method: "get",
             url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`
         }).then((res) => {
+            // console.log("success form items");
             setFormItems(res.data);
         })
     } catch (error) {
@@ -82,7 +83,9 @@ function Respondent (props) {
         url: `${BASE_URL}/api/v1/forms/form-respondent/${formId}`,
         data: userId_data, // cek lagi nanti. 
       }).then((res) => {
-        if(res.data && res.data.length > 0) setFormRespondentId(res.data[0]);
+        if(res.data && res.data.length > 0){
+          setFormRespondentId(res.data[0]);
+        }
         else {
           let newFormRespondent = {
             formId: formId,
@@ -109,8 +112,9 @@ function Respondent (props) {
 
   useEffect(() => {
     if(!formItems) return;
+
     let loadData = JSON.parse(localStorage.getItem("tempFormResponse"));
-    if (loadData) setFormResponse(loadData);
+    if (loadData && loadData.length == formItems.length) setFormResponse(loadData);
     else {
       let tempData = [];
       formItems.map((fi) => {
@@ -161,10 +165,6 @@ function Respondent (props) {
     }
   }, [bgLink, primaryColor]);
 
-  useEffect(() => {
-    localStorage.setItem("tempFormResponse", JSON.stringify(formResponse));
-  }, [formResponse])
-
   const responsePageTheme = () => {
     let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
     let selectedColor = selectedForm.backgroundColor;
@@ -209,18 +209,15 @@ function Respondent (props) {
   }
 
   useEffect(() => {
-    console.log("entering validate answer...");
     let length = formItems.length;
     if(index <= length){
       let current = formItems[index-1];
       let requiredField = document.getElementById("required-field");
       if(current.isRequired){
         if(!formResponse[index-1] || formResponse[index-1].answerSelectionValue == ""){
-          console.log("this is a required question!");
           requiredField.innerHTML = "* This is a required question!";
           setNext(false);
         } else {
-          console.log("kosongin is required");
           requiredField.innerHTML = "";
           setNext(true);
         }
@@ -310,6 +307,7 @@ function Respondent (props) {
     let id;
     let value;
     let responses = [...formResponse];
+    console.log("formRespondentId: " + formRespondentId);
     if(responses[index-1] && responses[index-1].answerSelectionValue == selectedAnswerSelection.value){
       id = "";
       value = "";
@@ -375,7 +373,7 @@ function Respondent (props) {
       <React.Fragment>
         <div id="preview-linear-scale">
           {arrayOptions.map((options, innerIdx) => {
-            console.log(options);
+            // console.log(options);
             return (
               <div className="preview-option-container" id="preview-option-ls-container">
                 <div id="preview-input-ls-container">
@@ -432,7 +430,7 @@ function Respondent (props) {
     let selectedResponse = formResponse[index-1];
     let checker = false;
     if(selectedResponse.length > 0) selectedResponse.map((resp) => {
-      if(resp.answerSelectionValue == options.value) checker = true;
+      if(resp.answerSelectionId == options.id) checker = true;
     });
     return checker;
   }
