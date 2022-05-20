@@ -320,7 +320,7 @@ function Invitation(props) {
     return (
       <React.Fragment>
         <div id="invitation-track-container">
-          {userInvited ? userInvited.map((value) => {
+          {userInvited.length > 0 ? userInvited.map((value) => {
             return (
               <React.Fragment>
                 <div id="invitation-track-box">
@@ -360,7 +360,8 @@ function Invitation(props) {
                 </div>
               </React.Fragment>
             );
-          }) : <div>There is no users invited.</div>}
+          }) : <div id="invitation-user-is-null">You're currently not invited anyone yet.</div>
+          }
         </div>
       </React.Fragment>
     );

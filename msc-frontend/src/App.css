@@ -1458,6 +1458,15 @@ body {
   cursor: pointer;
 }
 
+#invitation-user-is-null {
+  display: inline-block;
+  align-self: center;
+  margin-top: 10vh;
+  padding: 30px;
+  font-size: 15px;
+  font-style: italic;
+}
+
 #invitation-track-container {
   margin-top: 30px;
   margin-bottom: 30px;

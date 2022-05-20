@@ -312,7 +312,7 @@ public class FormDAO {
     }
 
     public List<FormRespondent> getFormTargetedUserList(String formId){
-        final String query = "SELECT * FROM FormRespondent WHERE formId = ? AND isTargeted = 1";
+        final String query = "SELECT * FROM FormRespondent WHERE formId = ? AND isTargeted = 1 ORDER BY inviteDate ASC";
         List<FormRespondent> formTargetedUserList = jdbcTemplate.query(query, (resultSet, i) -> {
             String formRespondentId = resultSet.getString("formRespondentId");
             String userId = resultSet.getString("userId");
