@@ -112,17 +112,18 @@ function Respondent (props) {
 
   useEffect(() => {
     if(!formItems) return;
-
-    let loadData = JSON.parse(localStorage.getItem("tempFormResponse"));
-    if (loadData && loadData.length == formItems.length) setFormResponse(loadData);
-    else {
-      let tempData = [];
-      formItems.map((fi) => {
-        if (fi.type == "CB") tempData.push([]);
-        else tempData.push({});
-      });
-      setFormResponse(tempData);
+    let loadData = localStorage.getItem("tempFormResponse");
+    if (loadData) {
+      loadData = JSON.parse(loadData);
     }
+    if (loadData.length !== formItems.length) {
+      loadData = [];
+      formItems.map((fi) => {
+        if (fi.type == "CB") loadData.push([]);
+        else loadData.push({});
+      });
+    }
+    setFormResponse(loadData);
   }, [formItems])
 
   useEffect((prevState) => {
@@ -308,7 +309,7 @@ function Respondent (props) {
     let value;
     let responses = [...formResponse];
     console.log("formRespondentId: " + formRespondentId);
-    if(responses[index-1] && responses[index-1].answerSelectionValue == selectedAnswerSelection.value){
+    if(responses[index-1] && responses[index-1].answerSelectionId == selectedAnswerSelection.id){
       id = "";
       value = "";
     } else {
@@ -322,6 +323,7 @@ function Respondent (props) {
       answerSelectionValue: value,
     }
     responses[index-1] = formItemResponse;
+    if(formResponse && formResponse.length == formItems.length) localStorage.setItem("tempFormResponse", JSON.stringify(responses));
     setFormResponse(responses);
   }
 
@@ -339,7 +341,7 @@ function Respondent (props) {
                     id={"options-"+formItemId+"-"+innerIdx}
                     type="radio"
                     name={"options-"+formItemId}
-                    checked={formResponse[index-1] && options.value == formResponse[index-1].answerSelectionValue}
+                    checked={formResponse[index-1] && options.id == formResponse[index-1].answerSelectionId}
                     onClick={() => setMultipleChoiceValue(index, formItemId, options)}
                   />
                   <label id={"option-label"+"-"+innerIdx} htmlFor={"options-"+formItemId+"-"+innerIdx}>
@@ -364,7 +366,7 @@ function Respondent (props) {
       answerSelectionValue: selectedAnswerSelection.value,
     }
     responses[index-1] = formItemResponse;
-    // console.log(responses[index-1]);
+    if(formResponse && formResponse.length == formItems.length) localStorage.setItem("tempFormResponse", JSON.stringify(responses));
     setFormResponse(responses);
   }
 
@@ -382,7 +384,7 @@ function Respondent (props) {
                     id={"options-"+formItemId+"-"+innerIdx}
                     type="radio"
                     name={"options-"+formItemId}
-                    checked={formResponse[index-1] && formResponse[index-1].answerSelectionValue == options.value}
+                    checked={formResponse[index-1] && formResponse[index-1].answerSelectionId == options.id}
                     onClick={() => setLinearScaleValue(index, formItemId, options)}
                   />
                   <label className="option-ls-desc" id={"option-label"+"-"+innerIdx} htmlFor={"options-"+formItemId+"-"+innerIdx}>
@@ -401,20 +403,23 @@ function Respondent (props) {
     let id = selectedAnswerSelection.id;
     let value = selectedAnswerSelection.value;
     let responses = [...formResponse];
+    let removeSelectedId = "";
     if(responses[index-1] && responses[index-1].length > 0){
       let selectedResponse = responses[index-1];
-      let removeSelectedId = "";
       selectedResponse.map((resp) => {
-        if(resp.answerSelectionValue == selectedAnswerSelection.value) {
+        if(resp.answerSelectionId == selectedAnswerSelection.id) {
+          console.log("deleted");
           removeSelectedId = resp.answerSelectionId;
         }
       });
       if(removeSelectedId) {
         responses[index-1] = selectedResponse.filter((resp) => resp.answerSelectionId != removeSelectedId);
+        if(formResponse && formResponse.length == formItems.length) localStorage.setItem("tempFormResponse", JSON.stringify(responses));
         setFormResponse(responses);
         return;
       }
     }
+    if(removeSelectedId) return;
     if(!responses[index-1]) responses[index-1] = [];
     let formItemResponse = {
       formRespondentId: formRespondentId,
@@ -423,6 +428,7 @@ function Respondent (props) {
       answerSelectionValue: value,
     }
     responses[index-1].push(formItemResponse);
+    if(formResponse && formResponse.length == formItems.length) localStorage.setItem("tempFormResponse", JSON.stringify(responses));
     setFormResponse(responses);
   }
 
@@ -470,6 +476,7 @@ function Respondent (props) {
       answerSelectionValue: value,
     }
     responses[index-1] = formItemResponse;
+    if(formResponse && formResponse.length == formItems.length) localStorage.setItem("tempFormResponse", JSON.stringify(responses));
     setFormResponse(responses);
   }
     
