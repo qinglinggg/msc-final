@@ -122,6 +122,10 @@ public class FormService {
         return formDAO.getFormRespondentByUserId(formId, userId);
     }
 
+    public List<String> getAllRespondents(String formId){
+        return formDAO.getAllRespondents(formId);
+    } 
+
     public int insertFormItemResponse(String formRespondentId, FormItemResponse formItemResponse){
         return formDAO.insertFormItemResponse(formRespondentId, formItemResponse);
     }

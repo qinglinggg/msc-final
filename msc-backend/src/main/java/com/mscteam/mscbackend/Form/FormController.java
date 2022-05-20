@@ -124,6 +124,11 @@ public class FormController {
         return formService.getFormRespondentByUserId(formId, userId);
     }
 
+    @GetMapping(path = "/get-all-respondents/{formId}")
+    public List<String> getAllRespondent(@PathVariable("formId") String formId) {
+        return formService.getAllRespondent(formId);
+    }
+
     // Form Item Response
     @PostMapping(path = "/insert-response/{formRespondentId}")
     public int insertFormItemResponse(@PathVariable("formRespondentId") String formRespondentId, @RequestBody FormItemResponse formItemResponse){

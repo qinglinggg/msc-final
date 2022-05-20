@@ -276,6 +276,15 @@ public class FormDAO {
         return formRespondentId;
     }
 
+    public List<String> getAllRespondents(String formId){
+        final String query = "SELECT userId FROM FormRespondent WHERE formId = ?";
+        List<String> userlist = jdbc.query(query, (resultSet, i) -> {
+            String userId = resultSet.getString("userId");
+            return userId;
+        }, formId);
+        return userlist;
+    }
+
     public int insertFormItemResponse(String formRespondentId, FormItemResponse formItemResponse){
         final String query = "INSERT INTO FormItemResponse (formRespondentId, formItemsId, formItemResponseId, answerSelectionId, answerSelectionValue) VALUES (?,?,?,?,?)";
         int res = jdbcTemplate.update(query, formRespondentId, formItemResponse.getFormItemId().toString(), formItemResponse.getFormItemResponseId().toString(), formItemResponse.getAnswerSelectionId().toString(), formItemResponse.getAnswerSelectionValue());

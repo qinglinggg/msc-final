@@ -21,6 +21,7 @@ function DataVisualization(props) {
   const [currentStep, setCurrentStep] = useState([]);
   const [inLoading, setInLoading] = useState(true);
   const [itemList, setItemList] = useState([]);
+  const [userList, setUserList] = useState([]);
   const [countData, setCountData] = useState([]);
   const [answerList, setAnswerList] = useState([]);
   let componentRef = useRef();
@@ -32,23 +33,12 @@ function DataVisualization(props) {
   ];
 
   function activateLink(item) {
-    setInLoading(true);
-    let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
-    tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
-    if(tempBreadcrumbs.length >= 2){
-      let selectedForm = JSON.parse(localStorage.getItem("selectedForm"))
-      while(tempBreadcrumbs.slice(-1)[0] && tempBreadcrumbs.slice(-1)[0].page != `Data Visualization - ${selectedForm['title']}`){
-        tempBreadcrumbs.pop();
-      }
+    if(currentStep && currentStep.length > 0){
+      let step = [...currentStep];
+      if(step.slice(-1)[0] && (step.slice(-1)[0] == "SUMMARY" || step.slice(-1)[0] == "RESPONSES" || step.slice(-1)[0] == "EXPORT")) step.pop();
+      step.push({page: item.innerHTML.toLowerCase(), path: window.location.href});
+      setCurrentStep(step);
     }
-    tempBreadcrumbs.push(
-      {
-        page: item.innerText,
-        path: window.location.href
-      }
-    );
-    setCurrentStep(tempBreadcrumbs);
-    localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
     let listPage = document.querySelectorAll(".sub-page-selection");
     listPage.forEach((i) => {
       i.classList.remove('active');
@@ -57,6 +47,7 @@ function DataVisualization(props) {
   }
 
   async function processData() {
+    setInLoading(true);
     let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
     let listOfFormItems = [];
     let tempAnswerList = []
@@ -88,7 +79,6 @@ function DataVisualization(props) {
           });
           tempAnswerList[fi] = listOfAnswers;
           if(count[fi].length === 0) for(let i=0; i < listOfAnswers.length; i++) count[fi].push(0);
-          console.log(count[fi].length);
           if(item.type == "SA") return;
           resData.forEach((ri) => {
             listOfAnswers.map((a, idx) => {
@@ -103,13 +93,13 @@ function DataVisualization(props) {
       setCountData(count);
       setTimeout(() => setInLoading(false), 2000);
     });
-    return listOfFormItems, count;
   }
 
   async function processResponses() {
+    setInLoading(true);
     let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
     let listOfFormItems = [];
-    let responseData = [];
+    let usermap = [];
     await axios({
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-form-items/${selectedForm.formId}`
@@ -118,21 +108,31 @@ function DataVisualization(props) {
       listOfFormItems.map(async (item) => {
         await axios({
           method: "get",
-          url: `${BASE_URL}/api/v1/forms/get-response/${item.id}`
+          url: `${BASE_URL}/api/v1/forms/get-all-respondents/${selectedForm.formId}`
         }).then((response) => {
           let currentRes = response.data;
-          responseData.push(currentRes);
-        });
+          currentRes.map((id) => usermap[id] = [])
+        }).finally(async () => {
+          await axios({
+            method: "get",
+            url: `${BASE_URL}/api/v1/forms/get-response/${item.id}`
+          }).then((response) => {
+            let currentRes = response.data;
+            usermap.map((id) => console.log(id));
+          });
+        })
       });
+    }).finally(() => {
+      setItemList(listOfFormItems);
       setTimeout(() => setInLoading(false), 3000);
-    });
-    return listOfFormItems, responseData;
+    })
   }
 
   useEffect(() => {
-    let tempBreadcrumbs = JSON.parse(localStorage.getItem("breadcrumbs"));
+    let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
+    if(tempBreadcrumbs) tempBreadcrumbs = JSON.parse(localStorage.getItem("breadcrumbs"));
     if(tempBreadcrumbs.length >= 2) {
-      while(tempBreadcrumbs.slice(-1)[0] && tempBreadcrumbs.slice(-1)[0].page != "Home" && tempBreadcrumbs.slice(-1)[0].page != "/"){
+      while(tempBreadcrumbs.slice(-1)[0] && !(tempBreadcrumbs.slice(-1)[0].page == "Home" || tempBreadcrumbs.slice(-1)[0].page == "/")){
         tempBreadcrumbs.pop();
       }
     }
@@ -142,9 +142,9 @@ function DataVisualization(props) {
         page: "Data Visualization - " + selectedForm['title'],
         path: window.location.href,
       }
-    )
-    setCurrentStep(tempBreadcrumbs);
+    );
     localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
+    setCurrentStep(tempBreadcrumbs);
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
@@ -195,11 +195,10 @@ function DataVisualization(props) {
   }
 
   const displayResponsePage = () => {
-    let listOfFormItems, responseData = processResponses();
     return (
       <React.Fragment>
         {inLoading ? (<Loading text="Memuat data responden..."/>) : (
-          <Responses data={listOfFormItems} responseData={responseData} />
+          <Responses data={itemList} userList={userList}/>
         )}
       </React.Fragment>
     );
@@ -369,7 +368,6 @@ function DataVisualization(props) {
               <li
                 onClick={(e) => {
                   handlePageSelection(1);
-                  activateLink(e.target);
                 }}
                 className="sub-page-selection active"
               >
@@ -378,7 +376,6 @@ function DataVisualization(props) {
               <li
                 onClick={(e) => {
                   handlePageSelection(2);
-                  activateLink(e.target);
                 }}
                 className="sub-page-selection"
               >
@@ -387,7 +384,6 @@ function DataVisualization(props) {
               <li
                 onClick={(e) => {
                   handlePageSelection(3);
-                  activateLink(e.target);
                 }}
                 className="sub-page-selection"
               >
