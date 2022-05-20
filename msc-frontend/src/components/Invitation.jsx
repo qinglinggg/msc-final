@@ -83,33 +83,7 @@ function Invitation(props) {
         handleCurrentSelection(e.target);
       })
     });
-    let userInvitedList = [];
-    try {
-      axios({
-        method: "get",
-        url: `${BASE_URL}/api/v1/forms/get-targeted-user-list/${formId}`,
-      }).then((res) => {
-        console.log(res);
-        if(res.data){
-          userInvitedList = res.data;
-          console.log("---- userInvitedList, inside res.data:");
-          console.log(userInvitedList);
-          userInvitedList.map((u) => {
-            if(!u.submitDate){
-              u['status'] = "Invited";
-              u['datetime'] = "-";
-            } else {
-              u['status'] = "Completed"
-              u['datetime'] = "Submitted at " + u.submitDate;
-            }
-          })
-          setUserInvited(userInvitedList);
-        }
-      }) 
-    } catch(error) {
-      console.log(error);
-    }
-
+    getTargetedUserList();
   }, []);
 
   useEffect(() => {
@@ -228,6 +202,35 @@ function Invitation(props) {
     setOpenTargetedUserEmail(true);
   }
 
+  const getTargetedUserList = () => {
+    let userInvitedList = [];
+    try {
+      axios({
+        method: "get",
+        url: `${BASE_URL}/api/v1/forms/get-targeted-user-list/${formId}`,
+      }).then((res) => {
+        console.log(res);
+        if(res.data){
+          userInvitedList = res.data;
+          console.log("---- userInvitedList, inside res.data:");
+          console.log(userInvitedList);
+          userInvitedList.map((u) => {
+            if(!u.submitDate){
+              u['status'] = "Invited";
+              u['datetime'] = "-";
+            } else {
+              u['status'] = "Completed"
+              u['datetime'] = "Submitted at " + u.submitDate;
+            }
+          })
+          setUserInvited(userInvitedList);
+        }
+      }) 
+    } catch(error) {
+      console.log(error);
+    }
+  }
+
   const handleSubmitTargetedUserEmail = () => {
     tags.map((userEmail) => {
       try {
@@ -240,6 +243,8 @@ function Invitation(props) {
           setTags([]);
           setTagsElement([]);
           console.log("Successfully inserted");
+        }).finally(() => {
+          getTargetedUserList();
         })
       } catch(error) {
           console.log(error);
