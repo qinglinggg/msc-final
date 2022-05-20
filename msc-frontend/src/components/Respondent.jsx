@@ -61,23 +61,6 @@ function Respondent (props) {
     let userId = JSON.parse(localStorage.getItem("loggedInUser"));
     let createNewFeedback = false;
     // cek pernah kirim message ga
-    console.log("get feedbackId");
-    // try {
-    //   axios({
-    //     method: "get",
-    //     url: `${BASE_URL}/api/v1/feedback/by-form-and-user/${formId}`,
-    //     data: userId,
-    //     headers: { "Content-Type": "text/plain"}
-    //   }).then((res) => {
-    //     if(res.data){
-    //       setFeedbackId(res.data);
-    //       console.log("feedbackId berhasil didapatkan " + res.data);
-    //     }
-    //     // else createNewFeedback = true;
-    //   })
-    // } catch(error) {
-    //   console.log(error);
-    // }
     if(userId) {
       let userId_data = {"userId": userId}
       axios({
@@ -128,44 +111,44 @@ function Respondent (props) {
     setFormResponse(loadData);
   }, [formItems])
 
-  // useEffect((prevState) => {
-  //   if(feedbackId == undefined){
-  //     console.log("create feedbackId");
-  //     let userId = JSON.parse(localStorage.getItem("loggedInUser"));
-  //     let newFeedback = {
-  //       formId: formId,
-  //       userId: userId,
-  //     }
-  //     console.log(newFeedback);
-  //     // pernah, displayPreviousMessage passing feedbackId
-  //     // nggak, maka insert feedback
-  //     try {
-  //       axios({
-  //         method: "post",
-  //         url: `${BASE_URL}/api/v1/feedback/by-feedback/insert`,
-  //         data: newFeedback,
-  //       }).then((res) => {
-  //         setFeedbackId(res.data);
-  //         console.log(res.data);
-  //       })
-  //     } catch (error){
-  //       console.log(error);
-  //     }
-  //   }
-  //   if(feedbackId != undefined && prevState.feedbackId == ""){
-  //     try {
-  //       axios({
-  //         method: "get",
-  //         url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
-  //       }).then((res) => {
-  //         if(res.data) setFeedbackMessages(res.data);
-  //       })
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   }
+  useEffect((prevState) => {
+    let userId = JSON.parse(localStorage.getItem("loggedInUser"));
+    console.log(userId);
+    if(feedbackId == undefined){
+      let newFeedback = {
+        formId: formId,
+        userId: userId,
+      }
+      console.log(newFeedback);
+      // pernah, displayPreviousMessage passing feedbackId
+      // nggak, maka insert feedback
+      try {
+        axios({
+          method: "post",
+          url: `${BASE_URL}/api/v1/feedback/by-feedback/insert`,
+          data: newFeedback,
+        }).then((res) => {
+          setFeedbackId(res.data);
+          console.log(res.data);
+        })
+      } catch (error){
+        console.log(error);
+      }
+    }
+    if(feedbackId){
+      try {
+        axios({
+          method: "get",
+          url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
+        }).then((res) => {
+          if(res.data) setFeedbackMessages(res.data);
+        })
+      } catch (error) {
+        console.log(error);
+      }
+    }
 
-  // }, [feedbackId, feedbackMessages]);
+  }, [feedbackId]);
 
   useEffect(() => {
     let navbar = document.getElementById("navbar");

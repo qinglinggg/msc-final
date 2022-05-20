@@ -80,8 +80,8 @@ public class FeedbackController {
         return feedbackService.removeFeedbackMessage(id);
     }
 
-    @GetMapping(path="/by-form-and-user/{formId}")
-    public Optional<String> getFeedbackIdByFormIdAndUserId(@PathVariable("formId") String formId, @RequestBody String userId){
-        return feedbackService.getFeedbackIdByFormIdAndUserId(formId, userId);
-    }
+    // @PostMapping(path="/by-form-and-user/{formId}")
+    // public Optional<String> getFeedbackIdByFormIdAndUserId(@PathVariable("formId") String formId, @RequestBody String userId){
+    //     return feedbackService.getFeedbackIdByFormIdAndUserId(formId, userId);
+    // }
 }
