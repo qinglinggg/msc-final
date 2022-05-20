@@ -58,24 +58,26 @@ function Respondent (props) {
     // DESIGN
     responsePageTheme();
     // CHAT
-    // let createNewFeedback = false;
+    let userId = JSON.parse(localStorage.getItem("loggedInUser"));
+    let createNewFeedback = false;
     // cek pernah kirim message ga
+    console.log("get feedbackId");
     // try {
     //   axios({
     //     method: "get",
     //     url: `${BASE_URL}/api/v1/feedback/by-form-and-user/${formId}`,
     //     data: userId,
+    //     headers: { "Content-Type": "text/plain"}
     //   }).then((res) => {
     //     if(res.data){
     //       setFeedbackId(res.data);
+    //       console.log("feedbackId berhasil didapatkan " + res.data);
     //     }
     //     // else createNewFeedback = true;
     //   })
     // } catch(error) {
     //   console.log(error);
     // }
-    // get feedbackId by formId and userId
-    let userId = JSON.parse(localStorage.getItem("loggedInUser"));
     if(userId) {
       let userId_data = {"userId": userId}
       axios({
@@ -126,20 +128,44 @@ function Respondent (props) {
     setFormResponse(loadData);
   }, [formItems])
 
-  useEffect((prevState) => {
-    if(feedbackId != undefined && prevState.feedbackId == ""){
-      try {
-        axios({
-          method: "get",
-          url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
-        }).then((res) => {
-          setFeedbackMessages(res.data);
-        })
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }, [feedbackId]);
+  // useEffect((prevState) => {
+  //   if(feedbackId == undefined){
+  //     console.log("create feedbackId");
+  //     let userId = JSON.parse(localStorage.getItem("loggedInUser"));
+  //     let newFeedback = {
+  //       formId: formId,
+  //       userId: userId,
+  //     }
+  //     console.log(newFeedback);
+  //     // pernah, displayPreviousMessage passing feedbackId
+  //     // nggak, maka insert feedback
+  //     try {
+  //       axios({
+  //         method: "post",
+  //         url: `${BASE_URL}/api/v1/feedback/by-feedback/insert`,
+  //         data: newFeedback,
+  //       }).then((res) => {
+  //         setFeedbackId(res.data);
+  //         console.log(res.data);
+  //       })
+  //     } catch (error){
+  //       console.log(error);
+  //     }
+  //   }
+  //   if(feedbackId != undefined && prevState.feedbackId == ""){
+  //     try {
+  //       axios({
+  //         method: "get",
+  //         url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
+  //       }).then((res) => {
+  //         if(res.data) setFeedbackMessages(res.data);
+  //       })
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   }
+
+  // }, [feedbackId, feedbackMessages]);
 
   useEffect(() => {
     let navbar = document.getElementById("navbar");
@@ -536,51 +562,38 @@ function Respondent (props) {
     setOpenChat(!openChat);
   }
 
-  const handleCreateNewFeedback = () => {
-    if(feedbackId == "") {
-      let newFeedback = {
-        formId: formId,
-        userId: props.user,
-      }
-      // pernah, displayPreviousMessage passing feedbackId
-      // nggak, maka insert feedback
-      try {
-        axios({
-          method: "post",
-          url: `${BASE_URL}/api/v1/feedback/by-feedback/insert`,
-          data: newFeedback,
-        }).then((res) => {
-          setFeedbackId(res.data);
-        })
-      } catch (error){
-        console.log(error);
-      }
-    }
-  }
-    
-  const displayChatBox = () => {
-    let chatbox = document.getElementById("respondent-chat-box");
-    if(openChat) chatbox.classList.toggle('respondent-chat-box--active');
-    else chatbox.classList.toggle('respondent-chat-box--active');
-  }
-
-  const handleMessageInput = (e) => {
-    setTempMessage(e.target.value);
-  };
-
-  const handleEnter = (e) => {
-    if (e.key === "Enter") handleClickSend();
-  };
+  // const handleCreateNewFeedback = () => {
+  //   if(feedbackId == "") {
+  //     let newFeedback = {
+  //       formId: formId,
+  //       userId: props.user,
+  //     }
+  //     // pernah, displayPreviousMessage passing feedbackId
+  //     // nggak, maka insert feedback
+  //     try {
+  //       axios({
+  //         method: "post",
+  //         url: `${BASE_URL}/api/v1/feedback/by-feedback/insert`,
+  //         data: newFeedback,
+  //       }).then((res) => {
+  //         setFeedbackId(res.data);
+  //       })
+  //     } catch (error){
+  //       console.log(error);
+  //     }
+  //   }
+  // }
 
   const handleClickSend = () => {
-    if(feedbackId == undefined){
-      handleCreateNewFeedback();
-    }
+    // if(feedbackId == undefined){
+    //   handleCreateNewFeedback();
+    // }
     let newMessage = {
       feedbackId: feedbackId,
       senderUserId: props.user,
       message: tempMessage,
     };
+    console.log(newMessage);
     let messages = [...feedbackMessages];
     messages.push(newMessage);
     try {
@@ -595,6 +608,20 @@ function Respondent (props) {
     } catch(error) {
       console.log(error);
     }
+  };
+    
+  const displayChatBox = () => {
+    let chatbox = document.getElementById("respondent-chat-box");
+    if(openChat) chatbox.classList.toggle('respondent-chat-box--active');
+    else chatbox.classList.toggle('respondent-chat-box--active');
+  }
+
+  const handleMessageInput = (e) => {
+    setTempMessage(e.target.value);
+  };
+
+  const handleEnter = (e) => {
+    if (e.key === "Enter") handleClickSend();
   };
 
   const updateTextarea = () => {
