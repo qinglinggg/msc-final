@@ -102,8 +102,8 @@ public class FeedbackDAO {
     }
 
     public int insertFeedbackMessage(FeedbackMessage feedbackMessage){
-        final String query = "INSERT INTO FeedbackMessage VALUES (?,?,?)";
-        int res = jdbcTemplate.update(query, feedbackMessage.getFeedbackId(), feedbackMessage.getSenderUserId(), feedbackMessage.getFeedbackMessage());
+        final String query = "INSERT INTO FeedbackMessage VALUES (?,?,?,?,?,?)";
+        int res = jdbcTemplate.update(query, feedbackMessage.getFeedbackId().toString(), feedbackMessage.getSenderUserId().toString(), feedbackMessage.getMessageId().toString(), feedbackMessage.getFeedbackMessage(), dateFormat.format(feedbackMessage.getCreateDateTime()), feedbackMessage.getIsRead());
         return res;
     }
 

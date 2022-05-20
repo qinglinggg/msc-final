@@ -30,8 +30,8 @@ function Respondent (props) {
   const [bgLink, setBgLink] = useState("./images/woman.jpg");
 
   useEffect(() => {
-    console.log("formId : " + formId + " is rendered.");
-    console.log("Preview mode enabled: " + props.previewMode);
+    // console.log("formId : " + formId + " is rendered.");
+    // console.log("Preview mode enabled: " + props.previewMode);
     if(props.previewMode) setPreviewMode(props.previewMode);
     try { 
         axios({
@@ -93,6 +93,12 @@ function Respondent (props) {
     displayContainer.addEventListener('webkitAnimationEnd', () => {
       displayContainer.style.animation = '';
     })
+    return () => {
+      console.log("feedbackId is destroyed");
+      if(feedbackMessages.length == 0){
+        axios.delete(`${BASE_URL}/api/v1/feedback/${feedbackId}`).catch((error) => console.log(error));
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -113,7 +119,7 @@ function Respondent (props) {
 
   useEffect((prevState) => {
     let userId = JSON.parse(localStorage.getItem("loggedInUser"));
-    console.log(userId);
+    // console.log(userId);
     if(feedbackId == undefined){
       let newFeedback = {
         formId: formId,
@@ -129,13 +135,14 @@ function Respondent (props) {
           data: newFeedback,
         }).then((res) => {
           setFeedbackId(res.data);
-          console.log(res.data);
+          console.log("feedbackId: " + res.data);
         })
       } catch (error){
         console.log(error);
       }
     }
     if(feedbackId){
+      console.log("currently loading past feedback messages...");
       try {
         axios({
           method: "get",
@@ -147,7 +154,6 @@ function Respondent (props) {
         console.log(error);
       }
     }
-
   }, [feedbackId]);
 
   useEffect(() => {
@@ -571,9 +577,10 @@ function Respondent (props) {
     // if(feedbackId == undefined){
     //   handleCreateNewFeedback();
     // }
+    let userId = JSON.parse(localStorage.getItem("loggedInUser"));
     let newMessage = {
       feedbackId: feedbackId,
-      senderUserId: props.user,
+      userId: userId,
       message: tempMessage,
     };
     console.log(newMessage);
@@ -582,6 +589,7 @@ function Respondent (props) {
     try {
       axios({
         method: "post",
+        url: `${BASE_URL}/api/v1/feedback/by-feedback-message/insert`,
         data: newMessage
       }).then(() => {
         setFeedbackMessages(messages);
@@ -615,6 +623,7 @@ function Respondent (props) {
   };
 
   const respondentChat = () => {
+    let userId = JSON.parse(localStorage.getItem("loggedInUser"));
     return (
       <div id="respondent-chat-box">
         <div id="respondent-chat-header">
@@ -628,7 +637,7 @@ function Respondent (props) {
                 <div className="message-content">
                   <div
                     className="message-content-2"
-                    id={m.userId != props.user ? "message-user-1" : "message-user-2"}
+                    id={m.userId != userId ? "message-user-1" : "message-user-2"}
                   >
                     <div className="message-single-bubble">
                       <div id="message-single-content">{m.feedbackMessage}</div>

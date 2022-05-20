@@ -75,7 +75,7 @@ class App extends React.Component {
             form['submitDate'] = tempInvitedForms[index].submitDate;
             index++;
           });
-          console.log(invitedForms);
+          // console.log(invitedForms);
           localStorage.setItem("invitedFormLists", JSON.stringify(invitedForms));
         }).catch((error) => {
           console.log(error);
