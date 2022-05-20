@@ -4,6 +4,6 @@ CREATE TABLE FormRespondent (
     userId VARCHAR(100) NOT NULL REFERENCES User(userId) ON UPDATE CASCADE ON DELETE CASCADE,
     submitDate DATETIME,
     isTargeted INT,
-    inviteDate TIMESTAMP,
+    inviteDate BIGINT,
     PRIMARY KEY(formRespondentId, formId)
 )

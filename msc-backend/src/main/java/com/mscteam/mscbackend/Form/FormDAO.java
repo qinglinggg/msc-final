@@ -357,8 +357,8 @@ public class FormDAO {
         if(submitDate != null) resultDate = dateFormat.format(targetedUser.getSubmitDate());
         else resultDate = null;
         final String query = "INSERT INTO FormRespondent VALUES (?,?,?,?,?,?)";
-        String inviteDateQuery = "TO_TIMESTAMP('" + targetedUser.inviteDateToTimestamp() + "', 'YYYY-MM-DD HH:MM:SS.FFF')";
-        int res = jdbcTemplate.update(query, targetedUser.getFormRespondentId().toString(), targetedUser.getFormId().toString(), targetedUser.getUserId().toString(), resultDate, targetedUser.getIsTargeted(), inviteDateQuery);
+        // String inviteDateQuery = "TO_TIMESTAMP('" + targetedUser.inviteDateToTimestamp() + "', 'YYYY-MM-DD HH:MM:SS.FFF')";
+        int res = jdbcTemplate.update(query, targetedUser.getFormRespondentId().toString(), targetedUser.getFormId().toString(), targetedUser.getUserId().toString(), resultDate, targetedUser.getIsTargeted(), targetedUser.getInviteDate());
         return res;
     }
 

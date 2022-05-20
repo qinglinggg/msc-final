@@ -96,6 +96,7 @@ class Home extends React.Component {
     } else {
       page = this.displayPage2();
     }
+
     return (
       <React.Fragment>
         <div className="container">
@@ -136,7 +137,7 @@ class Home extends React.Component {
                 <img src="" alt="" id="history-btn" />
               </div>
             </div>
-            {this.state.selectedPage == 2 && !this.state.invitedForms ?
+            {this.state.selectedPage == 2 && this.state.invitedForms.length == 0 ?
               <div className="home-form-is-null">You're not invited to fill any form yet. Feel free to continue your work!</div>
               : null
             }
