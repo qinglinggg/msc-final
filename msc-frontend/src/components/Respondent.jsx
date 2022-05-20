@@ -17,6 +17,7 @@ function Respondent (props) {
   const [formRespondentId, setFormRespondentId] = useState();
   const [formResponse, setFormResponse] = useState([]);
   const [next, setNext] = useState(true);
+  const [previewMode, setPreviewMode] = useState(false);
 
   const [openChat, setOpenChat] = useState(false);
   const [tempMessage, setTempMessage] = useState("");
@@ -30,6 +31,8 @@ function Respondent (props) {
 
   useEffect(() => {
     console.log("formId : " + formId + " is rendered.");
+    console.log("Preview mode enabled: " + props.previewMode);
+    if(props.previewMode) setPreviewMode(props.previewMode);
     try { 
         axios({
             method: "get",
@@ -96,6 +99,8 @@ function Respondent (props) {
         }
       });
     }
+    let prevElement = document.querySelector('.display-container');
+    if(props.previewMode) prevElement.style.marginTop = 0 + 'px';
     let displayContainer = document.querySelector('.inner-display-container');
     displayContainer.addEventListener('webkitAnimationEnd', () => {
       displayContainer.style.animation = '';
@@ -663,10 +668,10 @@ function Respondent (props) {
       <React.Fragment>
           <div className="respondent-container">
               <div className="page-title" id="page-title-respondent">
-                  {formMetadata.title}
+                  {props.previewMode ? null : formMetadata.title}
               </div>
               <div className="page-description-respondent">
-                  {formMetadata.description}
+                  {props.previewMode ? null : formMetadata.description}
               </div>
               <div className="display-container" id="display-respondent">
                 {index == 1 ? 
@@ -680,7 +685,7 @@ function Respondent (props) {
                   </div>
                 )}
                 {displayQuestion()}
-                {index > formItems.length ? null : (
+                {(index > formItems.length && !props.previewMode) || (index > formItems.length - 1 && props.previewMode) ? null : (
                   <div id="preview-next-icon-animation">
                     <ion-icon
                       name="chevron-forward-outline"

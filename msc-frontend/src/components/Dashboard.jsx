@@ -5,7 +5,9 @@ import { Link, useParams } from "react-router-dom";
 import Question from "./Question";
 import iconMenubarGrey from "./images/menubarGrey.png";
 import iconVisibility from "./images/visibility.png";
+import iconInvisible from './images/visibility2.png';
 import iconSettings from "./images/settings.png";
+import Respondent from "./Respondent";
 
 const BASE_URL = "http://10.61.38.193:8080";
 
@@ -94,7 +96,6 @@ function Dashboard(props) {
 
   const handleVisibility = () => {
     setOpenVisibility(!openVisibility);
-    window.location = `/preview/formId/${formId}`;
   };
 
   const handleSettings = () => {
@@ -608,6 +609,41 @@ function Dashboard(props) {
     );
   };
 
+  const displayPreview = () => {
+    return (
+      <Respondent
+        previewMode={true}
+      />
+    )
+  }
+
+  const displayDashboard = () => {
+    return (
+      <React.Fragment>
+        <div className="page-breadcrumbs">
+          {
+            currentStep.map((b, idx) => {
+              if(idx > 0) {
+                return (
+                  <a href={b['path']}>
+                    <span>{">"}</span>
+                    <span>{b['page']}</span>
+                  </a>
+                );
+              }
+              return (
+                <a href={b['path']}>{b['page']}</a>
+              );
+            })
+          }
+        </div>
+        <div id="page-content">
+          <div className="questions-container">{displayQuestion()}</div>
+        </div>
+      </React.Fragment>
+    );
+  }
+
   return (
     <React.Fragment>
       <div className="title-container">
@@ -615,13 +651,13 @@ function Dashboard(props) {
           <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
         </div>
         <div className="page-title" id="page-title-home">
-          Dashboard
+          {openVisibility? "Preview" : "Dashboard"}
         </div>
         <div className="dashboard-icon">
           <img
             className="icon-image"
             onClick={() => handleVisibility()}
-            src={iconVisibility}
+            src={openVisibility ? iconInvisible : iconVisibility}
             alt=""
           />
           <img
@@ -634,26 +670,7 @@ function Dashboard(props) {
           {openSettings ? displaySettings() : null}
         </div>
       </div>
-      <div className="page-breadcrumbs">
-        {
-          currentStep.map((b, idx) => {
-            if(idx > 0) {
-              return (
-                <a href={b['path']}>
-                  <span>{">"}</span>
-                  <span>{b['page']}</span>
-                </a>
-              );
-            }
-            return (
-              <a href={b['path']}>{b['page']}</a>
-            );
-          })
-        }
-      </div>
-      <div id="page-content">
-        <div className="questions-container">{displayQuestion()}</div>
-      </div>
+      {openVisibility ? displayPreview() : displayDashboard()}
     </React.Fragment>
   );
 }

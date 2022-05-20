@@ -18,7 +18,6 @@ import Design from "./components/Design";
 import DataVisualization from "./components/Data-visualization";
 import Feedback from "./components/Feedback";
 import Message from "./components/Message";
-import Preview from "./components/Preview";
 import RouteDashboard from "./components/Dashboard";
 import { render } from "react-dom";
 import AdminDashboard from "./components/admin/AdminDashboard";
@@ -283,15 +282,6 @@ class App extends React.Component {
                   );
                 }) : null}
               </Route>
-              
-              <Route
-                path={`/preview/formId/:formId`}
-                element={
-                  <Preview
-                    breadcrumbs={this.state.breadcrumbs} 
-                  />
-                }
-              />
 
               <Route
                 path={`/admin`}
