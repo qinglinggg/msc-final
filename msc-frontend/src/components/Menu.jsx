@@ -14,38 +14,43 @@ function Menu(props) {
   }
 
   useEffect(() => {
+    console.log(props.currentPage);
     let currentForm = localStorage.getItem("selectedForm");
     currentForm = JSON.parse(currentForm);
-    if(currentForm){
-      setSelectedForm(currentForm['formId']);
-    } else {
-      setSelectedForm("");
-    }
+    setSelectedForm(currentForm['formId']);
+  }, [props.currentPage]);
+
+  useEffect(() => {
+    refreshElements();
+  }, []);
+
+  const refreshElements = () => {
     let listSelection = document.querySelectorAll(".page-button");
     listSelection.forEach((item) => {
       item.addEventListener('click', (e) => {
         handleCurrentSelection(e.target);
       })
     });
-    let body = document.getElementById("body");
-    let subMenus = document.querySelectorAll(".sub-menu");
     function activateButton() {
+      let subMenus = document.querySelectorAll(".sub-menu");
       subMenus.forEach((item) => {
         item.classList.remove("active");
       });
       this.classList.add("active");
     }
     function disableOpenMenu() {
+      let body = document.getElementById("body");
       console.log("Toggle menu check");
       body.classList.toggle("openMenu");
     }
+    let subMenus = document.querySelectorAll(".sub-menu");
     if (subMenus) {
       subMenus.forEach((item) => {
         item.addEventListener("mouseover", activateButton);
         item.addEventListener("click", disableOpenMenu);
       });
     }
-  }, [])
+  }
 
   return (
     <div className="menu-container" id="menu-container">
@@ -60,7 +65,7 @@ function Menu(props) {
         <span className="menu-item">Design</span>
         <span className="indicator"></span>
       </Link>
-      <Link className="sub-menu" to={`/invitation/formId/${selectedForm}`}>
+      <Link className="sub-menu" to={`/invitation/formId/${selectedForm}`}> 
         <span className="menu-item">Invitation</span>
         <span className="indicator"></span>
       </Link>

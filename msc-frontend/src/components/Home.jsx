@@ -1,15 +1,13 @@
-import react from "react";
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { Fragment } from "react";
 import PageItems from "./PageItems";
-import Dashboard from "./Dashboard";
 import SearchField from "react-search-field";
 import axios from "axios";
 
 class Home extends React.Component {
   constructor(props) {
     super(props);
+    this.displayPage1 = this.displayPage1.bind(this);
+    this.displayPage2 = this.displayPage2.bind(this);
     this.handleAddItem = this.handleAddItem.bind(this);
     this.searchOnChange = this.searchOnChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -51,6 +49,8 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
+    console.log("Reset selectedForm on Home Page");
+    localStorage.setItem("selectedForm", JSON.stringify([]));
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
     tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
     if(tempBreadcrumbs.length >= 1) {
@@ -188,6 +188,8 @@ class Home extends React.Component {
             key={data.formId} 
             data={data}
             handleFormDeletion={this.handleFormDeletion}
+            onClick={() => localStorage.setItem("selectedForm", JSON.stringify(data))
+            }
             currentPage={1}
           />
         )) : null}

@@ -118,7 +118,6 @@ function Question(props) {
         "question-" + props.questionData.id + "-options-" + obj.id;
         let el = document.getElementById(optionId);
         if(el){
-          console.log(props.questionData);
           if (props.questionData.questionType != "LS") el.value = obj.value;
           else el.value = obj.label;
           autoResizeContent(el);

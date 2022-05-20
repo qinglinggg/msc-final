@@ -4,9 +4,7 @@ import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
-  Route,
-  useParams,
-  Link,
+  Route
 } from "react-router-dom";
 import axios from "axios";
 import Navbar from "./components/Navbar";
@@ -34,12 +32,14 @@ class App extends React.Component {
     this.handleCreateNewForm = this.handleCreateNewForm.bind(this);
     this.handleSetFormMessages = this.handleSetFormMessages.bind(this);
     this.handleSetLoggedInUser = this.handleSetLoggedInUser.bind(this);
+    this.handleUpdateCurrentPage = this.handleUpdateCurrentPage.bind(this);
   }
 
   state = {
     allForms: [],
     rawInvitedFormLists: [],
     loggedInUser: "",
+    currentPage: "",
   }
 
   componentDidMount() {
@@ -96,12 +96,15 @@ class App extends React.Component {
       });
     }
     if (sideMenu) sideMenu.style.left = "0";
-
     // form routing
     axios.get(`${BASE_URL}/api/v1/forms/`).then((res) => {
       this.setState({allForms : res.data});
     })
+  }
 
+  handleUpdateCurrentPage(value) {
+    console.log("Handle Update Current Page");
+    this.setState({currentPage : value});
   }
 
   componentDidUpdate(prevState) {
@@ -109,7 +112,6 @@ class App extends React.Component {
       let tempBreadcrumbs = [{ page: "/", path: `${APP_URL}` }];
       localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
     }
-
     // if(prevState.rawInvitedFormLists != this.state.rawInvitedFormLists){
     //   console.log("componentDidUpdate");
     //   let tempUser = JSON.parse(localStorage.getItem("loggedInUser"));
@@ -139,7 +141,6 @@ class App extends React.Component {
         
     //   }
     // }
-
   }
 
   async handleCreateNewForm(obj) {
@@ -155,6 +156,7 @@ class App extends React.Component {
         tempList.push(response.data);
         localStorage.setItem("formLists", JSON.stringify(tempList));
         localStorage.setItem("selectedForm", JSON.stringify(response.data));
+        this.handleUpdateCurrentPage("Dashboard");
         window.location = `/dashboard/formId/${response.data.formId}`;
       });
     } catch (error) {
@@ -198,7 +200,6 @@ class App extends React.Component {
   }
 
   formRouting() {
-
     return (
       <Routes>
         <Route 
@@ -215,7 +216,7 @@ class App extends React.Component {
       <React.Fragment>
         <Navbar />
         <div className="background"></div>
-        <Menu />
+        <Menu currentPage={this.state.currentPage}/>
         <div className="page-container" id="page-container">
             <Routes>
               <Route
@@ -231,7 +232,9 @@ class App extends React.Component {
               <Route
                 path={`/dashboard/formId/:formId`}
                 element={
-                  <Dashboard />
+                  <Dashboard 
+                  handleUpdateCurrentPage={this.handleUpdateCurrentPage}
+                  />
                 }
               />
               <Route

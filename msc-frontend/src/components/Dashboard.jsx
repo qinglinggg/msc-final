@@ -29,6 +29,7 @@ function Dashboard(props) {
 
   useEffect(() => {
     // console.log("Test Form Id: " + formId);
+    props.handleUpdateCurrentPage(formId);
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
