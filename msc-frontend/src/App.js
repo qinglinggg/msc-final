@@ -55,6 +55,8 @@ class App extends React.Component {
         const invitedForms = res.data;
         localStorage.setItem("rawInvitedFormLists", JSON.stringify(invitedForms));
         // this.setState({rawInvitedFormLists : invitedForms});
+      }).catch((error) => {
+        console.log(error);
       });
       let tempInvitedForms = JSON.parse(localStorage.getItem("rawInvitedFormLists"));
       // let tempInvitedForms = localStorage.getItem("rawInvitedFormLists");

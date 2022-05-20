@@ -29,9 +29,16 @@ class PageItems extends React.Component {
     });
   }
 
+  formNotFilled() {
+    if(this.props.currentPage == 2 && !this.props.data.submitDate){
+      let itemBg = document.getElementById("item-bg");
+      itemBg.style.backgroundColor = "rgb(252, 207, 207)";
+    }
+  }
+
   render() {
     return (
-      <div className="item-wrapper">
+      <div className="item-wrapper" id="item-bg" >
         <Link to={`/dashboard/formId/${this.props.data.formId}`} className="item-container">
           <div className="item-img">
             <img id="item-image" src={dummyItemImage} />
