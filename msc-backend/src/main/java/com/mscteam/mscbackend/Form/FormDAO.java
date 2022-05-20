@@ -312,7 +312,7 @@ public class FormDAO {
     }
 
     public List<FormRespondent> getFormTargetedUserList(String formId){
-        final String query = "SELECT * FROM FormRespondent WHERE formId = ? AND isTargeted = 1";
+        final String query = "SELECT * FROM FormRespondent WHERE formId = ? AND isTargeted = 1 ORDER BY inviteDate ASC";
         List<FormRespondent> formTargetedUserList = jdbcTemplate.query(query, (resultSet, i) -> {
             String formRespondentId = resultSet.getString("formRespondentId");
             String userId = resultSet.getString("userId");
@@ -367,7 +367,7 @@ public class FormDAO {
         if(targetedUser.getSubmitDate() == null) {
             query = "DELETE FROM FormRespondent WHERE formRespondentId = ? AND submitDate IS NULL";
         } else {
-            query = "UPDATE FormRespondent SET isTargeted = 0 WHERE formRespondentId = ?";
+            query = "UPDATE FormRespondent SET isTargeted = 0, invitedDate = 0 WHERE formRespondentId = ?";
         }
         int res = jdbcTemplate.update(query, formRespondentId);
         return res;

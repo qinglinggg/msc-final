@@ -83,35 +83,7 @@ function Invitation(props) {
         handleCurrentSelection(e.target);
       })
     });
-    let userInvitedList = [];
-    try {
-      axios({
-        method: "get",
-        url: `${BASE_URL}/api/v1/forms/get-targeted-user-list/${formId}`,
-      }).then((res) => {
-        console.log(res);
-        if(res.data){
-          userInvitedList = res.data;
-          console.log("---- userInvitedList, inside res.data:");
-          console.log(userInvitedList);
-          let index = 0;
-          userInvitedList.map((u) => {
-            index++;
-            if(!u.submitDate){
-              u['status'] = "Invited";
-              u['datetime'] = "-";
-            } else {
-              u['status'] = "Completed"
-              u['datetime'] = "Submitted at " + u.submitDate;
-            }
-          })
-          setUserInvited(userInvitedList);
-        }
-      }) 
-    } catch(error) {
-      console.log(error);
-    }
-
+    getTargetedUserList();
   }, []);
 
   useEffect(() => {
@@ -121,15 +93,15 @@ function Invitation(props) {
         let index = 0;
         let userInvitedList = userInvited;
         userInvitedList.map((u) => {
-          if(u['number'] && u['name'] && u['email']) return;
+          index++;
+          u['number'] = index;
+          if(u['name'] && u['email']) return;
           try {
             axios({
               method: "get",
               url: `${BASE_URL}/api/v1/user-profiles/${u.userId}`
             }).then((res) => {
               if(res.data){
-                index++;
-                u['number'] = index;
                 u['name'] = res.data.fullname;
                 u['email'] = res.data.email;
               }
@@ -138,12 +110,7 @@ function Invitation(props) {
             console.log(error);
           }
         })
-        // userInvitedList.sort(function(a, b) { 
-        //   if(a.number - b.number) return a - b;
-        //   else return b - a;
-        // });
         setUserInvited(userInvitedList);
-        console.log(userInvitedList);
       }
     }
   }, [userInvited]);
@@ -235,6 +202,35 @@ function Invitation(props) {
     setOpenTargetedUserEmail(true);
   }
 
+  const getTargetedUserList = () => {
+    let userInvitedList = [];
+    try {
+      axios({
+        method: "get",
+        url: `${BASE_URL}/api/v1/forms/get-targeted-user-list/${formId}`,
+      }).then((res) => {
+        console.log(res);
+        if(res.data){
+          userInvitedList = res.data;
+          console.log("---- userInvitedList, inside res.data:");
+          console.log(userInvitedList);
+          userInvitedList.map((u) => {
+            if(!u.submitDate){
+              u['status'] = "Invited";
+              u['datetime'] = "-";
+            } else {
+              u['status'] = "Completed"
+              u['datetime'] = "Submitted at " + u.submitDate;
+            }
+          })
+          setUserInvited(userInvitedList);
+        }
+      }) 
+    } catch(error) {
+      console.log(error);
+    }
+  }
+
   const handleSubmitTargetedUserEmail = () => {
     tags.map((userEmail) => {
       try {
@@ -247,6 +243,8 @@ function Invitation(props) {
           setTags([]);
           setTagsElement([]);
           console.log("Successfully inserted");
+        }).finally(() => {
+          getTargetedUserList();
         })
       } catch(error) {
           console.log(error);
@@ -273,6 +271,11 @@ function Invitation(props) {
       console.log(userInvited);
         let tempInvitedList = userInvited.filter((u) => {
           return u.email != obj.email;
+        })
+        let index = 0;
+        tempInvitedList.map((u) => {
+          index++;
+          u['number'] = index;
         })
         setUserInvited(tempInvitedList);
         console.log(tempInvitedList);
@@ -320,7 +323,7 @@ function Invitation(props) {
     return (
       <React.Fragment>
         <div id="invitation-track-container">
-          {userInvited ? userInvited.map((value) => {
+          {userInvited.length > 0 ? userInvited.map((value) => {
             return (
               <React.Fragment>
                 <div id="invitation-track-box">
@@ -360,7 +363,8 @@ function Invitation(props) {
                 </div>
               </React.Fragment>
             );
-          }) : <div>There is no users invited.</div>}
+          }) : <div id="invitation-user-is-null">You're currently not invited anyone yet.</div>
+          }
         </div>
       </React.Fragment>
     );

@@ -207,7 +207,6 @@ class Home extends React.Component {
 
   displayPage2() {
     let invitedFormsData = this.filterData(this.state.invitedForms);
-
     return (
       <React.Fragment>
         {invitedFormsData ? invitedFormsData.map((data) => (

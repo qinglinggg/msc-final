@@ -9,6 +9,13 @@ class PageItems extends React.Component {
   constructor(props) {
     super(props);
   }
+
+  componentDidMount() {
+    if(this.props.currentPage == 2 && !this.props.data.submitDate){
+      let itemBg = document.getElementById("item-bg");
+      itemBg.style.backgroundColor = "rgb(252, 207, 207)";
+    }
+  }
   
   async refreshFormList() {
     let tempUser = JSON.parse(localStorage.getItem("loggedInUser"));
@@ -27,13 +34,6 @@ class PageItems extends React.Component {
     }).then(() => {
       this.refreshFormList();
     });
-  }
-
-  formNotFilled() {
-    if(this.props.currentPage == 2 && !this.props.data.submitDate){
-      let itemBg = document.getElementById("item-bg");
-      itemBg.style.backgroundColor = "rgb(252, 207, 207)";
-    }
   }
 
   render() {
