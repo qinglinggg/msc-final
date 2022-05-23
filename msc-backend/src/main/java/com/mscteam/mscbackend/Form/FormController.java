@@ -2,6 +2,7 @@ package com.mscteam.mscbackend.Form;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +84,7 @@ public class FormController {
     }
 
     @GetMapping(path = "/get-response-user/{formId}/{userId}")
-    public HashMap<String, String, String> getItemResponseByUserId(@PathVariable("formId") String formId, @PathVariable("userId") String userId){
+    public HashMap<String, HashMap<String, String>> getItemResponseByUserId(@PathVariable("formId") String formId, @PathVariable("userId") String userId){
         return formService.getItemResponseByUserId(formId, userId);
     }
     
