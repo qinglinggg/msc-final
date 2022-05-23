@@ -17,7 +17,7 @@ function Responses(props) {
         method: "get",
         url: `${BASE_URL}/api/v1/forms/get-answer-selection/${data.id}`,
       }).then((res) => {
-        currentSelections.push(res.data);
+        currentSelections.push({formItemsId: data.id, data: res.data});
       }).finally(() => {
         setAnswerSelection(currentSelections);
       });
@@ -42,6 +42,10 @@ function Responses(props) {
         setAnswerList(tempAnswers);
       }
     });
+    let element = document.getElementById("selected-respondent");
+    if(element) {
+      element.value = selectedRespondent;
+    }
   }, [selectedRespondent]);
 
   useEffect(() => {
@@ -50,19 +54,39 @@ function Responses(props) {
       tempOpt.push({value: value, label: value})
     });
     setOptions(tempOpt);
-  }, [props.respondents])
+  }, [props.respondents]);
 
-  const displayMultipleChoice = (itemId, idx) => {
+  useEffect(() => {
+    if(!options || options.length <= 0) return;
+    let element = document.getElementById("selected-respondent");
+    if(element) {
+      element.value = options[0].value;
+      console.log(element.value == options[0].value);
+    }
+  }, [options])
+
+  const displayAnswers = (itemId, type) => {
+    let currentSelection = answerSelection.filter((selection) => {
+      return selection.formItemsId == itemId;
+    });
+    if (currentSelection && currentSelection.length > 0) currentSelection = currentSelection[0].data;
     return (
       <React.Fragment>
-      {console.log(answerSelection)}
       {
-      answerSelection[idx] ? answerSelection[idx].map((selection, idx) => {
-        let id = "question-" + selection.formItemsId + "-options-" + selection.id;
+      currentSelection ? currentSelection.map((selection, innerIdx) => {
+        let id = "question-" + itemId + "-options-" + innerIdx;
+        let name = "question-" + itemId;
+        let currentAns = answerList.filter((ans) => {
+          return ans.formItemsId == itemId;
+        });
+        if(currentAns) currentAns = currentAns[0];
         return (
           <div className="answer-selection">
-            <input type="radio" name={id} id={id} disabled/>
-            <label htmlFor={id}>{selection.value}</label>
+            {type == "MC" ? (<input type="radio" id={id} name={name} checked={currentAns && currentAns.value[0] == selection.id} disabled/>) : null}
+            {type == "CB" ? (<input type="checkbox" id={id} name={name} checked={currentAns && currentAns.value[0] == selection.id} disabled/>) : null}
+            {type == "LS" ? (<input type="radio" id={id} name={name} checked={currentAns && currentAns.value[0] == selection.id} disabled/>) : null}
+            {type == "SA" ? (<input type="text" id={id} name={name} value={currentAns && currentAns.value[0] == selection.id ? currentAns.value[1] : ""} disabled/>) : null}
+            {type != "LS" ? (<label htmlFor={id}>{selection.value}</label>) : (type != "SA" ? (<label htmlFor={id}>{selection.label}</label>) : null)}
           </div>
         );
       }) : (<span>No selection data...</span>)
@@ -71,24 +95,13 @@ function Responses(props) {
     );
   }
 
-  const displayCheckbox = () => {
-
-  }
-
-  const displayLinearScale = () => {
-
-  }
-
-  const displayShortAnswer = () => {
-
-  }
-
   return (
     <React.Fragment>
       <div className="select-user-container">
         <span>Selected respondents</span>
         <Select options={options}
         defaultValue={options[0]}
+        id="selected-respondent"
         onChange={(e) => setSelectedRespondent(e.value)}/>
       </div>
       { props.data && props.data.length > 0 ? (
@@ -101,10 +114,10 @@ function Responses(props) {
                 </div>
                 <div className="answer-container">
                   <span>{item.type}</span>
-                  {displayMultipleChoice(item.formId, idx)}
+                  {displayAnswers(item.id, item.type)}
                   <span>{answerList.map((ans) => {
-                    if(ans.formItemsId == item.id) return ans.value;
-                    return null;
+                    if (ans.formItemsId == item.id) return ans.value[1];
+                    // return null;
                   })}</span>
                 </div>
               </div>
