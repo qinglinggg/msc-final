@@ -190,6 +190,8 @@ public class FormDAO {
         final String query = "SELECT formItemsId, answerSelectionValue FROM FormRespondent JOIN FormItemResponse USING (formRespondentId) WHERE formId = ? and userId = ?";
         jdbcTemplate.query(query, (resultSet, i) -> {
             results.put(resultSet.getString("formItemsId"), resultSet.getString("answerSelectionValue"));
+            System.out.println("Test result on Responds by UserID:");
+            System.out.println(results);
             return results;
         }, formId, userId);
         return results;
