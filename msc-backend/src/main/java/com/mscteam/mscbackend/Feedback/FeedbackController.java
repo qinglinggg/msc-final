@@ -66,7 +66,7 @@ public class FeedbackController {
     }
 
     @PostMapping(path="/by-feedback-message/insert", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public int insertFeedbackMessage(@RequestBody FeedbackMessage feedbackMessage){
+    public FeedbackMessage insertFeedbackMessage(@RequestBody FeedbackMessage feedbackMessage){
         return feedbackService.insertFeedbackMessage(feedbackMessage);
     }
 

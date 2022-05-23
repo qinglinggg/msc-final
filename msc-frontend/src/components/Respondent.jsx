@@ -168,10 +168,13 @@ function Respondent (props) {
       }
       feedbackMessages.map((f) => {
         if(f['date'] && f['time']) return;
+        // console.log("jalan nih");
         const messageDate = new Date(f.createDateTime);
         const day = messageDate.getDate() + "/" + messageDate.getMonth() + "/" + messageDate.getFullYear();
-        let time = messageDate.getHours() + ':' + messageDate.getMinutes();
-        if(messageDate.getMinutes() == 0) time = time + '0';
+        let time = messageDate.getHours() + ':';
+        if(messageDate.getMinutes() == 0) time = time + messageDate.getMinutes() + '0';
+        else if(messageDate.getMinutes() < 10) time = time + '0' + messageDate.getMinutes();
+        else time = time + messageDate.getMinutes();
         f['day'] = day;
         f['time'] = time;
       });
@@ -613,8 +616,6 @@ function Respondent (props) {
         data: newMessage,
         headers: { "Content-Type" : "application/json" }
       }).then((res) => {
-        console.log("feedback masuk");
-        console.log(res.data);
         setFeedbackMessages(messages);
         setTempMessage("");
         updateTextarea();

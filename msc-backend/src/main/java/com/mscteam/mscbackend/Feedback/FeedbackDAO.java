@@ -101,10 +101,10 @@ public class FeedbackDAO {
         return feedback.getFeedbackId().toString();
     }
 
-    public int insertFeedbackMessage(FeedbackMessage feedbackMessage){
+    public FeedbackMessage insertFeedbackMessage(FeedbackMessage feedbackMessage){
         final String query = "INSERT INTO FeedbackMessage VALUES (?,?,?,?,?,?)";
         int res = jdbcTemplate.update(query, feedbackMessage.getFeedbackId().toString(), feedbackMessage.getSenderUserId().toString(), feedbackMessage.getMessageId().toString(), feedbackMessage.getFeedbackMessage(), dateFormat.format(feedbackMessage.getCreateDateTime()), feedbackMessage.getIsRead());
-        return res;
+        return new FeedbackMessage(feedbackMessage.getFeedbackId(), feedbackMessage.getSenderUserId(), feedbackMessage.getMessageId(), feedbackMessage.getFeedbackMessage(), feedbackMessage.getCreateDateTime(), feedbackMessage.getIsRead());
     }
 
     public int removeFeedback(String id){
