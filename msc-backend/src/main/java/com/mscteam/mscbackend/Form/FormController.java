@@ -130,8 +130,8 @@ public class FormController {
     }
 
     @GetMapping(path = "/get-all-respondents/{formId}")
-    public List<String> getAllRespondent(@PathVariable("formId") String formId) {
-        return formService.getAllRespondent(formId);
+    public List<String> getAllRespondents(@PathVariable("formId") String formId) {
+        return formService.getAllRespondents(formId);
     }
 
     // Form Item Response
