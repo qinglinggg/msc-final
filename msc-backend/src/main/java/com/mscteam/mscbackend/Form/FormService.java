@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.mscteam.mscbackend.UserProfile.UserProfileDAO;
@@ -135,7 +136,7 @@ public class FormService {
         return formDAO.getFormItemResponse(formItemId);
     }
 
-    public HashMap<String, String> getItemResponseByUserId(String formId, String userId){
+    public HashMap<String, ArrayList<String>> getItemResponseByUserId(String formId, String userId){
         return formDAO.getItemResponseByUserId(formId, userId);
     }
 
