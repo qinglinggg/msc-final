@@ -21,9 +21,9 @@ function DataVisualization(props) {
   const [currentStep, setCurrentStep] = useState([]);
   const [inLoading, setInLoading] = useState(true);
   const [itemList, setItemList] = useState([]);
-  const [userList, setUserList] = useState([]);
   const [countData, setCountData] = useState([]);
   const [answerList, setAnswerList] = useState([]);
+  const [respondents, setRespondents] = useState([]);
   let componentRef = useRef();
 
   const exportOptions = [
@@ -99,31 +99,24 @@ function DataVisualization(props) {
     setInLoading(true);
     let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
     let listOfFormItems = [];
-    let usermap = [];
+    let respondents = [];
     await axios({
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-form-items/${selectedForm.formId}`
-    }).then((res) => {
+    }).then(async (res) => {
       listOfFormItems = res.data;
-      listOfFormItems.map(async (item) => {
-        await axios({
-          method: "get",
-          url: `${BASE_URL}/api/v1/forms/get-all-respondents/${selectedForm.formId}`
-        }).then((response) => {
-          let currentRes = response.data;
-          currentRes.map((id) => usermap[id] = [])
-        }).finally(async () => {
-          await axios({
-            method: "get",
-            url: `${BASE_URL}/api/v1/forms/get-response/${item.id}`
-          }).then((response) => {
-            let currentRes = response.data;
-            usermap.map((id) => console.log(id));
-          });
-        })
+      await axios({
+        method: "get",
+        url: `${BASE_URL}/api/v1/forms/get-all-respondents/${selectedForm.formId}`
+      }).then((response) => {
+        let currentRes = response.data;
+        currentRes.map((data) => {
+          respondents.push(data);
+        });
       });
     }).finally(() => {
       setItemList(listOfFormItems);
+      setRespondents(respondents);
       setTimeout(() => setInLoading(false), 3000);
     })
   }
@@ -198,7 +191,7 @@ function DataVisualization(props) {
     return (
       <React.Fragment>
         {inLoading ? (<Loading text="Memuat data responden..."/>) : (
-          <Responses data={itemList} userList={userList}/>
+          <Responses data={itemList} respondents={respondents}/>
         )}
       </React.Fragment>
     );
