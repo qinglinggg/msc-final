@@ -186,7 +186,7 @@ public class FormDAO {
     
     public List<HashMap<String, String>> getItemResponseByUserId(String formId, String userId){
         final String query = "SELECT formItemsId, answerSelectionValue FROM FormRespondent JOIN FormItemResponse USING (formRespondentId) WHERE formId = ? and userId = ?";
-        List<HashMap<String, String>> itemResponse = jdbc.queryForList(query, (resultSet, i) -> {
+        List<HashMap<String, String>> itemResponse = jdbc.query(query, (resultSet, i) -> {
             HashMap<String, String> results = new HashMap<>();
             while(resultSet.next()) {
                 results.put(resultSet.getString("formItemsId"), resultSet.getString("answerSelectionValue"));
