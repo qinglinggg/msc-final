@@ -83,7 +83,7 @@ public class FormController {
     }
 
     @GetMapping(path = "/get-response-user/{formId}/{userId}")
-    public List<HashMap<String, String>> getItemResponseByUserId(@PathVariable("formId") String formId, @PathVariable("userId") String userId){
+    public HashMap<String, String> getItemResponseByUserId(@PathVariable("formId") String formId, @PathVariable("userId") String userId){
         return formService.getItemResponseByUserId(formId, userId);
     }
     
