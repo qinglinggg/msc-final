@@ -182,6 +182,16 @@ public class FormDAO {
         }, formItemsId);
         return formItemResponses;
     }
+    
+    public HashMap<String, String> getItemResponseByUserId(String formId, String userId){
+        final String query = "SELECT formItemsId, answerSelectionValue FROM FormRespondent JOIN FormItemResponse USING (formRespondentId) WHERE formId = ? and userId = ?";
+        HashMap<String, String, String> itemResponse = jdbc.query(query, (resultSet, i) -> {
+            String tempItemId = resultSet.getString("formItemsId");
+            String tempAnswerSelectionValue = resultSet.getString("answerSelectionValue");
+            return new HashMap(tempItemId, tempAnswerSelectionValue);
+        }, formId, userId);
+        return itemResponse;
+    }
 
     public int removeFormItems(String formItemsId) {
         final String query = "DELETE FROM FormItems WHERE formItemsId=?";
@@ -274,6 +284,15 @@ public class FormDAO {
             return resId;
         }, formId, userId);
         return formRespondentId;
+    }
+
+    public List<String> getAllRespondents(String formId){
+        final String query = "SELECT userId FROM FormRespondent WHERE formId = ?";
+        List<String> userlist = jdbc.query(query, (resultSet, i) -> {
+            String userId = resultSet.getString("userId");
+            return userId;
+        }, formId);
+        return userlist;
     }
 
     public int insertFormItemResponse(String formRespondentId, FormItemResponse formItemResponse){

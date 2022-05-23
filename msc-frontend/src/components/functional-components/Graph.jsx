@@ -39,7 +39,6 @@ class Graph extends React.Component {
     colorData.map((color, idx) => {
       let par = document.getElementById("item-subgraph-" + this.props.count + idx);
       let el = document.getElementById("color-subgraph-" + this.props.count + idx);
-      console.log(color);
       if (el && par) {
         el.style.backgroundColor = color;
         el.style.height = 5 + "px";
