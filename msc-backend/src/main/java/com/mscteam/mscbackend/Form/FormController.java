@@ -81,6 +81,11 @@ public class FormController {
     public List<FormItemResponse> getFormItemResponse(@PathVariable("formItemsId") String formItemsId){
         return formService.getFormItemResponse(formItemsId);
     }
+
+    @GetMapping(path = "/get-response-user/{formId}/{userId}")
+    public HashMap<String, String> getItemResponseByUserId(@PathVariable("formId") String formId, @PathVariable("userId") String userId){
+        return formService.getItemResponseByUserId(formId, userId);
+    }
     
     @PostMapping(path = "/add-answer-selection/{formItemsId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public FormAnswerSelection addAnswerSelection(@PathVariable("formItemsId") String formItemsId,
@@ -122,6 +127,11 @@ public class FormController {
         String userId = map.get("userId");
         System.out.println("Check ResponseBody: " + userId);
         return formService.getFormRespondentByUserId(formId, userId);
+    }
+
+    @GetMapping(path = "/get-all-respondents/{formId}")
+    public List<String> getAllRespondents(@PathVariable("formId") String formId) {
+        return formService.getAllRespondents(formId);
     }
 
     // Form Item Response

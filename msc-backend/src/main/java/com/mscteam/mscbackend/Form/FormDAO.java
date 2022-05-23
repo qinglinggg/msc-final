@@ -1,7 +1,9 @@
 package com.mscteam.mscbackend.Form;
 
+import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -182,6 +184,18 @@ public class FormDAO {
         }, formItemsId);
         return formItemResponses;
     }
+    
+    public HashMap<String, String> getItemResponseByUserId(String formId, String userId){
+        HashMap<String, String> results = new HashMap<>();
+        final String query = "SELECT formItemsId, answerSelectionValue FROM FormRespondent JOIN FormItemResponse USING (formRespondentId) WHERE formId = ? and userId = ?";
+        jdbcTemplate.query(query, (resultSet, i) -> {
+            results.put(resultSet.getString("formItemsId"), resultSet.getString("answerSelectionValue"));
+            System.out.println("Test result on Responds by UserID:");
+            System.out.println(results);
+            return results;
+        }, formId, userId);
+        return results;
+    }
 
     public int removeFormItems(String formItemsId) {
         final String query = "DELETE FROM FormItems WHERE formItemsId=?";
@@ -274,6 +288,15 @@ public class FormDAO {
             return resId;
         }, formId, userId);
         return formRespondentId;
+    }
+
+    public List<String> getAllRespondents(String formId){
+        final String query = "SELECT userId FROM FormRespondent WHERE formId = ?";
+        List<String> userlist = jdbcTemplate.query(query, (resultSet, i) -> {
+            String userId = resultSet.getString("userId");
+            return userId;
+        }, formId);
+        return userlist;
     }
 
     public int insertFormItemResponse(String formRespondentId, FormItemResponse formItemResponse){
