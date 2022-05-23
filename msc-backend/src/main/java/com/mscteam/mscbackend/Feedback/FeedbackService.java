@@ -60,8 +60,15 @@ public class FeedbackService {
     }
 
     public int insertFeedbackMessage(FeedbackMessage feedbackMessage) {
+        System.out.println("feedbackMessage yg masuk: ");
+        System.out.println(feedbackMessage);
         Optional<UserProfile> userProfile = userProfileDAO.getUserById(feedbackMessage.getSenderUserId().toString());
-        if(userProfile.isPresent()) return feedbackDAO.insertFeedbackMessage(feedbackMessage);
+        if(userProfile.isPresent()){
+            System.out.println("userProfile ada");
+            System.out.println(userProfile);
+            return feedbackDAO.insertFeedbackMessage(feedbackMessage);
+        }
+        System.out.println("userProfile tidak adaa");
         return -1;
     }
 
