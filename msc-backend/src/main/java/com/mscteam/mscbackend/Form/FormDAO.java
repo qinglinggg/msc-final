@@ -1,5 +1,6 @@
 package com.mscteam.mscbackend.Form;
 
+import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -189,8 +190,9 @@ public class FormDAO {
         final String query = "SELECT formItemsId, answerSelectionValue FROM FormRespondent JOIN FormItemResponse USING (formRespondentId) WHERE formId = ? and userId = ?";
         jdbcTemplate.query(query, (resultSet, i) -> {
             results.put(resultSet.getString("formItemsId"), resultSet.getString("answerSelectionValue"));
+            return results;
         }, formId, userId);
-        return itemResponse;
+        return results;
     }
 
     public int removeFormItems(String formItemsId) {
