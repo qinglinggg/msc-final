@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { Component, useEffect, useState } from 'react';
+import React, { Component, useEffect, useState, useRef } from 'react';
 import { Link, useParams } from "react-router-dom";
 import AutoHeightTextarea from './functional-components/AutoheightTextarea';
 
@@ -23,6 +23,7 @@ function Respondent (props) {
   const [tempMessage, setTempMessage] = useState("");
   const [feedbackId, setFeedbackId] = useState();
   const [feedbackMessages, setFeedbackMessages] = useState([]);
+  const prevFeedbackMessage = useRef(0);
 
   // DESIGN
   const [primaryColor, setPrimaryColor] = useState("Default");
@@ -117,7 +118,7 @@ function Respondent (props) {
     setFormResponse(loadData);
   }, [formItems])
 
-  useEffect((prevState) => {
+  useEffect(() => {
     let userId = JSON.parse(localStorage.getItem("loggedInUser"));
     // console.log(userId);
     if(feedbackId == undefined){
@@ -142,19 +143,46 @@ function Respondent (props) {
       }
     }
     if(feedbackId){
-      console.log("currently loading past feedback messages...");
+      if(feedbackMessages.length == 0){
+        console.log("currently loading past feedback messages...");
+        try {
+          axios({
+            method: "get",
+            url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
+          }).then((res) => {
+            if(res.data){
+              setFeedbackMessages(res.data);
+            }
+            console.log(res.data);
+          })
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    } 
+  }, [feedbackId]);
+
+
+  useEffect(() => {
+
+    if(feedbackMessages.length > 0 && prevFeedbackMessage.current != feedbackMessages){
       try {
         axios({
           method: "get",
           url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
         }).then((res) => {
-          if(res.data) setFeedbackMessages(res.data);
+          if(res.data){
+            setFeedbackMessages(res.data);
+            prevFeedbackMessage.current = res.data;
+          }
+          console.log(res.data);
         })
       } catch (error) {
         console.log(error);
       }
     }
-  }, [feedbackId]);
+    else prevFeedbackMessage.current = feedbackMessages;
+  }, [feedbackMessages])
 
   useEffect(() => {
     let navbar = document.getElementById("navbar");
@@ -574,14 +602,11 @@ function Respondent (props) {
   // }
 
   const handleClickSend = () => {
-    // if(feedbackId == undefined){
-    //   handleCreateNewFeedback();
-    // }
     let userId = JSON.parse(localStorage.getItem("loggedInUser"));
     let newMessage = {
       feedbackId: feedbackId,
       userId: userId,
-      message: tempMessage,
+      feedbackMessage: tempMessage,
     };
     console.log(newMessage);
     let messages = [...feedbackMessages];
@@ -591,7 +616,8 @@ function Respondent (props) {
         method: "post",
         url: `${BASE_URL}/api/v1/feedback/by-feedback-message/insert`,
         data: newMessage
-      }).then(() => {
+      }).then((res) => {
+        console.log("feedback masuk");
         setFeedbackMessages(messages);
         setTempMessage("");
         updateTextarea();
@@ -634,16 +660,12 @@ function Respondent (props) {
           {feedbackMessages.map((m) => {
             return (
               <React.Fragment>
-                <div className="message-content">
-                  <div
-                    className="message-content-2"
-                    id={m.userId != userId ? "message-user-1" : "message-user-2"}
-                  >
-                    <div className="message-single-bubble">
-                      <div id="message-single-content">{m.feedbackMessage}</div>
-                    </div>
-                    <div id="message-single-timestamp">{m.createDateTime}</div>
-                  </div>
+                <div 
+                  className="respondent-chat-wrapper"
+                  id={m.userId != userId ? "respondent-chat-1" : "respondent-chat-2"}
+                >
+                  <div className="respondent-chat-message">{m.feedbackMessage}</div>
+                  <div className="respondent-chat-timestamp">{m.createDateTime}</div>
                 </div>
               </React.Fragment>
             )

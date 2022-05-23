@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.mscteam.mscbackend.UserProfile.UserProfile;
+import com.mscteam.mscbackend.UserProfile.UserProfileDAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,10 +14,12 @@ import org.springframework.stereotype.Service;
 public class FeedbackService {
 
     private FeedbackDAO feedbackDAO;
+    private UserProfileDAO userProfileDAO;
 
     @Autowired
     public FeedbackService(FeedbackDAO feedbackDAO){
         this.feedbackDAO = feedbackDAO;
+        this.userProfileDAO = userProfileDAO;
     }
 
     public List<Feedback> getAllFeedback() {
@@ -57,7 +60,9 @@ public class FeedbackService {
     }
 
     public int insertFeedbackMessage(FeedbackMessage feedbackMessage) {
-        return feedbackDAO.insertFeedbackMessage(feedbackMessage);
+        Optional<UserProfile> userProfile = userProfileDAO.getUserById(feedbackMessage.getSenderUserId().toString());
+        if(userProfile.isPresent()) return feedbackDAO.insertFeedbackMessage(feedbackMessage);
+        return -1;
     }
 
     public int removeFeedback(String id) {
