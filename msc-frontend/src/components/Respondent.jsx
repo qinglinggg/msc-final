@@ -24,6 +24,7 @@ function Respondent (props) {
   const [feedbackId, setFeedbackId] = useState();
   const [feedbackMessages, setFeedbackMessages] = useState([]);
   const prevFeedbackMessage = useRef(0);
+  const chatRef = React.createRef();
 
   // DESIGN
   const [primaryColor, setPrimaryColor] = useState("Default");
@@ -50,7 +51,6 @@ function Respondent (props) {
             method: "get",
             url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`
         }).then((res) => {
-            // console.log("success form items");
             setFormItems(res.data);
         })
     } catch (error) {
@@ -60,8 +60,6 @@ function Respondent (props) {
     responsePageTheme();
     // CHAT
     let userId = JSON.parse(localStorage.getItem("loggedInUser"));
-    let createNewFeedback = false;
-    // cek pernah kirim message ga
     if(userId) {
       let userId_data = {"userId": userId}
       axios({
@@ -141,45 +139,40 @@ function Respondent (props) {
     if(feedbackId){
       if(feedbackMessages.length == 0){
         console.log("currently loading past feedback messages...");
-        getFeedbackMessages();
+        axios({
+          method: "get",
+          url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
+        }).then((res) => {
+          if(res.data){
+            preparingMessages(res.data);
+          }
+        }).catch(error => {
+          console.log(error);
+        })
       }
     } 
   }, [feedbackId]);
 
-  const getFeedbackMessages = () => {
-    axios({
-      method: "get",
-      url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
-    }).then((res) => {
-      if(res.data){
-        setFeedbackMessages(res.data);
-        console.log(res.data);
-        prevFeedbackMessage.current = res.data;
-      }
-    }).catch(error => {
-      console.log(error);
-    })
+  const preparingMessages = (data) => {
+    data.map((f) => {
+      // console.log(f);
+      if(f['date'] && f['time']) return;
+      // console.log("jalan nih");
+      const messageDate = new Date(f.createDateTime);
+      const date = messageDate.getDate() + "/" + messageDate.getMonth() + "/" + messageDate.getFullYear();
+      let time = messageDate.getHours() + ':';
+      if(messageDate.getMinutes() == 0) time = time + messageDate.getMinutes() + '0';
+      else if(messageDate.getMinutes() < 10) time = time + '0' + messageDate.getMinutes();
+      else time = time + messageDate.getMinutes();
+      f['date'] = date;
+      f['time'] = time;
+    });
+    prevFeedbackMessage.current = data;
+    setFeedbackMessages(data);
   }
 
   useEffect(() => {
-    if(feedbackMessages.length > 0){
-      if(prevFeedbackMessage.current != feedbackMessages){
-        getFeedbackMessages();
-      }
-      feedbackMessages.map((f) => {
-        if(f['date'] && f['time']) return;
-        // console.log("jalan nih");
-        const messageDate = new Date(f.createDateTime);
-        const day = messageDate.getDate() + "/" + messageDate.getMonth() + "/" + messageDate.getFullYear();
-        let time = messageDate.getHours() + ':';
-        if(messageDate.getMinutes() == 0) time = time + messageDate.getMinutes() + '0';
-        else if(messageDate.getMinutes() < 10) time = time + '0' + messageDate.getMinutes();
-        else time = time + messageDate.getMinutes();
-        f['day'] = day;
-        f['time'] = time;
-      });
-    }
-    prevFeedbackMessage.current = feedbackMessages;
+    chatRef.current.scrollIntoView(false);
   }, [feedbackMessages])
 
   useEffect(() => {
@@ -560,44 +553,11 @@ function Respondent (props) {
         });
       }
     })
-      // formResponse.map((response) => {
-      //   try {
-      //     axios({
-      //       method: "post",
-      //       url: `${BASE_URL}/api/v1/forms/insert-response/${formRespondentId}`,
-      //       data: response
-      //     })
-      //   } catch(error) {
-      //     console.log(error);
-      //   }
-      // });
   }
     
   const handleOpenChat = () => {
     setOpenChat(!openChat);
   }
-
-  // const handleCreateNewFeedback = () => {
-  //   if(feedbackId == "") {
-  //     let newFeedback = {
-  //       formId: formId,
-  //       userId: props.user,
-  //     }
-  //     // pernah, displayPreviousMessage passing feedbackId
-  //     // nggak, maka insert feedback
-  //     try {
-  //       axios({
-  //         method: "post",
-  //         url: `${BASE_URL}/api/v1/feedback/by-feedback/insert`,
-  //         data: newFeedback,
-  //       }).then((res) => {
-  //         setFeedbackId(res.data);
-  //       })
-  //     } catch (error){
-  //       console.log(error);
-  //     }
-  //   }
-  // }
 
   const handleClickSend = () => {
     let userId = JSON.parse(localStorage.getItem("loggedInUser"));
@@ -607,8 +567,6 @@ function Respondent (props) {
       feedbackMessage: tempMessage,
     };
     console.log(newMessage);
-    let messages = [...feedbackMessages];
-    messages.push(newMessage);
     try {
       axios({
         method: "post",
@@ -616,7 +574,9 @@ function Respondent (props) {
         data: newMessage,
         headers: { "Content-Type" : "application/json" }
       }).then((res) => {
-        setFeedbackMessages(messages);
+        let messages = [...feedbackMessages];
+        messages.push(res.data);
+        preparingMessages(messages);
         setTempMessage("");
         updateTextarea();
       })
@@ -628,7 +588,10 @@ function Respondent (props) {
   const displayChatBox = () => {
     let chatbox = document.getElementById("respondent-chat-box");
     if(openChat) chatbox.classList.toggle('respondent-chat-box--active');
-    else chatbox.classList.toggle('respondent-chat-box--active');
+    else {
+      chatbox.classList.toggle('respondent-chat-box--active');
+      chatRef.current.scrollIntoView(false);
+    }
   }
 
   const handleMessageInput = (e) => {
@@ -654,7 +617,7 @@ function Respondent (props) {
           <div id="respondent-chat-profile-image"></div>
           <div id="respondent-chat-profile-name">Survey Maker</div>
         </div>
-        <div id="respondent-chat-content">
+        <div id="respondent-chat-content" >
           {feedbackMessages.map((m) => {
             return (
               <React.Fragment>
@@ -663,11 +626,12 @@ function Respondent (props) {
                   id={m.userId != userId ? "respondent-chat-1" : "respondent-chat-2"}
                 >
                   <div className="respondent-chat-message">{m.feedbackMessage}</div>
-                  <div className="respondent-chat-timestamp">{m.time}</div>
+                  <div className="respondent-chat-timestamp">{m.date + " " + m.time}</div>
                 </div>
               </React.Fragment>
             )
           })}
+          <div id="end-of-chat" ref={chatRef}></div>
         </div>
         <div id="respondent-chat-footer">
           <AutoHeightTextarea 
