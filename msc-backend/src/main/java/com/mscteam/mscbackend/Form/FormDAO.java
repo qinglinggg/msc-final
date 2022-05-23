@@ -185,13 +185,11 @@ public class FormDAO {
         return formItemResponses;
     }
     
-    public HashMap<String, String> getItemResponseByUserId(String formId, String userId){
-        HashMap<String, String> results = new HashMap<>();
-        final String query = "SELECT formItemsId, answerSelectionValue FROM FormRespondent JOIN FormItemResponse USING (formRespondentId) WHERE formId = ? and userId = ?";
+    public HashMap<String, String, String> getItemResponseByUserId(String formId, String userId){
+        HashMap<String, String, String> results = new HashMap<>();
+        final String query = "SELECT formItemsId, answerSelectionId, answerSelectionValue FROM FormRespondent JOIN FormItemResponse USING (formRespondentId) WHERE formId = ? and userId = ?";
         jdbcTemplate.query(query, (resultSet, i) -> {
-            results.put(resultSet.getString("formItemsId"), resultSet.getString("answerSelectionValue"));
-            System.out.println("Test result on Responds by UserID:");
-            System.out.println(results);
+            results.put(resultSet.getString("formItemsId"), resultSet.getString("answerSelectionId"), resultSet.getString("answerSelectionValue"));
             return results;
         }, formId, userId);
         return results;
