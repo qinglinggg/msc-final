@@ -2,6 +2,7 @@ package com.mscteam.mscbackend.Form;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -132,6 +133,10 @@ public class FormService {
     
     public List<FormItemResponse> getFormItemResponse(String formItemId) {
         return formDAO.getFormItemResponse(formItemId);
+    }
+
+    public HashMap<String, String> getItemResponseByUserId(String formId, String userId){
+        return formDAO.getItemResponseByUserId(formId, userId);
     }
 
     public int updateFormItemResponse(String formRespondentId, FormItemResponse formItemResponse){
