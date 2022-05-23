@@ -61,15 +61,8 @@ public class FeedbackService {
 
     public int insertFeedbackMessage(FeedbackMessage feedbackMessage) {
         System.out.println("feedbackMessage yg masuk: ");
-        System.out.println(feedbackMessage);
-        Optional<UserProfile> userProfile = userProfileDAO.getUserById(feedbackMessage.getSenderUserId().toString());
-        if(userProfile.isPresent()){
-            System.out.println("userProfile ada");
-            System.out.println(userProfile);
-            return feedbackDAO.insertFeedbackMessage(feedbackMessage);
-        }
-        System.out.println("userProfile tidak adaa");
-        return -1;
+        System.out.println(feedbackMessage.getFeedbackMessage());
+        return feedbackDAO.insertFeedbackMessage(feedbackMessage);
     }
 
     public int removeFeedback(String id) {
@@ -79,9 +72,5 @@ public class FeedbackService {
     public int removeFeedbackMessage(String id) {
         return feedbackDAO.removeFeedbackMessage(id);
     }
-    
-    // public Optional<String> getFeedbackIdByFormIdAndUserId(String formId, String userId){
-    //     return feedbackDAO.getFeedbackIdByFormIdAndUserId(formId, userId);
-    // }
 
 }

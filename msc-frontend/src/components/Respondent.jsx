@@ -120,15 +120,11 @@ function Respondent (props) {
 
   useEffect(() => {
     let userId = JSON.parse(localStorage.getItem("loggedInUser"));
-    // console.log(userId);
     if(feedbackId == undefined){
       let newFeedback = {
         formId: formId,
         userId: userId,
       }
-      console.log(newFeedback);
-      // pernah, displayPreviousMessage passing feedbackId
-      // nggak, maka insert feedback
       try {
         axios({
           method: "post",
@@ -145,45 +141,42 @@ function Respondent (props) {
     if(feedbackId){
       if(feedbackMessages.length == 0){
         console.log("currently loading past feedback messages...");
-        try {
-          axios({
-            method: "get",
-            url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
-          }).then((res) => {
-            if(res.data){
-              setFeedbackMessages(res.data);
-            }
-            console.log(res.data);
-          })
-        } catch (error) {
-          console.log(error);
-        }
+        getFeedbackMessages();
       }
     } 
   }, [feedbackId]);
 
+  const getFeedbackMessages = () => {
+    axios({
+      method: "get",
+      url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
+    }).then((res) => {
+      if(res.data){
+        setFeedbackMessages(res.data);
+        console.log(res.data);
+        prevFeedbackMessage.current = res.data;
+      }
+    }).catch(error => {
+      console.log(error);
+    })
+  }
 
   useEffect(() => {
-
-    if(feedbackMessages.length > 0 && prevFeedbackMessage.current != feedbackMessages){
-      try {
-        axios({
-          method: "get",
-          url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
-        }).then((res) => {
-          if(res.data){
-            setFeedbackMessages(res.data);
-            prevFeedbackMessage.current = res.data;
-          }
-          console.log(res.data);
-        })
-      } catch (error) {
-        console.log(error);
+    if(feedbackMessages.length > 0){
+      if(prevFeedbackMessage.current != feedbackMessages){
+        getFeedbackMessages();
       }
+      feedbackMessages.map((f) => {
+        if(f['date'] && f['time']) return;
+        const messageDate = new Date(f.createDateTime);
+        const day = messageDate.getDate() + "/" + messageDate.getMonth() + "/" + messageDate.getFullYear();
+        let time = messageDate.getHours() + ':' + messageDate.getMinutes();
+        if(messageDate.getMinutes() == 0) time = time + '0';
+        f['day'] = day;
+        f['time'] = time;
+      });
     }
-    else prevFeedbackMessage.current = feedbackMessages;
-
-    // test
+    prevFeedbackMessage.current = feedbackMessages;
   }, [feedbackMessages])
 
   useEffect(() => {
@@ -617,9 +610,11 @@ function Respondent (props) {
       axios({
         method: "post",
         url: `${BASE_URL}/api/v1/feedback/by-feedback-message/insert`,
-        data: newMessage
+        data: newMessage,
+        headers: { "Content-Type" : "application/json" }
       }).then((res) => {
         console.log("feedback masuk");
+        console.log(res.data);
         setFeedbackMessages(messages);
         setTempMessage("");
         updateTextarea();
@@ -667,7 +662,7 @@ function Respondent (props) {
                   id={m.userId != userId ? "respondent-chat-1" : "respondent-chat-2"}
                 >
                   <div className="respondent-chat-message">{m.feedbackMessage}</div>
-                  <div className="respondent-chat-timestamp">{m.createDateTime}</div>
+                  <div className="respondent-chat-timestamp">{m.time}</div>
                 </div>
               </React.Fragment>
             )
