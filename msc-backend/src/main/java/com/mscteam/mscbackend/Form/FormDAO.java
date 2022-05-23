@@ -2,6 +2,7 @@ package com.mscteam.mscbackend.Form;
 
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -185,14 +186,15 @@ public class FormDAO {
         return formItemResponses;
     }
     
-    public HashMap<String, HashMap<String, String>> getItemResponseByUserId(String formId, String userId){
-        HashMap<String, HashMap<String, String>> results = new HashMap<>();
+    public HashMap<String, ArrayList<String>> getItemResponseByUserId(String formId, String userId){
+        HashMap<String, ArrayList<String>> results = new HashMap<>();
         final String query = "SELECT formItemsId, answerSelectionId, answerSelectionValue FROM FormRespondent JOIN FormItemResponse USING (formRespondentId) WHERE formId = ? and userId = ?";
         jdbcTemplate.query(query, (resultSet, i) -> {
-            HashMap<String, String> innerRes = new HashMap<>();
-            innerRes.put(resultSet.getString("answerSelectionId"), resultSet.getString("answerSelectionValue"));
+            ArrayList<String> innerRes = new ArrayList<>();
+            innerRes.add(resultSet.getString("answerSelectionId"));
+            innerRes.add(resultSet.getString("answerSelectionValue"));
             results.put(resultSet.getString("formItemsId"), innerRes);
-            return innerRes;
+            return results;
         }, formId, userId);
         return results;
     }
