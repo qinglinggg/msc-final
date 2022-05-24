@@ -3,7 +3,6 @@ import Graph from "./functional-components/Graph";
 
 const Summary = React.forwardRef((props, ref) => {
   let counter = 0;
-  let tempArr = [];
 
   return (
     <React.Fragment>

@@ -40,6 +40,7 @@ function Responses(props) {
           tempAnswers.push({formItemsId: key, value: res.data[key]});
         });
         setAnswerList(tempAnswers);
+        console.log(tempAnswers);
       }
     });
     let element = document.getElementById("selected-respondent");
@@ -61,9 +62,21 @@ function Responses(props) {
     let element = document.getElementById("selected-respondent");
     if(element) {
       element.value = options[0].value;
-      console.log(element.value == options[0].value);
+      // console.log(element.value == options[0].value);
     }
   }, [options])
+
+  const setDefaultValue = (currentAns, selection) => {
+    let validator = currentAns && currentAns.map(ans => ans.value[0] == selection.id);
+    let checker = false;
+    validator.map((check) => {
+      if(check == true) {
+        checker = true;
+        return;
+      }
+    });
+    return checker;
+  }
 
   const displayAnswers = (itemId, type) => {
     let currentSelection = answerSelection.filter((selection) => {
@@ -79,13 +92,12 @@ function Responses(props) {
         let currentAns = answerList.filter((ans) => {
           return ans.formItemsId == itemId;
         });
-        if(currentAns) currentAns = currentAns[0];
         return (
           <div className="answer-selection">
-            {type == "MC" ? (<input type="radio" id={id} name={name} checked={currentAns && currentAns.value[0] == selection.id} disabled/>) : null}
-            {type == "CB" ? (<input type="checkbox" id={id} name={name} checked={currentAns && currentAns.value[0] == selection.id} disabled/>) : null}
-            {type == "LS" ? (<input type="radio" id={id} name={name} checked={currentAns && currentAns.value[0] == selection.id} disabled/>) : null}
-            {type == "SA" ? (<input type="text" id={id} name={name} value={currentAns && currentAns.value[0] == selection.id ? currentAns.value[1] : ""} disabled/>) : null}
+            {type == "MC" ? (<input type="radio" id={id} name={name} checked={setDefaultValue(currentAns, selection)} disabled/>) : null}
+            {type == "CB" ? (<input type="checkbox" id={id} name={name} checked={setDefaultValue(currentAns, selection)} disabled/>) : null}
+            {type == "LS" ? (<input type="radio" id={id} name={name} checked={setDefaultValue(currentAns, selection)} disabled/>) : null}
+            {type == "SA" ? (<input type="text" id={id} name={name} value={setDefaultValue(currentAns, selection) ? currentAns[0].value[1] : ""} disabled/>) : null}
             {type != "LS" ? (<label htmlFor={id}>{selection.value}</label>) : (type != "SA" ? (<label htmlFor={id}>{selection.label}</label>) : null)}
           </div>
         );
