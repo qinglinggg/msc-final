@@ -71,7 +71,7 @@ public class FeedbackDAO {
             Date createDateTime = null;
             Integer isRead = resultSet.getInt("isRead");
             try {
-                createDateTime = dateFormat.parse(resultSet.getString("createDateTime"));
+                createDateTime = resultSet.getDate("createDateTime");
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -145,6 +145,7 @@ function Respondent (props) {
           url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
         }).then((res) => {
           if(res.data){
+            console.log(res.data);
             preparingMessages(res.data);
           }
         }).catch(error => {
@@ -160,25 +161,50 @@ function Respondent (props) {
     // tempDate untuk jadi penanda
 
     let tempDate = currDate;
+    let index = -1;
+    let listOfInsert = {};
     data.map((f) => {
-      if(f['date'] || f['time']) return;
-      const messageDate = new Date(f.createDateTime);
+      index++;
+      // cek udah pernah looping disitu belum
+      if(f['date'] && f['time']) return;
+      // "belum", tapi ternyata elemen date
+      if(!f['createDateTime']) return;
 
-      if(tempDate == "") tempDate = messageDate;
-      const messageTime = messageDate.getTime();
-
-      
-      // hour:minutes
-      const month = messageDate.getMonth() + 1;
-      const date = messageDate.getDate() + "/" + month + "/" + messageDate.getFullYear();
-      console.log(messageDate.getMonth());
-      let time = messageDate.getHours() + ':';
-      if(messageDate.getMinutes() == 0) time = time + messageDate.getMinutes() + '0';
-      else if(messageDate.getMinutes() < 10) time = time + '0' + messageDate.getMinutes();
-      else time = time + messageDate.getMinutes();
-      f['date'] = date;
-      f['time'] = time;
+      // console.log(f['createDateTime']);
+      // const messageDate = new Date(f.createDateTime);
+      // let flag = 0;
+      // if(tempDate == "") flag = 1;
+      // else if(tempDate != ""){
+      //   if(tempDate.getFullYear() < messageDate.getFullYear()) flag = 1;
+      //   else if(tempDate.getFullYear() == messageDate.getFullYear()){
+      //     if(tempDate.getMonth() < messageDate.getMonth()) flag = 1;
+      //     else if(tempDate.getMonth() == messageDate.getMonth()){
+      //       if(tempDate.getDate() < messageDate.getDate()) flag = 1;
+      //     }
+      //   }
+      // }
+      // if(flag == 1){
+      //   tempDate = messageDate;
+      //   let insert = {
+      //     date: tempDate,
+      //     index: index,
+      //   }
+      //   listOfInsert.add(insert);
+      // }
+      // const month = messageDate.getMonth() + 1;
+      // const date = messageDate.getDate() + "/" + month + "/" + messageDate.getFullYear();
+      // console.log(messageDate.getMonth());
+      // let time = messageDate.getHours() + ':';
+      // if(messageDate.getMinutes() == 0) time = time + messageDate.getMinutes() + '0';
+      // else if(messageDate.getMinutes() < 10) time = time + '0' + messageDate.getMinutes();
+      // else time = time + messageDate.getMinutes();
+      // f['date'] = date;
+      // f['time'] = time;
     });
+    // listOfInsert.map((insert) => {
+    //   data.splice(insert.index, 0, insert.date);
+    // })
+    setCurrDate(tempDate);
     prevFeedbackMessage.current = data;
     setFeedbackMessages(data);
   }
