@@ -68,10 +68,10 @@ public class FeedbackDAO {
             String senderUserId = resultSet.getString("senderUserId");
             String messageId = resultSet.getString("messageId");
             String message = resultSet.getString("message");
-            Date createDateTime = null;
+            String createDateTime = null;
             Integer isRead = resultSet.getInt("isRead");
             try {
-                createDateTime = resultSet.getDate("createDateTime");
+                createDateTime = dateFormat.format(resultSet.getDate("createDateTime"));
             } catch (Exception e) {
                 e.printStackTrace();
             }
