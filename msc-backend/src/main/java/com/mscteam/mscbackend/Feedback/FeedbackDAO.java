@@ -1,6 +1,7 @@
 package com.mscteam.mscbackend.Feedback;
 
 import java.sql.Time;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
@@ -103,7 +104,13 @@ public class FeedbackDAO {
 
     public FeedbackMessage insertFeedbackMessage(FeedbackMessage feedbackMessage){
         final String query = "INSERT INTO FeedbackMessage VALUES (?,?,?,?,?,?)";
-        System.out.println("createdatetime: " + feedbackMessage.getCreateDateTime());
+        try {
+            System.out.println("createdatetime: " + dateFormat.parse(feedbackMessage.getCreateDateTime().toString()));
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            System.out.println("parsing is failed");
+        }
         int res = jdbcTemplate.update(query, feedbackMessage.getFeedbackId().toString(), feedbackMessage.getSenderUserId().toString(), feedbackMessage.getMessageId().toString(), feedbackMessage.getFeedbackMessage(), feedbackMessage.getCreateDateTime(), feedbackMessage.getIsRead());
         return new FeedbackMessage(feedbackMessage.getFeedbackId(), feedbackMessage.getSenderUserId(), feedbackMessage.getMessageId(), feedbackMessage.getFeedbackMessage(), feedbackMessage.getCreateDateTime(), feedbackMessage.getIsRead());
     }
