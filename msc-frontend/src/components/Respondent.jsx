@@ -25,6 +25,7 @@ function Respondent (props) {
   const [feedbackMessages, setFeedbackMessages] = useState([]);
   const prevFeedbackMessage = useRef(0);
   const chatRef = React.createRef();
+  const [currDate, setCurrDate] = useState("");
 
   // DESIGN
   const [primaryColor, setPrimaryColor] = useState("Default");
@@ -154,12 +155,21 @@ function Respondent (props) {
   }, [feedbackId]);
 
   const preparingMessages = (data) => {
-    // new date element objects: [date] [indexToInsert]
+    // new date element objects: [date] [indexToInsert] -> splice
     // existing date element objects: [date]
+    // tempDate untuk jadi penanda
+
+    let tempDate = currDate;
     data.map((f) => {
-      if(f['date'] && f['time']) return;
+      if(f['date'] || f['time']) return;
       const messageDate = new Date(f.createDateTime);
-      const date = messageDate.getDate() + "/" + messageDate.getMonth() + "/" + messageDate.getFullYear();
+      if(tempDate == "") tempDate = messageDate;
+      else if(tempDate.getTime() < messageDate.getTime()){
+        // tempDate = messageDate
+      }
+      const month = messageDate.getMonth() + 1;
+      const date = messageDate.getDate() + "/" + month + "/" + messageDate.getFullYear();
+      console.log(messageDate.getMonth());
       let time = messageDate.getHours() + ':';
       if(messageDate.getMinutes() == 0) time = time + messageDate.getMinutes() + '0';
       else if(messageDate.getMinutes() < 10) time = time + '0' + messageDate.getMinutes();
@@ -566,7 +576,7 @@ function Respondent (props) {
       userId: userId,
       feedbackMessage: tempMessage,
     };
-    console.log(newMessage);
+    // console.log(newMessage);
     try {
       axios({
         method: "post",
@@ -575,6 +585,7 @@ function Respondent (props) {
         headers: { "Content-Type" : "application/json" }
       }).then((res) => {
         let messages = [...feedbackMessages];
+        console.log(res.data);
         messages.push(res.data);
         preparingMessages(messages);
         setTempMessage("");
