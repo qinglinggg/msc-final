@@ -10,6 +10,11 @@ function Responses(props) {
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
+    if(props.responses && selectedResponse == "")
+      setSelectedResponse(props.responses[0]);
+  }, []);
+
+  useEffect(() => {
     if(!props.data) return;
     let currentSelections = [...answerSelection];
     props.data.map((data) => {
@@ -37,16 +42,11 @@ function Responses(props) {
       if(res.data) {
         let keys = Object.keys(res.data);
         keys.map((key) => {
-          tempAnswers.push({formItemsId: key, value: res.data[key]});
-        });
+          tempAnswers.push({answerSelectionId: key, value: res.data[key].answerSelectionValue});
+        })
         setAnswerList(tempAnswers);
-        console.log(tempAnswers);
       }
     });
-    let element = document.getElementById("selected-response");
-    if(element) {
-      element.value = selectedResponse;
-    }
   }, [selectedResponse]);
 
   useEffect(() => {
@@ -62,20 +62,20 @@ function Responses(props) {
     let element = document.getElementById("selected-response");
     if(element) {
       element.value = options[0].value;
-      // console.log(element.value == options[0].value);
     }
   }, [options])
 
-  const setDefaultValue = (currentAns, selection) => {
-    let validator = currentAns && currentAns.map(ans => ans.value[0] == selection.id);
+  const setDefaultValue = (selection) => {
+    let currentAns = answerList;
+    let value = null;
     let checker = false;
-    validator.map((check) => {
-      if(check == true) {
+    currentAns && currentAns.map(ans => {
+      if(ans.answerSelectionId == selection.id) {
         checker = true;
-        return;
+        value = ans.value;
       }
     });
-    return checker;
+    return [checker, value];
   }
 
   const displayAnswers = (itemId, type) => {
@@ -89,15 +89,13 @@ function Responses(props) {
       currentSelection ? currentSelection.map((selection, innerIdx) => {
         let id = "question-" + itemId + "-options-" + innerIdx;
         let name = "question-" + itemId;
-        let currentAns = answerList.filter((ans) => {
-          return ans.formItemsId == itemId;
-        });
+        let checker = setDefaultValue(selection);
         return (
           <div className="answer-selection">
-            {type == "MC" ? (<input type="radio" id={id} name={name} checked={setDefaultValue(currentAns, selection)} disabled/>) : null}
-            {type == "CB" ? (<input type="checkbox" id={id} name={name} checked={setDefaultValue(currentAns, selection)} disabled/>) : null}
-            {type == "LS" ? (<input type="radio" id={id} name={name} checked={setDefaultValue(currentAns, selection)} disabled/>) : null}
-            {type == "SA" ? (<input type="text" id={id} name={name} value={setDefaultValue(currentAns, selection) ? currentAns[0].value[1] : ""} disabled/>) : null}
+            {type == "MC" ? (<input type="radio" id={id} name={name} className="answer-radio" checked={checker[0]} disabled/>) : null}
+            {type == "CB" ? (<input type="checkbox" id={id} name={name} className="answer-radio" checked={checker[0]} disabled/>) : null}
+            {type == "LS" ? (<input type="radio" id={id} name={name} className="answer-radio" checked={checker[0]} disabled/>) : null}
+            {type == "SA" ? (<div className="text-container"><input type="text" className="answer-text" name={name} value={checker[0] ? checker[1] : ""} disabled/></div>) : null}
             {type != "LS" ? (<label htmlFor={id}>{selection.value}</label>) : (type != "SA" ? (<label htmlFor={id}>{selection.label}</label>) : null)}
           </div>
         );
@@ -107,14 +105,40 @@ function Responses(props) {
     );
   }
 
+  const changeSelectedResponse = (navDistance, inUsed) => {
+    if(!selectedResponse) return false;
+    let validator = false;
+    props.responses.map((resp, idx) => {
+      if(selectedResponse == resp)
+        if(props.responses[idx+navDistance]){
+          if(inUsed) setSelectedResponse(props.responses[idx+navDistance]);
+          validator = true;
+        }
+    });
+    return validator;
+  }
+
   return (
     <React.Fragment>
       <div className="select-user-container">
         <span>Selected response</span>
-        <Select options={options}
-        defaultValue={options[0]}
+        <Select
+        styles={{
+          control: base => ({
+            ...base,
+            border: 0,
+            borderBottom: '1px solid gray',
+            borderRadius: 0,
+            boxShadow: 'none',
+            backgroundColor: 'transparent'
+          })
+        }}
+        options={options}
+        value={options.map((option) => option.value == selectedResponse ? option : null)}
         id="selected-response"
         onChange={(e) => setSelectedResponse(e.value)}/>
+        {changeSelectedResponse(-1, false) ? (<button onClick={() => changeSelectedResponse(-1, true)}>{"<< Prev"}</button>) : null}
+        {changeSelectedResponse(1, false) ? (<button onClick={() => changeSelectedResponse(1, true)}>{"Next >>"}</button>) : null}
       </div>
       { props.data && props.data.length > 0 ? (
         <React.Fragment>
@@ -125,12 +149,7 @@ function Responses(props) {
                   <span>{idx+1}. {item.content}</span>
                 </div>
                 <div className="answer-container">
-                  <span>{item.type}</span>
                   {displayAnswers(item.id, item.type)}
-                  <span>{answerList.map((ans) => {
-                    if (ans.formItemsId == item.id) return ans.value[1];
-                    // return null;
-                  })}</span>
                 </div>
               </div>
             );

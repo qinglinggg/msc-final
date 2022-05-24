@@ -1063,7 +1063,7 @@ body {
   height: fit-content;
   margin-left: 5px;
   border: none;
-  font-size: 1.55em;
+  font-size: medium;
   font-family: var(--font-roboto);
   scrollbar-width: none;
   padding: 8px;
@@ -1775,7 +1775,7 @@ body {
 .data-visualization-container > .result-container {
   width: 90%;
   height: fit-content;
-  padding: 15px;
+  padding: 25px;
   border-radius: 15px;
   border: 1px solid #c4c4c4;
   display: flex;
@@ -1894,6 +1894,67 @@ body {
   font-size: small;
   margin: 5px;
   color: black;
+}
+
+.answer-container {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.select-user-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: right;
+  font-family: var(--font-roboto);
+  font-size: small;
+  margin-top: 15px;
+}
+
+.select-user-container #selected-response {
+  width: 200px;
+  margin: 0 5px 0 5px;
+}
+
+.select-user-container button {
+  border: none;
+  background-color: transparent;
+  font-size: small;
+  font-family: var(--font-roboto);
+  font-weight: 500;
+  color: gray;
+}
+
+.answer-selection {
+  font-size: medium;
+  color: gray;
+  width: 100%;
+}
+
+.answer-selection .answer-radio {
+  width: 20px;
+  height: 20px;
+  margin: 0 25px 0 55px;
+}
+
+.text-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.answer-text {
+  width: 80%;
+  border: none;
+  border-bottom: 1px dotted gray;
+  font-size: medium;
+  background-color: transparent;
 }
 
 #export-container {
