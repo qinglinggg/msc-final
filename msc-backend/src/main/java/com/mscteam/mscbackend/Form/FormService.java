@@ -124,8 +124,8 @@ public class FormService {
         return formDAO.getFormRespondentByUserId(formId, userId);
     }
 
-    public List<String> getAllRespondents(String formId){
-        return formDAO.getAllRespondents(formId);
+    public List<String> getAllFormRespondent(String formId){
+        return formDAO.getAllFormRespondent(formId);
     } 
 
     public int insertFormItemResponse(String formRespondentId, FormItemResponse formItemResponse){
@@ -136,8 +136,8 @@ public class FormService {
         return formDAO.getFormItemResponse(formItemId);
     }
 
-    public HashMap<String, ArrayList<String>> getItemResponseByUserId(String formId, String userId){
-        return formDAO.getItemResponseByUserId(formId, userId);
+    public HashMap<String, HashMap<String, String>> getResponsesById(String formRespondentId){
+        return formDAO.getResponsesById(formRespondentId);
     }
 
     public int updateFormItemResponse(String formRespondentId, FormItemResponse formItemResponse){

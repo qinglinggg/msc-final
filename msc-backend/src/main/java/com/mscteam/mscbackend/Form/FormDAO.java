@@ -186,16 +186,16 @@ public class FormDAO {
         return formItemResponses;
     }
     
-    public HashMap<String, ArrayList<String>> getItemResponseByUserId(String formId, String userId){
-        HashMap<String, ArrayList<String>> results = new HashMap<>();
-        final String query = "SELECT formItemsId, answerSelectionId, answerSelectionValue FROM FormRespondent JOIN FormItemResponse USING (formRespondentId) WHERE formId = ? and userId = ?";
+    public HashMap<String, HashMap<String, String>> getResponsesById(String formRespondentId){
+        HashMap<String, HashMap<String, String>> results = new HashMap<>();
+        final String query = "SELECT formItemsId, answerSelectionId, answerSelectionValue FROM FormItemResponse WHERE formRespondentId = ?";
         jdbcTemplate.query(query, (resultSet, i) -> {
-            ArrayList<String> innerRes = new ArrayList<>();
-            innerRes.add(resultSet.getString("answerSelectionId"));
-            innerRes.add(resultSet.getString("answerSelectionValue"));
+            HashMap<String, String> innerRes = new HashMap<>();
+            innerRes.put("answerSelectionId", resultSet.getString("answerSelectionId"));
+            innerRes.put("answerSelectionValue", resultSet.getString("answerSelectionValue"));
             results.put(resultSet.getString("formItemsId"), innerRes);
             return results;
-        }, formId, userId);
+        }, formRespondentId);
         return results;
     }
 
@@ -292,22 +292,13 @@ public class FormDAO {
         return formRespondentId;
     }
 
-    public List<String> getFormRespondentByInvitedUserId(String formId, String userId){
-        final String query = "SELECT formRespondentId FROM FormRespondent WHERE formId = ? AND userId = ? AND isTargeted = 1";
-        List<String> formRespondentId = jdbcTemplate.query(query, (resultSet, i) -> {
-            String resId = resultSet.getString("formRespondentId");
-            return resId;
-        }, formId, userId);
-        return formRespondentId;
-    }
-
-    public List<String> getAllRespondents(String formId){
-        final String query = "SELECT userId FROM FormRespondent WHERE formId = ?";
-        List<String> userlist = jdbcTemplate.query(query, (resultSet, i) -> {
-            String userId = resultSet.getString("userId");
-            return userId;
+    public List<String> getAllFormRespondent(String formId){
+        final String query = "SELECT formRespondentId FROM FormRespondent WHERE formId = ?";
+        List<String> list = jdbcTemplate.query(query, (resultSet, i) -> {
+            String id = resultSet.getString("formRespondentId");
+            return id;
         }, formId);
-        return userlist;
+        return list;
     }
 
     public int insertFormItemResponse(String formRespondentId, FormItemResponse formItemResponse){

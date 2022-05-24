@@ -84,9 +84,9 @@ public class FormController {
         return formService.getFormItemResponse(formItemsId);
     }
 
-    @GetMapping(path = "/get-response-user/{formId}/{userId}")
-    public HashMap<String, ArrayList<String>> getItemResponseByUserId(@PathVariable("formId") String formId, @PathVariable("userId") String userId){
-        return formService.getItemResponseByUserId(formId, userId);
+    @GetMapping(path = "/get-responses-by-id/{formRespondentid}")
+    public HashMap<String, HashMap<String, String>> getResponsesById(@PathVariable("formRespondentId") String formRespondentId){
+        return formService.getResponsesById(formRespondentId);
     }
     
     @PostMapping(path = "/add-answer-selection/{formItemsId}", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -131,9 +131,9 @@ public class FormController {
         return formService.getFormRespondentByUserId(formId, userId);
     }
 
-    @GetMapping(path = "/get-all-respondents/{formId}")
-    public List<String> getAllRespondents(@PathVariable("formId") String formId) {
-        return formService.getAllRespondents(formId);
+    @GetMapping(path = "/get-all-resp/{formId}")
+    public List<String> getAllFormRespondent(@PathVariable("formId") String formId) {
+        return formService.getAllFormRespondent(formId);
     }
 
     // Form Item Response

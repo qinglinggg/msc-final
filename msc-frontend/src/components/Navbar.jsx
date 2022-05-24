@@ -8,7 +8,7 @@ const BASE_URL = "http://10.61.38.193:8080";
 class Navbar extends React.Component {
   state = {
     currentUser: {},
-    prImage: dummyProfile,
+    prImage: null,
   }
   
   componentDidMount() {
@@ -19,11 +19,23 @@ class Navbar extends React.Component {
       url: `${BASE_URL}/api/v1/user-profiles/${currentId}`
     }).then((res) => {
       if(res.data) this.setState({currentUser: res.data});
-      let profileImage = document.getElementById('pr-image');
-      if(profileImage)
-        if(this.state.currentUser)
-          if(this.state.currentUser.profileImage != null && this.state.currentUser.profileImage != "") this.setState({prImage: this.state.currentUser.profileImage});
+      if(this.state.currentUser)
+        if(this.state.currentUser.profileImage != null && this.state.currentUser.profileImage != "") this.setState({prImage: this.state.currentUser.profileImage});
+        else this.setState({prImage: null});
     });
+  }
+
+  displayPicture() {
+    if(!this.state.currentUser || !this.state.currentUser.fullname) return;
+    let splitted = this.state.currentUser.fullname.split(" ");
+    if(splitted){
+      let init = ""
+      splitted.map((val) => {
+        init += val[0];
+      });
+      return init;
+    }
+    return null;
   }
 
   render() {
@@ -40,7 +52,7 @@ class Navbar extends React.Component {
               </div>
             ) : null
           }
-          <img id="pr-image" className="profile-image" src={this.state.prImage}/>
+          { this.state.prImage ? (<img id="pr-image" className="profile-image" src={this.state.prImage}/>) : (<div className="profile-image">{this.displayPicture()}</div>) }
         </div>
       </nav>
     );
