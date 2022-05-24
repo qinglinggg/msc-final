@@ -154,10 +154,10 @@ function Respondent (props) {
   }, [feedbackId]);
 
   const preparingMessages = (data) => {
+    // new date element objects: [date] [indexToInsert]
+    // existing date element objects: [date]
     data.map((f) => {
-      // console.log(f);
       if(f['date'] && f['time']) return;
-      // console.log("jalan nih");
       const messageDate = new Date(f.createDateTime);
       const date = messageDate.getDate() + "/" + messageDate.getMonth() + "/" + messageDate.getFullYear();
       let time = messageDate.getHours() + ':';

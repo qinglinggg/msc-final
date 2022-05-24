@@ -162,7 +162,6 @@ public class FormController {
         return formService.getInvitedForms(userId, invitedData);
     }
 
-    // get user fullname?
     @GetMapping(path="/get-targeted-user-list/{formId}")
     public List<FormRespondent> getFormTargetedUserList(@PathVariable("formId") String formId){
         return formService.getFormTargetedUserList(formId);

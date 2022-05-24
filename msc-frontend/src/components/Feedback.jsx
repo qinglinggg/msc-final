@@ -3,7 +3,6 @@ import { Link, useParams } from "react-router-dom";
 import iconMenubarGrey from "./images/menubarGrey.png";
 import profilePicture from "./images/woman.jpg";
 import Chat from "./Message";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import axios from "axios";
 
 function Feedback(props) {
@@ -46,21 +45,25 @@ function Feedback(props) {
     if(feedbackList && messageList.length == 0){
       let index = 0;
       feedbackList.map((feedback) => {
-        let obj = {};
         let tempMessageList = [...messageList];
         axios.get(`${BASE_URL}/api/v1/user-profiles/${feedback.userId}`)
             .then((res) => {
+              let obj = {};
               obj.fullname = res.data.fullname;
               axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/get-last-message/${feedback.feedbackId}`)
                 .then((res) => {
-                  obj.feedbackId = res.data.feedbackId;
+                  console.log("masuk lastmessage");
+                  obj['feedbackId'] = res.data.feedbackId;
                   obj.lastMessage = res.data.feedbackMessage;
                   obj.createDateTime = res.data.createDateTime;
                   obj.isRead = res.data.isRead;
                   obj.tag = 1;
+                  console.log("obj");
+                  console.log(obj);
                   tempMessageList.push(obj);
                   setMessageList(tempMessageList);
                   index = index + 1;
+                  // console.log(tempMessageList);
               });
         });
       });
@@ -101,6 +104,8 @@ function Feedback(props) {
             count = count + 1;
             let path = "chat-" + count;
             // getFeedbackMessageByFeedbackId -> lastIndex
+            console.log("message");
+            console.log(message);
             return (
               <React.Fragment>
                 <div id="chat-single-box">

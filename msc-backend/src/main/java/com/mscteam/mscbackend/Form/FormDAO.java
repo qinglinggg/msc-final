@@ -292,6 +292,15 @@ public class FormDAO {
         return formRespondentId;
     }
 
+    public List<String> getFormRespondentByInvitedUserId(String formId, String userId){
+        final String query = "SELECT formRespondentId FROM FormRespondent WHERE formId = ? AND userId = ? AND isTargeted = 1";
+        List<String> formRespondentId = jdbcTemplate.query(query, (resultSet, i) -> {
+            String resId = resultSet.getString("formRespondentId");
+            return resId;
+        }, formId, userId);
+        return formRespondentId;
+    }
+
     public List<String> getAllRespondents(String formId){
         final String query = "SELECT userId FROM FormRespondent WHERE formId = ?";
         List<String> userlist = jdbcTemplate.query(query, (resultSet, i) -> {
