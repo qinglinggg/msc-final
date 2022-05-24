@@ -24,7 +24,6 @@ import LandingPage from "./components/LandingPage";
 
 const BASE_URL = "http://10.61.38.193:8080";
 const APP_URL = "http://10.61.38.193:3001";
-// const APP_URL = "http://localhost:3000";
 
 class App extends React.Component {
   constructor(props) {

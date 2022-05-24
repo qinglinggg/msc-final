@@ -92,7 +92,7 @@ class Graph extends React.Component {
         maintainAspectRatio: true,
         title: {
           display: true,
-          text: 'Persentase data dari ' + totalCount + ' pilihan responden',
+          text: 'Persentase data - ' + totalCount + ' pilihan responden',
           position: 'bottom'
         },
         datalabels: {
