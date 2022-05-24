@@ -101,10 +101,10 @@ public class FeedbackDAO {
         return feedback.getFeedbackId().toString();
     }
 
-    public int insertFeedbackMessage(FeedbackMessage feedbackMessage){
-        final String query = "INSERT INTO FeedbackMessage VALUES (?,?,?)";
-        int res = jdbcTemplate.update(query, feedbackMessage.getFeedbackId(), feedbackMessage.getSenderUserId(), feedbackMessage.getFeedbackMessage());
-        return res;
+    public FeedbackMessage insertFeedbackMessage(FeedbackMessage feedbackMessage){
+        final String query = "INSERT INTO FeedbackMessage VALUES (?,?,?,?,?,?)";
+        int res = jdbcTemplate.update(query, feedbackMessage.getFeedbackId().toString(), feedbackMessage.getSenderUserId().toString(), feedbackMessage.getMessageId().toString(), feedbackMessage.getFeedbackMessage(), dateFormat.format(feedbackMessage.getCreateDateTime()), feedbackMessage.getIsRead());
+        return new FeedbackMessage(feedbackMessage.getFeedbackId(), feedbackMessage.getSenderUserId(), feedbackMessage.getMessageId(), feedbackMessage.getFeedbackMessage(), feedbackMessage.getCreateDateTime(), feedbackMessage.getIsRead());
     }
 
     public int removeFeedback(String id){
@@ -121,10 +121,10 @@ public class FeedbackDAO {
 
     public Optional<String> getFeedbackIdByFormIdAndUserId(String formId, String userId){
         final String query = "SELECT feedbackId FROM Feedback WHERE formId = ? AND userId = ?";
-        String feedbackId = (String) jdbcTemplate.queryForObject(query, (resultSet, i) -> {
+        List<String> feedbackId = jdbcTemplate.query(query, (resultSet, i) -> {
             String resId = resultSet.getString("feedbackId");
             return resId;
         }, formId, userId);
-        return Optional.ofNullable(feedbackId);
+        return Optional.ofNullable(feedbackId.get(0));
     }
 }

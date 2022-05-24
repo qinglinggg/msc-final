@@ -74,7 +74,7 @@ class App extends React.Component {
             form['submitDate'] = tempInvitedForms[index].submitDate;
             index++;
           });
-          console.log(invitedForms);
+          // console.log(invitedForms);
           localStorage.setItem("invitedFormLists", JSON.stringify(invitedForms));
         }).catch((error) => {
           console.log(error);
@@ -269,10 +269,9 @@ class App extends React.Component {
                   let path = "chat-" + count;
 
                   // coba2
-                  console.log(message);
+                  // console.log(message);
                   let user = axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/get-user/${message.feedbackId}`);
                   let feedbackMessageList = axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/${message.feedbackId}`);
-                  
                   return (
                     <Route
                       path={`/feedback/formId/:feedbackId/${path}`}

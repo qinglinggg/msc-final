@@ -173,7 +173,7 @@ public class FormService {
             String resUserId = userId.get(0);
             System.out.println("userEmail " + userEmail + " with resId = " + resUserId);
             // check if user already invited
-            List<String> formRespondentId = formDAO.getFormRespondentByUserId(formId, resUserId);
+            List<String> formRespondentId = formDAO.getFormRespondentByInvitedUserId(formId, resUserId);
             if(formRespondentId.size() > 0){
                 String resRespondentId = formRespondentId.get(0);
                 System.out.println("formRespondentId is not null, the value is " + resRespondentId);

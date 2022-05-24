@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { Component, useEffect, useState } from 'react';
+import React, { Component, useEffect, useState, useRef } from 'react';
 import { Link, useParams } from "react-router-dom";
 import AutoHeightTextarea from './functional-components/AutoheightTextarea';
 
@@ -23,6 +23,8 @@ function Respondent (props) {
   const [tempMessage, setTempMessage] = useState("");
   const [feedbackId, setFeedbackId] = useState();
   const [feedbackMessages, setFeedbackMessages] = useState([]);
+  const prevFeedbackMessage = useRef(0);
+  const chatRef = React.createRef();
 
   // DESIGN
   const [primaryColor, setPrimaryColor] = useState("Default");
@@ -30,8 +32,8 @@ function Respondent (props) {
   const [bgLink, setBgLink] = useState("./images/woman.jpg");
 
   useEffect(() => {
-    console.log("formId : " + formId + " is rendered.");
-    console.log("Preview mode enabled: " + props.previewMode);
+    // console.log("formId : " + formId + " is rendered.");
+    // console.log("Preview mode enabled: " + props.previewMode);
     if(props.previewMode) setPreviewMode(props.previewMode);
     try { 
         axios({
@@ -49,7 +51,6 @@ function Respondent (props) {
             method: "get",
             url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`
         }).then((res) => {
-            // console.log("success form items");
             setFormItems(res.data);
         })
     } catch (error) {
@@ -58,23 +59,6 @@ function Respondent (props) {
     // DESIGN
     responsePageTheme();
     // CHAT
-    // let createNewFeedback = false;
-    // cek pernah kirim message ga
-    // try {
-    //   axios({
-    //     method: "get",
-    //     url: `${BASE_URL}/api/v1/feedback/by-form-and-user/${formId}`,
-    //     data: userId,
-    //   }).then((res) => {
-    //     if(res.data){
-    //       setFeedbackId(res.data);
-    //     }
-    //     // else createNewFeedback = true;
-    //   })
-    // } catch(error) {
-    //   console.log(error);
-    // }
-    // get feedbackId by formId and userId
     let userId = JSON.parse(localStorage.getItem("loggedInUser"));
     if(userId) {
       let userId_data = {"userId": userId}
@@ -108,6 +92,12 @@ function Respondent (props) {
     displayContainer.addEventListener('webkitAnimationEnd', () => {
       displayContainer.style.animation = '';
     })
+    return () => {
+      console.log("feedbackId is destroyed");
+      if(feedbackMessages.length == 0){
+        axios.delete(`${BASE_URL}/api/v1/feedback/${feedbackId}`).catch((error) => console.log(error));
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -126,20 +116,64 @@ function Respondent (props) {
     setFormResponse(loadData);
   }, [formItems])
 
-  useEffect((prevState) => {
-    if(feedbackId != undefined && prevState.feedbackId == ""){
+  useEffect(() => {
+    let userId = JSON.parse(localStorage.getItem("loggedInUser"));
+    if(feedbackId == undefined){
+      let newFeedback = {
+        formId: formId,
+        userId: userId,
+      }
       try {
+        axios({
+          method: "post",
+          url: `${BASE_URL}/api/v1/feedback/by-feedback/insert`,
+          data: newFeedback,
+        }).then((res) => {
+          setFeedbackId(res.data);
+          console.log("feedbackId: " + res.data);
+        })
+      } catch (error){
+        console.log(error);
+      }
+    }
+    if(feedbackId){
+      if(feedbackMessages.length == 0){
+        console.log("currently loading past feedback messages...");
         axios({
           method: "get",
           url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
         }).then((res) => {
-          setFeedbackMessages(res.data);
+          if(res.data){
+            preparingMessages(res.data);
+          }
+        }).catch(error => {
+          console.log(error);
         })
-      } catch (error) {
-        console.log(error);
       }
-    }
+    } 
   }, [feedbackId]);
+
+  const preparingMessages = (data) => {
+    // new date element objects: [date] [indexToInsert]
+    // existing date element objects: [date]
+    data.map((f) => {
+      if(f['date'] && f['time']) return;
+      const messageDate = new Date(f.createDateTime);
+      const date = messageDate.getDate() + "/" + messageDate.getMonth() + "/" + messageDate.getFullYear();
+      let time = messageDate.getHours() + ':';
+      if(messageDate.getMinutes() == 0) time = time + messageDate.getMinutes() + '0';
+      else if(messageDate.getMinutes() < 10) time = time + '0' + messageDate.getMinutes();
+      else time = time + messageDate.getMinutes();
+      f['date'] = date;
+      f['time'] = time;
+    });
+    prevFeedbackMessage.current = data;
+    setFeedbackMessages(data);
+  }
+
+  useEffect(() => {
+    chatRef.current.scrollIntoView(false);
+  }, [feedbackMessages])
 
   useEffect(() => {
     let navbar = document.getElementById("navbar");
@@ -519,49 +553,45 @@ function Respondent (props) {
         });
       }
     })
-      // formResponse.map((response) => {
-      //   try {
-      //     axios({
-      //       method: "post",
-      //       url: `${BASE_URL}/api/v1/forms/insert-response/${formRespondentId}`,
-      //       data: response
-      //     })
-      //   } catch(error) {
-      //     console.log(error);
-      //   }
-      // });
   }
     
   const handleOpenChat = () => {
     setOpenChat(!openChat);
   }
 
-  const handleCreateNewFeedback = () => {
-    if(feedbackId == "") {
-      let newFeedback = {
-        formId: formId,
-        userId: props.user,
-      }
-      // pernah, displayPreviousMessage passing feedbackId
-      // nggak, maka insert feedback
-      try {
-        axios({
-          method: "post",
-          url: `${BASE_URL}/api/v1/feedback/by-feedback/insert`,
-          data: newFeedback,
-        }).then((res) => {
-          setFeedbackId(res.data);
-        })
-      } catch (error){
-        console.log(error);
-      }
+  const handleClickSend = () => {
+    let userId = JSON.parse(localStorage.getItem("loggedInUser"));
+    let newMessage = {
+      feedbackId: feedbackId,
+      userId: userId,
+      feedbackMessage: tempMessage,
+    };
+    console.log(newMessage);
+    try {
+      axios({
+        method: "post",
+        url: `${BASE_URL}/api/v1/feedback/by-feedback-message/insert`,
+        data: newMessage,
+        headers: { "Content-Type" : "application/json" }
+      }).then((res) => {
+        let messages = [...feedbackMessages];
+        messages.push(res.data);
+        preparingMessages(messages);
+        setTempMessage("");
+        updateTextarea();
+      })
+    } catch(error) {
+      console.log(error);
     }
-  }
+  };
     
   const displayChatBox = () => {
     let chatbox = document.getElementById("respondent-chat-box");
     if(openChat) chatbox.classList.toggle('respondent-chat-box--active');
-    else chatbox.classList.toggle('respondent-chat-box--active');
+    else {
+      chatbox.classList.toggle('respondent-chat-box--active');
+      chatRef.current.scrollIntoView(false);
+    }
   }
 
   const handleMessageInput = (e) => {
@@ -572,31 +602,6 @@ function Respondent (props) {
     if (e.key === "Enter") handleClickSend();
   };
 
-  const handleClickSend = () => {
-    if(feedbackId == undefined){
-      handleCreateNewFeedback();
-    }
-    let newMessage = {
-      feedbackId: feedbackId,
-      senderUserId: props.user,
-      message: tempMessage,
-    };
-    let messages = [...feedbackMessages];
-    messages.push(newMessage);
-    try {
-      axios({
-        method: "post",
-        data: newMessage
-      }).then(() => {
-        setFeedbackMessages(messages);
-        setTempMessage("");
-        updateTextarea();
-      })
-    } catch(error) {
-      console.log(error);
-    }
-  };
-
   const updateTextarea = () => {
     let textarea = document.getElementById("respondent-chat-input");
     if (textarea) {
@@ -605,30 +610,28 @@ function Respondent (props) {
   };
 
   const respondentChat = () => {
+    let userId = JSON.parse(localStorage.getItem("loggedInUser"));
     return (
       <div id="respondent-chat-box">
         <div id="respondent-chat-header">
           <div id="respondent-chat-profile-image"></div>
           <div id="respondent-chat-profile-name">Survey Maker</div>
         </div>
-        <div id="respondent-chat-content">
+        <div id="respondent-chat-content" >
           {feedbackMessages.map((m) => {
             return (
               <React.Fragment>
-                <div className="message-content">
-                  <div
-                    className="message-content-2"
-                    id={m.userId != props.user ? "message-user-1" : "message-user-2"}
-                  >
-                    <div className="message-single-bubble">
-                      <div id="message-single-content">{m.feedbackMessage}</div>
-                    </div>
-                    <div id="message-single-timestamp">{m.createDateTime}</div>
-                  </div>
+                <div 
+                  className="respondent-chat-wrapper"
+                  id={m.userId != userId ? "respondent-chat-1" : "respondent-chat-2"}
+                >
+                  <div className="respondent-chat-message">{m.feedbackMessage}</div>
+                  <div className="respondent-chat-timestamp">{m.date + " " + m.time}</div>
                 </div>
               </React.Fragment>
             )
           })}
+          <div id="end-of-chat" ref={chatRef}></div>
         </div>
         <div id="respondent-chat-footer">
           <AutoHeightTextarea 

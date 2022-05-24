@@ -24,7 +24,7 @@ public class FeedbackMessage implements Comparable<FeedbackMessage> {
     }
     
     // Create, Insert mode
-    public FeedbackMessage(@JsonProperty("feedbackId") UUID feedbackId, @JsonProperty("userId") UUID senderUserId, @JsonProperty("message") String message){
+    public FeedbackMessage(@JsonProperty("feedbackId") UUID feedbackId, @JsonProperty("userId") UUID senderUserId, @JsonProperty("feedbackMessage") String message){
         this.feedbackId = feedbackId;
         this.senderUserId = senderUserId;
         this.messageId = UUID.randomUUID();

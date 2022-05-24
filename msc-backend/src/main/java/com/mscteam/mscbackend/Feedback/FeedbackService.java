@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.mscteam.mscbackend.UserProfile.UserProfile;
+import com.mscteam.mscbackend.UserProfile.UserProfileDAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,10 +14,12 @@ import org.springframework.stereotype.Service;
 public class FeedbackService {
 
     private FeedbackDAO feedbackDAO;
+    private UserProfileDAO userProfileDAO;
 
     @Autowired
     public FeedbackService(FeedbackDAO feedbackDAO){
         this.feedbackDAO = feedbackDAO;
+        this.userProfileDAO = userProfileDAO;
     }
 
     public List<Feedback> getAllFeedback() {
@@ -51,10 +54,14 @@ public class FeedbackService {
     }
 
     public String insertFeedback(Feedback feedback) {
+        Optional<String> feedbackId = feedbackDAO.getFeedbackIdByFormIdAndUserId(feedback.getFormId().toString(), feedback.getUserId().toString());
+        if(feedbackId.isPresent()) return feedbackId.get();
         return feedbackDAO.insertFeedback(feedback);
     }
 
-    public int insertFeedbackMessage(FeedbackMessage feedbackMessage) {
+    public FeedbackMessage insertFeedbackMessage(FeedbackMessage feedbackMessage) {
+        System.out.println("feedbackMessage yg masuk: ");
+        System.out.println(feedbackMessage.getFeedbackMessage());
         return feedbackDAO.insertFeedbackMessage(feedbackMessage);
     }
 
@@ -64,10 +71,6 @@ public class FeedbackService {
 
     public int removeFeedbackMessage(String id) {
         return feedbackDAO.removeFeedbackMessage(id);
-    }
-    
-    public Optional<String> getFeedbackIdByFormIdAndUserId(String formId, String userId){
-        return feedbackDAO.getFeedbackIdByFormIdAndUserId(formId, userId);
     }
 
 }
