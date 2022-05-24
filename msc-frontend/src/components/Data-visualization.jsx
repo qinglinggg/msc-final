@@ -23,7 +23,7 @@ function DataVisualization(props) {
   const [itemList, setItemList] = useState([]);
   const [countData, setCountData] = useState([]);
   const [answerList, setAnswerList] = useState([]);
-  const [respondents, setRespondents] = useState([]);
+  const [responses, setResponses] = useState([]);
   let componentRef = useRef();
 
   const exportOptions = [
@@ -99,26 +99,25 @@ function DataVisualization(props) {
     setInLoading(true);
     let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
     let listOfFormItems = [];
-    let respondents = [];
+    let tempResp = [];
     await axios({
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-form-items/${selectedForm.formId}`
     }).then(async (res) => {
       listOfFormItems = res.data;
-      await axios({
-        method: "get",
-        url: `${BASE_URL}/api/v1/forms/get-all-respondents/${selectedForm.formId}`
-      }).then((response) => {
-        let currentRes = response.data;
-        currentRes.map((data) => {
-          respondents.push(data);
-        });
-      });
     }).finally(() => {
       setItemList(listOfFormItems);
-      setRespondents(respondents);
       setTimeout(() => setInLoading(false), 3000);
-    })
+    });
+    await axios({
+      method: "get",
+      url: `${BASE_URL}/api/v1/forms/get-all-resp/${selectedForm.formId}`
+    }).then(async (res) => {
+      let currentRes = res.data;
+      currentRes.map((data) => {
+        tempResp.push(data);
+      });
+    }).finally(() => setResponses(tempResp));
   }
 
   useEffect(() => {
@@ -191,7 +190,7 @@ function DataVisualization(props) {
     return (
       <React.Fragment>
         {inLoading ? (<Loading text="Memuat data responden..."/>) : (
-          <Responses data={itemList} respondents={respondents}/>
+          <Responses data={itemList} responses={responses}/>
         )}
       </React.Fragment>
     );

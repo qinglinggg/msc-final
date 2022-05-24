@@ -4,7 +4,7 @@ import Select from "react-select";
 
 const BASE_URL = "http://10.61.38.193:8080";
 function Responses(props) {
-  const [selectedRespondent, setSelectedRespondent] = useState("");
+  const [selectedResponse, setSelectedResponse] = useState("");
   const [answerList, setAnswerList] = useState([]);
   const [answerSelection, setAnswerSelection] = useState([]);
   const [options, setOptions] = useState([]);
@@ -25,13 +25,13 @@ function Responses(props) {
   }, [props.data])
 
   useEffect(() => {
-    if(!selectedRespondent || selectedRespondent == "") return;
+    if(!selectedResponse || selectedResponse == "") return;
     let selectedForm = localStorage.getItem("selectedForm");
     if (selectedForm) selectedForm = JSON.parse(selectedForm);
     else return;
     axios({
       method: "get",
-      url: `${BASE_URL}/api/v1/forms/get-response-user/${selectedForm.formId}/${selectedRespondent}`
+      url: `${BASE_URL}/api/v1/forms/get-responses-by-id/${selectedResponse}/`
     }).then((res) => {
       let tempAnswers = []
       if(res.data) {
@@ -43,23 +43,23 @@ function Responses(props) {
         console.log(tempAnswers);
       }
     });
-    let element = document.getElementById("selected-respondent");
+    let element = document.getElementById("selected-response");
     if(element) {
-      element.value = selectedRespondent;
+      element.value = selectedResponse;
     }
-  }, [selectedRespondent]);
+  }, [selectedResponse]);
 
   useEffect(() => {
     let tempOpt = [];
-    props.respondents.map((value) => {
+    props.responses.map((value) => {
       tempOpt.push({value: value, label: value})
     });
     setOptions(tempOpt);
-  }, [props.respondents]);
+  }, [props.responses]);
 
   useEffect(() => {
     if(!options || options.length <= 0) return;
-    let element = document.getElementById("selected-respondent");
+    let element = document.getElementById("selected-response");
     if(element) {
       element.value = options[0].value;
       // console.log(element.value == options[0].value);
@@ -110,11 +110,11 @@ function Responses(props) {
   return (
     <React.Fragment>
       <div className="select-user-container">
-        <span>Selected respondents</span>
+        <span>Selected response</span>
         <Select options={options}
         defaultValue={options[0]}
-        id="selected-respondent"
-        onChange={(e) => setSelectedRespondent(e.value)}/>
+        id="selected-response"
+        onChange={(e) => setSelectedResponse(e.value)}/>
       </div>
       { props.data && props.data.length > 0 ? (
         <React.Fragment>
