@@ -163,10 +163,12 @@ function Respondent (props) {
     data.map((f) => {
       if(f['date'] || f['time']) return;
       const messageDate = new Date(f.createDateTime);
+
       if(tempDate == "") tempDate = messageDate;
-      else if(tempDate.getTime() < messageDate.getTime()){
-        // tempDate = messageDate
-      }
+      const messageTime = messageDate.getTime();
+
+      
+      // hour:minutes
       const month = messageDate.getMonth() + 1;
       const date = messageDate.getDate() + "/" + month + "/" + messageDate.getFullYear();
       console.log(messageDate.getMonth());
