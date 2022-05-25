@@ -42,6 +42,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    console.log("app.js mounted");
     let tempUser = localStorage.getItem("loggedInUser");
     if (tempUser) {
       tempUser = JSON.parse(tempUser);
@@ -80,25 +81,32 @@ class App extends React.Component {
           console.log(error);
         });
       }
-      
+      let body = document.getElementById("body");
+      // MENU
+      let pageContainer = document.getElementById("page-container");
+      let background = document.querySelector(".background");
+      let navBar = document.getElementById("navbar");
+      let menuClose = document.getElementById("menu-close");
+      let sideMenu = document.getElementById("menu-container");
+      if (menuClose) {
+        menuClose.addEventListener("click", () => {
+          body.classList.toggle("openMenu");
+        });
+      }
+      if (sideMenu) sideMenu.style.left = "0";
+      // form routing
+      axios.get(`${BASE_URL}/api/v1/forms/`).then((res) => {
+        this.setState({allForms : res.data});
+      })
+    } else {
+      if(window.location.pathname != "/"){
+        window.location = '/';
+      }
     }
-    let body = document.getElementById("body");
-    // MENU
-    let pageContainer = document.getElementById("page-container");
-    let background = document.querySelector(".background");
-    let navBar = document.getElementById("navbar");
-    let menuClose = document.getElementById("menu-close");
-    let sideMenu = document.getElementById("menu-container");
-    if (menuClose) {
-      menuClose.addEventListener("click", () => {
-        body.classList.toggle("openMenu");
-      });
-    }
-    if (sideMenu) sideMenu.style.left = "0";
-    // form routing
-    axios.get(`${BASE_URL}/api/v1/forms/`).then((res) => {
-      this.setState({allForms : res.data});
-    })
+  }
+
+  componentWillUnmount(){
+    localStorage.removeItem("loggedInUser");
   }
 
   handleUpdateCurrentPage(value) {
@@ -185,6 +193,7 @@ class App extends React.Component {
   }
 
   authentication() {
+    // console.log("this.authentication");
     return (
         <Routes>
             <Route 
@@ -306,7 +315,7 @@ class App extends React.Component {
   render() {
     return (
       <Router>
-        { this.state.loggedInUser == "" ? 
+        { this.state.loggedInUser == "" ?
             this.authentication() : 
             this.appRouting()
         }
