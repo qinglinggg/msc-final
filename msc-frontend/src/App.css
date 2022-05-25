@@ -3179,6 +3179,13 @@ body {
   color: #c4c4c4;
 }
 
+.respondent-chat-date {
+  width: 100%;
+  text-align: center;
+  font-size: 11px;
+  color: #c4c4c4;
+}
+
 #respondent-chat-footer {
   width: 100%;
   min-height: 6.5em;

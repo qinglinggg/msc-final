@@ -60,8 +60,6 @@ public class FeedbackService {
     }
 
     public FeedbackMessage insertFeedbackMessage(FeedbackMessage feedbackMessage) {
-        System.out.println("feedbackMessage yg masuk: ");
-        System.out.println(feedbackMessage.getFeedbackMessage());
         return feedbackDAO.insertFeedbackMessage(feedbackMessage);
     }
 

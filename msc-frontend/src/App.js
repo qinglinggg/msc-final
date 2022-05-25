@@ -75,11 +75,16 @@ class App extends React.Component {
         body.classList.toggle("openMenu");
       });
     }
-    if (sideMenu) sideMenu.style.left = "0";
-    // form routing
-    axios.get(`${BASE_URL}/api/v1/forms/`).then((res) => {
-      this.setState({allForms : res.data});
-    })
+  }
+  
+  componentDidUpdate(prevProps, prevState) {
+    if(this.state.loggedInUser != prevState.loggedInUser && this.state.loggedInUser != "") {
+      this.updateUserdata(this.state.loggedInUser);
+    }
+  }
+
+  componentWillUnmount(){
+    localStorage.removeItem("loggedInUser");
   }
 
   async updateUserdata(userId) {
@@ -162,14 +167,9 @@ class App extends React.Component {
     localStorage.setItem("loggedInUser", JSON.stringify(userId));
     this.setState({loggedInUser : userId});
   }
-  
-  componentDidUpdate(prevProps, prevState) {
-    if(this.state.loggedInUser != prevState.loggedInUser && this.state.loggedInUser != "") {
-      this.updateUserdata(this.state.loggedInUser);
-    }
-  }
 
   authentication() {
+    // console.log("this.authentication");
     return (
         <Routes>
             <Route 
@@ -289,7 +289,7 @@ class App extends React.Component {
   render() {
     return (
       <Router>
-        { this.state.loggedInUser == "" ? 
+        { this.state.loggedInUser == "" ?
             this.authentication() : 
             this.appRouting()
         }

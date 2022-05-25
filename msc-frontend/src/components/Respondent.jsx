@@ -25,6 +25,7 @@ function Respondent (props) {
   const [feedbackMessages, setFeedbackMessages] = useState([]);
   const prevFeedbackMessage = useRef(0);
   const chatRef = React.createRef();
+  const [currDate, setCurrDate] = useState("");
 
   // DESIGN
   const [primaryColor, setPrimaryColor] = useState("Default");
@@ -93,9 +94,10 @@ function Respondent (props) {
       displayContainer.style.animation = '';
     })
     return () => {
-      console.log("feedbackId is destroyed");
       if(feedbackMessages.length == 0){
-        axios.delete(`${BASE_URL}/api/v1/feedback/${feedbackId}`).catch((error) => console.log(error));
+        axios.delete(`${BASE_URL}/api/v1/feedback/${feedbackId}`)
+        .then((res) => console.log("feedbackId is destroyed"))
+        .catch((error) => console.log(error));
       }
     };
   }, []);
@@ -144,6 +146,7 @@ function Respondent (props) {
           url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
         }).then((res) => {
           if(res.data){
+            console.log(res.data);
             preparingMessages(res.data);
           }
         }).catch(error => {
@@ -154,19 +157,50 @@ function Respondent (props) {
   }, [feedbackId]);
 
   const preparingMessages = (data) => {
-    // new date element objects: [date] [indexToInsert]
-    // existing date element objects: [date]
+    let tempDate = currDate;
+    let index = -1;
+    let listOfInsert = [];
     data.map((f) => {
+      index++;
+      // cek udah pernah looping disitu belum
       if(f['date'] && f['time']) return;
+      // "belum", tapi ternyata elemen date
+      if(!f['createDateTime']) return;
       const messageDate = new Date(f.createDateTime);
-      const date = messageDate.getDate() + "/" + messageDate.getMonth() + "/" + messageDate.getFullYear();
+      console.log(messageDate);
+      let flag = 0;
+      if(tempDate == "") flag = 1;
+      else if(tempDate != ""){
+        tempDate = new Date(tempDate);
+        if(tempDate.getFullYear() < messageDate.getFullYear()) flag = 1;
+        else if(tempDate.getFullYear() == messageDate.getFullYear()){
+          if(tempDate.getMonth() < messageDate.getMonth()) flag = 1;
+          else if(tempDate.getMonth() == messageDate.getMonth()){
+            if(tempDate.getDate() < messageDate.getDate()) flag = 1;
+          }
+        }
+      }
+      const month = messageDate.getMonth() + 1;
+      const date = messageDate.getDate() + "/" + month + "/" + messageDate.getFullYear();
       let time = messageDate.getHours() + ':';
       if(messageDate.getMinutes() == 0) time = time + messageDate.getMinutes() + '0';
       else if(messageDate.getMinutes() < 10) time = time + '0' + messageDate.getMinutes();
       else time = time + messageDate.getMinutes();
+      if(flag == 1){
+        tempDate = date;
+        let insert = {
+          date: tempDate,
+          index: index,
+        }
+        listOfInsert.push(insert);
+      }
       f['date'] = date;
       f['time'] = time;
     });
+    listOfInsert.map((insert) => {
+      data.splice(insert.index, 0, insert.date);
+    })
+    setCurrDate(tempDate);
     prevFeedbackMessage.current = data;
     setFeedbackMessages(data);
   }
@@ -566,7 +600,7 @@ function Respondent (props) {
       userId: userId,
       feedbackMessage: tempMessage,
     };
-    console.log(newMessage);
+    // console.log(newMessage);
     try {
       axios({
         method: "post",
@@ -575,6 +609,7 @@ function Respondent (props) {
         headers: { "Content-Type" : "application/json" }
       }).then((res) => {
         let messages = [...feedbackMessages];
+        console.log(res.data);
         messages.push(res.data);
         preparingMessages(messages);
         setTempMessage("");
@@ -620,15 +655,21 @@ function Respondent (props) {
         <div id="respondent-chat-content" >
           {feedbackMessages.map((m) => {
             return (
-              <React.Fragment>
+              m.createDateTime ? (
                 <div 
                   className="respondent-chat-wrapper"
                   id={m.userId != userId ? "respondent-chat-1" : "respondent-chat-2"}
                 >
                   <div className="respondent-chat-message">{m.feedbackMessage}</div>
-                  <div className="respondent-chat-timestamp">{m.date + " " + m.time}</div>
+                  <div className="respondent-chat-timestamp">{m.time}</div>
                 </div>
-              </React.Fragment>
+              ) : (
+                <div className="respondent-chat-wrapper">
+                  <div className="respondent-chat-date">
+                    {"— " + m.toString() + " —"}
+                  </div>
+                </div>
+              )
             )
           })}
           <div id="end-of-chat" ref={chatRef}></div>

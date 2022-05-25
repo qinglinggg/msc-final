@@ -1,6 +1,5 @@
 package com.mscteam.mscbackend.Feedback;
 
-import java.util.Date;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,11 +9,11 @@ public class FeedbackMessage implements Comparable<FeedbackMessage> {
     private UUID senderUserId;
     private UUID messageId;
     private String message;
-    private Date createDateTime;
+    private Long createDateTime;
     private Integer isRead;
 
     // Get Items
-    public FeedbackMessage(UUID feedbackId, UUID senderUserId, UUID messageId, String message, Date createDateTime, Integer isRead){
+    public FeedbackMessage(UUID feedbackId, UUID senderUserId, UUID messageId, String message, Long createDateTime, Integer isRead){
         this.feedbackId = feedbackId;
         this.senderUserId = senderUserId;
         this.messageId = messageId;
@@ -29,7 +28,7 @@ public class FeedbackMessage implements Comparable<FeedbackMessage> {
         this.senderUserId = senderUserId;
         this.messageId = UUID.randomUUID();
         this.message = message;
-        this.createDateTime = new Date();
+        this.createDateTime = System.currentTimeMillis();
         this.isRead = 0;
     }
 
@@ -49,7 +48,7 @@ public class FeedbackMessage implements Comparable<FeedbackMessage> {
         return this.message;
     }
 
-    public Date getCreateDateTime() {
+    public Long getCreateDateTime() {
         return this.createDateTime;
     }
 
@@ -59,7 +58,7 @@ public class FeedbackMessage implements Comparable<FeedbackMessage> {
 
     @Override
     public int compareTo(FeedbackMessage o) {
-        if (this.getCreateDateTime() == null || o.getCreateDateTime() == null) return 0;
+        // if (this.getCreateDateTime() == null || o.getCreateDateTime() == null) return 0;
         return this.getCreateDateTime().compareTo(o.getCreateDateTime());
     }
 
