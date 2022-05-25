@@ -109,25 +109,27 @@ class LandingPage extends Component {
                     <div className='liner'></div>
                     <div className="landing-page-login-container">
                         <div className="landing-page-login-row">
-                            <div className="landing-page-login-title">Email</div>
+                            <div className="landing-page-login-title">
+                                <span>Email</span>
+                                <span className='span-asterisk' style={{marginLeft: '5px'}}>*</span>
+                            </div>
                             <div className="landing-page-input-container">
                                 <input type="email" className="landing-page-login-field" id="login-useremail" />
-                                <span>
-                                    <span className='span-asterisk'>*</span>
-                                    <span className='span-required'> Required fields</span>
-                                </span>
                             </div>
                         </div>
                         <div className="landing-page-login-row">
-                            <div className="landing-page-login-title">Password</div>
+                            <div className="landing-page-login-title">
+                                <span>Password</span>
+                                <span className='span-asterisk' style={{marginLeft: '5px'}}>*</span>
+                            </div>
                             <div className="landing-page-input-container">
                                 <input type="password" className="landing-page-login-field" id="login-password" />
-                                <span>
-                                    <span className='span-asterisk'>*</span>
-                                    <span className='span-required'> Required fields</span>
-                                </span>
                             </div>
                         </div>
+                        <span>
+                            <span className='span-asterisk'>*</span>
+                            <span className='span-required'> Required fields</span>
+                        </span>
                     </div>
                     <div id="landing-page-login-footer">
                         <div id="landing-page-login-button" onClick={this.handleLogin}>

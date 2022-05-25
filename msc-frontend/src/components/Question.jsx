@@ -444,7 +444,7 @@ function Question(props) {
                     }
                   })
                 }
-                defaultValue={inputOptions[0]}
+                placeholder="Select inputs..."
                 id="questionSelection"
                 onChange={(e) => {
                   props.handleResetOption(props.questionData.id, 0, e.value - 1);

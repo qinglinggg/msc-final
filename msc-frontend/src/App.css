@@ -1102,7 +1102,7 @@ body {
 }
 
 .linear-input-container {
-  width: 75%;
+  width: 100%;
   height: fit-content;
   display: flex;
   flex-direction: row;
@@ -1125,7 +1125,7 @@ body {
 
 #linear-input-box {
   padding-left: 20px;
-  width: 80px;
+  width: 100px;
 }
 
 .linear-label-container {
@@ -2625,15 +2625,6 @@ body {
   margin: 20px;
   padding-left: 25px;
   font-size: medium;
-}
-
-#required-field {
-  width: fit-content;
-  color: red;
-  font-style: italic;
-  display: flex;
-  align-self: flex-start;
-  padding-left: 10px;
 }
 
 .respondent-endpage {
