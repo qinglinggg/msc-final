@@ -170,8 +170,11 @@ function Respondent (props) {
       // "belum", tapi ternyata elemen date
       if(!f['createDateTime']) return;
 
-      // console.log(f['createDateTime']);
-      // const messageDate = new Date(f.createDateTime);
+      console.log("createDateTime: ");
+      console.log(f['createDateTime']);
+      const messageDate = new Date(f.createDateTime);
+      console.log(messageDate);
+      
       // let flag = 0;
       // if(tempDate == "") flag = 1;
       // else if(tempDate != ""){

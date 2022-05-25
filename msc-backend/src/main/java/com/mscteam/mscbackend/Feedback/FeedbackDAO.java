@@ -68,13 +68,8 @@ public class FeedbackDAO {
             String senderUserId = resultSet.getString("senderUserId");
             String messageId = resultSet.getString("messageId");
             String message = resultSet.getString("message");
-            String createDateTime = null;
+            Long createDateTime = resultSet.getLong("createDateTime");
             Integer isRead = resultSet.getInt("isRead");
-            try {
-                createDateTime = dateFormat.format(resultSet.getDate("createDateTime"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
             System.out.println(resultSet);
             return new FeedbackMessage(UUID.fromString(feedbackId), UUID.fromString(senderUserId), UUID.fromString(messageId), message, createDateTime, isRead);
         }, id);
@@ -104,8 +99,7 @@ public class FeedbackDAO {
 
     public FeedbackMessage insertFeedbackMessage(FeedbackMessage feedbackMessage){
         final String query = "INSERT INTO FeedbackMessage VALUES (?,?,?,?,?,?)";
-        System.out.println("createdatetime: " + dateFormat.format(feedbackMessage.getCreateDateTime()));
-        int res = jdbcTemplate.update(query, feedbackMessage.getFeedbackId().toString(), feedbackMessage.getSenderUserId().toString(), feedbackMessage.getMessageId().toString(), feedbackMessage.getFeedbackMessage(), dateFormat.format(feedbackMessage.getCreateDateTime()), feedbackMessage.getIsRead());
+        int res = jdbcTemplate.update(query, feedbackMessage.getFeedbackId().toString(), feedbackMessage.getSenderUserId().toString(), feedbackMessage.getMessageId().toString(), feedbackMessage.getFeedbackMessage(), feedbackMessage.getCreateDateTime(), feedbackMessage.getIsRead());
         return new FeedbackMessage(feedbackMessage.getFeedbackId(), feedbackMessage.getSenderUserId(), feedbackMessage.getMessageId(), feedbackMessage.getFeedbackMessage(), feedbackMessage.getCreateDateTime(), feedbackMessage.getIsRead());
     }
 
