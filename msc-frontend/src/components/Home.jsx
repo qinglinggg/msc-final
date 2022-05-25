@@ -3,6 +3,8 @@ import PageItems from "./PageItems";
 import SearchField from "react-search-field";
 import axios from "axios";
 
+const APP_URL = "http://10.61.38.193:3001";
+
 class Home extends React.Component {
   constructor(props) {
     super(props);
@@ -13,6 +15,7 @@ class Home extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.updatePopupData = this.updatePopupData.bind(this);
     this.handleFormDeletion = this.handleFormDeletion.bind(this);
+    this.checkLoggedInUser = this.checkLoggedInUser.bind(this);
   }
 
   state = {
@@ -25,7 +28,9 @@ class Home extends React.Component {
     description: "",
     privacySetting: "",
     forms: [],
-    invitedForms: []
+    invitedForms: [],
+    loggedInUser: "",
+    isRefreshed: false,
   };
 
   handleClickPage1() {
@@ -48,9 +53,26 @@ class Home extends React.Component {
     item.classList.add('clicked');
   }
 
+  checkLoggedInUser() {
+    let tempUser = localStorage.getItem("loggedInUser");
+    let currentUser = this.state.loggedInUser;
+    if (tempUser) {
+      tempUser = JSON.parse(tempUser);
+      if(tempUser != currentUser) {
+        this.setState({loggedInUser: tempUser});
+        this.setState({isRefreshed : false});
+      }
+    } else if(currentUser){
+      if(this.state.isRefreshed == false) {
+        this.setState({isRefreshed : true}, () => 
+        window.location.href = APP_URL);
+      }
+    }
+  }
+
   componentDidMount() {
+    setInterval(() => this.checkLoggedInUser(), 500);
     console.log("Reset selectedForm on Home Page");
-    localStorage.setItem("selectedForm", JSON.stringify([]));
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
     tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
     if(tempBreadcrumbs.length >= 1) {
@@ -63,8 +85,6 @@ class Home extends React.Component {
       path: window.location.href,
     });
     localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
-    this.setState({forms: JSON.parse(localStorage.getItem("formLists"))});
-    this.setState({invitedForms: JSON.parse(localStorage.getItem("invitedFormLists"))});
     let listSelection = document.querySelectorAll(".page-button");
     listSelection.forEach((item) => {
       item.addEventListener('click', (e) => {
@@ -73,7 +93,7 @@ class Home extends React.Component {
     });
   }
 
-  componentDidUpdate(){
+  componentDidUpdate(prevProps, prevState){
     let body = document.getElementById("body");
     if (this.state.isAdd == true){
       let closePopup = document.querySelector(".closePopup");
@@ -85,6 +105,11 @@ class Home extends React.Component {
       body.classList.add("openPopup");
     } else {
       body.classList.remove("openPopup");
+    }
+    if(this.state.loggedInUser != "" && prevState.loggedInUser != this.state.loggedInUser) {
+      localStorage.setItem("selectedForm", JSON.stringify([]));
+      this.setState({forms: JSON.parse(localStorage.getItem("formLists"))});
+      this.setState({invitedForms: JSON.parse(localStorage.getItem("invitedFormLists"))});
     }
   }
 
@@ -174,13 +199,6 @@ class Home extends React.Component {
 
   displayPage1() {
     let formsData = this.filterData(this.state.forms);
-    // else {
-    //   formsData = axios.get(`${BASE_URL}/api/v1/forms/owned-form/${this.state.loggedInUser}`).then((res) => {
-    //     const forms = res.data;
-    //     localStorage.setItem("formLists", JSON.stringify(forms));
-    //   });
-    //   localStorage.setItem("formLists", JSON.stringify(formsData));
-    // }
     return (
       <React.Fragment>
         {formsData ? formsData.map((data) => (
@@ -229,7 +247,7 @@ class Home extends React.Component {
     } else {
       this.setState({ isRequired: false });
       let obj = {};
-      obj.authorUserId = this.props.loggedInUser;
+      obj.authorUserId = this.state.loggedInUser;
       obj.title = this.state.title;
       obj.description = this.state.description;
       obj.privacySetting = this.state.privacySetting;
