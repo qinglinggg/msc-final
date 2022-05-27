@@ -147,17 +147,17 @@ class App extends React.Component {
     }
   }
 
-  handleSendNewMessage(message) {
-    let newArray = this.state.messages.messagesHistory;
-    let newMessage = {
-      // nanti diubah
-      userID: 2, // user id pemilik form
-      message: message,
-      timestamp: "3.48 PM",
-    };
-    newArray.push(newMessage);
-    this.setState({ messageHistory: newArray });
-  }
+  // handleSendNewMessage(message) {
+  //   let newArray = this.state.messages.messagesHistory;
+  //   let newMessage = {
+  //     // nanti diubah
+  //     userID: 2, // user id pemilik form
+  //     message: message,
+  //     timestamp: "3.48 PM",
+  //   };
+  //   newArray.push(newMessage);
+  //   this.setState({ messageHistory: newArray });
+  // }
 
   handleSetFormMessages(formMessages){
     this.setState({formMessages});
@@ -243,32 +243,17 @@ class App extends React.Component {
                 path={`/feedback/formId/:formId`}
                 element={
                   <Feedback
-                    handleSetFormMessages={this.handleSetFormMessages}
+                    // handleSetFormMessages={this.handleSetFormMessages}
                   />}
               />
-              <Route>
-                {this.state.formMessages ? this.state.formMessages.map((message) => {
-                  count = count + 1;
-                  let path = "chat-" + count;
-
-                  // coba2
-                  // console.log(message);
-                  let user = axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/get-user/${message.feedbackId}`);
-                  let feedbackMessageList = axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/${message.feedbackId}`);
-                  return (
-                    <Route
-                      path={`/feedback/formId/:feedbackId/${path}`}
-                      element={
-                        <Message
-                          user={user}
-                          messages={feedbackMessageList}
-                          handleSendNewMessage={this.handleSendNewMessage}
-                        />}
-                    />
-                  );
-                }) : null}
-              </Route>
-
+              <Route
+                path={`/feedback/formId/:formId/:feedbackId`}
+                element={
+                  <Message
+                    // handleSendNewMessage={this.handleSendNewMessage}
+                  />
+                }
+              />
               <Route
                 path={`/admin`}
                 element={<AdminDashboard />}
