@@ -119,8 +119,20 @@ function Respondent (props) {
         else loadData.push({});
       });
     }
-    setFormResponse(loadData);
-  }, [formItems])
+    setFormResponse(loadData, () => {
+      let loadNav = localStorage.getItem("navigator");
+      if(loadNav) loadNav = JSON.parse(loadNav);
+      else return;
+      let count = 1;
+      formResponse.map((resp, idx) => {
+        if(resp && loadNav[idx] != -1) count++;
+      });
+      let navCount = 1;
+      loadNav.map((val) => {if(val != -1) navCount++});
+      console.log("Check count nav:", count, navCount);
+      if (count == navCount) setNavigator(loadNav);
+    });
+  }, [formItems]);
 
   useEffect(() => {
     let userId = JSON.parse(localStorage.getItem("loggedInUser"));
@@ -129,6 +141,8 @@ function Respondent (props) {
         formId: formId,
         userId: userId,
       }
+      console.log("newFeedback");
+      console.log(newFeedback);
       try {
         axios({
           method: "post",
@@ -142,6 +156,7 @@ function Respondent (props) {
       }
     }
     if(feedbackId){
+      console.log("feedbackId masuk: " + feedbackId);
       if(feedbackMessages.length == 0){
         axios({
           method: "get",
@@ -271,14 +286,6 @@ function Respondent (props) {
           url: `${BASE_URL}/api/v1/forms/get-answer-selection/${formItemId}`
         }).then((res) => {
           setAnswerSelection(res.data);
-          // Must be rechecked
-          let validator = true;
-          let loadNav = localStorage.getItem("navigator");
-          if(loadNav) loadNav = JSON.parse(loadNav);
-          res.data.map((ans, idx) => {
-            if(loadNav[ans.nextItem] != idx) validator = false;
-          });
-          if(validator) setNavigator(loadNav);
         })
       } catch(error) {
         console.log(error);
@@ -645,7 +652,7 @@ function Respondent (props) {
       userId: userId,
       feedbackMessage: tempMessage,
     };
-    // console.log(newMessage);
+    console.log(newMessage);
     try {
       axios({
         method: "post",
