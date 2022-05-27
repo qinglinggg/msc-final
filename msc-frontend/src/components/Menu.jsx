@@ -40,11 +40,12 @@ function Menu(props) {
     }
     function disableOpenMenu() {
       let body = document.getElementById("body");
-      console.log("Toggle menu check");
       body.classList.toggle("openMenu");
     }
     let subMenus = document.querySelectorAll(".sub-menu");
     if (subMenus) {
+      let closeButton = document.getElementById("menu-close");
+      closeButton.addEventListener("click", disableOpenMenu);
       subMenus.forEach((item) => {
         item.addEventListener("mouseover", activateButton);
         item.addEventListener("click", disableOpenMenu);

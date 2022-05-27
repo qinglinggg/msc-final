@@ -104,6 +104,7 @@ class LandingPage extends Component {
                     <div id="landing-page-welcome-1">Halo, selamat datang di</div>
                     <div id="landing-page-welcome-2">MySurveyCompanion.</div>
                 </div>
+                <div className="vertical-separator"></div>
                 <div id="landing-page-login-box">
                     <div id="landing-page-login-header">Login</div>
                     <div className='liner'></div>
