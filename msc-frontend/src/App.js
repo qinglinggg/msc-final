@@ -32,75 +32,54 @@ class App extends React.Component {
     this.handleSetFormMessages = this.handleSetFormMessages.bind(this);
     this.handleSetLoggedInUser = this.handleSetLoggedInUser.bind(this);
     this.handleUpdateCurrentPage = this.handleUpdateCurrentPage.bind(this);
+    this.checkLoggedInUser = this.checkLoggedInUser.bind(this);
   }
 
   state = {
     allForms: [],
     rawInvitedFormLists: [],
     loggedInUser: "",
-    currentPage: ""
+    currentPage: "",
+    isRefreshed: false,
+  }
+
+  checkLoggedInUser() {
+    let tempUser = localStorage.getItem("loggedInUser");
+    let currentUser = this.state.loggedInUser;
+    if (tempUser) {
+      tempUser = JSON.parse(tempUser);
+      if(tempUser != currentUser) {
+        this.setState({loggedInUser: tempUser});
+        this.setState({isRefreshed : false});
+      }
+    } else if(currentUser){
+      if(this.state.isRefreshed == false) {
+        this.setState({isRefreshed : true}, () => 
+        window.location.href = APP_URL);
+      }
+    } else if(!tempUser){
+      if(window.location.pathname != '/'){
+        window.location = '/';
+      }
+    }
   }
 
   componentDidMount() {
-    let tempUser = localStorage.getItem("loggedInUser");
-    if (tempUser) {
-      tempUser = JSON.parse(tempUser);
-      this.setState({loggedInUser: tempUser});
-      axios.get(`${BASE_URL}/api/v1/forms/owned-form/${tempUser}`).then((res) => {
-        const forms = res.data;
-        localStorage.setItem("formLists", JSON.stringify(forms));
+    setInterval(() => this.checkLoggedInUser(), 1000);
+    let body = document.getElementById("body");
+    // MENU
+    let menuClose = document.getElementById("menu-close");
+    let sideMenu = document.getElementById("menu-container");
+    if (menuClose) {
+      menuClose.addEventListener("click", () => {
+        body.classList.toggle("openMenu");
       });
-      axios.get(`${BASE_URL}/api/v1/forms/invited-form-respondent/${tempUser}`).then((res) => {
-        const invitedForms = res.data;
-        localStorage.setItem("rawInvitedFormLists", JSON.stringify(invitedForms));
-        // this.setState({rawInvitedFormLists : invitedForms});
-      }).catch((error) => {
-        console.log(error);
-      });
-      let tempInvitedForms = JSON.parse(localStorage.getItem("rawInvitedFormLists"));
-      // let tempInvitedForms = localStorage.getItem("rawInvitedFormLists");
-      console.log(tempInvitedForms);
-      if(tempInvitedForms){
-        axios({
-          method: "post",
-          url: `${BASE_URL}/api/v1/forms/invited-form/${tempUser}`,
-          data: tempInvitedForms,
-          headers: {"Content-Type": "application/json"}
-        }).then((res) => {
-          let index = 0;
-          const invitedForms = res.data;
-          invitedForms.map((form) => {
-            form['formRespondentId'] = tempInvitedForms[index].formRespondentId;
-            form['submitDate'] = tempInvitedForms[index].submitDate;
-            index++;
-          });
-          // console.log(invitedForms);
-          localStorage.setItem("invitedFormLists", JSON.stringify(invitedForms));
-        }).catch((error) => {
-          console.log(error);
-        });
-      }
-      let body = document.getElementById("body");
-      // MENU
-      let pageContainer = document.getElementById("page-container");
-      let background = document.querySelector(".background");
-      let navBar = document.getElementById("navbar");
-      let menuClose = document.getElementById("menu-close");
-      let sideMenu = document.getElementById("menu-container");
-      if (menuClose) {
-        menuClose.addEventListener("click", () => {
-          body.classList.toggle("openMenu");
-        });
-      }
-      if (sideMenu) sideMenu.style.left = "0";
-      // form routing
-      axios.get(`${BASE_URL}/api/v1/forms/`).then((res) => {
-        this.setState({allForms : res.data});
-      })
-    } else {
-      if(window.location.pathname != "/"){
-        window.location = '/';
-      }
+    }
+  }
+  
+  componentDidUpdate(prevProps, prevState) {
+    if(this.state.loggedInUser != prevState.loggedInUser && this.state.loggedInUser != "") {
+      this.updateUserdata(this.state.loggedInUser);
     }
   }
 
@@ -108,45 +87,43 @@ class App extends React.Component {
     localStorage.removeItem("loggedInUser");
   }
 
-  handleUpdateCurrentPage(value) {
-    console.log("Handle Update Current Page");
-    this.setState({currentPage : value});
+  async updateUserdata(userId) {
+    console.log("update");
+    await axios.get(`${BASE_URL}/api/v1/forms/owned-form/${userId}`).then((res) => {
+      const forms = res.data;
+      localStorage.setItem("formLists", JSON.stringify(forms));
+    });
+    await axios.get(`${BASE_URL}/api/v1/forms/invited-form-respondent/${userId}`).then((res) => {
+      const invitedForms = res.data;
+      localStorage.setItem("rawInvitedFormLists", JSON.stringify(invitedForms));
+      // this.setState({rawInvitedFormLists : invitedForms});
+    }).catch((error) => {
+      console.log(error);
+    });
+    let tempInvitedForms = JSON.parse(localStorage.getItem("rawInvitedFormLists"));
+    if(tempInvitedForms){
+      await axios({
+        method: "post",
+        url: `${BASE_URL}/api/v1/forms/invited-form/${userId}`,
+        data: tempInvitedForms,
+        headers: {"Content-Type": "application/json"}
+      }).then((res) => {
+        let index = 0;
+        const invitedForms = res.data;
+        invitedForms.map((form) => {
+          form['formRespondentId'] = tempInvitedForms[index].formRespondentId;
+          form['submitDate'] = tempInvitedForms[index].submitDate;
+          index++;
+        });
+        localStorage.setItem("invitedFormLists", JSON.stringify(invitedForms));
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
   }
 
-  componentDidUpdate(prevState) {
-    if(prevState.loggedInUser != this.state.loggedInUser && this.state.loggedInUser != ""){
-      let tempBreadcrumbs = [{ page: "/", path: `${APP_URL}` }];
-      localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
-    }
-    // if(prevState.rawInvitedFormLists != this.state.rawInvitedFormLists){
-    //   console.log("componentDidUpdate");
-    //   let tempUser = JSON.parse(localStorage.getItem("loggedInUser"));
-    //   if(tempUser){
-    //     let tempInvitedForms = localStorage.getItem("rawInvitedFormLists");
-    //     try {
-    //       axios({
-    //         method: "get",
-    //         url: `${BASE_URL}/api/v1/forms/invited-form/${tempUser}`,
-    //         data: tempInvitedForms,
-    //         // headers: {"Content-Type": "application/json"}
-    //       }).then((res) => {
-    //         let index = 0;
-    //         console.log("masuk");
-    //         const invitedForms = res.data;
-    //         invitedForms.map((form) => {
-    //           form['formRespondentId'] = tempInvitedForms[index].formRespondentId;
-    //           form['submitDate'] = tempInvitedForms[index].submitDate;
-    //           index++;
-    //         });
-    //         console.log(invitedForms);
-    //         localStorage.setItem("invitedFormLists", JSON.stringify(invitedForms));
-    //       })
-    //     } catch (error) {
-    //       console.log(error);
-    //     }
-        
-    //   }
-    // }
+  handleUpdateCurrentPage(value) {
+    this.setState({currentPage : value});
   }
 
   async handleCreateNewForm(obj) {
@@ -230,8 +207,6 @@ class App extends React.Component {
                 path="/"
                 element={
                   <Home
-                    loggedInUser={this.state.loggedInUser}
-                    // waitingForms={this.state.waitingForms}
                     handleCreateNewForm={this.handleCreateNewForm}
                   />
                 }
