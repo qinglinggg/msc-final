@@ -12,7 +12,7 @@ import Respondent from "./Respondent";
 const BASE_URL = "http://10.61.38.193:8080";
 
 function Dashboard(props) {
-  const [testing, setTesting] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
   const [openVisibility, setOpenVisibility] = useState(false);
   
   const [formItems, setFormItems] = useState([]);
@@ -44,6 +44,10 @@ function Dashboard(props) {
         return data;
       }
     });
+    let checkTutorial = localStorage.getItem("showTutorial");
+    if(!checkTutorial) {
+      setShowTutorial(true);
+    }
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
     tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
     if(tempBreadcrumbs.length >= 2) {
@@ -645,8 +649,39 @@ function Dashboard(props) {
     );
   }
 
+  const handleShowTutorial = () => {
+    localStorage.setItem("showTutorial", JSON.stringify(true));
+    setShowTutorial(false);
+  }
+
+  const displayTutorial = () => {
+    return (
+      <React.Fragment>
+        <div className="tutorial-container">
+          <div className="icon-background">
+            <ion-icon name="stop-outline"></ion-icon>
+            <ion-icon name="stop-outline"></ion-icon>
+            <ion-icon name="stop-outline"></ion-icon>
+          </div>
+          <div className="icon-tutorial">
+            <ion-icon name="navigate-outline"></ion-icon>
+          </div>
+          <div className="desc-tutorial">
+            <span>Navigate between items using shift + mouse scroll.</span>
+          </div>
+          <div className="btn-container-tutorial">
+            <button className="btn-tutorial" onClick={() => handleShowTutorial()}>
+              <ion-icon name="arrow-forward-outline"></ion-icon>
+            </button>
+          </div>
+        </div>
+      </React.Fragment>
+    )
+  }
+
   return (
     <React.Fragment>
+      { showTutorial ? displayTutorial() : null }
       <div className="title-container">
         <div className="menu-icon" id="menu-icon">
           <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
