@@ -1,5 +1,5 @@
-import React, { Component, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import React, { Component, createRef, useEffect, useState } from "react";
+import { Link, useParams, useRef } from "react-router-dom";
 import iconMenubarGrey from "./images/menubarGrey.png";
 import profilePicture from "./images/woman.jpg";
 import backspaceIcon from "./images/backspaceIcon.png";
@@ -11,10 +11,10 @@ function Message() {
   const [messageMetadata, setMessageMetadata] = useState({});
   const [formMessages, setFormMessages] = useState([]);
   const [tempMessage, setTempMessage] = useState("");
-
+  const [surveyMakerId, setSurveyMakerId] = useState("");
   const { formId } = useParams();
   const { feedbackId } = useParams();
-  const [surveyMakerId, setSurveyMakerId] = useState("");
+  const { chatRef } = createRef();
 
   useEffect(() => {
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
@@ -34,15 +34,43 @@ function Message() {
     setMessageMetadata(metadata);
     axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`).then((res) => {
       let messages = res.data;
+      let tempDate = "";
+      let index = -1;
+      let listOfInsert = [];
       messages.map((message) => {
+        index++;
+        let flag = 0;
         const datetime = new Date(message.createDateTime);
+        if(tempDate == "") flag = 1;
+        else if(tempDate != ""){
+          tempDate = new Date(tempDate);
+          if(tempDate.getFullYear() < datetime.getFullYear()) flag = 1;
+          else if(tempDate.getFullYear() == datetime.getFullYear()){
+            if(tempDate.getMonth() < datetime.getMonth()) flag = 1;
+            else if(tempDate.getMonth() == datetime.getMonth()){
+              if(tempDate.getDate() < datetime.getDate()) flag = 1;
+            }
+          }
+        }
         let date = datetime.getDate() + "/" + (datetime.getMonth() + 1) + "/" + datetime.getFullYear();
         let time = datetime.getHours() + ':';
         if(datetime.getMinutes() == 0) time = time + datetime.getMinutes() + '0';
         else if(datetime.getMinutes() < 10) time = time + '0' + datetime.getMinutes();
         else time = time + datetime.getMinutes();
+        if(flag == 1){
+          tempDate = date;
+          let insert = {
+            date: tempDate,
+            index: index,
+          }
+          listOfInsert.push(insert);
+        }
         message["date"] = date;
         message["time"] = time;
+      });
+      console.log(listOfInsert);
+      listOfInsert.map((insert) => {
+        messages.splice(insert.index, 0, insert.date);
       })
       console.log(messages);
       setFormMessages(messages);
@@ -53,6 +81,8 @@ function Message() {
     //   const user = res.data;
     //   setUser(user);
     // });
+    // let end = document.getElementById("end-of-chat");
+    // if(end) chatRef.current.scrollIntoView(false);
   }, []);
 
   const handleMessageInput = (e) => {
@@ -132,6 +162,7 @@ function Message() {
             {formMessages.map((m) => {
               return (
                 <React.Fragment>
+                  {m.createDateTime ? 
                   <div className="message-content">
                     <div
                       className="message-content-2"
@@ -142,10 +173,16 @@ function Message() {
                       </div>
                       <div id="message-single-timestamp">{m.time}</div>
                     </div>
+                  </div> : 
+                  <div className="respondent-chat-wrapper">
+                  <div className="respondent-chat-date">
+                    {"— " + m.toString() + " —"}
                   </div>
+                </div>}
                 </React.Fragment>
               );
             })}
+            <div id="end-of-chat" ref={chatRef}></div>
           </div>
           <div className="message-line"></div>
           <div id="message-input-box">

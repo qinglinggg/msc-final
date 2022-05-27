@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { Component, useEffect, useState, useRef } from 'react';
+import React, { Component, useEffect, useState, useRef, createRef } from 'react';
 import { Link, useParams } from "react-router-dom";
 import AutoHeightTextarea from './functional-components/AutoheightTextarea';
 
@@ -26,7 +26,7 @@ function Respondent (props) {
   const [feedbackId, setFeedbackId] = useState();
   const [feedbackMessages, setFeedbackMessages] = useState([]);
   const prevFeedbackMessage = useRef(0);
-  const chatRef = React.createRef();
+  const chatRef = createRef();
   const [currDate, setCurrDate] = useState("");
 
   // DESIGN

@@ -2214,7 +2214,7 @@ body {
 /* Message */
 
 #message-container {
-  width: 100%;
+  width: 95%;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -2309,12 +2309,12 @@ body {
 
 #message-content-wrapper::-webkit-scrollbar-track-piece:start {
   background: transparent;
-  margin-top: 15px;
+  margin-top: 10px;
 }
 
 #message-content-wrapper::-webkit-scrollbar-track-piece:end {
   background: transparent;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 .message-single-bubble {
