@@ -8,7 +8,7 @@ import axios from "axios";
 function Feedback(props) {
   const [index, setIndex] = useState(0);
   const [feedbackList, setFeedbackList] = useState([]);
-  const [messageList, setMessageList] = useState([]);
+  const [renderFlag, setRenderFlag] = useState(0);
   const {formId} = useParams();
   const [currentStep, setCurrentStep] = useState([]);
   
@@ -21,11 +21,40 @@ function Feedback(props) {
       body.classList.toggle("openMenu");
     });
     // get all feedback by formId
+    let feedbacks = [];
     axios.get(`${BASE_URL}/api/v1/feedback/by-form/${formId}`).then((res) => {
-      const feedbackList = res.data;
-      setFeedbackList(feedbackList);
-      setIndex(feedbackList.length);
-      props.handleSetFormMessages(feedbackList);
+      feedbacks = res.data;
+      setIndex(feedbacks.length);
+    }).finally(() => {
+      console.log("finally, data: ");
+      feedbacks.map(async (feedback) => {
+        await axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/get-last-message/${feedback.feedbackId}`)
+        .then((res) => {
+          feedback["lastMessage"] = res.data.feedbackMessage;
+          feedback["isRead"] = res.data.isRead;
+          feedback["tag"] = 1;
+          const datetime = new Date(res.data.createDateTime);
+          let date = datetime.getDate() + "/" + (datetime.getMonth() + 1) + "/" + datetime.getFullYear();
+          let time = datetime.getHours() + ':';
+          if(datetime.getMinutes() == 0) time = time + datetime.getMinutes() + '0';
+          else if(datetime.getMinutes() < 10) time = time + '0' + datetime.getMinutes();
+          else time = time + datetime.getMinutes();
+          feedback["date"] = date;
+          feedback["time"] = time;
+        }).finally(async () => {
+          if(feedback["fullname"]) return;
+          await axios.get(`${BASE_URL}/api/v1/user-profiles/${feedback.userId}`)
+          .then((res) => {
+            feedback["fullname"] = res.data.fullname;
+          }).finally(() => {
+            // console.log("changed: ");
+            // console.log(feedback);
+            setRenderFlag(1);
+          })
+        })
+      });
+      console.log(feedbacks);
+      setFeedbackList(feedbacks);
     });
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
     tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
@@ -40,35 +69,6 @@ function Feedback(props) {
     setCurrentStep(tempBreadcrumbs);
     localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
   }, []);
-
-  useEffect(() => {
-    if(feedbackList && messageList.length == 0){
-      let index = 0;
-      feedbackList.map((feedback) => {
-        let tempMessageList = [...messageList];
-        axios.get(`${BASE_URL}/api/v1/user-profiles/${feedback.userId}`)
-            .then((res) => {
-              let obj = {};
-              obj.fullname = res.data.fullname;
-              axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/get-last-message/${feedback.feedbackId}`)
-                .then((res) => {
-                  console.log("masuk lastmessage");
-                  obj['feedbackId'] = res.data.feedbackId;
-                  obj.lastMessage = res.data.feedbackMessage;
-                  obj.createDateTime = res.data.createDateTime;
-                  obj.isRead = res.data.isRead;
-                  obj.tag = 1;
-                  console.log("obj");
-                  console.log(obj);
-                  tempMessageList.push(obj);
-                  setMessageList(tempMessageList);
-                  index = index + 1;
-                  // console.log(tempMessageList);
-              });
-        });
-      });
-    }
-  })
 
   let count = 0;
   return (
@@ -100,23 +100,24 @@ function Feedback(props) {
       </div>
       <div id="page-content" className="chat-content">
         <div id="chat-container">
-          {messageList.map((message) => {
-            count = count + 1;
-            let path = "chat-" + count;
-            // getFeedbackMessageByFeedbackId -> lastIndex
-            console.log("message");
-            console.log(message);
+          {renderFlag == 1 ? feedbackList.map((message) => {
+            count++;
+            console.log("rendering...");
+            console.log(feedbackList);
             return (
               <React.Fragment>
                 <div id="chat-single-box">
                   <img className="profile-image" src={profilePicture} alt="" />
-                  <Link to={`/feedback/formId/${message.feedbackId}/${path}`} className="link" id="link-container">
+                  <Link to={`/feedback/formId/${message.formId}/${message.feedbackId}`} 
+                    className="link" id="link-container"
+                    onClick={() => localStorage.setItem("selectedChat", JSON.stringify(message))}
+                  >
                     <div id="chat-message-box">
                       <div id="chat-user-name">{message.fullname}</div>
-                      <div id="chat-user-message">{message.lastMessage}</div>
+                      <div id="chat-user-message">{message["lastMessage"]}</div>
                     </div>
                     <div id="chat-info-box">
-                      <div id="chat-timestamp">{message.createDateTime}</div>
+                      <div id="chat-timestamp">{message["date"] + " " + message["time"]}</div>
                       <div
                         className="chat-tag-box"
                         id={
@@ -125,7 +126,7 @@ function Feedback(props) {
                             : "green-chat-tag-box"
                         }
                       >
-                        <div id="chat-tag">{message.tag}</div>
+                        <div id="chat-tag">{message["tag"]}</div>
                       </div>
                     </div>
                   </Link>
@@ -133,7 +134,7 @@ function Feedback(props) {
                 {count == index ? null : <div id="chat-line"></div>}
               </React.Fragment>
             );
-          })}
+          }) : false}
         </div>
       </div>
     </React.Fragment>

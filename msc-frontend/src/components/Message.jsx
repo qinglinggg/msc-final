@@ -5,46 +5,54 @@ import profilePicture from "./images/woman.jpg";
 import backspaceIcon from "./images/backspaceIcon.png";
 import axios from "axios";
 
-function Message(props) {
+const BASE_URL = "http://10.61.38.193:8080";
+
+function Message() {
+  const [messageMetadata, setMessageMetadata] = useState({});
   const [formMessages, setFormMessages] = useState([]);
   const [tempMessage, setTempMessage] = useState("");
-  const [user, setUser] = useState({});
-  const { feedbackId } = useParams(); // ?
-  const [breadcrumbs, setBreadcrumbs] = useState(props.breadcrumbs);
 
-  const BASE_URL = "http://10.61.38.193:8080";
+  const { formId } = useParams();
+  const { feedbackId } = useParams();
+  const [surveyMakerId, setSurveyMakerId] = useState("");
 
   useEffect(() => {
-
-    setBreadcrumbs(
-      breadcrumbs.push(
-        {
-          page: "formId",
-        },
-        {
-          page: "Feedback",
-          path: `${BASE_URL}/feedback/formId/:formId`,
-        }
-      )
-    )
-
+    let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
+    tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
+    if(tempBreadcrumbs.length >= 2) {
+      while(tempBreadcrumbs.slice(-1)[0] && !(tempBreadcrumbs.slice(-1)[0].page == "Home" || tempBreadcrumbs.slice(-1)[0].page == "/")){
+        tempBreadcrumbs.pop();
+      }
+    }
+    tempBreadcrumbs.push({page: "Chat", path: window.location.href});
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
-
+    let metadata = JSON.parse(localStorage.getItem("selectedChat"));
+    setMessageMetadata(metadata);
     axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`).then((res) => {
-      const formMessages = res.data;
-      // console.log(formMessages);
-      setFormMessages(formMessages);
+      let messages = res.data;
+      messages.map((message) => {
+        const datetime = new Date(message.createDateTime);
+        let date = datetime.getDate() + "/" + (datetime.getMonth() + 1) + "/" + datetime.getFullYear();
+        let time = datetime.getHours() + ':';
+        if(datetime.getMinutes() == 0) time = time + datetime.getMinutes() + '0';
+        else if(datetime.getMinutes() < 10) time = time + '0' + datetime.getMinutes();
+        else time = time + datetime.getMinutes();
+        message["date"] = date;
+        message["time"] = time;
+      })
+      console.log(messages);
+      setFormMessages(messages);
     });
-
-    axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/get-user/${feedbackId}`).then((res) => {
-      const user = res.data;
-      setUser(user);
-    });
-
+    let currentUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    setSurveyMakerId(currentUser);
+    // axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/get-user/${feedbackId}`).then((res) => {
+    //   const user = res.data;
+    //   setUser(user);
+    // });
   }, []);
 
   const handleMessageInput = (e) => {
@@ -52,14 +60,11 @@ function Message(props) {
   };
 
   const handleClickSend = () => {
-    let newArray = formMessages;
     let newMessage = {
-      feedbackId: formMessages.feedbackId,
-      userID: "2", // user id pemilik form
-      message: tempMessage,
+      feedbackId: messageMetadata.feedbackId,
+      userId: surveyMakerId, // user id pemilik form
+      feedbackMessage: tempMessage,
     };
-    newArray.push(newMessage);
-
     try {
       axios({
         method: "post",
@@ -67,8 +72,9 @@ function Message(props) {
         data: newMessage,
         headers: { "Content-Type": "application/json" }
       }).then((res) => {
-        // find feedback by feedbackid
-        setFormMessages(newArray);
+        let messages = [...formMessages];
+        messages.push(res.data);
+        setFormMessages(messages);
         setTempMessage("");
         updateTextarea();
       })
@@ -88,6 +94,11 @@ function Message(props) {
     }
   };
 
+  const handleBackToFeedbackList = () => {
+    window.location = `/feedback/formId/${formId}`;
+    localStorage.removeItem("selectedChat");
+  };
+
   return (
     <React.Fragment>
       <div className="title-container">
@@ -101,9 +112,9 @@ function Message(props) {
       <div id="page-content">
         <div id="message-container">
           <div id="message-header">
-            <Link to="/item1/feedback">
+            <div style={{"cursor": "pointer"}} onClick={() => handleBackToFeedbackList()}>
               <img id="backspace-icon-img" src={backspaceIcon} alt="" />
-            </Link>
+            </div>
             <div id="message-profile">
               {/* <div id="message-user-name"></div> */}
               {/* <div id="message-status"></div> */}
@@ -113,7 +124,7 @@ function Message(props) {
                 src={profilePicture}
                 alt=""
               />
-              {user.fullname}
+              {messageMetadata.fullname}
             </div>
           </div>
           <div className="message-line"></div>
@@ -124,12 +135,12 @@ function Message(props) {
                   <div className="message-content">
                     <div
                       className="message-content-2"
-                      id={m.userID != 2 ? "message-user-1" : "message-user-2"}
+                      id={m.userId != surveyMakerId ? "message-user-1" : "message-user-2"}
                     >
                       <div className="message-single-bubble">
                         <div id="message-single-content">{m.feedbackMessage}</div>
                       </div>
-                      <div id="message-single-timestamp">{m.createDateTime}</div>
+                      <div id="message-single-timestamp">{m.time}</div>
                     </div>
                   </div>
                 </React.Fragment>
