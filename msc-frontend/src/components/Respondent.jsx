@@ -28,12 +28,14 @@ function Respondent (props) {
   const [feedbackMessages, setFeedbackMessages] = useState([]);
   const prevFeedbackMessage = useRef(0);
   const chatRef = createRef();
-  const [currDate, setCurrDate] = useState("");
+  const [currDate, setCurrDate] = useState(new Date(0));
 
   // DESIGN
   const [primaryColor, setPrimaryColor] = useState("Default");
   const [secondaryColor, setSecondaryColor] = useState("Default");
   const [bgLink, setBgLink] = useState("./images/woman.jpg");
+
+  const [intervalId, setIntervalId] = useState(0);
 
   useEffect(() => {
     if(props.previewMode) setPreviewMode(props.previewMode);
@@ -101,11 +103,17 @@ function Respondent (props) {
       displayContainer.style.animation = '';
     });
     return () => {
-      if(feedbackMessages.length == 0){
-        axios.delete(`${BASE_URL}/api/v1/feedback/${feedbackId}`)
+      let check = undefined;
+      axios({
+        method: "get",
+        url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
+      }).then((res) => {
+        check = res.data;
+      }).finally(() => {
+        if(check == undefined) axios.delete(`${BASE_URL}/api/v1/feedback/${feedbackId}`)
         .then((res) => console.log("feedbackId is destroyed"))
         .catch((error) => console.log(error));
-      }
+      })
     };
   }, []);
 
@@ -156,37 +164,35 @@ function Respondent (props) {
         console.log(error);
       }
     }
-    if(feedbackId){
+    if(feedbackId && openChat){
       console.log("feedbackId masuk: " + feedbackId);
       if(feedbackMessages.length == 0){
-        console.log("userId: " + userId);
-        axios({
-          method: "put",
-          url: `${BASE_URL}/api/v1/feedback/by-feedback/read/${feedbackId}`,
-          data: userId,
-          headers: { "Content-Type": "text/plain" },
-        }).then((res) => {
-          // preparingMessages(tempData);
-          console.log("read result");
-          console.log(res);
-        }).finally(() => {
+        let interval = setInterval(() => {
+          console.log("interval is working...");
           axios({
-            method: "get",
-            url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
-          }).then((res) => {
-            if(res.data){
-              preparingMessages(res.data);
-            }
-          }).catch(error => {
-            console.log(error);
+            method: "put",
+            url: `${BASE_URL}/api/v1/feedback/by-feedback/read/${feedbackId}`,
+            data: userId,
+            headers: { "Content-Type": "text/plain" },
+          }).finally(() => {
+            axios({
+              method: "get",
+              url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
+            }).then((res) => {
+              if(res.data){
+                preparingMessages(res.data);
+              }
+            }).catch(error => {
+              console.log(error);
+            })
           })
-        })
-      } else if(feedbackMessages.length != 0 && openChat){
-        // sudah ada isinya, mau update isRead
-        // console.log("feedback messages is already not null");
-        // console.log(feedbackMessages);
+        }, 1000);
+        setIntervalId(interval);
       }
-    } 
+    }
+    if(!openChat){
+      clearInterval(intervalId);
+    }
   }, [feedbackId, openChat]);
 
   const preparingMessages = (data) => {
@@ -195,25 +201,18 @@ function Respondent (props) {
     let listOfInsert = [];
     data.map((f) => {
       index++;
-      // cek udah pernah looping disitu belum
       if(f['date'] && f['time']) return;
-      // "belum", tapi ternyata elemen date
       if(!f['createDateTime']) return;
       const messageDate = new Date(f.createDateTime);
       let flag = 0;
-      if(tempDate == "") flag = 1;
-      else if(tempDate != ""){
-        tempDate = new Date(tempDate);
-        if(tempDate.getFullYear() < messageDate.getFullYear()) flag = 1;
-        else if(tempDate.getFullYear() == messageDate.getFullYear()){
-          if(tempDate.getMonth() < messageDate.getMonth()) flag = 1;
-          else if(tempDate.getMonth() == messageDate.getMonth()){
-            if(tempDate.getDate() < messageDate.getDate()) flag = 1;
-          }
+      if(tempDate.getFullYear() < messageDate.getFullYear()) flag = 1;
+      else if(tempDate.getFullYear() == messageDate.getFullYear()){
+        if(tempDate.getMonth() < messageDate.getMonth()) flag = 1;
+        else if(tempDate.getMonth() == messageDate.getMonth()){
+          if(tempDate.getDate() < messageDate.getDate()) flag = 1;
         }
       }
-      const month = messageDate.getMonth() + 1;
-      const date = messageDate.getDate() + "/" + month + "/" + messageDate.getFullYear();
+      let date = messageDate.getDate() + "/" + (messageDate.getMonth() + 1) + "/" + messageDate.getFullYear();
       let time = messageDate.getHours() + ':';
       if(messageDate.getMinutes() == 0) time = time + messageDate.getMinutes() + '0';
       else if(messageDate.getMinutes() < 10) time = time + '0' + messageDate.getMinutes();
