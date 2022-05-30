@@ -12,6 +12,7 @@ import com.mscteam.mscbackend.UserProfile.UserProfile;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -94,6 +95,7 @@ public class FeedbackDAO {
     public String insertFeedback(Feedback feedback){
         final String query = "INSERT INTO Feedback VALUES (?,?,?)";
         int res = jdbcTemplate.update(query, feedback.getFormId().toString(), feedback.getFeedbackId().toString(), feedback.getUserId().toString());
+        System.out.println("feedback.getFeedbackId() " + feedback.getFeedbackId().toString());
         return feedback.getFeedbackId().toString();
     }
 
@@ -115,12 +117,26 @@ public class FeedbackDAO {
         return res;
     }
 
-    public Optional<String> getFeedbackIdByFormIdAndUserId(String formId, String userId){
+    public String getFeedbackIdByFormIdAndUserId(String formId, String userId){
         final String query = "SELECT feedbackId FROM Feedback WHERE formId = ? AND userId = ?";
-        List<String> feedbackId = jdbcTemplate.query(query, (resultSet, i) -> {
-            String resId = resultSet.getString("feedbackId");
-            return resId;
-        }, formId, userId);
-        return Optional.ofNullable(feedbackId.get(0));
+        String feedbackId = "";
+        try {
+            feedbackId = jdbcTemplate.queryForObject(query, String.class, formId, userId);
+        } catch(EmptyResultDataAccessException e){
+            System.out.println(e);
+        }
+        return feedbackId;
+    }
+
+    public int readFeedbackMessage(String feedbackId, String userId) {
+        final String query = "UPDATE FeedbackMessage SET isRead = 1 WHERE feedbackId = ? AND senderUserId != ?";
+        int res = jdbcTemplate.update(query, feedbackId, userId);
+        return res;
+    }
+
+    public int newFeedbackMessageCount(String feedbackId, String userId) {
+        final String query = "SELECT COUNT(messageId) FROM FeedbackMessage WHERE feedbackId = ? AND senderUserId != ? AND isRead = 0";
+        int res = jdbcTemplate.queryForObject(query, Integer.class, feedbackId, userId);
+        return res;
     }
 }

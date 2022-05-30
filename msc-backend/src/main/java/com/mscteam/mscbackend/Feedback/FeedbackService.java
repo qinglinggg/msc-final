@@ -19,7 +19,7 @@ public class FeedbackService {
     @Autowired
     public FeedbackService(FeedbackDAO feedbackDAO){
         this.feedbackDAO = feedbackDAO;
-        this.userProfileDAO = userProfileDAO;
+        // this.userProfileDAO = userProfileDAO;
     }
 
     public List<Feedback> getAllFeedback() {
@@ -54,8 +54,8 @@ public class FeedbackService {
     }
 
     public String insertFeedback(Feedback feedback) {
-        Optional<String> feedbackId = feedbackDAO.getFeedbackIdByFormIdAndUserId(feedback.getFormId().toString(), feedback.getUserId().toString());
-        if(feedbackId.isPresent()) return feedbackId.get();
+        String feedbackId = feedbackDAO.getFeedbackIdByFormIdAndUserId(feedback.getFormId().toString(), feedback.getUserId().toString());
+        if(feedbackId != "") return feedbackId;
         return feedbackDAO.insertFeedback(feedback);
     }
 
@@ -69,6 +69,14 @@ public class FeedbackService {
 
     public int removeFeedbackMessage(String id) {
         return feedbackDAO.removeFeedbackMessage(id);
+    }
+
+    public int readFeedbackMessage(String feedbackId, String userId) {
+        return feedbackDAO.readFeedbackMessage(feedbackId, userId);
+    }
+
+    public int newFeedbackMessageCount(String feedbackId, String userId){
+        return feedbackDAO.newFeedbackMessageCount(feedbackId, userId);
     }
 
 }

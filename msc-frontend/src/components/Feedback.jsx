@@ -21,41 +21,8 @@ function Feedback(props) {
       body.classList.toggle("openMenu");
     });
     // get all feedback by formId
-    let feedbacks = [];
-    axios.get(`${BASE_URL}/api/v1/feedback/by-form/${formId}`).then((res) => {
-      feedbacks = res.data;
-      setIndex(feedbacks.length);
-    }).finally(() => {
-      console.log("finally, data: ");
-      feedbacks.map(async (feedback) => {
-        await axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/get-last-message/${feedback.feedbackId}`)
-        .then((res) => {
-          feedback["lastMessage"] = res.data.feedbackMessage;
-          feedback["isRead"] = res.data.isRead;
-          feedback["tag"] = 1;
-          const datetime = new Date(res.data.createDateTime);
-          let date = datetime.getDate() + "/" + (datetime.getMonth() + 1) + "/" + datetime.getFullYear();
-          let time = datetime.getHours() + ':';
-          if(datetime.getMinutes() == 0) time = time + datetime.getMinutes() + '0';
-          else if(datetime.getMinutes() < 10) time = time + '0' + datetime.getMinutes();
-          else time = time + datetime.getMinutes();
-          feedback["date"] = date;
-          feedback["time"] = time;
-        }).finally(async () => {
-          if(feedback["fullname"]) return;
-          await axios.get(`${BASE_URL}/api/v1/user-profiles/${feedback.userId}`)
-          .then((res) => {
-            feedback["fullname"] = res.data.fullname;
-          }).finally(() => {
-            // console.log("changed: ");
-            // console.log(feedback);
-            setRenderFlag(1);
-          })
-        })
-      });
-      console.log(feedbacks);
-      setFeedbackList(feedbacks);
-    });
+    // console.log("user: " + loggedInUser);
+    // test
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
     tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
     if(tempBreadcrumbs.length >= 2) {
@@ -69,6 +36,60 @@ function Feedback(props) {
     setCurrentStep(tempBreadcrumbs);
     localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
   }, []);
+
+  useEffect(() => {
+    let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    let feedbacks = [];
+    if(feedbackList.length == 0){
+      axios.get(`${BASE_URL}/api/v1/feedback/by-form/${formId}`).then((res) => {
+        feedbacks = res.data;
+        setIndex(feedbacks.length);
+      }).finally(() => { 
+        let i = 0;
+        feedbacks.map(async (feedback) => {
+          console.log("awal feedback");
+          i++;
+          await axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/get-last-message/${feedback.feedbackId}`)
+          .then((res) => {
+            feedback["lastMessage"] = res.data.feedbackMessage;
+            feedback["isRead"] = res.data.isRead;
+            const datetime = new Date(res.data.createDateTime);
+            let date = datetime.getDate() + "/" + (datetime.getMonth() + 1) + "/" + datetime.getFullYear();
+            let time = datetime.getHours() + ':';
+            if(datetime.getMinutes() == 0) time = time + datetime.getMinutes() + '0';
+            else if(datetime.getMinutes() < 10) time = time + '0' + datetime.getMinutes();
+            else time = time + datetime.getMinutes();
+            feedback["date"] = date;
+            feedback["time"] = time;
+          }).finally(async () => {
+            if(feedback["fullname"]) return;
+            await axios.get(`${BASE_URL}/api/v1/user-profiles/${feedback.userId}`)
+            .then((res) => {
+              feedback["fullname"] = res.data.fullname;
+            }).finally(async () => {
+              await axios.get(`${BASE_URL}/api/v1/feedback/by-feedback-message/new-message-count/${feedback.feedbackId}/${loggedInUser}`)
+              .then((res) => {
+                feedback["tag"] = res.data;
+              }).finally(() => {
+                if(i == feedbacks.length){
+                  console.log(feedbacks.length);
+                  console.log("akhir feedback");
+                  setFeedbackList(feedbacks);
+                }
+              })
+            });
+            // await axios.get(`${BASE_URL}/api/v1/feedback/by-feedback-message/new-message-count/${feedback.feedbackId}/${feedback.userId}`)
+            // .then((res) => {
+            //   console.log("the value of tag " + res.data);
+            //   feedback["tag"] = res.data;
+            // })
+          })
+        });
+      });
+    } else if(feedbackList.length > 0){
+      setRenderFlag(1);
+    }
+  }, [feedbackList]);
 
   let count = 0;
   return (
@@ -103,7 +124,6 @@ function Feedback(props) {
           {renderFlag == 1 ? feedbackList.map((message) => {
             count++;
             console.log("rendering...");
-            console.log(feedbackList);
             return (
               <React.Fragment>
                 <div id="chat-single-box">
@@ -118,17 +138,19 @@ function Feedback(props) {
                     </div>
                     <div id="chat-info-box">
                       <div id="chat-timestamp">{message["date"] + " " + message["time"]}</div>
-                      <div
-                        className="chat-tag-box"
-                        id={
-                          message.isRead
-                            ? "orange-chat-tag-box"
-                            : "green-chat-tag-box"
-                        }
-                      >
-                        <div id="chat-tag">{message["tag"]}</div>
+                      {message["tag"] ?
+                        <div
+                          className="chat-tag-box"
+                          id={
+                            message.isRead
+                              ? "orange-chat-tag-box"
+                              : "green-chat-tag-box"
+                          }
+                        >
+                          <div id="chat-tag">{message["tag"]}</div>
+                        </div>
+                        : false}
                       </div>
-                    </div>
                   </Link>
                 </div>
                 {count == index ? null : <div id="chat-line"></div>}

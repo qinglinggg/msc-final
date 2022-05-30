@@ -112,8 +112,8 @@ function Respondent (props) {
   useEffect(() => {
     if(!formItems) return;
     let loadData = localStorage.getItem("tempFormResponse");
-    if (loadData) loadData = JSON.parse(loadData);
-    if (loadData.length !== formItems.length) {
+    if (loadData && loadData.length) loadData = JSON.parse(loadData);
+    else {
       loadData = [];
       formItems.map((fi) => {
         if (fi.type == "CB") loadData.push([]);
@@ -159,19 +159,35 @@ function Respondent (props) {
     if(feedbackId){
       console.log("feedbackId masuk: " + feedbackId);
       if(feedbackMessages.length == 0){
+        console.log("userId: " + userId);
         axios({
-          method: "get",
-          url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
+          method: "put",
+          url: `${BASE_URL}/api/v1/feedback/by-feedback/read/${feedbackId}`,
+          data: userId,
+          headers: { "Content-Type": "text/plain" },
         }).then((res) => {
-          if(res.data){
-            preparingMessages(res.data);
-          }
-        }).catch(error => {
-          console.log(error);
+          // preparingMessages(tempData);
+          console.log("read result");
+          console.log(res);
+        }).finally(() => {
+          axios({
+            method: "get",
+            url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
+          }).then((res) => {
+            if(res.data){
+              preparingMessages(res.data);
+            }
+          }).catch(error => {
+            console.log(error);
+          })
         })
+      } else if(feedbackMessages.length != 0 && openChat){
+        // sudah ada isinya, mau update isRead
+        // console.log("feedback messages is already not null");
+        // console.log(feedbackMessages);
       }
     } 
-  }, [feedbackId]);
+  }, [feedbackId, openChat]);
 
   const preparingMessages = (data) => {
     let tempDate = currDate;
@@ -203,9 +219,9 @@ function Respondent (props) {
       else if(messageDate.getMinutes() < 10) time = time + '0' + messageDate.getMinutes();
       else time = time + messageDate.getMinutes();
       if(flag == 1){
-        tempDate = date;
+        tempDate = messageDate;
         let insert = {
-          date: tempDate,
+          date: date,
           index: index,
         }
         listOfInsert.push(insert);
