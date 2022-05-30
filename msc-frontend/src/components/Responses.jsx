@@ -10,8 +10,11 @@ function Responses(props) {
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
-    if(props.responses && selectedResponse == "")
+    console.log(props.responses);
+    if(props.responses && selectedResponse == ""){
+      console.log("masuk");
       setSelectedResponse(props.responses[0]);
+    }
   }, []);
 
   useEffect(() => {
@@ -30,6 +33,7 @@ function Responses(props) {
   }, [props.data])
 
   useEffect(() => {
+    setTimeout(() => {return}, 1000);
     if(!selectedResponse || selectedResponse == "") return;
     let selectedForm = localStorage.getItem("selectedForm");
     if (selectedForm) selectedForm = JSON.parse(selectedForm);
@@ -50,6 +54,7 @@ function Responses(props) {
   }, [selectedResponse]);
 
   useEffect(() => {
+    if(!props.responses) return;
     let tempOpt = [];
     props.responses.map((value) => {
       tempOpt.push({value: value, label: value})
@@ -91,7 +96,7 @@ function Responses(props) {
         let name = "question-" + itemId;
         let checker = setDefaultValue(selection);
         return (
-          <div className="answer-selection">
+          <div className="answer-selection" key={"answerSelection-" + itemId + "-" + innerIdx}>
             {type == "MC" ? (<input type="radio" id={id} name={name} className="answer-radio" checked={checker[0]} disabled/>) : null}
             {type == "CB" ? (<input type="checkbox" id={id} name={name} className="answer-radio" checked={checker[0]} disabled/>) : null}
             {type == "LS" ? (<input type="radio" id={id} name={name} className="answer-radio" checked={checker[0]} disabled/>) : null}
@@ -144,7 +149,7 @@ function Responses(props) {
         <React.Fragment>
           {props.data.map((item, idx) => {
             return (
-              <div className="result-container">
+              <div className="result-container" key={"responses-" + idx}>
                 <div className="question-field">
                   <span>{idx+1}. {item.content}</span>
                 </div>

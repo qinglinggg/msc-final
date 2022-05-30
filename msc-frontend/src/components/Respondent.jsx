@@ -11,6 +11,7 @@ function Respondent (props) {
   let { formId } = useParams();
 
   const [index, setIndex] = useState(1);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [formMetadata, setFormMetadata] = useState([]);
   const [formItems, setFormItems] = useState([]);
   const [answerSelection, setAnswerSelection] = useState([]);
@@ -98,7 +99,7 @@ function Respondent (props) {
     let displayContainer = document.querySelector('.inner-display-container');
     displayContainer.addEventListener('webkitAnimationEnd', () => {
       displayContainer.style.animation = '';
-    })
+    });
     return () => {
       if(feedbackMessages.length == 0){
         axios.delete(`${BASE_URL}/api/v1/feedback/${feedbackId}`)
@@ -323,6 +324,27 @@ function Respondent (props) {
     }
   }, [index, formResponse])
 
+  useEffect(() => {
+    setIsLoaded(false);
+    let el = document.getElementById("loading-transition");
+    if(!el) return;
+    if(el.classList.contains("loading-transition-done")) el.classList.remove("loading-transition-done");
+    if(!el.classList.contains("loading-transition-onload")) el.classList.add("loading-transition-onload");
+    setNavToggle(false);
+    setTimeout(() => setIsLoaded(true), 500);
+  }, [index]);
+
+  useEffect(() => {
+    if(!isLoaded) return;
+    let el = document.getElementById("loading-transition");
+    el.style.animation = "done-trans 1.5s forwards";
+    el.addEventListener("webkitAnimationEnd", () => {
+      el.classList.remove("loading-transition-onload");
+      el.classList.add("loading-transition-done");
+      setNavToggle(true);
+    });
+  }, [isLoaded])
+
   const handleNext = () => {
     if(!navToggle) return;
     if(nextNav == -1) {
@@ -378,6 +400,7 @@ function Respondent (props) {
           <div className="preview-flex">
             {index <= length ? (
               <React.Fragment>
+                <div id="loading-transition"/>
                 {/* Selected option: {formResponse && formResponse[index-1] ? formResponse[index-1].answerSelectionValue : null} */}
                 <div className="preview-field">
                   <div id="preview-index">
@@ -451,7 +474,7 @@ function Respondent (props) {
           { 
             arrayOptions.map((options, innerIdx) => {
             return (
-              <div className="preview-option-container" id="preview-option-mc-cb-container">
+              <div className="preview-option-container" id="preview-option-mc-cb-container" key={"mc-" + innerIdx}>
                 <div id="preview-input-mc-cb-container">
                   <input
                     className="answerSelection"
@@ -604,6 +627,9 @@ function Respondent (props) {
         <div id="preview-short-answer">
           <AutoHeightTextarea id="preview-sa-text" placeholder="Your answer" onChange={(e) => setShortAnswerValue(index, formItemId, answerSelection, e.target.value)}
           value={formResponse[index-1] && formResponse[index-1].answerSelectionValue ? formResponse[index-1].answerSelectionValue : ""}></AutoHeightTextarea>
+        </div>
+        <div className="char-counter">
+          <span style={formResponse[index-1] && formResponse[index-1].answerSelectionValue.length <= 255 ? {color: "gray"} : {color: "red"}}>{formResponse[index-1] ? formResponse[index-1].answerSelectionValue.length : null}</span>
         </div>
       </React.Fragment>
     );
@@ -776,7 +802,8 @@ function Respondent (props) {
               <div className="display-container" id="display-respondent">
                 {index == 1 ? 
                   null : (
-                  <div id="preview-back-icon-animation">
+                  <div id="preview-back-icon-animation"
+                    style={navToggle ? {backgroundColor: "transparent"} : {backgroundColor: "gray"}}>
                     <ion-icon
                       name="chevron-back-outline"
                       id="preview-back-icon"
@@ -786,7 +813,8 @@ function Respondent (props) {
                 )}
                 {displayQuestion()}
                 {(index > formItems.length && !props.previewMode) || (index > formItems.length - 1 && props.previewMode) ? null : (
-                  <div id="preview-next-icon-animation">
+                  <div id="preview-next-icon-animation"
+                    style={navToggle ? {backgroundColor: "transparent"} : {backgroundColor: "gray"}}>
                     <ion-icon
                       name="chevron-forward-outline"
                       id="preview-next-icon"
@@ -794,6 +822,19 @@ function Respondent (props) {
                     />
                   </div>
                 )}
+              </div>
+              <div className="page-indicator">
+                <div className="symbol-indicator">
+                  {formItems.map((item, idx) => {
+                    return (
+                      <React.Fragment>
+                        <div className="each-indicator"
+                          style={idx <= index-1 ? {backgroundColor: "gray"} : null}/>
+                      </React.Fragment>
+                    );
+                  })}
+                </div>
+                <div className="text-indicator"><span id="page-num">{index}</span><span id="max-page">/{formItems.length}</span></div>
               </div>
               <div id="respondent-chat">
                 {respondentChat()}

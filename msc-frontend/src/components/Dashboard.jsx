@@ -8,20 +8,20 @@ import iconVisibility from "./images/visibility.png";
 import iconInvisible from './images/visibility2.png';
 import iconSettings from "./images/settings.png";
 import Respondent from "./Respondent";
+import Loading from "./Loading";
 
 const BASE_URL = "http://10.61.38.193:8080";
 
 function Dashboard(props) {
   const [showTutorial, setShowTutorial] = useState(false);
   const [openVisibility, setOpenVisibility] = useState(false);
-  
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [updated, setUpdated] = useState([])
   const [formItems, setFormItems] = useState([]);
   const [optionCheck, setOptionCheck] = useState(false);
   const [formCounter, setFormCounter] = useState(0);
-  const [timeout, setTimeout] = useState(0);
   const { formId } = useParams();
   const [currentStep, setCurrentStep] = useState([]);
-
   const [openSettings, setOpenSettings] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -85,15 +85,51 @@ function Dashboard(props) {
     } catch (error) {
       console.log(error);
     }
+    let el = document.querySelectorAll("#loading-transition");
+    if (el) {
+      el.forEach((i) => {
+        i.classList.add("loading-transition-onload");
+        i.addEventListener('webkitAnimationEnd', () => {
+          i.classList.remove("loading-transition-onload");
+          i.classList.add("loading-transition-done");
+        });
+      });
+    }
   }, []); // run once
+
+  useEffect(() => {
+    if(!formItems || formItems.length == 0) return;
+    let updateArray = [];
+    for(let i=0; i<formItems.length; i++) updateArray.push(false);
+    setUpdated(updateArray);
+  }, [formItems]);
+
+  useEffect(() => {
+    if(!updated || updated.length != formItems.length) return;
+    let validator = true;
+    updated.forEach((upd) => {
+      if(upd == true) {
+        validator = false;
+        return;
+      }
+    })
+    if (validator) setTimeout(() => setIsLoaded(true), 3000);
+  }, [updated]);
+
+  useEffect(() => {
+    let el = document.querySelectorAll("#loading-transition");
+    if (isLoaded) {
+      el.forEach((i) => {
+        i.style.animation = "done-trans 2s forwards";
+      });
+    }
+  }, [isLoaded]);
 
   useEffect(() => {
     let body = document.getElementById("body");
     let closePopup = document.querySelector(".closePopup");
     if(openSettings == false){
-      // if(closePopup) {
         body.classList.remove("openPopup");
-      // }
     } else {
       body.classList.add("openPopup");
     }
@@ -108,7 +144,6 @@ function Dashboard(props) {
   };
 
   const validateInput = (event) => {
-    // if (document.form.question.value == "") return null;
     if (event.target.value.length > 0) {
       return true;
     }
@@ -143,7 +178,6 @@ function Dashboard(props) {
           questionType: res.data.type,
           arrayOptions: [],
           optionCounter: 0,
-          // isRequired: 0,
         };
         currentStateData.push(newItem);
         formItemId = res.data.id;
@@ -289,6 +323,7 @@ function Dashboard(props) {
   const handleOptionList = (id, data) => {
     // console.log("Handle Add Option: " + id);
     let tempFormItems = [...formItems];
+    let updateArray = [...updated];
     let currentForm = tempFormItems.filter((elem) => {
       return elem.id == id;
     });
@@ -300,12 +335,14 @@ function Dashboard(props) {
         currentForm["optionCounter"] += 1;
         currentForm["arrayOptions"].push(obj);
       })
-    tempFormItems = tempFormItems.map((elem) => {
+    tempFormItems = tempFormItems.map((elem, idx) => {
       if (elem.id == id) {
+        updateArray[idx] = true;
         return currentForm;
       }
       return elem;
     });
+    setUpdated(updateArray);
     setFormItems(tempFormItems);
   };
 
@@ -365,7 +402,6 @@ function Dashboard(props) {
   };
 
   const handleOptionValue = async (questionId, event, object, nextToggle) => {
-    if (timeout != 0) clearTimeout(timeout);
     let value = null;
     if(event.target){
       value = event.target.value;
@@ -407,7 +443,6 @@ function Dashboard(props) {
   };
 
   const handleOptionLabel = async (questionId, event, object, index) => {
-    if (timeout != 0) clearTimeout(timeout);
     let value = event.target.value;
     if(value.length <= 0) value = "Label " + index;
     setTimeout(() => {
@@ -419,7 +454,6 @@ function Dashboard(props) {
       let arrayOptions = currentForm["arrayOptions"];
       let answerSelection;
       arrayOptions.map((elem) => {
-        console.log(elem);
         if (elem.id == object.id) {
           elem.label = value;
           elem.value = index;
@@ -465,14 +499,15 @@ function Dashboard(props) {
     let counter = 0;
     return (
       <React.Fragment>
-        {formItems ? formItems.map((res) => {
+        <div id="loading-transition">Loading your contents...</div>
+        {formItems ? formItems.map((res, idx) => {
           counter += 1;
           return (
-            <React.Fragment>
+            <React.Fragment key={"questionItem-" + idx}>
               <div className="separator" />
               <div className="question">
                 <Question
-                  key={"question-" + res.id}
+                  key={"questionInner-" + idx}
                   formItems={formItems}
                   questionData={res}
                   mode={true}
@@ -491,7 +526,7 @@ function Dashboard(props) {
                 />
               </div>
             </React.Fragment>
-          );
+          )
         }) : null}
         <div className="separator" />
         <div
@@ -630,20 +665,22 @@ function Dashboard(props) {
             currentStep.map((b, idx) => {
               if(idx > 0) {
                 return (
-                  <a href={b['path']}>
+                  <a href={b['path']} key={"bread-" + idx}>
                     <span>{">"}</span>
                     <span>{b['page']}</span>
                   </a>
                 );
               }
               return (
-                <a href={b['path']}>{b['page']}</a>
+                <a href={b['path']} key={"bread-" + idx}>{b['page']}</a>
               );
             })
           }
         </div>
         <div id="page-content">
-          <div className="questions-container">{displayQuestion()}</div>
+          <div className="questions-container">
+            {displayQuestion()}
+          </div>
         </div>
       </React.Fragment>
     );

@@ -107,7 +107,6 @@ function DataVisualization(props) {
       listOfFormItems = res.data;
     }).finally(() => {
       setItemList(listOfFormItems);
-      setTimeout(() => setInLoading(false), 3000);
     });
     await axios({
       method: "get",
@@ -117,7 +116,9 @@ function DataVisualization(props) {
       currentRes.map((data) => {
         tempResp.push(data);
       });
-    }).finally(() => setResponses(tempResp));
+    }).finally(() => {
+      setResponses(tempResp);
+    });
   }
 
   useEffect(() => {
@@ -154,6 +155,11 @@ function DataVisualization(props) {
     if (activePage == 1) processData();
     else if (activePage == 2) processResponses();
   }, [activePage]);
+
+  useEffect(() => {
+    if(responses && inLoading == true)
+      setTimeout(() => setInLoading(false), 3000);
+  }, [responses])
 
   const handleSettings = () => {
     setOpenSettings(!openSettings);
@@ -342,14 +348,14 @@ function DataVisualization(props) {
           currentStep.map((b, idx) => {
             if(idx > 0) {
               return (
-                <a href={b['path']}>
+                <a href={b['path']} key={"bread-" + idx}>
                   <span>{">"}</span>
                   <span>{b['page']}</span>
                 </a>
               );
             }
             return (
-              <a href={b['path']}>{b['page']}</a>
+              <a href={b['path']} key={"bread-" + idx}>{b['page']}</a>
             );
           })
         }

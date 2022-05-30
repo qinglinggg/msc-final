@@ -133,7 +133,7 @@ class Graph extends React.Component {
   showCountedLabels() {
     return this.props.countData.map((countSum, ci) => {
       return (
-        <React.Fragment>
+        <React.Fragment key={"graph-" + ci}>
             <div className="item-subgraph" id={"item-subgraph-" + this.props.count + ci}>
               <span id={"color-subgraph-" + this.props.count + ci} className="item-color"></span>
               <span className="item-text">{ this.props.answerList[ci] } : { countSum }</span>
@@ -149,7 +149,7 @@ class Graph extends React.Component {
       {
       this.props.answerList.map((ans, ai) => {
         return (
-          <div className="shortanswer-item">
+          <div className="shortanswer-item" key={"shortanswerList-" + ai}>
             <span>{ ans }</span>
           </div>
         )

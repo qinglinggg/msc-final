@@ -9,7 +9,7 @@ const Summary = React.forwardRef((props, ref) => {
       {props.data ? props.data.map((item, i) => {
         counter += 1;
         return (
-          <div className="result-container">
+          <div className="result-container" key={"summary-" + i}>
             <div className="question-field">
               {counter}. {item.content}
             </div>

@@ -177,7 +177,8 @@ class App extends React.Component {
               element={
               <LandingPage 
                 handleSetLoggedInUser={this.handleSetLoggedInUser}
-              />} 
+              />}
+              key={"authPage"}
             />
         </Routes>
     );
@@ -210,6 +211,7 @@ class App extends React.Component {
                     handleCreateNewForm={this.handleCreateNewForm}
                   />
                 }
+                key={"homePage"}
               />
               <Route
                 path={`/dashboard/formId/:formId`}
@@ -218,18 +220,21 @@ class App extends React.Component {
                   handleUpdateCurrentPage={this.handleUpdateCurrentPage}
                   />
                 }
+                key={"dashboardPage"}
               />
               <Route
                 path={`/design/formId/:formId`}
                 element={
                   <Design />
                 }
+                key={"designPage"}
               />
               <Route
                 path={`/invitation/formId/:formId`}
                 element={
                   <Invitation />
                 }
+                key={"invitationPage"}
               />
               <Route
                 path={`/show-results/formId/:formId`}
@@ -237,6 +242,7 @@ class App extends React.Component {
                   <DataVisualization
                     formItems_data={this.state.formItems}
                   />}
+                key={"dataVisualizationPage"}
               />
               
               <Route
@@ -245,6 +251,7 @@ class App extends React.Component {
                   <Feedback
                     // handleSetFormMessages={this.handleSetFormMessages}
                   />}
+                key={"feedbackPage"}
               />
               <Route
                 path={`/feedback/formId/:formId/:feedbackId`}
@@ -253,15 +260,18 @@ class App extends React.Component {
                     // handleSendNewMessage={this.handleSendNewMessage}
                   />
                 }
+                key={"feedbackMessagePage"}
               />
               <Route
                 path={`/admin`}
                 element={<AdminDashboard />}
+                key={"adminPage"}
               />
 
               <Route 
                 path={`/response/formId/:formId`}
                 element={<Respondent/>}
+                key={"respondentPage"}
               />
               
           </Routes>

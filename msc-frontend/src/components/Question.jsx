@@ -9,7 +9,6 @@ const BASE_URL = "http://10.61.38.193:8080";
 
 function Question(props) {
   const [selectedQuestionOption, setSelectedQuestionOption] = useState("");
-  const [selectedInputOption, setSelectedInputOption] = useState(2);
   const [selectedIsRequired, setSelectedIsRequired] = useState(false);
   const [branchingState, setBranchingState] = useState(false);
   const [branchingSelection, setBranchingSelection] = useState([]);
@@ -154,7 +153,6 @@ function Question(props) {
     if(value) value = 1;
     else value = 0;
     props.handleUpdateQuestionIsRequired(props.questionData.id, value);
-
     setSelectedIsRequired(!selectedIsRequired);
   }
 
@@ -178,6 +176,9 @@ function Question(props) {
             />
             <div id="border"></div>
             <br />
+            <div className="char-counter">
+              <span style={props.questionData && props.questionData.questionContent.length <= 255 ? {color: "gray"} : {color: "red"}}>{props.questionData ? props.questionData.questionContent.length : null}</span>
+            </div>
           </div>
           <div id="question-selection">
             <Select
@@ -261,12 +262,12 @@ function Question(props) {
       <React.Fragment>
         <div id="answer-selection-container">
           {props.arrayOptions
-            ? props.arrayOptions.map((obj) => {
+            ? props.arrayOptions.map((obj, idx) => {
                 let optionId =
                   "question-" + props.questionData.id + "-options-" + obj.id;
                 // this.handleUpdateTextarea(obj);
                 return (
-                  <React.Fragment>
+                  <React.Fragment key={"mc-" + idx}>
                     <div className="answer-selection">
                       <input
                         className="answerSelection"
@@ -361,11 +362,11 @@ function Question(props) {
         <div id="answer-selection-container">
           {/* nilai true untuk pertama kali */}
           {props.arrayOptions
-            ? props.arrayOptions.map((obj) => {
+            ? props.arrayOptions.map((obj, idx) => {
                 let optionId =
                   "question-" + props.questionData.id + "-options-" + obj.id;
                 return (
-                  <div className="answer-selection">
+                  <div className="answer-selection" key={"cb-" + idx}>
                     <input
                       className="answerSelection"
                       type="checkbox"
@@ -463,7 +464,7 @@ function Question(props) {
                 let optionId =
                   "question-" + props.questionData.id + "-options-" + object.id;
                 return (
-                  <div className="linear-label-row">
+                  <div className="linear-label-row" key={"ls-" + idx}>
                     <div className="linear-label-userinput">
                       <AutoHeightTextarea
                         key={optionId}

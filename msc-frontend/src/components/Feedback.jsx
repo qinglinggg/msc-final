@@ -86,14 +86,14 @@ function Feedback(props) {
           currentStep.map((b, idx) => {
             if(idx > 0) {
               return (
-                <a href={b['path']}>
+                <a href={b['path']} key={"bread-" + idx}>
                   <span>{">"}</span>
                   <span>{b['page']}</span>
                 </a>
               );
             }
             return (
-              <a href={b['path']}>{b['page']}</a>
+              <a href={b['path']} key={"bread-" + idx}>{b['page']}</a>
             );
           })
         }
