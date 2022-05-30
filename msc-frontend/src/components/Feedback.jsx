@@ -46,10 +46,14 @@ function Feedback(props) {
           await axios.get(`${BASE_URL}/api/v1/user-profiles/${feedback.userId}`)
           .then((res) => {
             feedback["fullname"] = res.data.fullname;
-          }).finally(() => {
-            // console.log("changed: ");
-            // console.log(feedback);
-            setRenderFlag(1);
+          }).finally(async () => {
+            await axios.get(`${BASE_URL}/api/v1/feedback/by-feedback-message/new-message-count/${feedback.feedbackId}/${feedback.userId}`)
+              .then((res) => {
+                console.log("the value of tag " + res.data);
+                feedback["tag"] = res.data;
+              }).finally(() => {
+                setRenderFlag(1);
+              })
           })
         })
       });

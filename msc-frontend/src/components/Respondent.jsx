@@ -158,27 +158,27 @@ function Respondent (props) {
     if(feedbackId){
       console.log("feedbackId masuk: " + feedbackId);
       if(feedbackMessages.length == 0){
-        let tempData = [];
+        console.log("userId: " + userId);
         axios({
-          method: "get",
-          url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
+          method: "put",
+          url: `${BASE_URL}/api/v1/feedback/by-feedback/read/${feedbackId}`,
+          data: userId,
+          headers: { "Content-Type": "text/plain" },
         }).then((res) => {
-          if(res.data){
-            // preparingMessages(res.data);
-            tempData = res.data;
-            console.log(tempData);
-          }
-        }).catch(error => {
-          console.log(error);
+          // preparingMessages(tempData);
+          console.log("read result");
+          console.log(res);
         }).finally(() => {
-          // console.log("checking if res.data is printed here..");
-          // axios({
-          //   method: "put",
-          //   url: `${BASE_URL}/api/v1/feedback/by-feedback/read/${feedbackId}`,
-          //   data: userId,
-          // }).then((res) => {
-          //   preparingMessages(tempData);
-          // })
+          axios({
+            method: "get",
+            url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
+          }).then((res) => {
+            if(res.data){
+              preparingMessages(res.data);
+            }
+          }).catch(error => {
+            console.log(error);
+          })
         })
       } else if(feedbackMessages.length != 0 && openChat){
         // sudah ada isinya, mau update isRead
