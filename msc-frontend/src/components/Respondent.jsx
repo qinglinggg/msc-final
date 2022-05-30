@@ -322,17 +322,18 @@ function Respondent (props) {
   }
 
   const getAnswerSelection = (current) => {
-      let formItemId = current.id;
-      try {
-        axios({
-          method: "get",
-          url: `${BASE_URL}/api/v1/forms/get-answer-selection/${formItemId}`
-        }).then((res) => {
-          setAnswerSelection(res.data);
-        });
-      } catch(error) {
-        console.log(error);
-      }
+    if(!current) return;
+    let formItemId = current.id;
+    try {
+      axios({
+        method: "get",
+        url: `${BASE_URL}/api/v1/forms/get-answer-selection/${formItemId}`
+      }).then((res) => {
+        setAnswerSelection(res.data);
+      });
+    } catch(error) {
+      console.log(error);
+    }
   }
 
   const checkIsRequired = (formItem, formResponse) => {
@@ -379,10 +380,11 @@ function Respondent (props) {
     setTimeout(() => {
       setIsLoaded(true);
     }, 500);
+    getAnswerSelection(formItems[index-1]);
     if(!answerSelection || answerSelection.length == 0) return;
     answerSelection.map((ans) => {
       if(formResponse[index-1] && ans.id == formResponse[index-1].answerSelectionId && ans.nextItem != nextNav){
-        setNextNav(findItemByNumber(ans.nextItem));
+        setNextNav(ans.nextItem);
       }
     });
   }, [index]);
@@ -418,11 +420,11 @@ function Respondent (props) {
     }
     else if(index != formItems.length + 1) {
       let previousNav = index;
-      setIndex(nextNav);
-      let tempNav = [...navigator];
       let currentIdx = findItemByNumber(nextNav);
+      setIndex(currentIdx);
+      let tempNav = [...navigator];
       tempNav[currentIdx] = previousNav;
-      for(let x=previousNav+1; x < nextNav-1; x++){
+      for(let x=previousNav+1; x < currentIdx-1; x++){
         tempNav[x] = -1;
       }
       setNavigator(tempNav);
@@ -463,7 +465,6 @@ function Respondent (props) {
       let current;
       if(index <= length){
         current = formItems[index-1];
-        getAnswerSelection(formItems[index-1]);
       }
       return (
         <React.Fragment>
@@ -534,7 +535,7 @@ function Respondent (props) {
     responses[index-1] = formItemResponse;
     if(formResponse && formResponse.length == formItems.length) localStorage.setItem("tempFormResponse", JSON.stringify(responses));
     setFormResponse(responses);
-    setNextNav(findItemByNumber(selectedAnswerSelection.nextItem));
+    setNextNav(selectedAnswerSelection.nextItem);
   }
 
   const loadMultipleChoice = (index, formItemId, arrayOptions) => {
@@ -578,7 +579,7 @@ function Respondent (props) {
     responses[index-1] = formItemResponse;
     if(formResponse && formResponse.length == formItems.length) localStorage.setItem("tempFormResponse", JSON.stringify(responses));
     setFormResponse(responses);
-    setNextNav(findItemByNumber(selectedAnswerSelection.nextItem));
+    setNextNav(selectedAnswerSelection.nextItem);
   }
 
   const loadLinearScale = (index, formItemId, arrayOptions) => {
@@ -639,7 +640,7 @@ function Respondent (props) {
     responses[index-1].push(formItemResponse);
     if(formResponse && formResponse.length == formItems.length) localStorage.setItem("tempFormResponse", JSON.stringify(responses));
     setFormResponse(responses);
-    setNextNav(findItemByNumber(selectedAnswerSelection.nextItem));
+    setNextNav(selectedAnswerSelection.nextItem);
   }
 
   const multipleChecked = (index, options) => {
@@ -688,7 +689,7 @@ function Respondent (props) {
     responses[index-1] = formItemResponse;
     if(formResponse && formResponse.length == formItems.length) localStorage.setItem("tempFormResponse", JSON.stringify(responses));
     setFormResponse(responses);
-    setNextNav(findItemByNumber(answerSelection[0].nextItem));
+    setNextNav(answerSelection[0].nextItem);
   }
     
   const loadShortAnswer = (index, formItemId, answerSelection) => {
