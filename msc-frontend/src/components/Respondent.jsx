@@ -112,7 +112,7 @@ function Respondent (props) {
   useEffect(() => {
     if(!formItems) return;
     let loadData = localStorage.getItem("tempFormResponse");
-    if (loadData && loadData.length) loadData = JSON.parse(loadData);
+    if (loadData && loadData.length == formItems.length) loadData = JSON.parse(loadData);
     else {
       loadData = [];
       formItems.map((fi) => {
@@ -642,10 +642,10 @@ function Respondent (props) {
       <React.Fragment>
         <div id="preview-short-answer">
           <AutoHeightTextarea id="preview-sa-text" placeholder="Your answer" onChange={(e) => setShortAnswerValue(index, formItemId, answerSelection, e.target.value)}
-          value={formResponse[index-1] && formResponse[index-1].answerSelectionValue ? formResponse[index-1].answerSelectionValue : ""}></AutoHeightTextarea>
+          value={formResponse[index-1] && formResponse[index-1].length && formResponse[index-1].answerSelectionValue ? formResponse[index-1].answerSelectionValue : ""}></AutoHeightTextarea>
         </div>
         <div className="char-counter">
-          <span style={formResponse[index-1] && formResponse[index-1].answerSelectionValue.length <= 255 ? {color: "gray"} : {color: "red"}}>{formResponse[index-1] ? formResponse[index-1].answerSelectionValue.length : null}</span>
+          <span style={formResponse[index-1] && formResponse[index-1].length && formResponse[index-1].answerSelectionValue.length <= 255 ? {color: "gray"} : {color: "red"}}>{formResponse[index-1] && formResponse[index-1].length ? formResponse[index-1].answerSelectionValue.length : null}</span>
         </div>
       </React.Fragment>
     );
