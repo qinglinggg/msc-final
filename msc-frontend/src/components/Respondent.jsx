@@ -337,7 +337,9 @@ function Respondent (props) {
         }
       }
     }
-  }, [index, formResponse])
+  }, [index, formResponse]);
+
+  let prevAnswerSelection = {};
 
   useEffect(() => {
     setIsLoaded(false);
@@ -346,7 +348,7 @@ function Respondent (props) {
     if(el.classList.contains("loading-transition-done")) el.classList.remove("loading-transition-done");
     if(!el.classList.contains("loading-transition-onload")) el.classList.add("loading-transition-onload");
     setNavToggle(false);
-    setTimeout(() => setIsLoaded(true), 500);
+    setTimeout(() => setIsLoaded(true), 1000);
   }, [index]);
 
   useEffect(() => {
@@ -408,7 +410,7 @@ function Respondent (props) {
       let current;
       if(index <= length){
         current = formItems[index-1];
-        getAnswerSelection(formItems[index-1]); 
+        getAnswerSelection(formItems[index-1]);
       }
       return (
         <React.Fragment>
