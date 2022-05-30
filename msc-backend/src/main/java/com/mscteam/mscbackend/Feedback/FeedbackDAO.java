@@ -94,6 +94,7 @@ public class FeedbackDAO {
     public String insertFeedback(Feedback feedback){
         final String query = "INSERT INTO Feedback VALUES (?,?,?)";
         int res = jdbcTemplate.update(query, feedback.getFormId().toString(), feedback.getFeedbackId().toString(), feedback.getUserId().toString());
+        System.out.println("feedback.getFeedbackId() " + feedback.getFeedbackId().toString());
         return feedback.getFeedbackId().toString();
     }
 

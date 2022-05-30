@@ -111,8 +111,8 @@ function Respondent (props) {
   useEffect(() => {
     if(!formItems) return;
     let loadData = localStorage.getItem("tempFormResponse");
-    if (loadData) loadData = JSON.parse(loadData);
-    if (loadData.length !== formItems.length) {
+    if (loadData && loadData.length) loadData = JSON.parse(loadData);
+    else {
       loadData = [];
       formItems.map((fi) => {
         if (fi.type == "CB") loadData.push([]);
