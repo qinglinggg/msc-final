@@ -86,4 +86,10 @@ public class FeedbackController {
     public int readFeedbackMessage(@PathVariable("id") String feedbackId, @RequestBody String userId){
         return feedbackService.readFeedbackMessage(feedbackId, userId);
     }
+
+    @GetMapping(path="by-feedback-message/new-message-count/{id}/{userId}")
+    public int newFeedbackMessageCount(@PathVariable("id") String feedbackId, @PathVariable("userId") String userId){
+        return feedbackService.newFeedbackMessageCount(feedbackId, userId);
+    }
+
 }

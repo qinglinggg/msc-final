@@ -19,7 +19,7 @@ public class FeedbackService {
     @Autowired
     public FeedbackService(FeedbackDAO feedbackDAO){
         this.feedbackDAO = feedbackDAO;
-        this.userProfileDAO = userProfileDAO;
+        // this.userProfileDAO = userProfileDAO;
     }
 
     public List<Feedback> getAllFeedback() {
@@ -74,5 +74,9 @@ public class FeedbackService {
     public int readFeedbackMessage(String feedbackId, String userId) {
         return feedbackDAO.readFeedbackMessage(feedbackId, userId);
     }
-    
+
+    public int newFeedbackMessageCount(String feedbackId, String userId){
+        return feedbackDAO.newFeedbackMessageCount(feedbackId, userId);
+    }
+
 }

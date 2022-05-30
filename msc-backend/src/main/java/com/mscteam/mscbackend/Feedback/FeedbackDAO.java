@@ -129,4 +129,10 @@ public class FeedbackDAO {
         int res = jdbcTemplate.update(query, feedbackId, userId);
         return res;
     }
+
+    public int newFeedbackMessageCount(String feedbackId, String userId) {
+        final String query = "SELECT COUNT(messageId) FROM FeedbackMessage WHERE feedbackId = ? AND senderUserId != ? AND isRead = 0";
+        int res = jdbcTemplate.update(query, feedbackId, userId);
+        return res;
+    }
 }
