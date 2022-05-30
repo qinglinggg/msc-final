@@ -31,6 +31,7 @@ function Question(props) {
         tempLabel = "Continue to next question";
         logger = true;
       } else {
+        if(i+2 > props.formItems.length) break;
         tempLabel = `Jump to Question No.${i+2}`;
       }
       tempSelection.push({ value: props.formItems[i+1].itemNumber, label: tempLabel});
@@ -133,15 +134,6 @@ function Question(props) {
       });
     }
   }, [branchingState]);
-
-  // useEffect((prevState) => {
-  //   if(prevState.selectedIsRequired != selectedIsRequired){
-  //     let value;
-  //     if(selectedIsRequired) value = 1;
-  //     else value = 0;
-  //     props.handleUpdateQuestionIsRequired(props.questionData.id, value);
-  //   }
-  // }, [selectedIsRequired]);
 
   const handleShowBranching = () => {
     setBranchingState(!branchingState);

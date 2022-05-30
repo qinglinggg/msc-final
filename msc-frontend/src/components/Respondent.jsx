@@ -54,13 +54,7 @@ function Respondent (props) {
             url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`
         }).then((res) => {
             setFormItems(res.data);
-            if(!navigator || navigator.length == 0) {
-              let tempNav = [...navigator];
-              res.data.map((data) => tempNav.push(-1));
-              tempNav.push(-1);
-              setNavigator(tempNav, () => localStorage.setItem("navigator", tempNav));
-            }
-        })
+        });
     } catch (error) {
       console.log(error);
     }
@@ -100,6 +94,10 @@ function Respondent (props) {
     displayContainer.addEventListener('webkitAnimationEnd', () => {
       displayContainer.style.animation = '';
     });
+    if(formResponse[index-1] && formResponse[index-1].length && formResponse[index-1].answerSelectionValue){
+      let el = document.getElementById("preview-sa-text");
+      if(el) el.value = formResponse[index-1].answerSelectionValue;
+    }
     return () => {
       if(feedbackMessages.length == 0){
         axios.delete(`${BASE_URL}/api/v1/feedback/${feedbackId}`)
@@ -110,30 +108,58 @@ function Respondent (props) {
   }, []);
 
   useEffect(() => {
-    if(!formItems) return;
+    console.log(formRespondentId);
+    if(!formRespondentId) return;
+    if(!formItems || formItems.length == 0) return;
+    if(formResponse && formResponse.length > 0) return;
+    if(navigator && navigator.length > 0) return;
     let loadData = localStorage.getItem("tempFormResponse");
-    if (loadData && loadData.length == formItems.length) loadData = JSON.parse(loadData);
-    else {
+    let validator = false;
+    let nav_check = false;
+    if (loadData) {
+      console.log("imported");
+      let selectedId = null;
+      loadData = JSON.parse(loadData);
+      formItems.map((data, idx) => {
+        if(data.type != "CB" && !selectedId) {
+          selectedId = loadData[idx]['formRespondentId'];
+        } else {
+          let currentResp = loadData[idx];
+          if(currentResp && currentResp.length > 0) currentResp.map((resp) => {
+            if(!selectedId) selectedId = resp['formRespondentId'];
+          });
+        }
+      });
+      if(selectedId == formRespondentId) {
+        setFormResponse(loadData)
+        validator = true;
+        let loadNav = localStorage.getItem("navigator");
+        if(loadNav) {
+          loadNav = JSON.parse(loadNav);
+          if(loadNav.length == formItems.length) {
+            setNavigator(loadNav);
+            nav_check = true;
+          }
+        }
+      }
+    }
+    if(!validator) {
       loadData = [];
       formItems.map((fi) => {
         if (fi.type == "CB") loadData.push([]);
         else loadData.push({});
       });
     }
-    setFormResponse(loadData, () => {
-      let loadNav = localStorage.getItem("navigator");
-      if(loadNav) loadNav = JSON.parse(loadNav);
-      else return;
-      let count = 1;
-      formResponse.map((resp, idx) => {
-        if(resp && loadNav[idx] != -1) count++;
-      });
-      let navCount = 1;
-      loadNav.map((val) => {if(val != -1) navCount++});
-      console.log("Check count nav:", count, navCount);
-      if (count == navCount) setNavigator(loadNav);
-    });
-  }, [formItems]);
+    if(!validator || !nav_check){
+      let tempNav = [];
+      formItems.map((data) => tempNav.push(-1));
+      if(tempNav.length > 0) tempNav.push(-1);
+      console.log("check init navigator", tempNav);
+      setNavigator(tempNav);
+      localStorage.setItem("navigator", JSON.stringify(tempNav));
+    }
+    setFormResponse(loadData);
+  }, [formRespondentId]);
 
   useEffect(() => {
     let userId = JSON.parse(localStorage.getItem("loggedInUser"));
@@ -303,7 +329,7 @@ function Respondent (props) {
           url: `${BASE_URL}/api/v1/forms/get-answer-selection/${formItemId}`
         }).then((res) => {
           setAnswerSelection(res.data);
-        })
+        });
       } catch(error) {
         console.log(error);
       }
@@ -315,11 +341,14 @@ function Respondent (props) {
       if(!formResponse || formResponse.answerSelectionValue == "") checker = false;
     }
     else if(formItem.type == "CB"){
-      formResponse.map(resp => {
+      if(formResponse) formResponse.map(resp => {
         if((!resp || resp.answerSelectionValue == "") && checker == true) checker = false;
       });
+      else checker = false;
     }
     else if(formItem.type == "LS"){
+      if(!formResponse || !formResponse.answerSelectionValue) checker = false;
+    } else if(formItem.type == "SA"){
       if(!formResponse || !formResponse.answerSelectionValue) checker = false;
     }
     return checker;
@@ -340,16 +369,22 @@ function Respondent (props) {
     }
   }, [index, formResponse]);
 
-  let prevAnswerSelection = {};
-
   useEffect(() => {
     setIsLoaded(false);
     let el = document.getElementById("loading-transition");
     if(!el) return;
     if(el.classList.contains("loading-transition-done")) el.classList.remove("loading-transition-done");
     if(!el.classList.contains("loading-transition-onload")) el.classList.add("loading-transition-onload");
-    setNavToggle(false);
-    setTimeout(() => setIsLoaded(true), 1000);
+    setNextNav(-1);
+    setTimeout(() => {
+      setIsLoaded(true);
+    }, 500);
+    if(!answerSelection || answerSelection.length == 0) return;
+    answerSelection.map((ans) => {
+      if(formResponse[index-1] && ans.id == formResponse[index-1].answerSelectionId && ans.nextItem != nextNav){
+        setNextNav(findItemByNumber(ans.nextItem));
+      }
+    });
   }, [index]);
 
   useEffect(() => {
@@ -359,23 +394,39 @@ function Respondent (props) {
     el.addEventListener("webkitAnimationEnd", () => {
       el.classList.remove("loading-transition-onload");
       el.classList.add("loading-transition-done");
-      setNavToggle(true);
     });
   }, [isLoaded])
+
+  const findItemByNumber = (itemNumber) => {
+    formItems.map((data, idx) => {
+      if(data.itemNumber == itemNumber){
+        return idx;
+      }
+    });
+    return -1;
+  }
 
   const handleNext = () => {
     if(!navToggle) return;
     if(nextNav == -1) {
-      setIndex(index + 1);
-      navigator[index] = -1;
-      setNavigator(navigator, () => localStorage.setItem("navigator", JSON.stringify(navigator)));
+      let tempIdx = index + 1;
+      setIndex(tempIdx);
+      let tempNav = [...navigator];
+      tempNav[tempIdx] = -1;
+      setNavigator(tempNav);
+      localStorage.setItem("navigator", JSON.stringify(navigator));
     }
     else if(index != formItems.length + 1) {
-      console.log(nextNav);
       let previousNav = index;
       setIndex(nextNav);
-      navigator[nextNav-1] = previousNav;
-      setNavigator(navigator, () => localStorage.setItem("navigator", JSON.stringify(navigator)));
+      let tempNav = [...navigator];
+      let currentIdx = findItemByNumber(nextNav);
+      tempNav[currentIdx] = previousNav;
+      for(let x=previousNav+1; x < nextNav-1; x++){
+        tempNav[x] = -1;
+      }
+      setNavigator(tempNav);
+      localStorage.setItem("navigator", JSON.stringify(navigator));
     } else {
       setIndex(index + 1);
     }
@@ -387,6 +438,7 @@ function Respondent (props) {
     if(!navToggle) return;
     if(navigator[index-1] == -1) setIndex(index - 1);
     else setIndex(navigator[index-1]);
+
     let displayContainer = document.querySelector('.inner-display-container');
     displayContainer.style.animation = 'hide-transition 1s forwards';
   }
@@ -482,7 +534,7 @@ function Respondent (props) {
     responses[index-1] = formItemResponse;
     if(formResponse && formResponse.length == formItems.length) localStorage.setItem("tempFormResponse", JSON.stringify(responses));
     setFormResponse(responses);
-    setNextNav(selectedAnswerSelection.nextItem);
+    setNextNav(findItemByNumber(selectedAnswerSelection.nextItem));
   }
 
   const loadMultipleChoice = (index, formItemId, arrayOptions) => {
@@ -526,7 +578,7 @@ function Respondent (props) {
     responses[index-1] = formItemResponse;
     if(formResponse && formResponse.length == formItems.length) localStorage.setItem("tempFormResponse", JSON.stringify(responses));
     setFormResponse(responses);
-    setNextNav(selectedAnswerSelection.nextItem);
+    setNextNav(findItemByNumber(selectedAnswerSelection.nextItem));
   }
 
   const loadLinearScale = (index, formItemId, arrayOptions) => {
@@ -587,7 +639,7 @@ function Respondent (props) {
     responses[index-1].push(formItemResponse);
     if(formResponse && formResponse.length == formItems.length) localStorage.setItem("tempFormResponse", JSON.stringify(responses));
     setFormResponse(responses);
-    setNextNav(selectedAnswerSelection.nextItem);
+    setNextNav(findItemByNumber(selectedAnswerSelection.nextItem));
   }
 
   const multipleChecked = (index, options) => {
@@ -636,15 +688,14 @@ function Respondent (props) {
     responses[index-1] = formItemResponse;
     if(formResponse && formResponse.length == formItems.length) localStorage.setItem("tempFormResponse", JSON.stringify(responses));
     setFormResponse(responses);
-    setNextNav(answerSelection[0].nextItem);
+    setNextNav(findItemByNumber(answerSelection[0].nextItem));
   }
     
   const loadShortAnswer = (index, formItemId, answerSelection) => {
     return (
       <React.Fragment>
         <div id="preview-short-answer">
-          <AutoHeightTextarea id="preview-sa-text" placeholder="Your answer" onChange={(e) => setShortAnswerValue(index, formItemId, answerSelection, e.target.value)}
-          value={formResponse[index-1] && formResponse[index-1].length && formResponse[index-1].answerSelectionValue ? formResponse[index-1].answerSelectionValue : ""}></AutoHeightTextarea>
+          <AutoHeightTextarea id="preview-sa-text" placeholder="Your answer" onChange={(e) => setShortAnswerValue(index, formItemId, answerSelection, e.target.value)}/>
         </div>
         <div className="char-counter">
           <span style={formResponse[index-1] && formResponse[index-1].length && formResponse[index-1].answerSelectionValue.length <= 255 ? {color: "gray"} : {color: "red"}}>{formResponse[index-1] && formResponse[index-1].length ? formResponse[index-1].answerSelectionValue.length : null}</span>
@@ -845,7 +896,7 @@ function Respondent (props) {
                 <div className="symbol-indicator">
                   {formItems.map((item, idx) => {
                     return (
-                      <React.Fragment>
+                      <React.Fragment key={"indicator"+idx}>
                         <div className="each-indicator"
                           style={idx <= index-1 ? {backgroundColor: "gray"} : null}/>
                       </React.Fragment>
