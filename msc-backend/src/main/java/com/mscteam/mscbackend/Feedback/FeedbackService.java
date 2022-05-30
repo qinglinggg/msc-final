@@ -54,11 +54,6 @@ public class FeedbackService {
     }
 
     public String insertFeedback(Feedback feedback) {
-        // Optional<String> feedbackId = feedbackDAO.getFeedbackIdByFormIdAndUserId(feedback.getFormId().toString(), feedback.getUserId().toString());
-        // if(feedbackId.isPresent()){
-        //     System.out.println("feedbackId.isPresent " + feedbackId);
-        //     return feedbackId.get();
-        // }
         String feedbackId = feedbackDAO.getFeedbackIdByFormIdAndUserId(feedback.getFormId().toString(), feedback.getUserId().toString());
         if(feedbackId != "") return feedbackId;
         return feedbackDAO.insertFeedback(feedback);

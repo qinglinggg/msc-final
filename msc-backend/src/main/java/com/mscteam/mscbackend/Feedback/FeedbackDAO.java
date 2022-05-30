@@ -119,19 +119,12 @@ public class FeedbackDAO {
 
     public String getFeedbackIdByFormIdAndUserId(String formId, String userId){
         final String query = "SELECT feedbackId FROM Feedback WHERE formId = ? AND userId = ?";
-        // List<String> feedbackId = jdbcTemplate.query(query, (resultSet, i) -> {
-        //     String resId = resultSet.getString("feedbackId");
-        //     return resId;
-        // }, formId, userId);
-        System.out.println("entering getFeedbackIdByFormIdAndUserId");
         String feedbackId = "";
         try {
             feedbackId = jdbcTemplate.queryForObject(query, String.class, formId, userId);
         } catch(EmptyResultDataAccessException e){
             System.out.println(e);
         }
-        System.out.println("feedbackId value: " + feedbackId);
-        // return Optional.ofNullable(feedbackId.get(0));
         return feedbackId;
     }
 
@@ -143,7 +136,7 @@ public class FeedbackDAO {
 
     public int newFeedbackMessageCount(String feedbackId, String userId) {
         final String query = "SELECT COUNT(messageId) FROM FeedbackMessage WHERE feedbackId = ? AND senderUserId != ? AND isRead = 0";
-        int res = jdbcTemplate.update(query, feedbackId, userId);
+        int res = jdbcTemplate.queryForObject(query, Integer.class, feedbackId, userId);
         return res;
     }
 }
