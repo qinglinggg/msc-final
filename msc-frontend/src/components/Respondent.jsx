@@ -158,19 +158,35 @@ function Respondent (props) {
     if(feedbackId){
       console.log("feedbackId masuk: " + feedbackId);
       if(feedbackMessages.length == 0){
+        let tempData = [];
         axios({
           method: "get",
           url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
         }).then((res) => {
           if(res.data){
-            preparingMessages(res.data);
+            // preparingMessages(res.data);
+            tempData = res.data;
+            console.log(tempData);
           }
         }).catch(error => {
           console.log(error);
+        }).finally(() => {
+          // console.log("checking if res.data is printed here..");
+          // axios({
+          //   method: "put",
+          //   url: `${BASE_URL}/api/v1/feedback/by-feedback/read/${feedbackId}`,
+          //   data: userId,
+          // }).then((res) => {
+          //   preparingMessages(tempData);
+          // })
         })
+      } else if(feedbackMessages.length != 0 && openChat){
+        // sudah ada isinya, mau update isRead
+        // console.log("feedback messages is already not null");
+        // console.log(feedbackMessages);
       }
     } 
-  }, [feedbackId]);
+  }, [feedbackId, openChat]);
 
   const preparingMessages = (data) => {
     let tempDate = currDate;
@@ -202,9 +218,9 @@ function Respondent (props) {
       else if(messageDate.getMinutes() < 10) time = time + '0' + messageDate.getMinutes();
       else time = time + messageDate.getMinutes();
       if(flag == 1){
-        tempDate = date;
+        tempDate = messageDate;
         let insert = {
-          date: tempDate,
+          date: date,
           index: index,
         }
         listOfInsert.push(insert);

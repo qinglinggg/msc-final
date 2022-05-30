@@ -71,4 +71,8 @@ public class FeedbackService {
         return feedbackDAO.removeFeedbackMessage(id);
     }
 
+    public int readFeedbackMessage(String feedbackId, String userId) {
+        return feedbackDAO.readFeedbackMessage(feedbackId, userId);
+    }
+    
 }

@@ -34,22 +34,18 @@ function Message() {
     setMessageMetadata(metadata);
     axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`).then((res) => {
       let messages = res.data;
-      let tempDate = "";
+      let tempDate = new Date(0);
       let index = -1;
       let listOfInsert = [];
       messages.map((message) => {
         index++;
         let flag = 0;
         const datetime = new Date(message.createDateTime);
-        if(tempDate == "") flag = 1;
-        else if(tempDate != ""){
-          tempDate = new Date(tempDate);
-          if(tempDate.getFullYear() < datetime.getFullYear()) flag = 1;
-          else if(tempDate.getFullYear() == datetime.getFullYear()){
-            if(tempDate.getMonth() < datetime.getMonth()) flag = 1;
-            else if(tempDate.getMonth() == datetime.getMonth()){
-              if(tempDate.getDate() < datetime.getDate()) flag = 1;
-            }
+        if(tempDate.getFullYear() < datetime.getFullYear()) flag = 1;
+        else if(tempDate.getFullYear() == datetime.getFullYear()){
+          if(tempDate.getMonth() < datetime.getMonth()) flag = 1;
+          else if(tempDate.getMonth() == datetime.getMonth()){
+            if(tempDate.getDate() < datetime.getDate()) flag = 1;
           }
         }
         let date = datetime.getDate() + "/" + (datetime.getMonth() + 1) + "/" + datetime.getFullYear();
@@ -58,9 +54,10 @@ function Message() {
         else if(datetime.getMinutes() < 10) time = time + '0' + datetime.getMinutes();
         else time = time + datetime.getMinutes();
         if(flag == 1){
-          tempDate = date;
+          tempDate = datetime;
+          console.log("now tempdate value is " + tempDate);
           let insert = {
-            date: tempDate,
+            date: date,
             index: index,
           }
           listOfInsert.push(insert);

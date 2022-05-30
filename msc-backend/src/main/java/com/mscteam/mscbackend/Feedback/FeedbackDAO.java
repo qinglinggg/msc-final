@@ -123,4 +123,10 @@ public class FeedbackDAO {
         }, formId, userId);
         return Optional.ofNullable(feedbackId.get(0));
     }
+
+    public int readFeedbackMessage(String feedbackId, String userId) {
+        final String query = "UPDATE FeedbackMessage SET isRead = 1 WHERE feedbackId = ? AND senderUserId != ?";
+        int res = jdbcTemplate.update(query, feedbackId, userId);
+        return res;
+    }
 }
