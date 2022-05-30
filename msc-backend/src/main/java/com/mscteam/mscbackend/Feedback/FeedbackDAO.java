@@ -12,6 +12,7 @@ import com.mscteam.mscbackend.UserProfile.UserProfile;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -116,13 +117,22 @@ public class FeedbackDAO {
         return res;
     }
 
-    public Optional<String> getFeedbackIdByFormIdAndUserId(String formId, String userId){
+    public String getFeedbackIdByFormIdAndUserId(String formId, String userId){
         final String query = "SELECT feedbackId FROM Feedback WHERE formId = ? AND userId = ?";
-        List<String> feedbackId = jdbcTemplate.query(query, (resultSet, i) -> {
-            String resId = resultSet.getString("feedbackId");
-            return resId;
-        }, formId, userId);
-        return Optional.ofNullable(feedbackId.get(0));
+        // List<String> feedbackId = jdbcTemplate.query(query, (resultSet, i) -> {
+        //     String resId = resultSet.getString("feedbackId");
+        //     return resId;
+        // }, formId, userId);
+        System.out.println("entering getFeedbackIdByFormIdAndUserId");
+        String feedbackId = "";
+        try {
+            feedbackId = jdbcTemplate.queryForObject(query, String.class, formId, userId);
+        } catch(EmptyResultDataAccessException e){
+            System.out.println(e);
+        }
+        System.out.println("feedbackId value: " + feedbackId);
+        // return Optional.ofNullable(feedbackId.get(0));
+        return feedbackId;
     }
 
     public int readFeedbackMessage(String feedbackId, String userId) {
