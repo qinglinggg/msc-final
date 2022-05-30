@@ -2169,6 +2169,7 @@ body {
 /* Feedback */
 
 .chat-content {
+  min-height: 500px !important;
   overflow-y: scroll;
   scroll-behavior: smooth;
   scrollbar-width: none;
@@ -2339,6 +2340,7 @@ body {
 
 #message-content-wrapper {
   height: 100%;
+  min-height: 400px;
   max-height: 600px;
   width: 90%;
   padding: 20px 50px 15px 50px;

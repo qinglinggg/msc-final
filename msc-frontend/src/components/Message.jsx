@@ -74,12 +74,12 @@ function Message() {
     });
     let currentUser = JSON.parse(localStorage.getItem("loggedInUser"));
     setSurveyMakerId(currentUser);
-    // axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/get-user/${feedbackId}`).then((res) => {
-    //   const user = res.data;
-    //   setUser(user);
-    // });
-    // let end = document.getElementById("end-of-chat");
-    // if(end) chatRef.current.scrollIntoView(false);
+    axios({
+      method: "put",
+      url: `${BASE_URL}/api/v1/feedback/by-feedback/read/${feedbackId}`,
+      data: currentUser,
+      headers: { "Content-Type": "text/plain" }
+    }).catch(error => console.log(error));
   }, []);
 
   const handleMessageInput = (e) => {
