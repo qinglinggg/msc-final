@@ -93,7 +93,7 @@ function Respondent (props) {
     let prevElement = document.querySelector('.display-container');
     if(props.previewMode) prevElement.style.marginTop = 0 + 'px';
     let displayContainer = document.querySelector('.inner-display-container');
-    displayContainer.addEventListener('webkitAnimationEnd', () => {
+    displayContainer.addEventListener('animationend', () => {
       displayContainer.style.animation = '';
     });
     return () => {
@@ -251,16 +251,19 @@ function Respondent (props) {
     if(!el) return;
     if(el.classList.contains("loading-transition-done")) el.classList.remove("loading-transition-done");
     if(!el.classList.contains("loading-transition-onload")) el.classList.add("loading-transition-onload");
-    el.addEventListener("webkitAnimationEnd", () => {
+    el.addEventListener("animationend", () => {
+      console.log("ended");
       el.classList.remove("loading-transition-onload");
       el.classList.add("loading-transition-done");
       setTimeout(setIsLoaded(true), 500);
-    });
+    })
   }, [index]);
 
   useEffect(() => {
-    if(!isLoaded) return;
+    if(isLoaded) return;
+    console.log("check");
     let el = document.getElementById("loading-transition");
+    if(!el) return;
     el.style.animation = "done-trans 1.5s forwards";
   }, [isLoaded]);
 
