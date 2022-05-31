@@ -1,7 +1,8 @@
 import React, { Component, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import iconMenubarGrey from "./images/menubarGrey.png";
-import profilePicture from "./images/woman.jpg";
+// import profilePicture from "./images/woman.jpg";
+import ProfilePicture from "./functional-components/ProfilePicture"
 import Chat from "./Message";
 import axios from "axios";
 
@@ -69,14 +70,15 @@ function Feedback(props) {
               await axios.get(`${BASE_URL}/api/v1/user-profiles/${feedback.userId}`)
               .then((res) => {
                 feedback["fullname"] = res.data.fullname;
+                console.log("profilepicture");
+                console.log(res.data);
+                feedback["user"] = res.data;
               }).finally(async () => {
                 await axios.get(`${BASE_URL}/api/v1/feedback/by-feedback-message/new-message-count/${feedback.feedbackId}/${loggedInUser}`)
                 .then((res) => {
                   feedback["tag"] = res.data;
                 }).finally(() => {
                   if(i == feedbacks.length){
-                    console.log(feedbacks.length);
-                    console.log("akhir feedback");
                     setFeedbackList(feedbacks);
                   }
                 })
@@ -84,7 +86,7 @@ function Feedback(props) {
             })
           });
         });
-      }, 5000);
+      }, 1000);
       setIntervalId(interval);
     } else if(feedbackList.length > 0){
       setRenderFlag(1);
@@ -131,7 +133,8 @@ function Feedback(props) {
             return (
               <React.Fragment>
                 <div id="chat-single-box">
-                  <img className="profile-image" src={profilePicture} alt="" />
+                  {/* <img className="profile-image" src={profilePicture} alt="" /> */}
+                  <ProfilePicture user={message["user"]}></ProfilePicture>
                   <Link to={`/feedback/formId/${message.formId}/${message.feedbackId}`} 
                     className="link" id="link-container"
                     onClick={() => localStorage.setItem("selectedChat", JSON.stringify(message))}

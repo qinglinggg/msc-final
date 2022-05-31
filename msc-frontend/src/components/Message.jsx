@@ -1,7 +1,8 @@
 import React, { Component, createRef, useEffect, useState } from "react";
 import { Link, useParams, useRef } from "react-router-dom";
 import iconMenubarGrey from "./images/menubarGrey.png";
-import profilePicture from "./images/woman.jpg";
+// import profilePicture from "./images/woman.jpg";
+import ProfilePicture from "./functional-components/ProfilePicture"
 import backspaceIcon from "./images/backspaceIcon.png";
 import axios from "axios";
 
@@ -77,19 +78,20 @@ function Message() {
       else time = time + datetime.getMinutes();
       if(flag == 1){
         tempDate = datetime;
-        console.log("now tempdate value is " + tempDate);
         let insert = {
           date: date,
-          index: index,
+          index: index + listOfInsert.length,
         }
         listOfInsert.push(insert);
       }
       message["date"] = date;
       message["time"] = time;
     });
+    console.log(listOfInsert);
     listOfInsert.map((insert) => {
       messages.splice(insert.index, 0, insert.date);
     })
+    console.log(messages);
     setCurrDate(tempDate);
     setFormMessages(messages);
   }
@@ -157,12 +159,8 @@ function Message() {
             <div id="message-profile">
               {/* <div id="message-user-name"></div> */}
               {/* <div id="message-status"></div> */}
-              <img
-                className="profile-image"
-                id="message-profile-image"
-                src={profilePicture}
-                alt=""
-              />
+              {/* {console.log(messageMetadata.user)} */}
+              <ProfilePicture id="message-profile-image" user={JSON.parse(localStorage.getItem("selectedChat")).user}></ProfilePicture>
               {messageMetadata.fullname}
             </div>
           </div>

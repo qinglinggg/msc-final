@@ -221,7 +221,7 @@ function Respondent (props) {
         tempDate = messageDate;
         let insert = {
           date: date,
-          index: index,
+          index: index + listOfInsert.length,
         }
         listOfInsert.push(insert);
       }

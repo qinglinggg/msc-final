@@ -23,10 +23,8 @@ function Design(props) {
 
   const colorOptions = [
     { value: "Default", label: "Default"},
-    // { value: "White", label: "White" },
     { value: "Black", label: "Black" },
     { value: "Dark Grey", label: "Dark Grey" },
-    // { value: "Grey", label: "Grey" },
     { value: "Red", label: "Red" },
     { value: "Green", label: "Green" },
     { value: "Blue", label: "Blue" },
