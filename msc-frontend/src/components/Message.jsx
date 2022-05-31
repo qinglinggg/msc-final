@@ -15,6 +15,8 @@ function Message() {
   const { formId } = useParams();
   const { feedbackId } = useParams();
   const { chatRef } = createRef();
+  const [currDate, setCurrDate] = useState(new Date(0));
+  const [intervalId, setIntervalId] = useState(0);
 
   useEffect(() => {
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
@@ -32,55 +34,65 @@ function Message() {
     });
     let metadata = JSON.parse(localStorage.getItem("selectedChat"));
     setMessageMetadata(metadata);
-    axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`).then((res) => {
-      let messages = res.data;
-      let tempDate = new Date(0);
-      let index = -1;
-      let listOfInsert = [];
-      messages.map((message) => {
-        index++;
-        let flag = 0;
-        const datetime = new Date(message.createDateTime);
-        if(tempDate.getFullYear() < datetime.getFullYear()) flag = 1;
-        else if(tempDate.getFullYear() == datetime.getFullYear()){
-          if(tempDate.getMonth() < datetime.getMonth()) flag = 1;
-          else if(tempDate.getMonth() == datetime.getMonth()){
-            if(tempDate.getDate() < datetime.getDate()) flag = 1;
-          }
-        }
-        let date = datetime.getDate() + "/" + (datetime.getMonth() + 1) + "/" + datetime.getFullYear();
-        let time = datetime.getHours() + ':';
-        if(datetime.getMinutes() == 0) time = time + datetime.getMinutes() + '0';
-        else if(datetime.getMinutes() < 10) time = time + '0' + datetime.getMinutes();
-        else time = time + datetime.getMinutes();
-        if(flag == 1){
-          tempDate = datetime;
-          console.log("now tempdate value is " + tempDate);
-          let insert = {
-            date: date,
-            index: index,
-          }
-          listOfInsert.push(insert);
-        }
-        message["date"] = date;
-        message["time"] = time;
+    let intervalId = setInterval(() => {
+      axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`).then((res) => {
+        preparingMessages(res.data);
       });
-      console.log(listOfInsert);
-      listOfInsert.map((insert) => {
-        messages.splice(insert.index, 0, insert.date);
-      })
-      console.log(messages);
-      setFormMessages(messages);
-    });
+      axios({
+        method: "put",
+        url: `${BASE_URL}/api/v1/feedback/by-feedback/read/${feedbackId}`,
+        data: currentUser,
+        headers: { "Content-Type": "text/plain" }
+      }).catch(error => console.log(error));
+    }, 1000);
+    setIntervalId(intervalId);
     let currentUser = JSON.parse(localStorage.getItem("loggedInUser"));
     setSurveyMakerId(currentUser);
-    axios({
-      method: "put",
-      url: `${BASE_URL}/api/v1/feedback/by-feedback/read/${feedbackId}`,
-      data: currentUser,
-      headers: { "Content-Type": "text/plain" }
-    }).catch(error => console.log(error));
+    return () => {
+      clearInterval(intervalId);
+    }
   }, []);
+
+  const preparingMessages = (messages) => {
+    let tempDate = currDate;
+    let index = -1;
+    let listOfInsert = [];
+    messages.map((message) => {
+      index++;
+      if(message['date'] && message['time']) return;
+      if(!message['createDateTime']) return;
+      const datetime = new Date(message.createDateTime);
+      let flag = 0;
+      if(tempDate.getFullYear() < datetime.getFullYear()) flag = 1;
+      else if(tempDate.getFullYear() == datetime.getFullYear()){
+        if(tempDate.getMonth() < datetime.getMonth()) flag = 1;
+        else if(tempDate.getMonth() == datetime.getMonth()){
+          if(tempDate.getDate() < datetime.getDate()) flag = 1;
+        }
+      }
+      let date = datetime.getDate() + "/" + (datetime.getMonth() + 1) + "/" + datetime.getFullYear();
+      let time = datetime.getHours() + ':';
+      if(datetime.getMinutes() == 0) time = time + datetime.getMinutes() + '0';
+      else if(datetime.getMinutes() < 10) time = time + '0' + datetime.getMinutes();
+      else time = time + datetime.getMinutes();
+      if(flag == 1){
+        tempDate = datetime;
+        console.log("now tempdate value is " + tempDate);
+        let insert = {
+          date: date,
+          index: index,
+        }
+        listOfInsert.push(insert);
+      }
+      message["date"] = date;
+      message["time"] = time;
+    });
+    listOfInsert.map((insert) => {
+      messages.splice(insert.index, 0, insert.date);
+    })
+    setCurrDate(tempDate);
+    setFormMessages(messages);
+  }
 
   const handleMessageInput = (e) => {
     setTempMessage(e.target.value);
@@ -101,7 +113,7 @@ function Message() {
       }).then((res) => {
         let messages = [...formMessages];
         messages.push(res.data);
-        setFormMessages(messages);
+        preparingMessages(messages);
         setTempMessage("");
         updateTextarea();
       })

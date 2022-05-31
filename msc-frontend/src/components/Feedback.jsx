@@ -11,7 +11,7 @@ function Feedback(props) {
   const [renderFlag, setRenderFlag] = useState(0);
   const {formId} = useParams();
   const [currentStep, setCurrentStep] = useState([]);
-  
+  const [intervalId, setIntervalId] = useState(0);
   const BASE_URL = "http://10.61.38.193:8080";
 
   useEffect(() => {
@@ -41,53 +41,57 @@ function Feedback(props) {
     let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
     let feedbacks = [];
     if(feedbackList.length == 0){
-      axios.get(`${BASE_URL}/api/v1/feedback/by-form/${formId}`).then((res) => {
-        feedbacks = res.data;
-        setIndex(feedbacks.length);
-      }).finally(() => { 
-        let i = 0;
-        feedbacks.map(async (feedback) => {
-          console.log("awal feedback");
-          i++;
-          await axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/get-last-message/${feedback.feedbackId}`)
-          .then((res) => {
-            feedback["lastMessage"] = res.data.feedbackMessage;
-            feedback["isRead"] = res.data.isRead;
-            const datetime = new Date(res.data.createDateTime);
-            let date = datetime.getDate() + "/" + (datetime.getMonth() + 1) + "/" + datetime.getFullYear();
-            let time = datetime.getHours() + ':';
-            if(datetime.getMinutes() == 0) time = time + datetime.getMinutes() + '0';
-            else if(datetime.getMinutes() < 10) time = time + '0' + datetime.getMinutes();
-            else time = time + datetime.getMinutes();
-            feedback["date"] = date;
-            feedback["time"] = time;
-          }).finally(async () => {
-            if(feedback["fullname"]) return;
-            await axios.get(`${BASE_URL}/api/v1/user-profiles/${feedback.userId}`)
+      let interval = setInterval(() => {
+        axios.get(`${BASE_URL}/api/v1/feedback/by-form/${formId}`).then((res) => {
+          feedbacks = res.data;
+          setIndex(feedbacks.length);
+        }).finally(() => { 
+          let i = 0;
+          feedbacks.map(async (feedback) => {
+            console.log("awal feedback");
+            i++;
+            await axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/get-last-message/${feedback.feedbackId}`)
             .then((res) => {
-              feedback["fullname"] = res.data.fullname;
+              console.log("get-last-message");
+              console.log(res.data);
+              feedback["lastMessage"] = res.data.feedbackMessage;
+              feedback["isRead"] = res.data.isRead;
+              const datetime = new Date(res.data.createDateTime);
+              let date = datetime.getDate() + "/" + (datetime.getMonth() + 1) + "/" + datetime.getFullYear();
+              let time = datetime.getHours() + ':';
+              if(datetime.getMinutes() == 0) time = time + datetime.getMinutes() + '0';
+              else if(datetime.getMinutes() < 10) time = time + '0' + datetime.getMinutes();
+              else time = time + datetime.getMinutes();
+              feedback["date"] = date;
+              feedback["time"] = time;
             }).finally(async () => {
-              await axios.get(`${BASE_URL}/api/v1/feedback/by-feedback-message/new-message-count/${feedback.feedbackId}/${loggedInUser}`)
+              if(feedback["fullname"]) return;
+              await axios.get(`${BASE_URL}/api/v1/user-profiles/${feedback.userId}`)
               .then((res) => {
-                feedback["tag"] = res.data;
-              }).finally(() => {
-                if(i == feedbacks.length){
-                  console.log(feedbacks.length);
-                  console.log("akhir feedback");
-                  setFeedbackList(feedbacks);
-                }
-              })
-            });
-            // await axios.get(`${BASE_URL}/api/v1/feedback/by-feedback-message/new-message-count/${feedback.feedbackId}/${feedback.userId}`)
-            // .then((res) => {
-            //   console.log("the value of tag " + res.data);
-            //   feedback["tag"] = res.data;
-            // })
-          })
+                feedback["fullname"] = res.data.fullname;
+              }).finally(async () => {
+                await axios.get(`${BASE_URL}/api/v1/feedback/by-feedback-message/new-message-count/${feedback.feedbackId}/${loggedInUser}`)
+                .then((res) => {
+                  feedback["tag"] = res.data;
+                }).finally(() => {
+                  if(i == feedbacks.length){
+                    console.log(feedbacks.length);
+                    console.log("akhir feedback");
+                    setFeedbackList(feedbacks);
+                  }
+                })
+              });
+            })
+          });
         });
-      });
+      }, 5000);
+      setIntervalId(interval);
     } else if(feedbackList.length > 0){
       setRenderFlag(1);
+    }
+
+    return () => {
+      clearInterval(intervalId);
     }
   }, [feedbackList]);
 
