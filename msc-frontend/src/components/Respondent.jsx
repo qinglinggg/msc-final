@@ -56,6 +56,23 @@ function Respondent (props) {
             url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`
         }).then((res) => {
             setFormItems(res.data);
+            let loadNav = localStorage.getItem("navigator");
+            let nav_check = false;
+            if(loadNav) {
+              loadNav = JSON.parse(loadNav);
+              if(loadNav.length == res.data.length + 1) {
+                setNavigator(loadNav);
+                nav_check = true;
+              }
+            }
+            if(!nav_check || (loadNav && loadNav.length != res.data.length + 1)){
+              let tempNav = [];
+              res.data.map((data) => tempNav.push(-1));
+              if(tempNav.length > 0) tempNav.push(-1);
+              console.log("check init navigator", tempNav);
+              setNavigator(tempNav);
+              localStorage.setItem("navigator", JSON.stringify(tempNav));
+            }
         });
     } catch (error) {
       console.log(error);
@@ -256,20 +273,18 @@ function Respondent (props) {
     if(!el) return;
     if(el.classList.contains("loading-transition-done")) el.classList.remove("loading-transition-done");
     if(!el.classList.contains("loading-transition-onload")) el.classList.add("loading-transition-onload");
-    el.addEventListener("animationend", () => {
-      console.log("ended");
+    setTimeout(() => {
       el.classList.remove("loading-transition-onload");
       el.classList.add("loading-transition-done");
-      setTimeout(setIsLoaded(true), 500);
-    })
+      setIsLoaded(true)
+    }, 500);
   }, [index]);
 
   useEffect(() => {
     if(isLoaded) return;
-    console.log("check");
     let el = document.getElementById("loading-transition");
     if(!el) return;
-    el.style.animation = "done-trans 1.5s forwards";
+    el.style.animation = "done-trans 2s forwards";
   }, [isLoaded]);
 
   useEffect(() => {
@@ -421,7 +436,9 @@ function Respondent (props) {
   }
 
   const handleNext = () => {
+    console.log("nextNav:", nextNav);
     if(!navToggle) return;
+    console.log("cek Navigator:",navigator);
     if(navigator && navigator.length != formItems.length + 1) return;
     if(nextNav == -1) {
       let tempIdx = index+1;
@@ -615,7 +632,7 @@ function Respondent (props) {
         <div id="preview-linear-scale">
           {arrayOptions.map((options, innerIdx) => {
             return (
-              <div className="preview-option-container" id="preview-option-ls-container">
+              <div className="preview-option-container" id="preview-option-ls-container" key={"ls-"+formItemId+"-"+innerIdx}>
                 <div id="preview-input-ls-container">
                   <input
                     className="answerSelection"
