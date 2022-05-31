@@ -94,10 +94,6 @@ function Respondent (props) {
     displayContainer.addEventListener('webkitAnimationEnd', () => {
       displayContainer.style.animation = '';
     });
-    if(formResponse[index-1] && formResponse[index-1].length && formResponse[index-1].answerSelectionValue){
-      let el = document.getElementById("preview-sa-text");
-      if(el) el.value = formResponse[index-1].answerSelectionValue;
-    }
     return () => {
       if(feedbackMessages.length == 0){
         axios.delete(`${BASE_URL}/api/v1/feedback/${feedbackId}`)
@@ -108,18 +104,19 @@ function Respondent (props) {
   }, []);
 
   useEffect(() => {
-    console.log(formRespondentId);
+    getAnswerSelection();
+  }, [formItems])
+
+  useEffect(() => {
     if(!formRespondentId) return;
     if(!formItems || formItems.length == 0) return;
     if(formResponse && formResponse.length > 0) return;
-    if(navigator && navigator.length > 0) return;
     let loadData = localStorage.getItem("tempFormResponse");
     let validator = false;
-    let nav_check = false;
     if (loadData) {
-      console.log("imported");
       let selectedId = null;
       loadData = JSON.parse(loadData);
+      if(loadData.length)
       formItems.map((data, idx) => {
         if(data.type != "CB" && !selectedId) {
           selectedId = loadData[idx]['formRespondentId'];
@@ -133,14 +130,6 @@ function Respondent (props) {
       if(selectedId == formRespondentId) {
         setFormResponse(loadData)
         validator = true;
-        let loadNav = localStorage.getItem("navigator");
-        if(loadNav) {
-          loadNav = JSON.parse(loadNav);
-          if(loadNav.length == formItems.length) {
-            setNavigator(loadNav);
-            nav_check = true;
-          }
-        }
       }
     }
     if(!validator) {
@@ -149,16 +138,8 @@ function Respondent (props) {
         if (fi.type == "CB") loadData.push([]);
         else loadData.push({});
       });
+      setFormResponse(loadData);
     }
-    if(!validator || !nav_check){
-      let tempNav = [];
-      formItems.map((data) => tempNav.push(-1));
-      if(tempNav.length > 0) tempNav.push(-1);
-      console.log("check init navigator", tempNav);
-      setNavigator(tempNav);
-      localStorage.setItem("navigator", JSON.stringify(tempNav));
-    }
-    setFormResponse(loadData);
   }, [formRespondentId]);
 
   useEffect(() => {
@@ -183,9 +164,7 @@ function Respondent (props) {
       }
     }
     if(feedbackId){
-      console.log("feedbackId masuk: " + feedbackId);
       if(feedbackMessages.length == 0){
-        console.log("userId: " + userId);
         axios({
           method: "put",
           url: `${BASE_URL}/api/v1/feedback/by-feedback/read/${feedbackId}`,
@@ -214,7 +193,97 @@ function Respondent (props) {
       }
     } 
   }, [feedbackId, openChat]);
+  
+  useEffect(() => {
+    if(!formItems || formItems.length == 0) return;
+    if(navigator && navigator.length > 0) return;
+    let loadNav = localStorage.getItem("navigator");
+    let nav_check = false;
+    if(loadNav) {
+      loadNav = JSON.parse(loadNav);
+      if(loadNav.length == formItems.length) {
+        setNavigator(loadNav);
+        nav_check = true;
+      }
+    }
+    if(!nav_check || (loadNav && loadNav.length != formItems.length + 1)){
+      let tempNav = [];
+      formItems.map((data) => tempNav.push(-1));
+      if(tempNav.length > 0) tempNav.push(-1);
+      console.log("check init navigator", tempNav);
+      setNavigator(tempNav);
+      localStorage.setItem("navigator", JSON.stringify(tempNav));
+    }
+  }, [formResponse])
 
+  useEffect(() => {
+    if(formItems.length != formResponse.length || formResponse.length == 0) return;
+    let length = formItems.length;
+    if(index <= length){
+      let current = formItems[index-1];
+      if(current.isRequired){
+        let validator = checkIsRequired(formItems[index-1], formResponse[index-1]);
+        if(!validator){
+          setNavToggle(false);
+        } else {
+          setNavToggle(true);
+        }
+      }
+    }
+  }, [index, formResponse]);
+
+  useEffect(() => {
+    setIsLoaded(false);
+    setNextNav(-1);
+    if(formResponse[index-1] && formResponse[index-1].answerSelectionValue){
+      let el = document.getElementById("preview-sa-text");
+      if(el) el.value = formResponse[index-1].answerSelectionValue;
+    }
+    let el = document.getElementById("loading-transition");
+    if(!el) return;
+    if(el.classList.contains("loading-transition-done")) el.classList.remove("loading-transition-done");
+    if(!el.classList.contains("loading-transition-onload")) el.classList.add("loading-transition-onload");
+    el.addEventListener("webkitAnimationEnd", () => {
+      el.classList.remove("loading-transition-onload");
+      el.classList.add("loading-transition-done");
+      setTimeout(setIsLoaded(true), 500);
+    });
+  }, [index]);
+
+  useEffect(() => {
+    if(!isLoaded) return;
+    let el = document.getElementById("loading-transition");
+    el.style.animation = "done-trans 1.5s forwards";
+  }, [isLoaded]);
+
+  useEffect(() => {
+    chatRef.current.scrollIntoView(false);
+  }, [feedbackMessages])
+
+  useEffect(() => {
+    let navbar = document.getElementById("navbar");
+    let chatHeader = document.getElementById("respondent-chat-header");
+    let chatIcon = document.getElementById("respondent-chat-button-float");
+    let background = document.getElementById("page-container");
+
+    navbar.style.backgroundColor = primaryColor;
+    chatHeader.style.backgroundColor = primaryColor;
+    chatIcon.style.backgroundColor = primaryColor;
+    if(bgLink == "") background.style.backgroundColor = secondaryColor;
+    else {
+      background.style.backgroundImage = bgLink;
+      background.style.backgroundSize = "cover";
+    }
+    return () => {
+      navbar.style.backgroundColor = "";
+      chatHeader.style.backgroundColor = "";
+      chatIcon.style.backgroundColor = "";
+      background.style.backgroundColor = "";
+      background.style.backgroundImage = "";
+      background.style.backgroundSize = "";
+    }
+  }, [bgLink, primaryColor]);
+  
   const preparingMessages = (data) => {
     let tempDate = currDate;
     let index = -1;
@@ -263,35 +332,6 @@ function Respondent (props) {
     setFeedbackMessages(data);
   }
 
-  useEffect(() => {
-    chatRef.current.scrollIntoView(false);
-  }, [feedbackMessages])
-
-  useEffect(() => {
-    let navbar = document.getElementById("navbar");
-    let chatHeader = document.getElementById("respondent-chat-header");
-    let chatIcon = document.getElementById("respondent-chat-button-float");
-    let background = document.getElementById("page-container");
-
-    navbar.style.backgroundColor = primaryColor;
-    chatHeader.style.backgroundColor = primaryColor;
-    chatIcon.style.backgroundColor = primaryColor;
-    if(bgLink == "") background.style.backgroundColor = secondaryColor;
-    else {
-      background.style.backgroundImage = bgLink;
-      background.style.backgroundSize = "cover";
-    }
-
-    return () => {
-      navbar.style.backgroundColor = "";
-      chatHeader.style.backgroundColor = "";
-      chatIcon.style.backgroundColor = "";
-      background.style.backgroundColor = "";
-      background.style.backgroundImage = "";
-      background.style.backgroundSize = "";
-    }
-  }, [bgLink, primaryColor]);
-
   const responsePageTheme = () => {
     let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
     let selectedColor = selectedForm.backgroundColor;
@@ -321,19 +361,23 @@ function Respondent (props) {
     setBgLink(selectedForm.backgroundLink);
   }
 
-  const getAnswerSelection = (current) => {
-    if(!current) return;
-    let formItemId = current.id;
-    try {
-      axios({
-        method: "get",
-        url: `${BASE_URL}/api/v1/forms/get-answer-selection/${formItemId}`
-      }).then((res) => {
-        setAnswerSelection(res.data);
-      });
-    } catch(error) {
-      console.log(error);
-    }
+  const getAnswerSelection = () => {
+    if(!formItems || !formItems.length) return;
+    let tempArr = [];
+    formItems.map(() => tempArr.push([]));
+    formItems.map((currentItem, idx) => {
+      try {
+        axios({
+          method: "get",
+          url: `${BASE_URL}/api/v1/forms/get-answer-selection/${currentItem.id}`
+        }).then((res) => {
+          tempArr[idx] = res.data;
+          if(idx == formItems.length - 1) setAnswerSelection(tempArr);
+        });
+      } catch(error) {
+        console.log(error);
+      }
+    });
   }
 
   const checkIsRequired = (formItem, formResponse) => {
@@ -342,10 +386,11 @@ function Respondent (props) {
       if(!formResponse || formResponse.answerSelectionValue == "") checker = false;
     }
     else if(formItem.type == "CB"){
-      if(formResponse) formResponse.map(resp => {
-        if((!resp || resp.answerSelectionValue == "") && checker == true) checker = false;
+      formResponse.map(resp => {
+        if(resp || resp.answerSelectionValue != "") return;
+        checker = false;
       });
-      else checker = false;
+      if(!formResponse || formResponse.length == 0) checker = false;
     }
     else if(formItem.type == "LS"){
       if(!formResponse || !formResponse.answerSelectionValue) checker = false;
@@ -355,80 +400,39 @@ function Respondent (props) {
     return checker;
   }
 
-  useEffect(() => {
-    let length = formItems.length;
-    if(index <= length){
-      let current = formItems[index-1];
-      if(current.isRequired){
-        let validator = checkIsRequired(formItems[index-1], formResponse[index-1]);
-        if(!validator){
-          setNavToggle(false);
-        } else {
-          setNavToggle(true);
-        }
-      }
-    }
-  }, [index, formResponse]);
-
-  useEffect(() => {
-    setIsLoaded(false);
-    let el = document.getElementById("loading-transition");
-    if(!el) return;
-    if(el.classList.contains("loading-transition-done")) el.classList.remove("loading-transition-done");
-    if(!el.classList.contains("loading-transition-onload")) el.classList.add("loading-transition-onload");
-    setNextNav(-1);
-    setTimeout(() => {
-      setIsLoaded(true);
-    }, 500);
-    getAnswerSelection(formItems[index-1]);
-    if(!answerSelection || answerSelection.length == 0) return;
-    answerSelection.map((ans) => {
-      if(formResponse[index-1] && ans.id == formResponse[index-1].answerSelectionId && ans.nextItem != nextNav){
-        setNextNav(ans.nextItem);
-      }
-    });
-  }, [index]);
-
-  useEffect(() => {
-    if(!isLoaded) return;
-    let el = document.getElementById("loading-transition");
-    el.style.animation = "done-trans 1.5s forwards";
-    el.addEventListener("webkitAnimationEnd", () => {
-      el.classList.remove("loading-transition-onload");
-      el.classList.add("loading-transition-done");
-    });
-  }, [isLoaded])
-
   const findItemByNumber = (itemNumber) => {
+    let i = -1;
     formItems.map((data, idx) => {
       if(data.itemNumber == itemNumber){
-        return idx;
+        i = idx;
       }
     });
+    if(i != -1) return i+1;
     return -1;
   }
 
   const handleNext = () => {
     if(!navToggle) return;
+    if(navigator && navigator.length != formItems.length + 1) return;
     if(nextNav == -1) {
-      let tempIdx = index + 1;
+      let tempIdx = index+1;
       setIndex(tempIdx);
       let tempNav = [...navigator];
-      tempNav[tempIdx] = -1;
+      tempNav[tempIdx-1] = -1;
       setNavigator(tempNav);
-      localStorage.setItem("navigator", JSON.stringify(navigator));
+      localStorage.setItem("navigator", JSON.stringify(tempNav));
     }
     else if(index != formItems.length + 1) {
       let previousNav = index;
       let currentIdx = findItemByNumber(nextNav);
       setIndex(currentIdx);
       let tempNav = [...navigator];
-      tempNav[currentIdx] = previousNav;
-      for(let x=previousNav+1; x < currentIdx-1; x++){
+      tempNav[currentIdx-1] = previousNav;
+      for(let x=previousNav; x < currentIdx-1; x++){
         tempNav[x] = -1;
       }
       setNavigator(tempNav);
-      localStorage.setItem("navigator", JSON.stringify(navigator));
+      localStorage.setItem("navigator", JSON.stringify(tempNav));
     } else {
       setIndex(index + 1);
     }
@@ -461,59 +465,59 @@ function Respondent (props) {
   }
 
   const displayQuestionCard = (length) => {
-      let loadAnswerField;
-      let current;
-      if(index <= length){
-        current = formItems[index-1];
-      }
-      return (
-        <React.Fragment>
-          <div className="preview-flex">
-            {index <= length ? (
-              <React.Fragment>
-                <div id="loading-transition"/>
-                {/* Selected option: {formResponse && formResponse[index-1] ? formResponse[index-1].answerSelectionValue : null} */}
-                <div className="preview-field">
-                  <div id="preview-index">
-                    {index}.
-                  </div>
-                  {current.content == '' ? 
-                    <div id="preview-warning">
-                      There is no question, please contact the author.
-                    </div> 
-                    : current.content
-                  }
-                  {current.isRequired ? <span style={{color: 'red', marginLeft: '20px'}}>{'*'}</span> : null}
-                </div>
-                <div className="answer-field">
-                  {current.type == "LS"
-                    ? (loadAnswerField = loadLinearScale(index, current.id, answerSelection))
-                    : current.type == "MC"
-                    ? (loadAnswerField = loadMultipleChoice(index, current.id, answerSelection))
-                    : current.type == "CB"
-                    ? (loadAnswerField = loadCheckbox(index, current.id, answerSelection))
-                    : current.type == "SA"
-                    ? (loadAnswerField = loadShortAnswer(index, current.id, answerSelection))
-                    : null}
-                </div>
-                {current.isRequired ? (
-                <div>
-                  <span style={{color: 'red', fontSize: 'small'}}>{'*'}</span>
-                  <span style={{color: 'gray', marginLeft: '10px', fontSize: 'small'}}>Required to be filled.</span>
-                </div>
-                ) : null}
-              </React.Fragment>
-            ) : (
-              <div className="respondent-endpage" >
-                <div className="respondent-endpage-title" style={{ backgroundColor: primaryColor }}>Congratulations!</div>
-                <div className="respondent-endpage-description">You are at the end of the form. Click the button below to submit your answer! :)</div>
-                { displayOnSubmission() }
-              </div>
-            )}
-          </div>
-        </React.Fragment>
-      );
+    let loadAnswerField;
+    let current;
+    if(index <= length){
+      current = formItems[index-1];
     }
+    return (
+      <React.Fragment>
+        <div className="preview-flex">
+          {index <= length ? (
+            <React.Fragment>
+              <div id="loading-transition"/>
+              {/* Selected option: {formResponse && formResponse[index-1] ? formResponse[index-1].answerSelectionValue : null} */}
+              <div className="preview-field">
+                <div id="preview-index">
+                  {index}.
+                </div>
+                {current.content == '' ? 
+                  <div id="preview-warning">
+                    There is no question, please contact the author.
+                  </div> 
+                  : current.content
+                }
+                {current.isRequired ? <span style={{color: 'red', marginLeft: '20px'}}>{'*'}</span> : null}
+              </div>
+              <div className="answer-field">
+                {current.type == "LS"
+                  ? (loadAnswerField = loadLinearScale(index, current.id, answerSelection[index-1]))
+                  : current.type == "MC"
+                  ? (loadAnswerField = loadMultipleChoice(index, current.id, answerSelection[index-1]))
+                  : current.type == "CB"
+                  ? (loadAnswerField = loadCheckbox(index, current.id, answerSelection[index-1]))
+                  : current.type == "SA"
+                  ? (loadAnswerField = loadShortAnswer(index, current.id, answerSelection[index-1]))
+                  : null}
+              </div>
+              {current.isRequired ? (
+              <div>
+                <span style={{color: 'red', fontSize: 'small'}}>{'*'}</span>
+                <span style={{color: 'gray', marginLeft: '10px', fontSize: 'small'}}>Required to be filled.</span>
+              </div>
+              ) : null}
+            </React.Fragment>
+          ) : (
+            <div className="respondent-endpage" >
+              <div className="respondent-endpage-title" style={{ backgroundColor: primaryColor }}>Congratulations!</div>
+              <div className="respondent-endpage-description">You are at the end of the form. Click the button below to submit your answer! :)</div>
+              { displayOnSubmission() }
+            </div>
+          )}
+        </div>
+      </React.Fragment>
+    );
+  }
 
   const setMultipleChoiceValue = (index, formItemId, selectedAnswerSelection) => {
     let id;
@@ -539,11 +543,15 @@ function Respondent (props) {
   }
 
   const loadMultipleChoice = (index, formItemId, arrayOptions) => {
+    if(!arrayOptions) return;
     return (
       <React.Fragment>
         <div id="preview-multiple-choice">
           { 
             arrayOptions.map((options, innerIdx) => {
+            if(formResponse[index-1] && options.id == formResponse[index-1].answerSelectionId && options.nextItem != nextNav){
+              setNextNav(options.nextItem);
+            }
             return (
               <div className="preview-option-container" id="preview-option-mc-cb-container" key={"mc-" + innerIdx}>
                 <div id="preview-input-mc-cb-container">
@@ -570,19 +578,29 @@ function Respondent (props) {
   
   const setLinearScaleValue = (index, formItemId, selectedAnswerSelection) => {
     let responses = [...formResponse];
+    let id;
+    let value;
+    if(responses[index-1] && responses[index-1].answerSelectionId == selectedAnswerSelection.id){
+      id = "";
+      value = "";
+    } else {
+      id = selectedAnswerSelection.id;
+      value = selectedAnswerSelection.label;
+    }
     let formItemResponse = {
       formRespondentId: formRespondentId,
       formItemsId: formItemId,
-      answerSelectionId: selectedAnswerSelection.id,
-      answerSelectionValue: selectedAnswerSelection.label,
+      answerSelectionId: id,
+      answerSelectionValue: value,
     }
     responses[index-1] = formItemResponse;
     if(formResponse && formResponse.length == formItems.length) localStorage.setItem("tempFormResponse", JSON.stringify(responses));
     setFormResponse(responses);
-    setNextNav(selectedAnswerSelection.nextItem);
+    setNextNav(-1);
   }
 
   const loadLinearScale = (index, formItemId, arrayOptions) => {
+    if(!arrayOptions) return;
     return (
       <React.Fragment>
         <div id="preview-linear-scale">
@@ -640,7 +658,7 @@ function Respondent (props) {
     responses[index-1].push(formItemResponse);
     if(formResponse && formResponse.length == formItems.length) localStorage.setItem("tempFormResponse", JSON.stringify(responses));
     setFormResponse(responses);
-    setNextNav(selectedAnswerSelection.nextItem);
+    setNextNav(-1);
   }
 
   const multipleChecked = (index, options) => {
@@ -653,11 +671,12 @@ function Respondent (props) {
   }
     
   const loadCheckbox = (index, formItemId, arrayOptions) => {
+    if(!arrayOptions) return;
     return (
       <React.Fragment>
         {arrayOptions.map((options, innerIdx) => {
           return (
-            <div className="preview-option-container" id="preview-option-mc-cb-container">
+            <div className="preview-option-container" id="preview-option-mc-cb-container" key={"cb-"+formItemId+"-"+innerIdx}>
               <div id="preview-input-mc-cb-container">
                 <input
                   className="answerSelection"
@@ -689,7 +708,7 @@ function Respondent (props) {
     responses[index-1] = formItemResponse;
     if(formResponse && formResponse.length == formItems.length) localStorage.setItem("tempFormResponse", JSON.stringify(responses));
     setFormResponse(responses);
-    setNextNav(answerSelection[0].nextItem);
+    setNextNav(-1);
   }
     
   const loadShortAnswer = (index, formItemId, answerSelection) => {
