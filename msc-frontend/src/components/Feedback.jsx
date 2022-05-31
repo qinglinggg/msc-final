@@ -134,14 +134,17 @@ function Feedback(props) {
               <React.Fragment>
                 <div id="chat-single-box">
                   {/* <img className="profile-image" src={profilePicture} alt="" /> */}
-                  <ProfilePicture user={message["user"]}></ProfilePicture>
+                  
                   <Link to={`/feedback/formId/${message.formId}/${message.feedbackId}`} 
                     className="link" id="link-container"
                     onClick={() => localStorage.setItem("selectedChat", JSON.stringify(message))}
                   >
-                    <div id="chat-message-box">
-                      <div id="chat-user-name">{message.fullname}</div>
-                      <div id="chat-user-message">{message["lastMessage"]}</div>
+                    <div className="chat-display">
+                      <ProfilePicture user={message["user"]}></ProfilePicture>
+                      <div id="chat-message-box">
+                        <div id="chat-user-name">{message.fullname}</div>
+                        <div id="chat-user-message">{message["lastMessage"]}</div>
+                      </div>
                     </div>
                     <div id="chat-info-box">
                       <div id="chat-timestamp">{message["date"] + " " + message["time"]}</div>

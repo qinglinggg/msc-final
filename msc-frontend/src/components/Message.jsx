@@ -157,11 +157,8 @@ function Message() {
               <img id="backspace-icon-img" src={backspaceIcon} alt="" />
             </div>
             <div id="message-profile">
-              {/* <div id="message-user-name"></div> */}
-              {/* <div id="message-status"></div> */}
-              {/* {console.log(messageMetadata.user)} */}
-              <ProfilePicture id="message-profile-image" user={JSON.parse(localStorage.getItem("selectedChat")).user}></ProfilePicture>
-              {messageMetadata.fullname}
+              <ProfilePicture user={JSON.parse(localStorage.getItem("selectedChat")).user}></ProfilePicture>
+              <span>{messageMetadata.fullname}</span>
             </div>
           </div>
           <div className="message-line"></div>

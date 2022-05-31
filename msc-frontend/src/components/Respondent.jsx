@@ -69,7 +69,7 @@ function Respondent (props) {
       axios({
         method: "post",
         url: `${BASE_URL}/api/v1/forms/form-respondent/${formId}`,
-        data: userId_data, // cek lagi nanti. 
+        data: userId_data, 
       }).then((res) => {
         if(res.data && res.data.length > 0){
           setFormRespondentId(res.data[0]);
@@ -104,9 +104,7 @@ function Respondent (props) {
       }).then((res) => {
         check = res.data;
       }).finally(() => {
-        if(check == undefined) axios.delete(`${BASE_URL}/api/v1/feedback/${feedbackId}`)
-        .then((res) => console.log("feedbackId is destroyed"))
-        .catch((error) => console.log(error));
+        if(check == undefined) axios.delete(`${BASE_URL}/api/v1/feedback/${feedbackId}`).catch((error) => console.log(error));
       })
     };
   }, []);
@@ -119,22 +117,24 @@ function Respondent (props) {
     if(!formRespondentId) return;
     if(!formItems || formItems.length == 0) return;
     if(formResponse && formResponse.length > 0) return;
+    // inisialisasi untuk formResponse
     let loadData = localStorage.getItem("tempFormResponse");
     let validator = false;
     if (loadData) {
       let selectedId = null;
       loadData = JSON.parse(loadData);
       if(loadData.length)
-      formItems.map((data, idx) => {
-        if(data.type != "CB" && !selectedId) {
-          selectedId = loadData[idx]['formRespondentId'];
-        } else {
-          let currentResp = loadData[idx];
-          if(currentResp && currentResp.length > 0) currentResp.map((resp) => {
-            if(!selectedId) selectedId = resp['formRespondentId'];
-          });
-        }
-      });
+        formItems.map((data, idx) => {
+          console.log("data: " + data + ", idx: " + idx);
+          if(data.type != "CB" && !selectedId) {
+            selectedId = loadData[idx]['formRespondentId'];
+          } else {
+            let currentResp = loadData[idx];
+            if(currentResp && currentResp.length > 0) currentResp.map((resp) => {
+              if(!selectedId) selectedId = resp['formRespondentId'];
+            });
+          }
+        });
       if(selectedId == formRespondentId) {
         setFormResponse(loadData)
         validator = true;
@@ -222,6 +222,11 @@ function Respondent (props) {
       setNavigator(tempNav);
       localStorage.setItem("navigator", JSON.stringify(tempNav));
     }
+
+    return (() => {
+      localStorage.removeItem("navigator");
+      localStorage.removeItem("tempFormResponse");
+    })
   }, [formResponse])
 
   useEffect(() => {

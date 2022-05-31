@@ -37,7 +37,7 @@ class Navbar extends React.Component {
               </div>
             ) : null
           }
-          <ProfilePicture id="pr-image" user={this.state.currentUser}></ProfilePicture>
+          <ProfilePicture user={this.state.currentUser}></ProfilePicture>
         </div>
       </nav>
     );
