@@ -42,7 +42,7 @@ class UploadImage extends React.Component {
       axios({
         url: "http://localhost:8080/upload",
         method: "POST",
-        data: { formData },
+        data: formData,
         headers: {
           'Content-Type': 'multipart/form-data'
         }
