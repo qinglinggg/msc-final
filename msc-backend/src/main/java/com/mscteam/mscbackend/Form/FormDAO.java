@@ -31,14 +31,8 @@ public class FormDAO {
             String title = resultSet.getString("title");
             String description = resultSet.getString("description");
             String privacySetting = resultSet.getString("privacySetting");
-            Date createDate = null;
-            Date modifyDate = null;
-            try {
-                createDate = dateFormat.parse(resultSet.getString("createDate"));
-                modifyDate = dateFormat.parse(resultSet.getString("modifyDate"));
-            } catch (Exception e) {
-                
-            }
+            Long createDate = resultSet.getLong("createDate");
+            Long modifyDate = resultSet.getLong("modifyDate");
             return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate);
         });
         return formList;
@@ -52,14 +46,8 @@ public class FormDAO {
             String title = resultSet.getString("title");
             String description = resultSet.getString("description");
             String privacySetting = resultSet.getString("privacySetting");
-            Date createDate = null;
-            Date modifyDate = null;
-            try {
-                createDate = dateFormat.parse(resultSet.getString("createDate"));
-                modifyDate = dateFormat.parse(resultSet.getString("modifyDate"));
-            } catch (Exception e) {
-                
-            }
+            Long createDate = resultSet.getLong("createDate");
+            Long modifyDate = resultSet.getLong("modifyDate");
             return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate);
         }, id);
         return Optional.ofNullable(form);
@@ -68,7 +56,7 @@ public class FormDAO {
     public Form insertForm(Form form) {
         final String query = "INSERT INTO Form VALUES (?,?,?,?,?,?,?)";
         int res = jdbcTemplate.update(query, form.getFormId().toString(), form.getAuthorUserId().toString(), form.getTitle(), form.getDescription(),
-                form.getPrivacySetting(), dateFormat.format(form.getCreateDate()), form.getModifyDate());
+                form.getPrivacySetting(), form.getCreateDate(), form.getModifyDate());
         return form;
     }
 
@@ -330,14 +318,8 @@ public class FormDAO {
             String title = resultSet.getString("title");
             String description = resultSet.getString("description");
             String privacySetting = resultSet.getString("privacySetting");
-            Date createDate = null;
-            Date modifyDate = null;
-            try {
-                createDate = dateFormat.parse(resultSet.getString("createDate"));
-                modifyDate = dateFormat.parse(resultSet.getString("modifyDate"));
-            } catch (Exception e) {
-                
-            }
+            Long createDate = resultSet.getLong("createDate");
+            Long modifyDate = resultSet.getLong("modifyDate");
             System.out.println("Checking: " + title);
             return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate);
         }, userId);
@@ -410,6 +392,25 @@ public class FormDAO {
     public int forceDeleteFormRespondent(String formId, String userId){
         final String query = "DELETE FROM FormRespondent WHERE formId = ? AND userId = ?";
         int res = jdbcTemplate.update(query, formId, userId);
+        return res;
+    }
+
+    public int updateModifyDate(String formId){
+        final String query = "UPDATE Form SET modifyDate = ? WHERE formId = ?";
+        Long modifyDate = System.currentTimeMillis();
+        int res = jdbcTemplate.update(query, modifyDate, formId);
+        return res;
+    }
+
+    public String getFormIdByFormItemsId(String formItemsId){
+        final String query = "SELECT formId FROM FormItems WHERE formItemsId = ?";
+        String res = jdbcTemplate.queryForObject(query, String.class, formItemsId);
+        return res;
+    }
+
+    public String getFormItemsIdByAnswerId(String answerSelectionId){
+        final String query = "SELECT formItemsId FROM FormAnswerSelection WHERE answerSelectionId = ?";
+        String res = jdbcTemplate.queryForObject(query, String.class, answerSelectionId);
         return res;
     }
 
