@@ -122,6 +122,7 @@ class App extends React.Component {
           index++;
         });
         localStorage.setItem("invitedFormLists", JSON.stringify(invitedForms));
+        localStorage.removeItem("rawInvitedFormLists");
       }).catch((error) => {
         console.log(error);
       });

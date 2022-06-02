@@ -130,7 +130,7 @@ public class FormDAO {
     }
 
     public List<FormItems> getFormItems(String id) {
-        final String query = "SELECT * FROM FormItems WHERE formId=?";
+        final String query = "SELECT * FROM FormItems WHERE formId=? ORDER BY itemNumber ASC";
         System.out.println("Searching for: " + id);
         List<FormItems> formItems = jdbcTemplate.query(query, (resultSet, i) -> {
             System.out.println(query);
@@ -311,7 +311,7 @@ public class FormDAO {
     }
 
     public List<Form> getAuthoredForms(String userId){
-        final String query = "SELECT * FROM Form WHERE authorUserId = ?";
+        final String query = "SELECT * FROM Form WHERE authorUserId = ? ORDER BY modifyDate ASC";
         List<Form> authoredForms = jdbcTemplate.query(query, (resultSet, i) -> {
             String formId = resultSet.getString("formId");
             String authorUserId = resultSet.getString("authorUserId");
@@ -347,7 +347,7 @@ public class FormDAO {
     }
 
     public List<FormRespondent> getInvitedFormRespondent(String userId){
-        final String query = "SELECT * FROM FormRespondent WHERE userId = ? AND isTargeted = 1";
+        final String query = "SELECT * FROM FormRespondent WHERE userId = ? AND isTargeted = 1 ORDER BY inviteDate ASC";
         List<FormRespondent> invitedFormList = jdbcTemplate.query(query, (resultSet, i) -> {
             String formRespondentId = resultSet.getString("formRespondentId");
             String formId = resultSet.getString("formId");
@@ -373,7 +373,6 @@ public class FormDAO {
         if(submitDate != null) resultDate = dateFormat.format(targetedUser.getSubmitDate());
         else resultDate = null;
         final String query = "INSERT INTO FormRespondent VALUES (?,?,?,?,?,?)";
-        // String inviteDateQuery = "TO_TIMESTAMP('" + targetedUser.inviteDateToTimestamp() + "', 'YYYY-MM-DD HH:MM:SS.FFF')";
         int res = jdbcTemplate.update(query, targetedUser.getFormRespondentId().toString(), targetedUser.getFormId().toString(), targetedUser.getUserId().toString(), resultDate, targetedUser.getIsTargeted(), targetedUser.getInviteDate());
         return res;
     }

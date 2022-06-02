@@ -24,9 +24,7 @@ public class FormService {
     }
 
     public List<Form> getAllForms() {
-        List<Form> forms = formDAO.getAllForms();
-        Collections.sort(forms);
-        return forms;
+        return formDAO.getAllForms();
     }
 
     public Optional<Form> getFormById(String id) {
@@ -74,9 +72,9 @@ public class FormService {
     }
 
     public List<FormItems> getFormItems(String formId) {
-        List<FormItems> listItems = formDAO.getFormItems(formId);
-        Collections.sort(listItems);
-        return listItems;
+        // List<FormItems> listItems = formDAO.getFormItems(formId);
+        // Collections.sort(listItems);
+        return formDAO.getFormItems(formId);
     }
 
     public FormItems getFormItemById(String itemId) {
