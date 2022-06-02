@@ -1,5 +1,13 @@
 package com.mscteam.mscbackend.Filedb;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
+
 @Entity
 @Table(name = "files")
 public class FileDB {
