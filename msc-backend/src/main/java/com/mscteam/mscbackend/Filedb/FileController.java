@@ -26,6 +26,7 @@ public class FileController {
     @PostMapping("/upload")
     public FileDB uploadFile(@RequestParam("file") MultipartFile file) {
         FileDB result = null;
+        String message = "";
         try {
             result = storageService.store(file);
             message = "Uploaded file successfully. ->" + file.getOriginalFilename();
