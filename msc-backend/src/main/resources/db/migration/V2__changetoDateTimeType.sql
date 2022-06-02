@@ -6,6 +6,6 @@ CREATE TABLE Form (
     privacySetting VARCHAR(30) NOT NULL,
     backgroundColor VARCHAR(25),
     backgroundLink VARCHAR(100),
-    createDate DATETIME,
-    modifyDate DATETIME
+    createDate BIGINT,
+    modifyDate BIGINT
 )
