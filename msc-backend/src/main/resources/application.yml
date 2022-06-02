@@ -1,17 +1,16 @@
-app:
-  main:
-    datasource:
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      jdbc-url: jdbc:mysql://mysqldatabase:3306/msc_database
-      username: user
-      password: password
-      pool-size: 30
-    jpa:
-      properties:
-        hibernate.dialect: org.hibernate.dialect.MySQL5InnoDBDialect
-      # Hibernate ddl auto (create, create-drop, validate, update)
-      hibernate.ddl-auto: update
-    servlet:
-      multipart:
-        max-file-size: 2MB
-        max-request-size: 2MB
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    jdbc-url: jdbc:mysql://mysqldatabase:3306/msc_database
+    username: user
+    password: password
+    pool-size: 30
+  jpa:
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    # Hibernate ddl auto (create, create-drop, validate, update)
+    hibernate.ddl-auto: update
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 2MB
