@@ -50,8 +50,8 @@ function Message() {
     let currentUser = JSON.parse(localStorage.getItem("loggedInUser"));
     setSurveyMakerId(currentUser);
     return () => {
-      clearInterval(intervalId);
       localStorage.removeItem("selectedChat");
+      clearInterval(intervalId);
     }
   }, []);
 
@@ -137,6 +137,7 @@ function Message() {
   };
 
   const handleBackToFeedbackList = () => {
+    localStorage.removeItem("selectedChat");
     window.location = `/feedback/formId/${formId}`;
   };
 

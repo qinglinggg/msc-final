@@ -30,7 +30,7 @@ class Home extends React.Component {
     forms: [],
     invitedForms: [],
     loggedInUser: "",
-    isRefreshed: false,
+    // isRefreshed: false,
   };
 
   handleClickPage1() {
@@ -60,26 +60,28 @@ class Home extends React.Component {
       tempUser = JSON.parse(tempUser);
       if(tempUser != currentUser) {
         this.setState({loggedInUser: tempUser});
-        this.setState({isRefreshed : false});
+        // this.setState({isRefreshed : false});
       }
-    } else if(currentUser){
-      if(this.state.isRefreshed == false) {
-        this.setState({isRefreshed : true}, () => 
-        window.location.href = APP_URL);
-      }
-    }
+    } 
+    // } else if(currentUser){
+    //   if(this.state.isRefreshed == false) {
+    //     this.setState({isRefreshed : true}, () => 
+    //     window.location.href = APP_URL);
+    //   }
+    // }
   }
 
   componentDidMount() {
     setInterval(() => this.checkLoggedInUser(), 500);
-    console.log("Reset selectedForm on Home Page");
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
-    tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
-    if(tempBreadcrumbs.length >= 1) {
-      while(tempBreadcrumbs.slice(-1)[0] && tempBreadcrumbs.slice(-1)[0].page != "/"){
-        tempBreadcrumbs.pop();
+    if(tempBreadcrumbs){
+      tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
+      if(tempBreadcrumbs.length >= 1) {
+        while(tempBreadcrumbs.slice(-1)[0] && tempBreadcrumbs.slice(-1)[0].page != "/"){
+          tempBreadcrumbs.pop();
+        }
       }
-    }
+    } else tempBreadcrumbs = [];
     tempBreadcrumbs.push({
       page: "Home",
       path: window.location.href,

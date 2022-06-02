@@ -230,10 +230,6 @@ function Respondent (props) {
   
   useEffect(() => {
     if(!formItems || formItems.length == 0) return;
-    // if(formResponse){
-    //   console.log("formResponse useEffect");
-    //   localStorage.setItem("tempFormResponse", JSON.stringify(formResponse));
-    // }
     if(navigator && navigator.length > 0) return;
     let loadNav = localStorage.getItem("navigator");
     let nav_check = false;
@@ -448,9 +444,26 @@ function Respondent (props) {
     return -1;
   }
 
+  const warningStyle = () => {
+    let displayContainer = document.querySelector('.inner-display-container');
+    if(!navToggle){
+      displayContainer.style.border = "2px solid #f16f6f";
+      displayContainer.style.backgroundColor = "#fde6e6";
+    } else {
+      displayContainer.style.border = "2px solid #c4c4c4";
+      displayContainer.style.backgroundColor = "white";
+      displayContainer.style.animation = 'show-transition 1s forwards';
+    }
+  }
+
   const handleNext = () => {
     console.log("nextNav:", nextNav);
-    if(!navToggle) return;
+    // console.log(navToggle);
+    // let displayContainer = document.querySelector('.inner-display-container');
+    warningStyle();
+    if(!navToggle){
+      return;
+    } 
     console.log("cek Navigator:",navigator);
     if(navigator && navigator.length != formItems.length + 1) return;
     if(nextNav == -1) {
@@ -475,12 +488,14 @@ function Respondent (props) {
     } else {
       setIndex(index + 1);
     }
-    let displayContainer = document.querySelector('.inner-display-container');
-    displayContainer.style.animation = 'show-transition 1s forwards';
+    // displayContainer.style.animation = 'show-transition 1s forwards';
   }
     
   const handleBack = () => {
-    if(!navToggle) return;
+    warningStyle();
+    if(!navToggle){
+      return;
+    }
     if(navigator[index-1] == -1) setIndex(index - 1);
     else setIndex(navigator[index-1]);
 
@@ -940,7 +955,7 @@ function Respondent (props) {
                 {index == 1 ? 
                   null : (
                   <div id="preview-back-icon-animation"
-                    style={navToggle ? {backgroundColor: "transparent"} : {backgroundColor: "gray"}}>
+                    style={navToggle ? {backgroundColor: "white"} : {backgroundColor: "gray"}}>
                     <ion-icon
                       name="chevron-back-outline"
                       id="preview-back-icon"
@@ -951,7 +966,7 @@ function Respondent (props) {
                 {displayQuestion()}
                 {(index > formItems.length && !props.previewMode) || (index > formItems.length - 1 && props.previewMode) ? null : (
                   <div id="preview-next-icon-animation"
-                    style={navToggle ? {backgroundColor: "transparent"} : {backgroundColor: "gray"}}>
+                    style={navToggle ? {backgroundColor: "white"} : {backgroundColor: "gray"}}>
                     <ion-icon
                       name="chevron-forward-outline"
                       id="preview-next-icon"

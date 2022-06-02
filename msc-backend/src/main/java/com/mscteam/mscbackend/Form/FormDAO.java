@@ -128,6 +128,7 @@ public class FormDAO {
             query += " backgroundColor = '" + toBeUpdated.getBackgroundColor() + "'";
         }
         query += "WHERE formId = ?";
+        System.out.println(query);
         int res = jdbcTemplate.update(query, id);
         return res;
     }

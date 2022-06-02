@@ -68,6 +68,8 @@ function Design(props) {
 
     let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
     selectedForm.backgroundColor = data.value;
+    console.log("selectedForm: ");
+    console.log(selectedForm);
     localStorage.setItem("selectedForm", JSON.stringify(selectedForm));
 
     /* backend : update selectedcolor */
@@ -75,8 +77,10 @@ function Design(props) {
       axios({
         method: "put",
         data: selectedForm,
-        url: `${BASE_URL}/api/v1/forms/${formId}`
+        url: `${BASE_URL}/api/v1/forms/${formId}`,
+        headers: {"Content-Type": "application/json"}
       }).then((res) => {
+        console.log(res.data);
         setSelectedColor(data.value);
       })
     } catch(error) {
