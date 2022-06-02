@@ -1,11 +1,10 @@
 spring:
   datasource:
-    main:
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      jdbc-url: jdbc:mysql://mysqldatabase:3306/msc_database
-      username: user
-      password: password
-      pool-size: 30
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    jdbc-url: jdbc:mysql://mysqldatabase:3306/msc_database
+    username: user
+    password: password
+    pool-size: 30
   jpa:
     properties:
       hibernate.dialect: org.hibernate.dialect.MySQL5InnoDBDialect
