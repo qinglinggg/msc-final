@@ -1,4 +1,4 @@
-app:
+spring:
   datasource:
     main:
       driver-class-name: com.mysql.cj.jdbc.Driver
@@ -6,3 +6,15 @@ app:
       username: user
       password: password
       pool-size: 30
+  jpa:
+    properties:
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+      hibernate.jdbc.lob.non_contextual_creation: true
+    # Hibernate ddl auto (create, create-drop, validate, update)
+    hibernate:
+      ddl-auto: update
+    multipart:
+      max-file-size: 2MB
+  servlet:
+    multipart:
+      max-request-size: 2MB
