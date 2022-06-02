@@ -1,4 +1,4 @@
-app:
+spring:
   datasource:
     main:
       driver-class-name: com.mysql.cj.jdbc.Driver
@@ -6,3 +6,13 @@ app:
       username: user
       password: password
       pool-size: 30
+  jpa:
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    # Hibernate ddl auto (create, create-drop, validate, update)
+    hibernate:
+      ddl-auto: update
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 2MB
