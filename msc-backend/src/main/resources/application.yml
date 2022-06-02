@@ -9,12 +9,10 @@ spring:
   jpa:
     properties:
       hibernate.dialect: org.hibernate.dialect.MySQL5InnoDBDialect
-      hibernate.jdbc.lob.non_contextual_creation: true
     # Hibernate ddl auto (create, create-drop, validate, update)
     hibernate:
       ddl-auto: update
-    multipart:
-      max-file-size: 2MB
   servlet:
     multipart:
+      max-file-size: 2MB
       max-request-size: 2MB
