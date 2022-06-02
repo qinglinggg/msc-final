@@ -65,11 +65,9 @@ function Design(props) {
   }
 
   const handleColorChange = (data) => {
-
     let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
     selectedForm.backgroundColor = data.value;
     localStorage.setItem("selectedForm", JSON.stringify(selectedForm));
-
     /* backend : update selectedcolor */
     try {
       axios({
@@ -81,8 +79,7 @@ function Design(props) {
       })
     } catch(error) {
       console.log(error);
-    }
-    
+    }  
   }
 
   return (
