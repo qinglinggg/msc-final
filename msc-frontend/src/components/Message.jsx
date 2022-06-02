@@ -51,6 +51,7 @@ function Message() {
     setSurveyMakerId(currentUser);
     return () => {
       clearInterval(intervalId);
+      localStorage.removeItem("selectedChat");
     }
   }, []);
 
@@ -137,7 +138,6 @@ function Message() {
 
   const handleBackToFeedbackList = () => {
     window.location = `/feedback/formId/${formId}`;
-    localStorage.removeItem("selectedChat");
   };
 
   return (

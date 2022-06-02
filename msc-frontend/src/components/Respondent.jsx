@@ -113,17 +113,24 @@ function Respondent (props) {
     displayContainer.addEventListener('animationend', () => {
       displayContainer.style.animation = '';
     });
+    localStorage.removeItem("navigator");
+    localStorage.removeItem("tempFormResponse");
     return () => {
-      let check = undefined;
-      axios({
-        method: "get",
-        url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
-      }).then((res) => {
-        check = res.data;
-      }).finally(() => {
-        if(check == undefined) axios.delete(`${BASE_URL}/api/v1/feedback/${feedbackId}`).catch((error) => console.log(error));
-      })
+      if(!previewMode){
+        let check = undefined;
+        axios({
+          method: "get",
+          url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
+        }).then((res) => {
+          check = res.data;
+        }).finally(() => {
+          if(check == undefined) axios.delete(`${BASE_URL}/api/v1/feedback/${feedbackId}`).catch((error) => console.log(error));
+        })
+      }
+      localStorage.removeItem("navigator");
+      localStorage.removeItem("tempFormResponse");
     };
+    
   }, []);
 
   useEffect(() => {
@@ -133,31 +140,34 @@ function Respondent (props) {
   useEffect(() => {
     if(!formRespondentId) return;
     if(!formItems || formItems.length == 0) return;
-    if(formResponse && formResponse.length > 0) return;
-    // inisialisasi untuk formResponse
     let loadData = localStorage.getItem("tempFormResponse");
     let validator = false;
     if (loadData) {
       let selectedId = null;
       loadData = JSON.parse(loadData);
+      console.log("loadData");
+      console.log(loadData);
       if(loadData.length)
         formItems.map((data, idx) => {
-          console.log("data: " + data + ", idx: " + idx);
           if(data.type != "CB" && !selectedId) {
             selectedId = loadData[idx]['formRespondentId'];
+            console.log("if(data.type != CB && !selectedId)")
+            console.log("selectedId: ", selectedId);
           } else {
             let currentResp = loadData[idx];
             if(currentResp && currentResp.length > 0) currentResp.map((resp) => {
               if(!selectedId) selectedId = resp['formRespondentId'];
             });
+            console.log("else, selectedId: ", selectedId);
           }
         });
       if(selectedId == formRespondentId) {
-        setFormResponse(loadData)
+        setFormResponse(loadData);
         validator = true;
       }
     }
     if(!validator) {
+      console.log("!validator");
       loadData = [];
       formItems.map((fi) => {
         if (fi.type == "CB") loadData.push([]);
@@ -165,17 +175,16 @@ function Respondent (props) {
       });
       setFormResponse(loadData);
     }
-  }, [formRespondentId]);
+  }, [formRespondentId, answerSelection]);
 
   useEffect(() => {
+    if(previewMode) return;
     let userId = JSON.parse(localStorage.getItem("loggedInUser"));
     if(feedbackId == undefined){
       let newFeedback = {
         formId: formId,
         userId: userId,
       }
-      console.log("newFeedback");
-      console.log(newFeedback);
       try {
         axios({
           method: "post",
@@ -221,6 +230,10 @@ function Respondent (props) {
   
   useEffect(() => {
     if(!formItems || formItems.length == 0) return;
+    // if(formResponse){
+    //   console.log("formResponse useEffect");
+    //   localStorage.setItem("tempFormResponse", JSON.stringify(formResponse));
+    // }
     if(navigator && navigator.length > 0) return;
     let loadNav = localStorage.getItem("navigator");
     let nav_check = false;
@@ -239,11 +252,6 @@ function Respondent (props) {
       setNavigator(tempNav);
       localStorage.setItem("navigator", JSON.stringify(tempNav));
     }
-
-    return (() => {
-      localStorage.removeItem("navigator");
-      localStorage.removeItem("tempFormResponse");
-    })
   }, [formResponse])
 
   useEffect(() => {
@@ -293,13 +301,16 @@ function Respondent (props) {
 
   useEffect(() => {
     let navbar = document.getElementById("navbar");
-    let chatHeader = document.getElementById("respondent-chat-header");
-    let chatIcon = document.getElementById("respondent-chat-button-float");
     let background = document.getElementById("page-container");
-
+    let chatHeader;
+    let chatIcon;
+    if(!previewMode){
+      chatHeader = document.getElementById("respondent-chat-header");
+      chatIcon = document.getElementById("respondent-chat-button-float");
+      chatHeader.style.backgroundColor = primaryColor;
+      chatIcon.style.backgroundColor = primaryColor;
+    }
     navbar.style.backgroundColor = primaryColor;
-    chatHeader.style.backgroundColor = primaryColor;
-    chatIcon.style.backgroundColor = primaryColor;
     if(bgLink == "") background.style.backgroundColor = secondaryColor;
     else {
       background.style.backgroundImage = bgLink;
@@ -307,11 +318,13 @@ function Respondent (props) {
     }
     return () => {
       navbar.style.backgroundColor = "";
-      chatHeader.style.backgroundColor = "";
-      chatIcon.style.backgroundColor = "";
       background.style.backgroundColor = "";
       background.style.backgroundImage = "";
       background.style.backgroundSize = "";
+      if(!previewMode && chatHeader && chatIcon){
+        chatHeader.style.backgroundColor = "";
+        chatIcon.style.backgroundColor = "";
+      }
     }
   }, [bgLink, primaryColor]);
   
@@ -407,20 +420,20 @@ function Respondent (props) {
   const checkIsRequired = (formItem, formResponse) => {
     let checker = true;
     if(!(formItem.type == "CB" || formItem.type == "LS")) {
-      if(!formResponse || formResponse.answerSelectionValue == "") checker = false;
+      // SA, MC
+      if(!formResponse || formResponse.answerSelectionValue == "" || !(formResponse.answerSelectionValue)) checker = false;
     }
     else if(formItem.type == "CB"){
+      if(!formResponse || formResponse.length == 0) checker = false;
+      else
       formResponse.map(resp => {
         if(resp || resp.answerSelectionValue != "") return;
         checker = false;
       });
-      if(!formResponse || formResponse.length == 0) checker = false;
     }
     else if(formItem.type == "LS"){
       if(!formResponse || !formResponse.answerSelectionValue) checker = false;
-    } else if(formItem.type == "SA"){
-      if(!formResponse || !formResponse.answerSelectionValue) checker = false;
-    }
+    } 
     return checker;
   }
 
@@ -563,7 +576,16 @@ function Respondent (props) {
       answerSelectionValue: value,
     }
     responses[index-1] = formItemResponse;
-    if(formResponse && formResponse.length == formItems.length) localStorage.setItem("tempFormResponse", JSON.stringify(responses));
+    console.log("responses ");
+    console.log(responses);
+    console.log("formResponse");
+    console.log(formResponse);
+    console.log("formItems.length");
+    console.log(formItems.length);
+    if(formResponse && formResponse.length == formItems.length){
+      console.log("set item");
+      localStorage.setItem("tempFormResponse", JSON.stringify(responses));
+    }
     setFormResponse(responses);
     setNextNav(selectedAnswerSelection.nextItem);
   }
@@ -759,7 +781,7 @@ function Respondent (props) {
             url: `${BASE_URL}/api/v1/forms/insert-response/${formRespondentId}`,
             data: response
           }).then(() => {
-            localStorage.setItem("tempFormResponse", JSON.stringify([]));
+            localStorage.removeItem("tempFormResponse");
           })
         } catch(error) {
           console.log(error);
@@ -773,7 +795,7 @@ function Respondent (props) {
               method: "post",
               url: `${BASE_URL}/api/v1/forms/insert-response/${formRespondentId}`,
               data: respItem
-            }).then(() => {if(respIndex == response.length - 1) localStorage.setItem("tempFormResponse", JSON.stringify([]))});
+            }).then(() => {if(respIndex == response.length - 1) localStorage.removeItem("tempFormResponse");});
           } catch(error) {
             console.log(error);
           }
@@ -951,7 +973,8 @@ function Respondent (props) {
                 </div>
                 <div className="text-indicator"><span id="page-num">{index}</span><span id="max-page">/{formItems.length}</span></div>
               </div>
-              <div id="respondent-chat">
+              {!previewMode ? (
+                <div id="respondent-chat">
                 {respondentChat()}
                 <div id="respondent-chat-button-float" 
                   onClick={() => {
@@ -962,6 +985,18 @@ function Respondent (props) {
                   <ion-icon name={openChat ? "close" : "chatbubbles"} id="respondent-chat-icon"></ion-icon>
                 </div>
               </div>
+              ) : null}
+              {/* <div id="respondent-chat">
+                {respondentChat()}
+                <div id="respondent-chat-button-float" 
+                  onClick={() => {
+                    handleOpenChat();
+                    displayChatBox();
+                  }}
+                >
+                  <ion-icon name={openChat ? "close" : "chatbubbles"} id="respondent-chat-icon"></ion-icon>
+                </div>
+              </div> */}
           </div>
       </React.Fragment>
   );
