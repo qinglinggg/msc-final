@@ -24,7 +24,9 @@ public class FormService {
     }
 
     public List<Form> getAllForms() {
-        return formDAO.getAllForms();
+        List<Form> forms = formDAO.getAllForms();
+        Collections.sort(forms);
+        return forms;
     }
 
     public Optional<Form> getFormById(String id) {
