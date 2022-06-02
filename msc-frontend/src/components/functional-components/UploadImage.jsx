@@ -37,7 +37,7 @@ class UploadImage extends React.Component {
       console.log("file", file);
       let formData = new FormData();
       let currentForm = 
-      formData.append("image", file);
+      formData.append("file", file);
       console.log("formData", formData);
       axios({
         url: "http://localhost:8080/upload",
