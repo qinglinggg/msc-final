@@ -14,25 +14,41 @@ class UploadImage extends React.Component {
     selectedImage: null,
   };
 
+  componentDidMount() {
+    // let fileReader = new FileReader();
+    // let fileURL;
+    // fileReader.onload = () => {
+    //   fileURL = fileReader.result;
+
+    //   let imageContainer = document.querySelector(
+    //     "#design-background-uploadimage-image"
+    //   );
+    //   let image = `<img src=${fileURL} alt="" />`;
+    //   imageContainer.insertAdjacentHTML("afterbegin", image);
+    // };
+
+    // fileReader.readAsDataURL(file);
+  }
+
   handleUploadFile(file) {
-    console.log("Enter handle file");
-    console.log(file);
-
     // image validation
-
     let validExtensions = ["image/jpeg", "image/png", "image/jpg"];
     if (validExtensions.includes(file.type)) {
-      console.log(file);
+      console.log("file", file);
       let formData = new FormData();
-      formData.append("image", file);
-
+      let currentForm = 
+      formData.append("file", file);
+      console.log("formData", formData);
       axios({
-        url: "http://localhost:8080/api/v1/forms/background",
+        url: "http://localhost:8080/api/v1/upload",
         method: "POST",
-        data: { formData },
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       }).then(
         (res) => {
-          // console.log("successfully uploaded");
+          console.log(res);
         },
         (err) => {
           // error
@@ -40,20 +56,6 @@ class UploadImage extends React.Component {
       );
 
       this.setState({ isImageUploaded: true });
-
-      let fileReader = new FileReader();
-      let fileURL;
-      fileReader.onload = () => {
-        fileURL = fileReader.result;
-
-        let imageContainer = document.querySelector(
-          "#design-background-uploadimage-image"
-        );
-        let image = `<img src=${fileURL} alt="" />`;
-        imageContainer.insertAdjacentHTML("afterbegin", image);
-      };
-
-      fileReader.readAsDataURL(file);
       // console.log(this.state.selectedImage);
 
       // animation
@@ -95,8 +97,6 @@ class UploadImage extends React.Component {
         "#design-background-uploadimage-text-header"
       );
 
-    // file is dragged on drag area
-    console.log("File is dragged");
     e.preventDefault();
     dropArea.classList.add("active");
     dragText.textContent = "Release to Upload File";
@@ -110,15 +110,11 @@ class UploadImage extends React.Component {
         "#design-background-uploadimage-text-header"
       );
 
-    // file is dragged over drag area
-    console.log("File is dragged outside from drag area");
     dropArea.classList.remove("active");
     dragText.textContent = "Drag & Drop to Upload File";
   }
 
   handleAreaDrop(e) {
-    // file is dropped on drag area
-    console.log("File is dropped on drag area");
     e.preventDefault();
     let file = e.dataTransfer.files[0];
     this.handleUploadFile(file);

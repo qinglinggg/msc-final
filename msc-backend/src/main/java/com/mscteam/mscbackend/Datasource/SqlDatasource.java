@@ -13,7 +13,7 @@ public class SqlDatasource {
 
     @Bean
     @Primary
-    @ConfigurationProperties("app.datasource.main")
+    @ConfigurationProperties("spring.datasource")
     public HikariDataSource HDS() {
         return DataSourceBuilder
                 .create()
