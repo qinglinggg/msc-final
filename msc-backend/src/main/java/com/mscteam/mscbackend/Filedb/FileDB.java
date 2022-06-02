@@ -9,7 +9,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-@Table(name = "files")
+@Table(name = "Files")
 public class FileDB {
 
     @Id
