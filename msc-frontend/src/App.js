@@ -70,7 +70,7 @@ class App extends React.Component {
         loggedIn = JSON.parse(loggedIn);
         this.checkLoggedInUser(loggedIn);
       } else {
-        currentToken = sessionStorage.getItem("bearer_token");
+        let currentToken = sessionStorage.getItem("bearer_token");
         if(this.state.loggedInUser) this.setState({ loggedInUser : "" });
         if (currentToken) sessionStorage.removeItem("bearer_token");
         return;
@@ -96,10 +96,6 @@ class App extends React.Component {
       localStorage.setItem("rawInvitedFormLists", JSON.stringify([]));
       this.setState({ isRefreshed : true });
     }
-  }
-
-  componentWillUnmount(){
-    localStorage.removeItem("loggedInUser");
   }
 
   async updateUserdata(userId) {
@@ -180,17 +176,17 @@ class App extends React.Component {
 
   handleSetLoggedInUser(userId) {
     localStorage.setItem("loggedInUser", JSON.stringify(userId));
-    obj = {"userId" : userId};
+    let obj = {"userId" : userId};
     axios({
       method: "post",
       url: `${BASE_URL}/api/v1/user-profiles/insert-session`,
       data: obj,
       headers: { "Content-Type" : "application/json" }
     }).then((res) => {
-      currentLogin = res.data["bearerToken"];
+      let currentLogin = res.data["bearerToken"];
       sessionStorage.setItem("bearer_token", JSON.stringify(currentLogin));
-    })
-    this.setState({loggedInUser : userId});
+      localStorage.setItem("loggedInUser", res.data["userId"]);
+    });
   }
 
   authentication() {
