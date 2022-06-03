@@ -33,7 +33,9 @@ public class FormDAO {
             String privacySetting = resultSet.getString("privacySetting");
             Long createDate = resultSet.getLong("createDate");
             Long modifyDate = resultSet.getLong("modifyDate");
-            return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate);
+            String backgroundColor = resultSet.getString("backgroundColor");
+            String backgroundLink = resultSet.getString("backgroundLink");
+            return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate, backgroundColor, backgroundLink);
         });
         return formList;
     }
@@ -48,16 +50,18 @@ public class FormDAO {
             String privacySetting = resultSet.getString("privacySetting");
             Long createDate = resultSet.getLong("createDate");
             Long modifyDate = resultSet.getLong("modifyDate");
-            return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate);
+            String backgroundColor = resultSet.getString("backgroundColor");
+            String backgroundLink = resultSet.getString("backgroundLink");
+            return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate, backgroundColor, backgroundLink);
         }, id);
         if(form.isEmpty()) return null;
         return Optional.ofNullable(form.get(0));
     }
 
     public Form insertForm(Form form) {
-        final String query = "INSERT INTO Form VALUES (?,?,?,?,?,?,?)";
+        final String query = "INSERT INTO Form VALUES (?,?,?,?,?,?,?,?,?)";
         int res = jdbcTemplate.update(query, form.getFormId().toString(), form.getAuthorUserId().toString(), form.getTitle(), form.getDescription(),
-                form.getPrivacySetting(), form.getCreateDate(), form.getModifyDate());
+                form.getPrivacySetting(), form.getCreateDate(), form.getModifyDate(), form.getBackgroundColor(), form.getBackgroundLink());
         return form;
     }
 
@@ -321,8 +325,10 @@ public class FormDAO {
             String privacySetting = resultSet.getString("privacySetting");
             Long createDate = resultSet.getLong("createDate");
             Long modifyDate = resultSet.getLong("modifyDate");
+            String backgroundColor = resultSet.getString("backgroundColor");
+            String backgroundLink = resultSet.getString("backgroundLink");
             System.out.println("Checking: " + title);
-            return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate);
+            return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate, backgroundColor, backgroundLink);
         }, userId);
 
         return authoredForms;

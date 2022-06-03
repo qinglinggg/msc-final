@@ -53,7 +53,6 @@ class App extends React.Component {
       method: "get",
       url: `${BASE_URL}/api/v1/user-profiles/get-session/${loggedIn}`
     }).then((res) => {
-      console.log(res.data);
       if(!res.data) return;
       let currentKey = res.data["bearerToken"];
       if (this.state.loggedInUser == res.data["userId"]) return;
@@ -118,8 +117,8 @@ class App extends React.Component {
     });
     await axios.get(`${BASE_URL}/api/v1/forms/invited-form-respondent/${userId}`).then((res) => {
       const invitedForms = res.data;
+      console.log(res.data);
       localStorage.setItem("rawInvitedFormLists", JSON.stringify(invitedForms));
-      // this.setState({rawInvitedFormLists : invitedForms});
     }).catch((error) => {
       console.log(error);
     });
