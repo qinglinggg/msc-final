@@ -41,26 +41,30 @@ class App extends React.Component {
     rawInvitedFormLists: [],
     loggedInUser: "",
     currentPage: "",
-    isRefreshed: false,
+    isRefreshed: false
   }
 
-  checkLoggedInUser() {
-    let tempUser = localStorage.getItem("loggedInUser");
-    let currentUser = this.state.loggedInUser;
-    if (tempUser) {
-      tempUser = JSON.parse(tempUser);
-      if(tempUser != currentUser) {
-        this.setState({loggedInUser: tempUser});
-        this.setState({isRefreshed : false});
-      }
-    } else if(!tempUser){
-      this.handleLogout();
-    } else if(currentUser){
-      // if(this.state.isRefreshed == false) {
-      //   this.setState({isRefreshed : true}, () => 
-      //   window.location.href = APP_URL);
-      // }
+  checkLoggedInUser(loggedIn) {
+    if(!loggedIn || loggedIn == "") {
+      if(window.location.pathname != '/') window.location = '/';
+      return;
     }
+    axios({
+      method: "get",
+      url: `${BASE_URL}/api/v1/user-profiles/get-session/${loggedIn}`
+    }).then((res) => {
+      console.log(res);
+      if(!res.data) return;
+      let currentKey = res.data["bearerToken"];
+      if (this.state.loggedInUser == res.data["userId"]) return;
+      let ownedKey = JSON.parse(sessionStorage.getItem("bearer_token"));
+      console.log(currentKey, ownedKey, currentKey == ownedKey);
+      if(currentKey == ownedKey) {
+        this.setState({ loggedInUser : res.data["userId"] });
+      } else {
+        this.setState({ loggedInUser : "" });
+      }
+    });
   }
 
   handleLogout() {
@@ -72,7 +76,19 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    setInterval(() => this.checkLoggedInUser(), 1000);
+    setInterval(() => {
+      let loggedIn = localStorage.getItem("loggedInUser");
+      console.log(loggedIn);
+      if (loggedIn) {
+        loggedIn = JSON.parse(loggedIn);
+        this.checkLoggedInUser(loggedIn);
+      } else {
+        let currentToken = sessionStorage.getItem("bearer_token");
+        if(this.state.loggedInUser) this.setState({ loggedInUser : "" });
+        if (currentToken) sessionStorage.removeItem("bearer_token");
+        return;
+      }
+    }, 1000);
     let body = document.getElementById("body");
     // MENU
     let menuClose = document.getElementById("menu-close");
@@ -87,11 +103,13 @@ class App extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if(this.state.loggedInUser != prevState.loggedInUser && this.state.loggedInUser != "") {
       this.updateUserdata(this.state.loggedInUser);
+      this.setState({ isRefreshed : false });
+    } else if (this.state.loggedInUser == "" && !this.state.isRefreshed) {
+      localStorage.removeItem("formLists");
+      localStorage.removeItem("rawInvitedFormLists");
+      localStorage.removeItem("loggedInUser");
+      this.setState({ isRefreshed : true });
     }
-  }
-
-  componentWillUnmount(){
-    localStorage.removeItem("loggedInUser");
   }
 
   async updateUserdata(userId) {
@@ -159,8 +177,18 @@ class App extends React.Component {
   }
 
   handleSetLoggedInUser(userId) {
-    localStorage.setItem("loggedInUser", JSON.stringify(userId));
-    this.setState({loggedInUser : userId});
+    let obj = {"userId" : userId};
+    axios({
+      method: "post",
+      url: `${BASE_URL}/api/v1/user-profiles/insert-session`,
+      data: obj,
+      headers: { "Content-Type" : "application/json" }
+    }).then((res) => {
+      let currentLogin = res.data["bearerToken"];
+      console.log("bearer", currentLogin);
+      sessionStorage.setItem("bearer_token", JSON.stringify(currentLogin));
+      localStorage.setItem("loggedInUser", JSON.stringify(res.data["userId"]));
+    });
   }
 
   authentication() {
