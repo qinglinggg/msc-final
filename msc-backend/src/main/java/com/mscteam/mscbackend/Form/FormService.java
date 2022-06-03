@@ -83,8 +83,11 @@ public class FormService {
     }
 
     public int updateFormItems(String formItemsId, FormItems toBeUpdated) {
+        System.out.println("updateFormItems");
         String formId = toBeUpdated.getFormId().toString();
+        System.out.println("formId masuk " + formId);
         int res = this.updateModifyDate(formId, 0);
+        System.out.println("sudah update modifyDate");
         return formDAO.updateFormItems(formItemsId, toBeUpdated);
     }
 

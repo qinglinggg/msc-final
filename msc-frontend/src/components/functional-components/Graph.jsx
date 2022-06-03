@@ -144,6 +144,7 @@ class Graph extends React.Component {
   }
 
   showListedAnswers() {
+    console.log(this.props.answerList);
     return (
       <div className="shortanswer-list">
       {
