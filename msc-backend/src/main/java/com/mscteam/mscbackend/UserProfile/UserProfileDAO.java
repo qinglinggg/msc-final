@@ -128,7 +128,8 @@ public class UserProfileDAO {
             return new Logins(userId, bearer);
         }, id);
         if(resToken.size() > 0) {
-            System.out.println("Test getSession: " + resToken.get(0));
+            Logins curData = resToken.get(0);
+            System.out.println("Test getSession: " + curData.getBearerToken());
             return resToken.get(0);
         }
         return null;

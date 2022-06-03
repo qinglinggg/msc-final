@@ -53,7 +53,7 @@ class App extends React.Component {
       method: "get",
       url: `${BASE_URL}/api/v1/user-profiles/get-session/${loggedIn}`
     }).then((res) => {
-      console.log(res);
+      console.log(res.data);
       if(!res.data) return;
       let currentKey = res.data["bearerToken"];
       if (this.state.loggedInUser == res.data["userId"]) return;
@@ -78,8 +78,7 @@ class App extends React.Component {
   componentDidMount() {
     setInterval(() => {
       let loggedIn = localStorage.getItem("loggedInUser");
-      console.log(loggedIn);
-      if (loggedIn) {
+      if (loggedIn && loggedIn != "") {
         loggedIn = JSON.parse(loggedIn);
         this.checkLoggedInUser(loggedIn);
       } else {
