@@ -16,8 +16,10 @@ function Menu(props) {
   useEffect(() => {
     console.log(props.currentPage);
     let currentForm = localStorage.getItem("selectedForm");
-    currentForm = JSON.parse(currentForm);
-    setSelectedForm(currentForm['formId']);
+    if(currentForm) {
+      currentForm = JSON.parse(currentForm);
+      setSelectedForm(currentForm['formId']);
+    }
   }, [props.currentPage]);
 
   useEffect(() => {
