@@ -130,7 +130,7 @@ public class UserProfileDAO {
         if(resToken.size() > 0) {
             Logins curData = resToken.get(0);
             System.out.println("Test getSession: " + curData.getBearerToken());
-            return resToken.get(0);
+            return curData;
         }
         return null;
     }
