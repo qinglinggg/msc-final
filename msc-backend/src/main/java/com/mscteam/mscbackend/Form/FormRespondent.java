@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class FormRespondent {
+public class FormRespondent implements Comparable<FormRespondent> {
     private UUID formRespondentId;
     private UUID formId;
     private UUID userId;
@@ -80,5 +80,10 @@ public class FormRespondent {
     public String inviteDateToTimestamp()  {
         Timestamp timestamp = new Timestamp(inviteDate);
         return timestamp.toString();
+    }
+
+    @Override
+    public int compareTo(FormRespondent o) {
+        return this.getInviteDate().compareTo(o.getInviteDate());
     }
 }

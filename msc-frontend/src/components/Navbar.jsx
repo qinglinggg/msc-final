@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 // import dummyProfile from "./images/woman.jpg";
 import ProfilePicture from "./functional-components/ProfilePicture"
+import Popup from "reactjs-popup";
 
 const BASE_URL = "http://10.61.38.193:8080";
 
@@ -29,16 +30,30 @@ class Navbar extends React.Component {
         <Link to="/" id="app-title">
           MySurveyCompanion
         </Link>
-        <div id="profile-container">
-          {this.state.currentUser ? (
-              <div className="profile-preview">
-                <span id="pr-username">{this.state.currentUser.fullname}</span>
-                <span id="pr-email">{this.state.currentUser.email}</span>
+        <Popup
+            trigger={(open) => 
+              <div 
+                id="profile-container"
+              >
+              {this.state.currentUser ? (
+                  <div className="profile-preview">
+                    <span id="pr-username">{this.state.currentUser.fullname}</span>
+                    <span id="pr-email">{this.state.currentUser.email}</span>
+                  </div>
+                ) : null
+              }
+                <ProfilePicture user={this.state.currentUser}></ProfilePicture>
               </div>
-            ) : null
-          }
-          <ProfilePicture user={this.state.currentUser}></ProfilePicture>
-        </div>
+            }
+            position="bottom center"
+          >
+             <div className="popup-wrapper">
+               <div className="popup-content" id="popup-logout" onClick={this.props.handleLogout}>
+                <ion-icon name="log-out" id="popup-icon-logout"></ion-icon>
+                <div className="popup-text">Sign out</div>
+               </div>
+             </div>
+          </Popup>
       </nav>
     );
   }

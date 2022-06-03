@@ -33,6 +33,7 @@ class App extends React.Component {
     this.handleSetLoggedInUser = this.handleSetLoggedInUser.bind(this);
     this.handleUpdateCurrentPage = this.handleUpdateCurrentPage.bind(this);
     this.checkLoggedInUser = this.checkLoggedInUser.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
   }
 
   state = {
@@ -61,6 +62,14 @@ class App extends React.Component {
         this.setState({ loggedInUser : "" });
       }
     });
+  }
+
+  handleLogout() {
+    localStorage.clear();
+    this.setState({ loggedInUser: false });
+    if(window.location.pathname != '/'){
+      window.location = '/';
+    }
   }
 
   componentDidMount() {
@@ -99,7 +108,6 @@ class App extends React.Component {
   }
 
   async updateUserdata(userId) {
-    console.log("update");
     await axios.get(`${BASE_URL}/api/v1/forms/owned-form/${userId}`).then((res) => {
       const forms = res.data;
       localStorage.setItem("formLists", JSON.stringify(forms));
@@ -127,6 +135,7 @@ class App extends React.Component {
           index++;
         });
         localStorage.setItem("invitedFormLists", JSON.stringify(invitedForms));
+        localStorage.removeItem("rawInvitedFormLists");
       }).catch((error) => {
         console.log(error);
       });
@@ -157,18 +166,6 @@ class App extends React.Component {
       console.log(error);
     }
   }
-
-  // handleSendNewMessage(message) {
-  //   let newArray = this.state.messages.messagesHistory;
-  //   let newMessage = {
-  //     // nanti diubah
-  //     userID: 2, // user id pemilik form
-  //     message: message,
-  //     timestamp: "3.48 PM",
-  //   };
-  //   newArray.push(newMessage);
-  //   this.setState({ messageHistory: newArray });
-  // }
 
   handleSetFormMessages(formMessages){
     this.setState({formMessages});
@@ -220,7 +217,9 @@ class App extends React.Component {
     let count = 0;
     return (
       <React.Fragment>
-        <Navbar />
+        <Navbar 
+          handleLogout={this.handleLogout}
+        />
         <div className="background"></div>
         <Menu currentPage={this.state.currentPage}/>
         <div className="page-container" id="page-container">

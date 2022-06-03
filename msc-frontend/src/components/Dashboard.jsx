@@ -28,7 +28,6 @@ function Dashboard(props) {
   const [privacyCheck, setPrivacyCheck] = useState(false);
 
   useEffect(() => {
-    // console.log("Test Form Id: " + formId);
     props.handleUpdateCurrentPage(formId);
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
@@ -56,9 +55,11 @@ function Dashboard(props) {
       }
     }
     let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
-    tempBreadcrumbs.push({page: "Dashboard - " + selectedForm['title'], path: window.location.href});
-    setCurrentStep(tempBreadcrumbs);
-    localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
+    if(tempBreadcrumbs){
+      tempBreadcrumbs.push({page: "Dashboard - " + selectedForm['title'], path: window.location.href});
+      setCurrentStep(tempBreadcrumbs);
+      localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
+    }
     setTitle(selectedForm.title);
     setDescription(selectedForm.description);
     setPrivacyCheck(selectedForm.privacyCheck);

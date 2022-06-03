@@ -66,7 +66,7 @@ class PageItems extends React.Component {
                   this.processDeletion();
                 }}
               >
-                Delete this form
+                <div className="popup-text">Delete this form</div>
               </div>
             </div>
           </Popup> 
