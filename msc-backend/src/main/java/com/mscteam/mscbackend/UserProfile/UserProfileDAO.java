@@ -126,6 +126,7 @@ public class UserProfileDAO {
             String bearer = resultSet.getString("bearerToken");
             return new Logins(userId, bearer);
         }, id);
+        System.out.println("Test getSession", resToken.get(0));
         if(resToken.size() > 0) return resToken.get(0);
         return null;
     }
