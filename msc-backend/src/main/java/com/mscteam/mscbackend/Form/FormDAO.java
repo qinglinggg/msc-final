@@ -40,7 +40,7 @@ public class FormDAO {
 
     public Optional<Form> getFormById(String id) {
         final String query = "SELECT * FROM Form WHERE formId=?";
-        Form form = jdbcTemplate.queryForObject(query, (resultSet, i) -> {
+        List<Form> form = jdbcTemplate.query(query, (resultSet, i) -> {
             String formId = resultSet.getString("formId");
             String authorUserId = resultSet.getString("authorUserId");
             String title = resultSet.getString("title");
@@ -50,7 +50,8 @@ public class FormDAO {
             Long modifyDate = resultSet.getLong("modifyDate");
             return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate);
         }, id);
-        return Optional.ofNullable(form);
+        if(form.isEmpty()) return null;
+        return Optional.ofNullable(form.get(0));
     }
 
     public Form insertForm(Form form) {

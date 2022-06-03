@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PageItems from "./PageItems";
 import SearchField from "react-search-field";
+import Popup from "reactjs-popup";
 import axios from "axios";
 
 const APP_URL = "http://10.61.38.193:3001";
@@ -24,12 +25,14 @@ class Home extends React.Component {
     isRequired: false,
     formCounter: 0,
     searchValue: null,
+    invFilterValue: null,
     title: "",
     description: "",
     privacySetting: "",
     forms: [],
     invitedForms: [],
     loggedInUser: "",
+    nullFlag: 0,
     // isRefreshed: false,
   };
 
@@ -161,13 +164,34 @@ class Home extends React.Component {
                     classNames="test-class"
                   />
                 </div>
+                <div className="page-filter">
+                  {
+                    this.state.selectedPage == 2 ?
+                    <Popup
+                      trigger={(open) => 
+                        <ion-icon name="filter-outline" id="page-filter"></ion-icon>
+                      }
+                      position="bottom center"
+                    >
+                      <div className="popup-wrapper">
+                        {/* <div className="popup-content" onClick={() => this.setState({invFilterValue : "unanswered"})}> */}
+                          <div className="popup-text">Show only unanswered forms</div>
+                        {/* </div> */}
+                        {/* <div className="popup-content" onClick={() => this.setState({invFilterValue : "answered"})}> */}
+                          <div className="popup-text">Show only answered forms</div>
+                        {/* </div> */}
+                      </div>
+                    </Popup>
+                      : null
+                  }
+                </div>
                 <img src="" alt="" id="history-btn" />
               </div>
             </div>
-            {this.state.selectedPage == 2 && this.state.invitedForms.length == 0 ?
+            {/* {this.state.selectedPage == 2 && this.state.invitedForms.length == 0 ?
               <div className="home-form-is-null">You're not invited to fill any form yet. Feel free to continue your work!</div>
               : null
-            }
+            } */}
             <div className="list-container">{page}</div>
           </div>
         </div>
@@ -176,14 +200,66 @@ class Home extends React.Component {
     );
   }
 
-  filterData(data) {
-    if (!this.state.searchValue) {
-      return data;
+  nullText() {
+    let nullValue = this.state.nullFlag;
+    if(nullValue == 1){
+      return (
+        <div className="home-form-is-null">The form you are looking for is unavailable. Maybe try other keywords?</div>
+      )
+    } else if (nullValue == 2){
+      return (
+        <div className="home-form-is-null">You're not invited to fill any form yet. Feel free to continue your work!</div>
+      )
+    } else if (nullValue == 3){
+      return (
+        <div className="home-form-is-null">There are no matches form yet :(</div>
+      )
     }
-    return data.filter((d) => {
+  }
+
+  searchData(data){
+    if(!this.state.searchValue) return data;
+    const search = this.state.searchValue.toLowerCase();
+    let searchedData = data.filter((d) => {
       const dataName = d.title.toLowerCase();
-      return dataName.includes(this.state.searchValue);
+      return dataName.includes(search);
     });
+    return searchedData;
+  }
+
+  filterData(data){
+    if(!this.state.invFilterValue) return data;
+    let filteredData = data;
+    if(this.state.invFilterValue == "answered"){
+      filteredData = filteredData.filter((d) => {
+        return d.submitDate != null;
+      })
+    }
+    else if(this.state.invFilterValue == "unanswered"){
+      filteredData = filteredData.filter((d) => {
+        return d.submitDate == null;
+      })
+    }
+    return filteredData;
+  }
+
+  getData(data) {
+    let nullValue = 0;
+    let res = null;
+    if(this.state.selectedPage == 1){
+      res = this.searchData(data);
+      if(!res) nullValue = 1;
+    } else if(this.state.selectedPage == 2){
+      if(!data) nullValue = 2;
+      else {
+        res = this.filterData(data);
+        if(!res) nullValue = 3;
+        else {
+          res = this.searchData(res);
+          if(!res) nullValue = 1;
+        }
+      }
+    }
   }
 
   searchOnChange(value) {
@@ -196,7 +272,6 @@ class Home extends React.Component {
     let tempList = localStorage.getItem("formLists");
     tempList = JSON.parse(tempList);
     this.setState({forms: tempList}); 
-    console.log("deleted");
   }
 
   displayPage1() {
