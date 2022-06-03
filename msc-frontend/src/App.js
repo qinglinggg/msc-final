@@ -83,7 +83,7 @@ class App extends React.Component {
         this.checkLoggedInUser(loggedIn);
       } else {
         let currentToken = sessionStorage.getItem("bearer_token");
-        if(this.state.loggedInUser) this.setState({ loggedInUser : "" });
+        if(this.state.loggedInUser != "" || this.state.loggedInUser == null) this.setState({ loggedInUser : "" });
         if (currentToken) sessionStorage.removeItem("bearer_token");
         return;
       }
@@ -104,9 +104,7 @@ class App extends React.Component {
       this.updateUserdata(this.state.loggedInUser);
       this.setState({ isRefreshed : false });
     } else if (this.state.loggedInUser == "" && !this.state.isRefreshed) {
-      localStorage.removeItem("formLists");
-      localStorage.removeItem("rawInvitedFormLists");
-      localStorage.removeItem("loggedInUser");
+      localStorage.clear();
       this.setState({ isRefreshed : true });
     }
   }
@@ -308,7 +306,7 @@ class App extends React.Component {
   render() {
     return (
       <Router>
-        { this.state.loggedInUser != null ? ( this.state.loggedInUser == "" ? this.authentication() : this.appRouting()) : null}
+        { this.state.loggedInUser != null ? ( this.state.loggedInUser == "" ? this.authentication() : this.appRouting()) : <div>Loading application...</div>}
       </Router>
     );
   }

@@ -36,11 +36,10 @@ class UploadImage extends React.Component {
     if (validExtensions.includes(file.type)) {
       console.log("file", file);
       let formData = new FormData();
-      let currentForm = 
       formData.append("file", file);
       console.log("formData", formData);
       axios({
-        url: "http://localhost:8080/api/v1/upload",
+        url: "http://10.61.38.193:8080/api/v1/upload",
         method: "POST",
         data: formData,
         headers: {
@@ -49,15 +48,12 @@ class UploadImage extends React.Component {
       }).then(
         (res) => {
           console.log(res);
+          this.setState({ isImageUploaded: true });
         },
         (err) => {
           // error
         }
       );
-
-      this.setState({ isImageUploaded: true });
-      // console.log(this.state.selectedImage);
-
       // animation
       const dropArea = document.querySelector(
           "#design-background-uploadimage-area"
