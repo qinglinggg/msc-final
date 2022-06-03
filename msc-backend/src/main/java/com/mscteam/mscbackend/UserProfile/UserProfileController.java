@@ -59,7 +59,7 @@ public class UserProfileController {
     }
 
     @GetMapping(value = "/get-session/{id}")
-    public Logins getSession(String id) {
+    public Logins getSession(@PathVariable("id") String id) {
         return userProfileService.getSession(id);
     }
 
