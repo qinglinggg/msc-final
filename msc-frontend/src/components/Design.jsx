@@ -49,7 +49,6 @@ function Design(props) {
 
     let selectedForm = localStorage.getItem("selectedForm");
     selectedForm = JSON.parse(selectedForm);
-    console.log(selectedForm);
 
     tempBreadcrumbs.push({page: "Design - " + selectedForm['title'], path: window.location.href});
     setCurrentStep(tempBreadcrumbs);
