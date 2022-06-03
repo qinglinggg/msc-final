@@ -2,21 +2,19 @@ import React, { useEffect, useState } from 'react';
  
 const ProfilePicture = (props) => {
 
-    let id = props.id;
-    let user = props.user;
-
     const [userState, setUserState] = useState(false);
 
     useEffect(() => {
-        let profileImage = user.profileImage;
+        console.log(props.user);
+        let profileImage = props.user.profileImage;
         if(profileImage != "null" && profileImage) {
             setUserState(true);
         }
-    }, []);
+    }, [props.user]);
 
     const displayPicture = () => {
-        if(!user || !user.fullname) return;
-        let splitted = user.fullname.split(" ");
+        if(!props.user || !props.user.fullname) return;
+        let splitted = props.user.fullname.split(" ");
         let init = "";
         splitted.map((val) => {
         init += val[0];
@@ -27,8 +25,7 @@ const ProfilePicture = (props) => {
     return (
         <div className="profile-image">
         {userState ? 
-        (<img id={id ? id : null} 
-            src={user.profileImage} />) : (displayPicture())}
+        (<img src={props.user.profileImage} />) : (displayPicture())}
         </div>
     );
 

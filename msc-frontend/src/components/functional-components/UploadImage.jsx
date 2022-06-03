@@ -14,20 +14,24 @@ class UploadImage extends React.Component {
     selectedImage: null,
   };
 
-  componentDidMount() {
-    // let fileReader = new FileReader();
-    // let fileURL;
-    // fileReader.onload = () => {
-    //   fileURL = fileReader.result;
-
-    //   let imageContainer = document.querySelector(
-    //     "#design-background-uploadimage-image"
-    //   );
-    //   let image = `<img src=${fileURL} alt="" />`;
-    //   imageContainer.insertAdjacentHTML("afterbegin", image);
-    // };
-
-    // fileReader.readAsDataURL(file);
+  componentDidUpdate(prevProps, prevState) {
+    let currentForm = localStorage.getItem("selectedForm");
+    if(currentForm) currentForm = JSON.parse(currentForm);
+    else return;
+    if(prevState.selectedImage != this.state.selectedImage && this.state.selectedImage != null) {
+      console.log("image updated");
+      currentForm.backgroundLink = "http://10.61.38.193:8080/api/v1/files/" + this.state.selectedImage;
+      axios({
+        method: "put",
+        url: "http://10.61.38.193:8080/api/v1/forms/" + currentForm.formId,
+        data: currentForm
+      }).then(() => {
+        this.setState({ isImageUploaded: true });
+      });
+    }
+    if(prevState.isImageUploaded != this.state.isImageUploaded && this.state.isImageUploaded == true) {
+      setTimeout(this.setState({ isImageUploaded: false}));
+    }
   }
 
   handleUploadFile(file) {
@@ -45,15 +49,9 @@ class UploadImage extends React.Component {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
-      }).then(
-        (res) => {
-          console.log(res);
-          this.setState({ isImageUploaded: true });
-        },
-        (err) => {
-          // error
-        }
-      );
+      }).then((res) => {
+          this.setState({selectedImage : res.data.id});
+        });
       // animation
       const dropArea = document.querySelector(
           "#design-background-uploadimage-area"
@@ -175,9 +173,7 @@ class UploadImage extends React.Component {
             type="file"
             onChange={(e) => {
               let file = e.target.files[0];
-              this.setState({ selectedImage: file });
               this.handleUploadFile(file);
-
               // animation
               let dropArea = document.querySelector(
                 "#design-background-uploadimage-area"
