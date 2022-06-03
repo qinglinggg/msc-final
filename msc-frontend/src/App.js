@@ -55,20 +55,21 @@ class App extends React.Component {
     }).then((res) => {
       if(!res.data) return;
       let currentKey = res.data["bearerToken"];
-      if (this.state.loggedInUser == res.data["userId"]) return;
       let ownedKey = JSON.parse(sessionStorage.getItem("bearer_token"));
+      if (this.state.loggedInUser == res.data["userId"] && ownedKey) return;
       console.log(currentKey, ownedKey, currentKey == ownedKey);
       if(currentKey == ownedKey) {
         this.setState({ loggedInUser : res.data["userId"] });
       } else {
-        this.setState({ loggedInUser : "" });
+        localStorage.clear();
       }
     });
   }
 
   handleLogout() {
     localStorage.clear();
-    this.setState({ loggedInUser: false });
+    sessionStorage.clear();
+    this.setState({ loggedInUser: "" });
     if(window.location.pathname != '/'){
       window.location = '/';
     }
