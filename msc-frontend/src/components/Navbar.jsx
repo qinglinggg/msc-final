@@ -33,20 +33,19 @@ class Navbar extends React.Component {
         <Popup
             trigger={(open) => 
               <div 
-                id="profile-container"
-              >
-              {this.state.currentUser ? (
-                  <div className="profile-preview">
-                    <span id="pr-username">{this.state.currentUser.fullname}</span>
-                    <span id="pr-email">{this.state.currentUser.email}</span>
-                  </div>
-                ) : null
-              }
-                <ProfilePicture user={this.state.currentUser}></ProfilePicture>
+                id="profile-container">
+                {this.state.currentUser ? (
+                    <React.Fragment>
+                      <div className="profile-preview">
+                        <span id="pr-username">{this.state.currentUser.fullname}</span>
+                        <span id="pr-email">{this.state.currentUser.email}</span>
+                      </div>
+                      <ProfilePicture user={this.state.currentUser}></ProfilePicture>
+                    </React.Fragment>
+                  ) : null
+                }
               </div>
-            }
-            position="bottom center"
-          >
+            } position="bottom center">
              <div className="popup-wrapper">
                <div className="popup-content" id="popup-logout" onClick={this.props.handleLogout}>
                 <ion-icon name="log-out" id="popup-icon-logout"></ion-icon>
