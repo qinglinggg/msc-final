@@ -39,4 +39,14 @@ public class UserProfileService {
     public String userAuthentication(UserProfile user) {
         return userProfileDAO.userAuthentication(user);
     }
+
+    public Logins getSession(String id) {
+        return userProfileDAO.getSession(id);
+    }
+
+    public Logins insertSession(Logins login) {
+        Logins checker = userProfileDAO.getSession(login.getUserId());
+        if (checker) userProfileDAO.removeSession(login);
+        return userProfileDAO.insertSession(login);
+    }
 }

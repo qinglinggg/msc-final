@@ -55,7 +55,16 @@ public class UserProfileController {
 
     @PostMapping(value = "/auth", consumes=MediaType.APPLICATION_JSON_VALUE)
     public String userAuthentication(@RequestBody UserProfile user) {
-        System.out.println("User authentication");
         return userProfileService.userAuthentication(user);
+    }
+
+    @GetMapping(value = "/get-session/{id}")
+    public Logins getSession(String id) {
+        return userProfileService.getSession(id);
+    }
+
+    @PostMapping(value = "/insert-session")
+    public Logins insertSession(@RequestBody Logins login) {
+        return userProfileService.insertSession(login);
     }
 }
