@@ -45,7 +45,7 @@ class App extends React.Component {
   }
 
   checkLoggedInUser(loggedIn) {
-    if(!loggedIn) {
+    if(!loggedIn || loggedIn == "") {
       if(window.location.pathname != '/') window.location = '/';
       return;
     }
@@ -53,9 +53,12 @@ class App extends React.Component {
       method: "get",
       url: `${BASE_URL}/api/v1/user-profiles/get-session/${loggedIn}`
     }).then((res) => {
+      if(!res.data) return;
+      console.log(res);
       let currentKey = res.data["bearerToken"];
       if (this.state.loggedInUser == res.data["userId"]) return;
       let ownedKey = JSON.parse(sessionStorage.getItem("bearer_token"));
+      console.log(currentKey, ownedKey, currentKey == ownedKey);
       if(currentKey == ownedKey) {
         this.setState({ loggedInUser : res.data["userId"] });
       } else {
@@ -101,8 +104,9 @@ class App extends React.Component {
       this.updateUserdata(this.state.loggedInUser);
       this.setState({ isRefreshed : false });
     } else if (this.state.loggedInUser == "" && !this.state.isRefreshed) {
-      localStorage.setItem("formLists", JSON.stringify([]));
-      localStorage.setItem("rawInvitedFormLists", JSON.stringify([]));
+      localStorage.removeItem("formLists");
+      localStorage.removeItem("rawInvitedFormLists");
+      localStorage.removeItem("loggedInUser");
       this.setState({ isRefreshed : true });
     }
   }
@@ -181,8 +185,9 @@ class App extends React.Component {
       headers: { "Content-Type" : "application/json" }
     }).then((res) => {
       let currentLogin = res.data["bearerToken"];
+      console.log("bearer", currentLogin);
       sessionStorage.setItem("bearer_token", JSON.stringify(currentLogin));
-      localStorage.setItem("loggedInUser", res.data["userId"]);
+      localStorage.setItem("loggedInUser", JSON.stringify(res.data["userId"]));
     });
   }
 
