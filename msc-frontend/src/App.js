@@ -39,7 +39,7 @@ class App extends React.Component {
   state = {
     allForms: [],
     rawInvitedFormLists: [],
-    loggedInUser: "",
+    loggedInUser: null,
     currentPage: "",
     isRefreshed: false
   }
@@ -55,20 +55,21 @@ class App extends React.Component {
     }).then((res) => {
       if(!res.data) return;
       let currentKey = res.data["bearerToken"];
-      if (this.state.loggedInUser == res.data["userId"]) return;
       let ownedKey = JSON.parse(sessionStorage.getItem("bearer_token"));
+      if (this.state.loggedInUser == res.data["userId"] && ownedKey) return;
       console.log(currentKey, ownedKey, currentKey == ownedKey);
       if(currentKey == ownedKey) {
         this.setState({ loggedInUser : res.data["userId"] });
       } else {
-        this.setState({ loggedInUser : "" });
+        localStorage.clear();
       }
     });
   }
 
   handleLogout() {
     localStorage.clear();
-    this.setState({ loggedInUser: false });
+    sessionStorage.clear();
+    this.setState({ loggedInUser: "" });
     if(window.location.pathname != '/'){
       window.location = '/';
     }
@@ -82,7 +83,7 @@ class App extends React.Component {
         this.checkLoggedInUser(loggedIn);
       } else {
         let currentToken = sessionStorage.getItem("bearer_token");
-        if(this.state.loggedInUser) this.setState({ loggedInUser : "" });
+        if(this.state.loggedInUser != "" || this.state.loggedInUser == null) this.setState({ loggedInUser : "" });
         if (currentToken) sessionStorage.removeItem("bearer_token");
         return;
       }
@@ -103,9 +104,7 @@ class App extends React.Component {
       this.updateUserdata(this.state.loggedInUser);
       this.setState({ isRefreshed : false });
     } else if (this.state.loggedInUser == "" && !this.state.isRefreshed) {
-      localStorage.removeItem("formLists");
-      localStorage.removeItem("rawInvitedFormLists");
-      localStorage.removeItem("loggedInUser");
+      localStorage.clear();
       this.setState({ isRefreshed : true });
     }
   }
@@ -307,10 +306,7 @@ class App extends React.Component {
   render() {
     return (
       <Router>
-        { this.state.loggedInUser == "" ?
-            this.authentication() : 
-            this.appRouting()
-        }
+        { this.state.loggedInUser != null ? ( this.state.loggedInUser == "" ? this.authentication() : this.appRouting()) : <div>Loading application...</div>}
       </Router>
     );
   }

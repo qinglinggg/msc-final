@@ -124,12 +124,10 @@ public class UserProfileDAO {
         List<Logins> resToken = jdbcTemplate.query(query, (resultSet, i) -> {
             String userId = resultSet.getString("userId");
             String bearer = resultSet.getString("bearerToken");
-            System.out.println("[Bearer] UserId : " + userId + " bearer: " + bearer);
             return new Logins(userId, bearer);
         }, id);
         if(resToken.size() > 0) {
             Logins curData = resToken.get(0);
-            System.out.println("Test getSession: " + curData.getBearerToken());
             return curData;
         }
         return null;
