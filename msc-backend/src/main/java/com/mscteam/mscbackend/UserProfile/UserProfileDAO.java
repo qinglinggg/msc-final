@@ -121,12 +121,13 @@ public class UserProfileDAO {
 
     public Logins getSession(String id) {
         final String query = "SELECT * FROM LoginSessions WHERE userId = ?";
-        Logins resToken = jdbcTemplate.queryForObject(query, (resultSet, i) -> {
+        List<Logins> resToken = jdbcTemplate.query(query, (resultSet, i) -> {
             String userId = resultSet.getString("userId");
             String bearer = resultSet.getString("bearerToken");
             return new Logins(userId, bearer);
         }, id);
-        return resToken;
+        if(resToken.size() > 0) return resToken.get(0);
+        return null;
     }
 
     public Logins insertSession(Logins login) {

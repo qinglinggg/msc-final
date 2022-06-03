@@ -46,7 +46,7 @@ public class UserProfileService {
 
     public Logins insertSession(Logins login) {
         Logins checker = userProfileDAO.getSession(login.getUserId());
-        if (checker) userProfileDAO.removeSession(login);
+        if (checker != null) userProfileDAO.removeSession(login);
         return userProfileDAO.insertSession(login);
     }
 }
