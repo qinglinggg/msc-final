@@ -38,10 +38,12 @@ class Home extends React.Component {
 
   handleClickPage1() {
     this.setState({ selectedPage: 1 });
+    this.setState({ nullFlag : 0 });
   }
 
   handleClickPage2() {
     this.setState({ selectedPage: 2 });
+    this.setState({ nullFlag : 0 });
   }
 
   handleAddItem() {
@@ -174,12 +176,15 @@ class Home extends React.Component {
                       position="bottom center"
                     >
                       <div className="popup-wrapper">
-                        {/* <div className="popup-content" onClick={() => this.setState({invFilterValue : "unanswered"})}> */}
-                          <div className="popup-text">Show only unanswered forms</div>
-                        {/* </div> */}
-                        {/* <div className="popup-content" onClick={() => this.setState({invFilterValue : "answered"})}> */}
-                          <div className="popup-text">Show only answered forms</div>
-                        {/* </div> */}
+                        <div className="popup-content" onClick={() => this.filterOnChange("unanswered")}>
+                          <div className="popup-text" style={{ fontWeight : this.state.invFilterValue == 'unanswered' ? 'bold' : '' }}>Show only unanswered forms</div>
+                        </div>
+                        <div className="popup-content" onClick={() => this.filterOnChange("answered")}>
+                          <div className="popup-text" style={{ fontWeight: this.state.invFilterValue == 'answered' ? 'bold' : '' }}>Show only answered forms</div>
+                        </div>
+                        <div className="popup-content" onClick={() => this.filterOnChange(null)}>
+                          <div className="popup-text" style={{ fontWeight: !this.state.invFilterValue ? 'bold' : ''}}>Show all</div>
+                        </div>
                       </div>
                     </Popup>
                       : null
@@ -188,11 +193,10 @@ class Home extends React.Component {
                 <img src="" alt="" id="history-btn" />
               </div>
             </div>
-            {/* {this.state.selectedPage == 2 && this.state.invitedForms.length == 0 ?
-              <div className="home-form-is-null">You're not invited to fill any form yet. Feel free to continue your work!</div>
-              : null
-            } */}
-            <div className="list-container">{page}</div>
+            {this.state.nullFlag == 0 ? 
+              <div className="list-container">{page}</div> 
+              : this.nullText()
+            }
           </div>
         </div>
         {this.state.isAdd ? this.displayPopUp() : null}
@@ -247,35 +251,45 @@ class Home extends React.Component {
     let nullValue = 0;
     let res = null;
     if(this.state.selectedPage == 1){
+      if(data.length == 0) return data;
       res = this.searchData(data);
-      if(!res) nullValue = 1;
+      if(res.length == 0) nullValue = 1;
     } else if(this.state.selectedPage == 2){
-      if(!data) nullValue = 2;
+      console.log(data.length);
+      if(data.length == 0) nullValue = 2;
       else {
         res = this.filterData(data);
-        if(!res) nullValue = 3;
+        if(res.length == 0) nullValue = 3;
         else {
           res = this.searchData(res);
-          if(!res) nullValue = 1;
+          if(res.length == 0) nullValue = 1;
         }
       }
     }
+    if(nullValue != 0 && this.state.nullFlag != nullValue) this.setState({ nullFlag: nullValue });
+    return res;
   }
 
   searchOnChange(value) {
     this.setState((prevState) => {
       return { searchValue: value };
     });
+    this.setState({ nullFlag: 0 });
+  }
+
+  filterOnChange(value){
+    this.setState({ invFilterValue: value });
+    this.setState({ nullFlag : 0 });
   }
 
   handleFormDeletion() {
     let tempList = localStorage.getItem("formLists");
     tempList = JSON.parse(tempList);
-    this.setState({forms: tempList}); 
+    this.setState({ forms: tempList }); 
   }
 
   displayPage1() {
-    let formsData = this.filterData(this.state.forms);
+    let formsData = this.getData(this.state.forms);
     return (
       <React.Fragment>
         {formsData ? formsData.map((data) => (
@@ -301,7 +315,7 @@ class Home extends React.Component {
   }
 
   displayPage2() {
-    let invitedFormsData = this.filterData(this.state.invitedForms);
+    let invitedFormsData = this.getData(this.state.invitedForms);
     return (
       <React.Fragment>
         {invitedFormsData ? invitedFormsData.map((data) => (
