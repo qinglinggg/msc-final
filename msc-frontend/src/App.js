@@ -39,7 +39,7 @@ class App extends React.Component {
   state = {
     allForms: [],
     rawInvitedFormLists: [],
-    loggedInUser: "",
+    loggedInUser: null,
     currentPage: "",
     isRefreshed: false
   }
@@ -308,10 +308,7 @@ class App extends React.Component {
   render() {
     return (
       <Router>
-        { this.state.loggedInUser == "" ?
-            this.authentication() : 
-            this.appRouting()
-        }
+        { this.state.loggedInUser != null ? ( this.state.loggedInUser == "" ? this.authentication() : this.appRouting()) : null}
       </Router>
     );
   }
