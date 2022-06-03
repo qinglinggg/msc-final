@@ -36,6 +36,7 @@ class UploadImage extends React.Component {
 
   handleUploadFile(file) {
     // image validation
+    if(!file) return;
     let validExtensions = ["image/jpeg", "image/png", "image/jpg"];
     if (validExtensions.includes(file.type)) {
       console.log("file", file);
