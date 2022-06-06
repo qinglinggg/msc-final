@@ -23,13 +23,12 @@ public class Form implements Comparable<Form> {
         this.privacySetting = privacySetting;
         this.createDate = createDate;
         this.modifyDate = modifyDate;
-        this.backgroundLink = "";
-        this.backgroundColor = "";
+        this.backgroundLink = backgroundLink;
+        this.backgroundColor = backgroundColor;
     }
 
     // Create and Insert mode
-    public Form(@JsonProperty("authorUserId") String authorUserId, @JsonProperty("title") String title, @JsonProperty("description") String description, @JsonProperty("privacySetting") String privacySetting,
-    @JsonProperty("backgroundLink") String backgroundLink, @JsonProperty("backgroundColor") String backgroundColor){
+    public Form(@JsonProperty("authorUserId") String authorUserId, @JsonProperty("title") String title, @JsonProperty("description") String description, @JsonProperty("privacySetting") String privacySetting){
         this.formId = UUID.randomUUID();
         this.authorUserId = UUID.fromString(authorUserId);
         this.title = title;
@@ -37,8 +36,8 @@ public class Form implements Comparable<Form> {
         this.privacySetting = privacySetting;
         this.createDate = System.currentTimeMillis();
         this.modifyDate = System.currentTimeMillis();
-        this.backgroundLink = backgroundLink;
-        this.backgroundColor = backgroundColor;
+        this.backgroundLink = "";
+        this.backgroundColor = "";
     }
 
     public UUID getFormId(){
