@@ -59,7 +59,6 @@ public class FormService {
 
     public FormItems addFormItems(String id, FormItems item) {
         int res = this.updateModifyDate(id, 0);
-
         List<FormItems> listItems = this.getFormItems(id);
         int num = this.getLastItemNum(listItems);
         item.setItemNumber(num);
@@ -72,8 +71,6 @@ public class FormService {
     }
 
     public List<FormItems> getFormItems(String formId) {
-        // List<FormItems> listItems = formDAO.getFormItems(formId);
-        // Collections.sort(listItems);
         return formDAO.getFormItems(formId);
     }
 
@@ -83,11 +80,9 @@ public class FormService {
     }
 
     public int updateFormItems(String formItemsId, FormItems toBeUpdated) {
-        System.out.println("updateFormItems");
-        String formId = toBeUpdated.getFormId().toString();
-        System.out.println("formId masuk " + formId);
-        int res = this.updateModifyDate(formId, 0);
+        int res = this.updateModifyDate(formItemsId, 1);
         System.out.println("sudah update modifyDate");
+        System.out.println("updateFormItems");
         return formDAO.updateFormItems(formItemsId, toBeUpdated);
     }
 

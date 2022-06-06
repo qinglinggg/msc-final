@@ -247,6 +247,7 @@ function Dashboard(props) {
       }
       return elem;
     });
+    console.log(currentForm);
     try {
       axios({
         method: "put",
