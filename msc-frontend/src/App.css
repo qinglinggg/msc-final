@@ -2606,6 +2606,8 @@ body {
   position: absolute;
   border-radius: 15px;
   background-color: transparent;
+  background-position: center;
+  background-size: auto;
   top: 0;
   left: 0;
 }

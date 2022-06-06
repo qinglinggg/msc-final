@@ -34,17 +34,23 @@ function Dashboard(props) {
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
-    try { 
-      axios({
-          method: "get",
-          url: `${BASE_URL}/api/v1/forms/${formId}`
-      }).then((res) => {
-          console.log(res.data);
-          localStorage.setItem("selectedForm", JSON.stringify(res.data));
-      })
-    } catch (error) {
-      console.log(error);
+    async function fetchData() {
+      try { 
+        await axios({
+            method: "get",
+            url: `${BASE_URL}/api/v1/forms/${formId}`
+        }).then((res) => {
+            console.log(res.data);
+            localStorage.setItem("selectedForm", JSON.stringify(res.data));
+            setTitle(selectedForm.title);
+            setDescription(selectedForm.description);
+            setPrivacyCheck(selectedForm.privacyCheck);
+        })
+      } catch (error) {
+        console.log(error);
+      }
     }
+    fetchData();
     let checkTutorial = localStorage.getItem("showTutorial");
     if(!checkTutorial) {
       setShowTutorial(true);
@@ -62,9 +68,6 @@ function Dashboard(props) {
       setCurrentStep(tempBreadcrumbs);
       localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
     }
-    setTitle(selectedForm.title);
-    setDescription(selectedForm.description);
-    setPrivacyCheck(selectedForm.privacyCheck);
     try {
       axios({
         method: "get",
