@@ -40,8 +40,7 @@ class App extends React.Component {
     allForms: [],
     rawInvitedFormLists: [],
     loggedInUser: null,
-    currentPage: "",
-    isRefreshed: false
+    currentPage: ""
   }
 
   checkLoggedInUser(loggedIn) {
@@ -57,11 +56,10 @@ class App extends React.Component {
       let currentKey = res.data["bearerToken"];
       let ownedKey = JSON.parse(sessionStorage.getItem("bearer_token"));
       if (this.state.loggedInUser == res.data["userId"] && ownedKey) return;
-      console.log(currentKey, ownedKey, currentKey == ownedKey);
       if(currentKey == ownedKey) {
         this.setState({ loggedInUser : res.data["userId"] });
       } else {
-        localStorage.clear();
+        // localStorage.clear();
       }
     });
   }
@@ -76,14 +74,20 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    if(!this.state.loggedInUser) {
+      localStorage.clear();
+      this.setState({ loggedInUser : ""});
+      localStorage.setItem("loggedInUser", "");
+    }
     setInterval(() => {
       let loggedIn = localStorage.getItem("loggedInUser");
-      if (loggedIn && loggedIn != "") {
+      console.log(loggedIn);
+      if (loggedIn || loggedIn != "") {
         loggedIn = JSON.parse(loggedIn);
         this.checkLoggedInUser(loggedIn);
       } else {
         let currentToken = sessionStorage.getItem("bearer_token");
-        if(this.state.loggedInUser != "" || this.state.loggedInUser == null) this.setState({ loggedInUser : "" });
+        if(this.state.loggedInUser != "") this.setState({ loggedInUser : "" });
         if (currentToken) sessionStorage.removeItem("bearer_token");
         return;
       }
@@ -100,12 +104,13 @@ class App extends React.Component {
   }
   
   componentDidUpdate(prevProps, prevState) {
-    if(this.state.loggedInUser != prevState.loggedInUser && this.state.loggedInUser != "") {
+    console.log(this.state.loggedInUser);
+    if(this.state.loggedInUser != prevProps.loggedInUser){
+      console.log("Difference: ", prevState.loggedInUser, this.state.loggedInUser, prevState.loggedInUser == this.state.loggedInUser);
+    }
+    if(this.state.loggedInUser && this.state.loggedInUser != prevState.loggedInUser && this.state.loggedInUser != "") {
+      console.log("Updating user Dataaaa");
       this.updateUserdata(this.state.loggedInUser);
-      this.setState({ isRefreshed : false });
-    } else if (this.state.loggedInUser == "" && !this.state.isRefreshed) {
-      localStorage.clear();
-      this.setState({ isRefreshed : true });
     }
   }
 
@@ -113,10 +118,9 @@ class App extends React.Component {
     await axios.get(`${BASE_URL}/api/v1/forms/owned-form/${userId}`).then((res) => {
       const forms = res.data;
       localStorage.setItem("formLists", JSON.stringify(forms));
-    });
+    })
     await axios.get(`${BASE_URL}/api/v1/forms/invited-form-respondent/${userId}`).then((res) => {
       const invitedForms = res.data;
-      console.log(res.data);
       localStorage.setItem("rawInvitedFormLists", JSON.stringify(invitedForms));
     }).catch((error) => {
       console.log(error);
@@ -184,6 +188,7 @@ class App extends React.Component {
       let currentLogin = res.data["bearerToken"];
       console.log("bearer", currentLogin);
       sessionStorage.setItem("bearer_token", JSON.stringify(currentLogin));
+      console.log(res.data["userId"]);
       localStorage.setItem("loggedInUser", JSON.stringify(res.data["userId"]));
     });
   }
