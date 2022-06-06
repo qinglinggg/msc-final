@@ -33,7 +33,7 @@ class Home extends React.Component {
     invitedForms: [],
     loggedInUser: "",
     nullFlag: 0,
-    // isRefreshed: false,
+    isRefreshed: false,
   };
 
   handleClickPage1() {
@@ -63,21 +63,16 @@ class Home extends React.Component {
     let currentUser = this.state.loggedInUser;
     if (tempUser) {
       tempUser = JSON.parse(tempUser);
-      if(tempUser != currentUser) {
+      if(tempUser != currentUser && tempUser != "") {
         this.setState({loggedInUser: tempUser});
-        // this.setState({isRefreshed : false});
       }
-    } 
-    // } else if(currentUser){
-    //   if(this.state.isRefreshed == false) {
-    //     this.setState({isRefreshed : true}, () => 
-    //     window.location.href = APP_URL);
-    //   }
-    // }
+    }
   }
 
   componentDidMount() {
-    setInterval(() => this.checkLoggedInUser(), 500);
+    setInterval(() => {
+      if(!this.state.isRefreshed) this.checkLoggedInUser();
+    }, 500);
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
     if(tempBreadcrumbs){
       tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
@@ -113,10 +108,11 @@ class Home extends React.Component {
     } else {
       body.classList.remove("openPopup");
     }
-    if(this.state.loggedInUser != "" && prevState.loggedInUser != this.state.loggedInUser) {
+    if(this.state.loggedInUser != "" && this.state.loggedInUser != prevState.loggedInUser){
       localStorage.setItem("selectedForm", JSON.stringify([]));
       this.setState({forms: JSON.parse(localStorage.getItem("formLists"))});
       this.setState({invitedForms: JSON.parse(localStorage.getItem("invitedFormLists"))});
+      this.setState({ isRefreshed : true });
     }
   }
 
@@ -248,6 +244,7 @@ class Home extends React.Component {
   }
 
   getData(data) {
+    if(!data) return;
     let nullValue = 0;
     let res = null;
     if(this.state.selectedPage == 1){
@@ -293,12 +290,10 @@ class Home extends React.Component {
     return (
       <React.Fragment>
         {formsData ? formsData.map((data) => (
-          <PageItems 
+          <PageItems
             key={data.formId} 
             data={data}
             handleFormDeletion={this.handleFormDeletion}
-            onClick={() => localStorage.setItem("selectedForm", JSON.stringify(data))
-            }
             currentPage={1}
           />
         )) : null}

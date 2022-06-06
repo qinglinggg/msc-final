@@ -31,7 +31,6 @@ class UploadImage extends React.Component {
     const imageBlob = await res.blob();
     const imageUrl = URL.createObjectURL(imageBlob);
     dropArea.style.backgroundImage = `url(${imageUrl})`;
-    console.log(this.state.selectedImage);
     dropArea.style.animation = "fade-in 1s forwards";
   }
 
@@ -40,7 +39,6 @@ class UploadImage extends React.Component {
     if(currentForm) currentForm = JSON.parse(currentForm);
     else return;
     if(prevState.selectedImage != this.state.selectedImage && this.state.selectedImage != null) {
-      console.log("image updated");
       this.fetchImage();
       currentForm.backgroundLink = this.state.selectedImage;
       axios({

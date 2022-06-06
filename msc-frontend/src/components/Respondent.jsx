@@ -309,8 +309,13 @@ function Respondent (props) {
     navbar.style.backgroundColor = primaryColor;
     if(bgLink == "") background.style.backgroundColor = secondaryColor;
     else {
-      background.style.backgroundImage = bgLink;
-      background.style.backgroundSize = "cover";
+      async function fetchImage() {
+        const res = await fetch(bgLink);
+        const imageBlob = await res.blob();
+        const imageUrl = URL.createObjectURL(imageBlob);
+        background.style.backgroundImage = `url(${imageUrl})`;
+      }
+      fetchImage();
     }
     return () => {
       navbar.style.backgroundColor = "";

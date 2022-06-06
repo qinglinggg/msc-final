@@ -35,36 +35,35 @@ function Dashboard(props) {
       body.classList.toggle("openMenu");
     });
     try { 
-      axios({
+        axios({
           method: "get",
           url: `${BASE_URL}/api/v1/forms/${formId}`
-      }).then((res) => {
-          console.log(res.data);
-          localStorage.setItem("selectedForm", JSON.stringify(res.data));
-      })
-    } catch (error) {
-      console.log(error);
-    }
+        }).then((res) => {
+            if(!res.data) return;
+            setTitle(res.data.title);
+            setDescription(res.data.description);
+            setPrivacyCheck(res.data.privacyCheck);
+            let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
+            tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
+            if(tempBreadcrumbs.length >= 2) {
+              while(tempBreadcrumbs.slice(-1)[0] && !(tempBreadcrumbs.slice(-1)[0].page == "Home" || tempBreadcrumbs.slice(-1)[0].page == "/")){
+                tempBreadcrumbs.pop();
+              }
+            }
+            let selectedForm = res.data;
+            if(tempBreadcrumbs){
+              tempBreadcrumbs.push({page: "Dashboard - " + selectedForm['title'], path: window.location.href});
+              setCurrentStep(tempBreadcrumbs);
+              localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
+            }
+        });
+      } catch (error) {
+        console.log(error);
+      }
     let checkTutorial = localStorage.getItem("showTutorial");
     if(!checkTutorial) {
       setShowTutorial(true);
     }
-    let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
-    tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
-    if(tempBreadcrumbs.length >= 2) {
-      while(tempBreadcrumbs.slice(-1)[0] && !(tempBreadcrumbs.slice(-1)[0].page == "Home" || tempBreadcrumbs.slice(-1)[0].page == "/")){
-        tempBreadcrumbs.pop();
-      }
-    }
-    let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
-    if(tempBreadcrumbs){
-      tempBreadcrumbs.push({page: "Dashboard - " + selectedForm['title'], path: window.location.href});
-      setCurrentStep(tempBreadcrumbs);
-      localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
-    }
-    setTitle(selectedForm.title);
-    setDescription(selectedForm.description);
-    setPrivacyCheck(selectedForm.privacyCheck);
     try {
       axios({
         method: "get",
