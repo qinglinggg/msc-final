@@ -143,19 +143,45 @@ class Graph extends React.Component {
     });
   }
 
+  countingAnswers() {
+    let data = this.props.answerList.map((d) => {
+      d["flag"] = false;
+    }) 
+    let countedAns = data.map((current) => {
+      if(current["flag"]) return;
+      let count = 1;
+      data.map((d) => {
+        if(d == current || d["flag"]) return;
+        if(d.toLowerCase() == current.toLowerCase()) {
+          count++;
+          d["flag"] = true;
+        }
+      })
+      current["count"] = count;
+      current["flag"] = true;
+    })
+    countedAns = countedAns.filter((d) => {
+      return !d["count"];
+    })
+    return countedAns;
+  }
+
   showListedAnswers() {
+    console.log(this.props.answerList);
+    let countedAns = this.countingAnswers();
     return (
       <div className="shortanswer-list">
       {
-      this.props.answerList.map((ans, ai) => {
-        return (
-          <div className="shortanswer-item" key={"shortanswerList-" + ai}>
-            <span>{ ans }</span>
-          </div>
-        )
-      })
-    }
-    </div>
+        this.props.countedAns.map((ans, ai, count) => {
+          return (
+            <div className="shortanswer-item" key={"shortanswerList-" + ai}>
+              <span>{ ans }</span>
+              <span>{ count }</span>
+            </div>
+          )
+        })
+      }
+      </div>
     )
   }
 

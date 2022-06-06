@@ -15,7 +15,7 @@ public class Form implements Comparable<Form> {
     private String backgroundColor;
 
     // Get Forms
-    public Form(String formId, String authorUserId, String title, String description, String privacySetting, Long createDate, Long modifyDate) {
+    public Form(String formId, String authorUserId, String title, String description, String privacySetting, Long createDate, Long modifyDate, String backgroundColor, String backgroundLink) {
         this.formId = UUID.fromString(formId);
         this.authorUserId = UUID.fromString(authorUserId);
         this.title = title;

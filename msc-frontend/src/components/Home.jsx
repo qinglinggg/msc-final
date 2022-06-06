@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PageItems from "./PageItems";
 import SearchField from "react-search-field";
+import Popup from "reactjs-popup";
 import axios from "axios";
 
 const APP_URL = "http://10.61.38.193:3001";
@@ -24,21 +25,25 @@ class Home extends React.Component {
     isRequired: false,
     formCounter: 0,
     searchValue: null,
+    invFilterValue: null,
     title: "",
     description: "",
     privacySetting: "",
     forms: [],
     invitedForms: [],
     loggedInUser: "",
+    nullFlag: 0,
     // isRefreshed: false,
   };
 
   handleClickPage1() {
     this.setState({ selectedPage: 1 });
+    this.setState({ nullFlag : 0 });
   }
 
   handleClickPage2() {
     this.setState({ selectedPage: 2 });
+    this.setState({ nullFlag : 0 });
   }
 
   handleAddItem() {
@@ -161,14 +166,37 @@ class Home extends React.Component {
                     classNames="test-class"
                   />
                 </div>
+                <div className="page-filter">
+                  {
+                    this.state.selectedPage == 2 ?
+                    <Popup
+                      trigger={(open) => 
+                        <ion-icon name="filter-outline" id="page-filter"></ion-icon>
+                      }
+                      position="bottom center"
+                    >
+                      <div className="popup-wrapper">
+                        <div className="popup-content" onClick={() => this.filterOnChange("unanswered")}>
+                          <div className="popup-text" style={{ fontWeight : this.state.invFilterValue == 'unanswered' ? 'bold' : '' }}>Show only unanswered forms</div>
+                        </div>
+                        <div className="popup-content" onClick={() => this.filterOnChange("answered")}>
+                          <div className="popup-text" style={{ fontWeight: this.state.invFilterValue == 'answered' ? 'bold' : '' }}>Show only answered forms</div>
+                        </div>
+                        <div className="popup-content" onClick={() => this.filterOnChange(null)}>
+                          <div className="popup-text" style={{ fontWeight: !this.state.invFilterValue ? 'bold' : ''}}>Show all</div>
+                        </div>
+                      </div>
+                    </Popup>
+                      : null
+                  }
+                </div>
                 <img src="" alt="" id="history-btn" />
               </div>
             </div>
-            {this.state.selectedPage == 2 && this.state.invitedForms.length == 0 ?
-              <div className="home-form-is-null">You're not invited to fill any form yet. Feel free to continue your work!</div>
-              : null
+            {this.state.nullFlag == 0 ? 
+              <div className="list-container">{page}</div> 
+              : this.nullText()
             }
-            <div className="list-container">{page}</div>
           </div>
         </div>
         {this.state.isAdd ? this.displayPopUp() : null}
@@ -176,31 +204,92 @@ class Home extends React.Component {
     );
   }
 
-  filterData(data) {
-    if (!this.state.searchValue) {
-      return data;
+  nullText() {
+    let nullValue = this.state.nullFlag;
+    if(nullValue == 1){
+      return (
+        <div className="home-form-is-null">The form you are looking for is unavailable. Maybe try other keywords?</div>
+      )
+    } else if (nullValue == 2){
+      return (
+        <div className="home-form-is-null">You're not invited to fill any form yet. Feel free to continue your work!</div>
+      )
+    } else if (nullValue == 3){
+      return (
+        <div className="home-form-is-null">There are no matches form yet :(</div>
+      )
     }
-    return data.filter((d) => {
+  }
+
+  searchData(data){
+    if(!this.state.searchValue) return data;
+    const search = this.state.searchValue.toLowerCase();
+    let searchedData = data.filter((d) => {
       const dataName = d.title.toLowerCase();
-      return dataName.includes(this.state.searchValue);
+      return dataName.includes(search);
     });
+    return searchedData;
+  }
+
+  filterData(data){
+    if(!this.state.invFilterValue) return data;
+    let filteredData = data;
+    if(this.state.invFilterValue == "answered"){
+      filteredData = filteredData.filter((d) => {
+        return d.submitDate != null;
+      })
+    }
+    else if(this.state.invFilterValue == "unanswered"){
+      filteredData = filteredData.filter((d) => {
+        return d.submitDate == null;
+      })
+    }
+    return filteredData;
+  }
+
+  getData(data) {
+    let nullValue = 0;
+    let res = null;
+    if(this.state.selectedPage == 1){
+      if(data.length == 0) return data;
+      res = this.searchData(data);
+      if(res.length == 0) nullValue = 1;
+    } else if(this.state.selectedPage == 2){
+      console.log(data.length);
+      if(data.length == 0) nullValue = 2;
+      else {
+        res = this.filterData(data);
+        if(res.length == 0) nullValue = 3;
+        else {
+          res = this.searchData(res);
+          if(res.length == 0) nullValue = 1;
+        }
+      }
+    }
+    if(nullValue != 0 && this.state.nullFlag != nullValue) this.setState({ nullFlag: nullValue });
+    return res;
   }
 
   searchOnChange(value) {
     this.setState((prevState) => {
       return { searchValue: value };
     });
+    this.setState({ nullFlag: 0 });
+  }
+
+  filterOnChange(value){
+    this.setState({ invFilterValue: value });
+    this.setState({ nullFlag : 0 });
   }
 
   handleFormDeletion() {
     let tempList = localStorage.getItem("formLists");
     tempList = JSON.parse(tempList);
-    this.setState({forms: tempList}); 
-    console.log("deleted");
+    this.setState({ forms: tempList }); 
   }
 
   displayPage1() {
-    let formsData = this.filterData(this.state.forms);
+    let formsData = this.getData(this.state.forms);
     return (
       <React.Fragment>
         {formsData ? formsData.map((data) => (
@@ -226,7 +315,7 @@ class Home extends React.Component {
   }
 
   displayPage2() {
-    let invitedFormsData = this.filterData(this.state.invitedForms);
+    let invitedFormsData = this.getData(this.state.invitedForms);
     return (
       <React.Fragment>
         {invitedFormsData ? invitedFormsData.map((data) => (

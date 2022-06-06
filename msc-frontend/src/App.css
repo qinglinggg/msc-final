@@ -414,6 +414,21 @@ body {
   display: flex;
   align-items: right;
 }
+
+.page-filter {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  padding: 0px 10px 0px 10px;
+}
+
+#page-filter {
+  width: 100%;
+  height: 20px;
+  cursor: pointer;
+}
+
 .react-search-field {
   border-radius: 10px;
   height: 40vh;
@@ -2079,7 +2094,6 @@ body {
   flex-direction: column;
   z-index: 1;
   align-items: center;
-  cursor: pointer;
   /* position: absolute; */
 }
 
@@ -2092,6 +2106,7 @@ body {
   font-display: medium;
   text-align: center;
   align-items: center;
+  cursor: pointer;
 }
 
 .popup-text {

@@ -116,8 +116,8 @@ class App extends React.Component {
     });
     await axios.get(`${BASE_URL}/api/v1/forms/invited-form-respondent/${userId}`).then((res) => {
       const invitedForms = res.data;
+      console.log(res.data);
       localStorage.setItem("rawInvitedFormLists", JSON.stringify(invitedForms));
-      // this.setState({rawInvitedFormLists : invitedForms});
     }).catch((error) => {
       console.log(error);
     });

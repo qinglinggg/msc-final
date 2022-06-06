@@ -14,10 +14,8 @@ const BASE_URL = "http://10.61.38.193:8080";
 
 function DataVisualization(props) {
   const [openMenu, setOpenMenu] = useState(false);
-  const [openSettings, setOpenSettings] = useState(false);
   const [activePage, setActivePage] = useState(1);
   const [selectedExport, setSelectionExport] = useState("pdf");
-  const [privacyCheck, setPrivacyCheck] = useState(false);
   const [currentStep, setCurrentStep] = useState([]);
   const [inLoading, setInLoading] = useState(true);
   const [itemList, setItemList] = useState([]);
@@ -161,10 +159,6 @@ function DataVisualization(props) {
       setTimeout(() => setInLoading(false), 3000);
   }, [responses])
 
-  const handleSettings = () => {
-    setOpenSettings(!openSettings);
-  }
-
   const handleMenu = () => {
     setOpenMenu(!openMenu);
   }
@@ -248,73 +242,6 @@ function DataVisualization(props) {
     );
   }
 
-  const displaySettings = () => {
-    return (
-      <React.Fragment>
-        <div className="popup" id="popup-addItem">
-          <span className="closePopup" onClick={() => handleSettings()}>
-            &times;
-          </span>
-          <form className="form-components">
-            <h1>Settings</h1>
-            <br />
-            <label>
-              Name
-              <input className="form-alignright" type="text" name="name" />
-            </label>
-            <br />
-            <br />
-            <label>
-              Description
-              <input className="form-alignright" type="text" name="desc" />
-            </label>
-            <br />
-            <br />
-            <label>
-              Respondent Privacy
-              <div className="form-alignright">
-                <input
-                  type="radio"
-                  name="privacy"
-                  id="anonymous"
-                  value="anonymous"
-                  checked={privacyCheck ? true : false}
-                  onClick={() => {
-                    setPrivacyCheck(true);
-                  }}
-                />
-                <label for="anonymous">Anonymous</label>
-                <input
-                  type="radio"
-                  name="privacy"
-                  id="not-anonymous"
-                  value="not-anonymous"
-                  checked={privacyCheck ? false : true}
-                  onClick={() => {
-                    setPrivacyCheck(false);
-                  }}
-                />
-                <label for="not-anonymous">Not Anonymous</label>
-                <br />
-              </div>
-              <br />
-            </label>
-            <br />
-            <br />
-            {/* <input
-              type="submit"
-              value="Confirm"
-              onClick={() => this.handleClickConfirm.bind(this)}
-            /> */}
-            <Link to="/item1/dashboard">
-              <button>Confirm</button>
-            </Link>
-          </form>
-        </div>
-      </React.Fragment>
-    );
-  }
-
   const displayDataVisualization = () => {
     let loadPage = null;
     if (activePage == 1) {
@@ -337,11 +264,11 @@ function DataVisualization(props) {
           <div className="page-title" id="page-title-home">
             Data Visualization
           </div>
-          <div className="dashboard-icon">
+          {/* <div className="dashboard-icon">
             <img src={iconVisibility} alt="" className="icon-image" />
             <img src={iconSettings} alt="" className="icon-image" />
             {openSettings ? displaySettings() : null}
-          </div>
+          </div> */}
         </div>
         <div className="page-breadcrumbs">
         {

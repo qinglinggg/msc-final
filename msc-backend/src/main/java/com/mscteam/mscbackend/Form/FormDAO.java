@@ -35,17 +35,16 @@ public class FormDAO {
             String backgroundLink = resultSet.getString("backgroundLink");
             Long createDate = resultSet.getLong("createDate");
             Long modifyDate = resultSet.getLong("modifyDate");
-            Form tempForm = new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate);
-            tempForm.setBackgroundColor = backgroundColor;
-            tempForm.setBackgroundLink = backgroundLink;
-            return tempForm;
+            String backgroundColor = resultSet.getString("backgroundColor");
+            String backgroundLink = resultSet.getString("backgroundLink");
+            return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate, backgroundColor, backgroundLink);
         });
         return formList;
     }
 
     public Optional<Form> getFormById(String id) {
         final String query = "SELECT * FROM Form WHERE formId=?";
-        Form form = jdbcTemplate.queryForObject(query, (resultSet, i) -> {
+        List<Form> form = jdbcTemplate.query(query, (resultSet, i) -> {
             String formId = resultSet.getString("formId");
             String authorUserId = resultSet.getString("authorUserId");
             String title = resultSet.getString("title");
@@ -55,18 +54,18 @@ public class FormDAO {
             String backgroundLink = resultSet.getString("backgroundLink");
             Long createDate = resultSet.getLong("createDate");
             Long modifyDate = resultSet.getLong("modifyDate");
-            Form tempForm = new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate);
-            tempForm.setBackgroundColor = backgroundColor;
-            tempForm.setBackgroundLink = backgroundLink;
-            return tempForm;
+            String backgroundColor = resultSet.getString("backgroundColor");
+            String backgroundLink = resultSet.getString("backgroundLink");
+            return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate, backgroundColor, backgroundLink);
         }, id);
-        return Optional.ofNullable(form);
+        if(form.isEmpty()) return null;
+        return Optional.ofNullable(form.get(0));
     }
 
     public Form insertForm(Form form) {
-        final String query = "INSERT INTO Form VALUES (?,?,?,?,?,?,?)";
+        final String query = "INSERT INTO Form VALUES (?,?,?,?,?,?,?,?,?)";
         int res = jdbcTemplate.update(query, form.getFormId().toString(), form.getAuthorUserId().toString(), form.getTitle(), form.getDescription(),
-                form.getPrivacySetting(), form.getCreateDate(), form.getModifyDate());
+                form.getPrivacySetting(), form.getCreateDate(), form.getModifyDate(), form.getBackgroundColor(), form.getBackgroundLink());
         return form;
     }
 
@@ -213,6 +212,7 @@ public class FormDAO {
     }
 
     public int updateFormItems(String formItemsId, FormItems toBeUpdated) {
+        System.out.println("updateFormItems FormDAO masuk");
         String query = "UPDATE FormItems SET ";
         query = query + "questionContent = '" + toBeUpdated.getContent().toString() + "', ";
         if (toBeUpdated.getType() != "" && toBeUpdated.getType() != null) {
@@ -339,8 +339,10 @@ public class FormDAO {
             String privacySetting = resultSet.getString("privacySetting");
             Long createDate = resultSet.getLong("createDate");
             Long modifyDate = resultSet.getLong("modifyDate");
+            String backgroundColor = resultSet.getString("backgroundColor");
+            String backgroundLink = resultSet.getString("backgroundLink");
             System.out.println("Checking: " + title);
-            return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate);
+            return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate, backgroundColor, backgroundLink);
         }, userId);
 
         return authoredForms;
