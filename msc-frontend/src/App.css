@@ -2001,12 +2001,35 @@ body {
 
 .shortanswer-item {
   width: 50%;
-  background-color: #00ff6a;
+  height: fit-content;
+  /* background-color: #00ff6a; */
+  border-radius: 15px;
+  font-size: small;
+  /* padding: 15px; */
+  margin: 5px;
+  color: black;
+  display: flex;
+  flex-direction: row;
+}
+
+.shortanswer-ans {
+  height: 100%;
+  width: fit-content;
   padding: 15px;
+  background-color: #00ff6a;
   border-radius: 15px;
   font-size: small;
   margin: 5px;
-  color: black;
+}
+
+.shortanswer-count {
+  height: 100%;
+  width: fit-content;
+  padding: 15px;
+  background-color: #00ff6a;
+  border-radius: 15px;
+  font-size: small;
+  margin: 5px;
 }
 
 .answer-container {

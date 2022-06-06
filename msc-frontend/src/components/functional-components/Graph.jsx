@@ -144,40 +144,50 @@ class Graph extends React.Component {
   }
 
   countingAnswers() {
-    let data = this.props.answerList.map((d) => {
-      d["flag"] = false;
-    }) 
-    let countedAns = data.map((current) => {
-      if(current["flag"]) return;
+    let data = [];
+    this.props.answerList.map((d, idx) => {
+      data.push({
+        index: idx,
+        answer: d,
+        flag: false
+      })
+    })
+    data.map((current) => {
+      if(current.flag) return;
       let count = 1;
-      data.map((d) => {
-        if(d == current || d["flag"]) return;
-        if(d.toLowerCase() == current.toLowerCase()) {
+      data.map((d, idx) => {
+        if(idx == current.index || d.flag) return;
+        if(d.answer.toLowerCase() == current.answer.toLowerCase()) {
           count++;
-          d["flag"] = true;
+          d.flag = true;
         }
       })
-      current["count"] = count;
-      current["flag"] = true;
+      current.count = count;
+      current.flag = true;
     })
-    countedAns = countedAns.filter((d) => {
-      return !d["count"];
-    })
-    return countedAns;
+    // data.filter((d) => {
+    //   if(d.count == undefined) return;
+    // })
+    return data;
   }
 
   showListedAnswers() {
-    console.log(this.props.answerList);
     let countedAns = this.countingAnswers();
+    console.log(countedAns);
+    let idx = -1;
     return (
       <div className="shortanswer-list">
       {
-        this.props.countedAns.map((ans, ai, count) => {
+        countedAns.map((ans) => {
+          idx++;
+          if(ans.count == undefined) return;
           return (
-            <div className="shortanswer-item" key={"shortanswerList-" + ai}>
-              <span>{ ans }</span>
-              <span>{ count }</span>
-            </div>
+            <React.Fragment>
+              <div className="shortanswer-item" key={"shortanswerList-" + idx}>
+                <div className="shortanswer-ans">{ ans.answer }</div>
+                <div className="shortanswer-count">{ ans.count }</div>
+              </div>
+            </React.Fragment>
           )
         })
       }

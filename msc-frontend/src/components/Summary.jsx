@@ -3,10 +3,15 @@ import Graph from "./functional-components/Graph";
 
 const Summary = React.forwardRef((props, ref) => {
   let counter = 0;
-
+  console.log(props);
   return (
     <React.Fragment>
       {props.data ? props.data.map((item, i) => {
+        // console.log("item: ");
+        // console.log(item);
+        // console.log("i: " + i);
+        // console.log("props.answerList[" + i + "] passed");
+        // console.log(props.answerList[i]);
         counter += 1;
         return (
           <div className="result-container" key={"summary-" + i}>

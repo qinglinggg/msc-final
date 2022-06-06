@@ -488,6 +488,10 @@ function Respondent (props) {
     } else {
       setIndex(index + 1);
     }
+    let answerTextarea = document.getElementById("preview-sa-text");
+    if(answerTextarea){
+      answerTextarea.value = "";
+    }
     // displayContainer.style.animation = 'show-transition 1s forwards';
   }
     
@@ -501,6 +505,11 @@ function Respondent (props) {
 
     let displayContainer = document.querySelector('.inner-display-container');
     displayContainer.style.animation = 'hide-transition 1s forwards';
+
+    let answerTextarea = document.getElementById("preview-sa-text");
+    if(answerTextarea){
+      answerTextarea.value = "";
+    }
   }
      
   const displayQuestion = () => {
