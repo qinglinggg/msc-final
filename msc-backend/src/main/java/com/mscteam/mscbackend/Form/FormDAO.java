@@ -31,6 +31,8 @@ public class FormDAO {
             String title = resultSet.getString("title");
             String description = resultSet.getString("description");
             String privacySetting = resultSet.getString("privacySetting");
+            String backgroundColor = resultSet.getString("backgroundColor");
+            String backgroundLink = resultSet.getString("backgroundLink");
             Long createDate = resultSet.getLong("createDate");
             Long modifyDate = resultSet.getLong("modifyDate");
             String backgroundColor = resultSet.getString("backgroundColor");
@@ -48,6 +50,8 @@ public class FormDAO {
             String title = resultSet.getString("title");
             String description = resultSet.getString("description");
             String privacySetting = resultSet.getString("privacySetting");
+            String backgroundColor = resultSet.getString("backgroundColor");
+            String backgroundLink = resultSet.getString("backgroundLink");
             Long createDate = resultSet.getLong("createDate");
             Long modifyDate = resultSet.getLong("modifyDate");
             String backgroundColor = resultSet.getString("backgroundColor");
