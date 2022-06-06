@@ -35,8 +35,6 @@ public class FormDAO {
             String backgroundLink = resultSet.getString("backgroundLink");
             Long createDate = resultSet.getLong("createDate");
             Long modifyDate = resultSet.getLong("modifyDate");
-            String backgroundColor = resultSet.getString("backgroundColor");
-            String backgroundLink = resultSet.getString("backgroundLink");
             return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate, backgroundColor, backgroundLink);
         });
         return formList;
@@ -54,8 +52,6 @@ public class FormDAO {
             String backgroundLink = resultSet.getString("backgroundLink");
             Long createDate = resultSet.getLong("createDate");
             Long modifyDate = resultSet.getLong("modifyDate");
-            String backgroundColor = resultSet.getString("backgroundColor");
-            String backgroundLink = resultSet.getString("backgroundLink");
             return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate, backgroundColor, backgroundLink);
         }, id);
         if(form.isEmpty()) return null;
