@@ -9,7 +9,7 @@ import axios from "axios";
 const BASE_URL = "http://10.61.38.193:8080";
 
 function Design(props) {
-  const [selectedBackground, setSelectedBackground] = useState("No background");
+  const [selectedBackground, setSelectedBackground] = useState("");
   const [selectedColor, setSelectedColor] = useState("Default");
   const [formItems, setFormItems] = useState();
   const [openMenu, setOpenMenu] = useState(false);
@@ -49,7 +49,10 @@ function Design(props) {
 
     let selectedForm = localStorage.getItem("selectedForm");
     selectedForm = JSON.parse(selectedForm);
-
+    
+    if(selectedForm && selectedForm.backgroundLink != ""){
+      setSelectedBackground(selectedForm.backgroundLink);
+    }
     tempBreadcrumbs.push({page: "Design - " + selectedForm['title'], path: window.location.href});
     setCurrentStep(tempBreadcrumbs);
     localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
@@ -119,14 +122,14 @@ function Design(props) {
           <div id="design-background-title">Choose background...</div>
           <div id="design-background-input-container">
             <Select
-              value={backgroundOptions.value}
+              value={selectedBackground != "" ? backgroundOptions[1] : backgroundOptions[0]}
               options={backgroundOptions}
-              defaultValue={backgroundOptions[0]}
               className="design-selection"
+              id="design-selection"
               onChange={(data) => handleBackgroundChange(data)}
             />
             <div id="design-background-input-uploadimage">
-              {selectedBackground == 1 ? (
+              {selectedBackground != "" ? (
                 <UploadImage />
               ) : null}
             </div>

@@ -31,9 +31,14 @@ public class FormDAO {
             String title = resultSet.getString("title");
             String description = resultSet.getString("description");
             String privacySetting = resultSet.getString("privacySetting");
+            String backgroundColor = resultSet.getString("backgroundColor");
+            String backgroundLink = resultSet.getString("backgroundLink");
             Long createDate = resultSet.getLong("createDate");
             Long modifyDate = resultSet.getLong("modifyDate");
-            return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate);
+            Form tempForm = new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate);
+            tempForm.setBackgroundColor = backgroundColor;
+            tempForm.setBackgroundLink = backgroundLink;
+            return tempForm;
         });
         return formList;
     }
@@ -46,9 +51,14 @@ public class FormDAO {
             String title = resultSet.getString("title");
             String description = resultSet.getString("description");
             String privacySetting = resultSet.getString("privacySetting");
+            String backgroundColor = resultSet.getString("backgroundColor");
+            String backgroundLink = resultSet.getString("backgroundLink");
             Long createDate = resultSet.getLong("createDate");
             Long modifyDate = resultSet.getLong("modifyDate");
-            return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate);
+            Form tempForm = new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate);
+            tempForm.setBackgroundColor = backgroundColor;
+            tempForm.setBackgroundLink = backgroundLink;
+            return tempForm;
         }, id);
         return Optional.ofNullable(form);
     }

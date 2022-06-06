@@ -34,15 +34,17 @@ function Dashboard(props) {
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
-    let loadData = JSON.parse(
-      localStorage.getItem("formLists")
-    );
-    loadData.map((data) => {
-      if (data.formId == formId) {
-        localStorage.setItem("selectedForm", JSON.stringify(data));
-        return data;
-      }
-    });
+    try { 
+      axios({
+          method: "get",
+          url: `${BASE_URL}/api/v1/forms/${formId}`
+      }).then((res) => {
+          console.log(res.data);
+          localStorage.setItem("selectedForm", JSON.stringify(res.data));
+      })
+    } catch (error) {
+      console.log(error);
+    }
     let checkTutorial = localStorage.getItem("showTutorial");
     if(!checkTutorial) {
       setShowTutorial(true);
