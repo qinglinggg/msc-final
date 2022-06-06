@@ -109,7 +109,7 @@ public class FormDAO {
             } else {
                 query += ",";
             }
-            query += " modifyDate = '" + dateFormat.format(toBeUpdated.getModifyDate()) + "'";
+            query += " modifyDate = " + toBeUpdated.getModifyDate();
         }
         if(toBeUpdated.getBackgroundColor() != "" && toBeUpdated.getBackgroundColor() != null){
             if (firstCheck == false) {
@@ -120,7 +120,16 @@ public class FormDAO {
             }
             query += " backgroundColor = '" + toBeUpdated.getBackgroundColor() + "'";
         }
-        query += "WHERE formId = ?";
+        if(toBeUpdated.getBackgroundLink() != "" && toBeUpdated.getBackgroundLink() != null){
+            if (firstCheck == false) {
+                query += "";
+                firstCheck = true;
+            } else {
+                query += ",";
+            }
+            query += " backgroundLink = '" + toBeUpdated.getBackgroundLink() + "'";
+        }
+        query += " WHERE formId = ?";
         System.out.println(query);
         int res = jdbcTemplate.update(query, id);
         return res;
