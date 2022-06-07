@@ -326,7 +326,7 @@ public class FormDAO {
     }
 
     public List<Form> getAuthoredForms(String userId){
-        final String query = "SELECT * FROM Form WHERE authorUserId = ? ORDER BY modifyDate ASC";
+        final String query = "SELECT * FROM Form WHERE authorUserId = ? ORDER BY modifyDate DESC";
         List<Form> authoredForms = jdbcTemplate.query(query, (resultSet, i) -> {
             String formId = resultSet.getString("formId");
             String authorUserId = resultSet.getString("authorUserId");
@@ -345,7 +345,7 @@ public class FormDAO {
     }
 
     public List<FormRespondent> getFormTargetedUserList(String formId){
-        final String query = "SELECT * FROM FormRespondent WHERE formId = ? AND isTargeted = 1 ORDER BY inviteDate ASC";
+        final String query = "SELECT * FROM FormRespondent WHERE formId = ? AND isTargeted = 1 ORDER BY inviteDate DESC";
         List<FormRespondent> formTargetedUserList = jdbcTemplate.query(query, (resultSet, i) -> {
             String formRespondentId = resultSet.getString("formRespondentId");
             String userId = resultSet.getString("userId");
