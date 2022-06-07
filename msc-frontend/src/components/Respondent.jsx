@@ -828,6 +828,10 @@ function Respondent (props) {
       }
       if(resIdx == formResponse.length - 1) localStorage.setItem("tempFormResponse", JSON.stringify([]));
     });
+    axios({
+      method: "put",
+      url: `${BASE_URL}/api/v1/forms/submit-form/${formRespondentId}`
+    }).catch((error) => console.log(error));
   }
     
   const handleOpenChat = () => {

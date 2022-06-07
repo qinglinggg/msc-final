@@ -224,5 +224,7 @@ public class FormService {
         return res;
     }
 
-
+    public int submitForm(String formRespondentId){
+        return formDAO.submitForm(formRespondentId);
+    }
 }

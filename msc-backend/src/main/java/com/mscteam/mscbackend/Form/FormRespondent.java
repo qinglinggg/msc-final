@@ -6,16 +6,16 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class FormRespondent implements Comparable<FormRespondent> {
+public class FormRespondent {
     private UUID formRespondentId;
     private UUID formId;
     private UUID userId;
-    private Date submitDate;
+    private Long submitDate;
     private Integer isTargeted;
     private Long inviteDate;
 
     // get 
-    public FormRespondent(String formRespondentId, String formId, String userId, Date submitDate, Integer isTargeted, Long inviteDate){
+    public FormRespondent(String formRespondentId, String formId, String userId, Long submitDate, Integer isTargeted, Long inviteDate){
         this.formRespondentId = UUID.fromString(formRespondentId);
         this.formId = UUID.fromString(formId);
         this.userId = UUID.fromString(userId);
@@ -31,10 +31,9 @@ public class FormRespondent implements Comparable<FormRespondent> {
         this.userId = UUID.fromString(userId);
         if(isTargeted == 1){
             this.submitDate = null;
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            this.inviteDate = timestamp.getTime();
+            this.setInviteDate();
         } else {
-            this.submitDate = setSubmitDate();
+            this.setSubmitDate();
             this.inviteDate = null;
         }
         this.isTargeted = isTargeted;
@@ -52,13 +51,12 @@ public class FormRespondent implements Comparable<FormRespondent> {
         return this.userId;
     }
 
-    public Date getSubmitDate() {
+    public Long getSubmitDate() {
         return this.submitDate;
     }
 
-    public Date setSubmitDate() {
-        Date date = new Date();
-        return date;
+    public void setSubmitDate() {
+        this.submitDate = System.currentTimeMillis();
     }
 
     public Integer getIsTargeted() {
@@ -73,17 +71,17 @@ public class FormRespondent implements Comparable<FormRespondent> {
         return this.inviteDate;
     }
 
-    public void setInviteDate(Long inviteDate) {
-        this.inviteDate = inviteDate;
+    public void setInviteDate() {
+        this.inviteDate = System.currentTimeMillis();
     }
 
-    public String inviteDateToTimestamp()  {
-        Timestamp timestamp = new Timestamp(inviteDate);
-        return timestamp.toString();
-    }
+    // public String inviteDateToTimestamp()  {
+    //     Timestamp timestamp = new Timestamp(inviteDate);
+    //     return timestamp.toString();
+    // }
 
-    @Override
-    public int compareTo(FormRespondent o) {
-        return this.getInviteDate().compareTo(o.getInviteDate());
-    }
+    // @Override
+    // public int compareTo(FormRespondent o) {
+    //     return this.getInviteDate().compareTo(o.getInviteDate());
+    // }
 }

@@ -349,12 +349,7 @@ public class FormDAO {
         List<FormRespondent> formTargetedUserList = jdbcTemplate.query(query, (resultSet, i) -> {
             String formRespondentId = resultSet.getString("formRespondentId");
             String userId = resultSet.getString("userId");
-            Date submitDate = null;
-            try {
-                submitDate = dateFormat.parse(resultSet.getString("submitDate"));
-            } catch (Exception e) {
-                System.out.println("dateFormat.parse is failed");
-            }
+            Long submitDate = resultSet.getLong("submitDate");
             Integer isTargeted = resultSet.getInt("isTargeted");
             Long inviteDate = resultSet.getLong("inviteDate");
             return new FormRespondent(formRespondentId, formId, userId, submitDate, isTargeted, inviteDate);
@@ -368,12 +363,7 @@ public class FormDAO {
         List<FormRespondent> invitedFormList = jdbcTemplate.query(query, (resultSet, i) -> {
             String formRespondentId = resultSet.getString("formRespondentId");
             String formId = resultSet.getString("formId");
-            Date submitDate = null;
-            try {
-                submitDate = dateFormat.parse(resultSet.getString("submitDate"));
-            } catch (Exception e) {
-                System.out.println("dateFormat.parse is failed");
-            }
+            Long submitDate = resultSet.getLong("submitDate");
             Integer isTargeted = resultSet.getInt("isTargeted");
             Long inviteDate = resultSet.getLong("inviteDate");
             return new FormRespondent(formRespondentId, formId, userId, submitDate, isTargeted, inviteDate); 
@@ -385,7 +375,7 @@ public class FormDAO {
     public int insertTargetedUser(String formId, String userId){
         System.out.println("masuk insertTargetedUser");
         FormRespondent targetedUser = new FormRespondent(formId, userId, 1);
-        Date submitDate = targetedUser.getSubmitDate();
+        Long submitDate = targetedUser.getSubmitDate();
         String resultDate = "";
         if(submitDate != null) resultDate = dateFormat.format(targetedUser.getSubmitDate());
         else resultDate = null;
@@ -430,4 +420,10 @@ public class FormDAO {
         return res;
     }
 
+    public int submitForm(String formRespondentId){
+        final String query = "UPDATE FormRespondent SET submitDate = ? WHERE formRespondentId = ?";
+        Long submitDate = System.currentTimeMillis();
+        int res = jdbcTemplate.update(query, submitDate, formRespondentId);
+        return res;
+    }
 }

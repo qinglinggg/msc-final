@@ -183,4 +183,9 @@ public class FormController {
         return formService.forceDeleteFormRespondent(formId, userId);
     }
 
+    @PutMapping(path="/submit-form/{formRespondentId}")
+    public int submitForm(@PathVariable("formRespondentId") String formRespondentId){
+        return formService.submitForm(formRespondentId);
+    }
+
 }
