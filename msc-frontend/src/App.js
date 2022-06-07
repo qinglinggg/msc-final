@@ -39,7 +39,7 @@ class App extends React.Component {
   state = {
     allForms: [],
     rawInvitedFormLists: [],
-    loggedInUser: null,
+    loggedInUser: "",
     currentPage: ""
   }
 
@@ -74,11 +74,6 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    if(!this.state.loggedInUser) {
-      localStorage.clear();
-      this.setState({ loggedInUser : ""});
-      localStorage.setItem("loggedInUser", "");
-    }
     setInterval(() => {
       let loggedIn = localStorage.getItem("loggedInUser");
       console.log(loggedIn);
