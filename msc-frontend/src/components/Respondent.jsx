@@ -34,7 +34,6 @@ function Respondent (props) {
   const [primaryColor, setPrimaryColor] = useState("Default");
   const [secondaryColor, setSecondaryColor] = useState("Default");
   const [bgLink, setBgLink] = useState("./images/woman.jpg");
-
   const [intervalId, setIntervalId] = useState(0);
 
   useEffect(() => {
@@ -44,6 +43,7 @@ function Respondent (props) {
             method: "get",
             url: `${BASE_URL}/api/v1/forms/${formId}`
         }).then((res) => {
+            console.log(res.data);
             setFormMetadata(res.data);
             localStorage.setItem("selectedForm", JSON.stringify(res.data));
         })
@@ -297,7 +297,7 @@ function Respondent (props) {
 
   useEffect(() => {
     let navbar = document.getElementById("navbar");
-    let background = document.getElementById("page-container");
+    let background = document.getElementById("display-background");
     let chatHeader;
     let chatIcon;
     if(!previewMode){
@@ -309,8 +309,13 @@ function Respondent (props) {
     navbar.style.backgroundColor = primaryColor;
     if(bgLink == "") background.style.backgroundColor = secondaryColor;
     else {
-      background.style.backgroundImage = bgLink;
-      background.style.backgroundSize = "cover";
+      async function fetchImage() {
+        const res = await fetch(bgLink);
+        const imageBlob = await res.blob();
+        const imageUrl = URL.createObjectURL(imageBlob);
+        background.style.backgroundImage = `url(${imageUrl})`;
+      }
+      fetchImage();
     }
     return () => {
       navbar.style.backgroundColor = "";
@@ -390,7 +395,6 @@ function Respondent (props) {
       setPrimaryColor("rgb(248, 174, 186)");
       setSecondaryColor("rgb(245, 233, 239)");
     }
-    // setBgLink(`url('${dummyProfile}')`);
     setBgLink(selectedForm.backgroundLink);
   }
 
@@ -961,6 +965,7 @@ function Respondent (props) {
                   {props.previewMode ? null : formMetadata.description}
               </div>
               <div className="display-container" id="display-respondent">
+                <div id="display-background"></div>
                 {index == 1 ? 
                   null : (
                   <div id="preview-back-icon-animation"

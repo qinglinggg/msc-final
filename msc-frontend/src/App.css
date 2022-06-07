@@ -1703,6 +1703,7 @@ body {
   border-radius: 10px;
   margin: 20px 0px 20px 0px;
   position: relative;
+  background-size: cover;
 }
 
 #design-background-uploadimage-area.active {
@@ -1800,7 +1801,7 @@ body {
   /* background-color: rgb(139, 231, 180); */
   background: linear-gradient(135deg, #3afe8c 0%, #5bcfec 100%);
   padding: 5px 0px 5px 0px;
-  border-radius: 0px 0px 5px 5px;
+  border-radius: 0px 0px 10px 10px;
   align-self: flex-end;
   /* position: absolute; */
   visibility: hidden;
@@ -2620,6 +2621,18 @@ body {
   100% {
     transform: translateX(0);
   }
+}
+
+#display-background {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  border-radius: 15px;
+  background-color: transparent;
+  background-position: center;
+  background-size: auto;
+  top: 0;
+  left: 0;
 }
 
 #display-respondent {
@@ -3763,4 +3776,8 @@ body {
   100% {
     opacity: 0;
   }
+}
+@keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
