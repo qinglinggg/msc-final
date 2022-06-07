@@ -28,40 +28,42 @@ function Dashboard(props) {
   const [privacyCheck, setPrivacyCheck] = useState(false);
 
   useEffect(() => {
-    // console.log("Test Form Id: " + formId);
     props.handleUpdateCurrentPage(formId);
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
-    let loadData = JSON.parse(
-      localStorage.getItem("formLists")
-    );
-    loadData.map((data) => {
-      if (data.formId == formId) {
-        localStorage.setItem("selectedForm", JSON.stringify(data));
-        return data;
+    try { 
+        axios({
+          method: "get",
+          url: `${BASE_URL}/api/v1/forms/${formId}`
+        }).then((res) => {
+            if(!res.data) return;
+            setTitle(res.data.title);
+            setDescription(res.data.description);
+            setPrivacyCheck(res.data.privacyCheck);
+            let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
+            tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
+            if(tempBreadcrumbs.length >= 2) {
+              while(tempBreadcrumbs.slice(-1)[0] && !(tempBreadcrumbs.slice(-1)[0].page == "Home" || tempBreadcrumbs.slice(-1)[0].page == "/")){
+                tempBreadcrumbs.pop();
+              }
+            }
+            let selectedForm = res.data;
+            if(tempBreadcrumbs){
+              tempBreadcrumbs.push({page: "Dashboard - " + selectedForm['title'], path: window.location.href});
+              setCurrentStep(tempBreadcrumbs);
+              localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
+            }
+        });
+      } catch (error) {
+        console.log(error);
       }
-    });
     let checkTutorial = localStorage.getItem("showTutorial");
     if(!checkTutorial) {
       setShowTutorial(true);
     }
-    let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
-    tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
-    if(tempBreadcrumbs.length >= 2) {
-      while(tempBreadcrumbs.slice(-1)[0] && !(tempBreadcrumbs.slice(-1)[0].page == "Home" || tempBreadcrumbs.slice(-1)[0].page == "/")){
-        tempBreadcrumbs.pop();
-      }
-    }
-    let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
-    tempBreadcrumbs.push({page: "Dashboard - " + selectedForm['title'], path: window.location.href});
-    setCurrentStep(tempBreadcrumbs);
-    localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
-    setTitle(selectedForm.title);
-    setDescription(selectedForm.description);
-    setPrivacyCheck(selectedForm.privacyCheck);
     try {
       axios({
         method: "get",
@@ -246,6 +248,7 @@ function Dashboard(props) {
       }
       return elem;
     });
+    console.log(currentForm);
     try {
       axios({
         method: "put",

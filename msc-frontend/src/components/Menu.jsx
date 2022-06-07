@@ -3,8 +3,8 @@ import react, { createRef, Fragment, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 function Menu(props) {
-  const [selectedForm, setSelectedForm] = useState([]);
-
+  const [selectedForm, setSelectedForm] = useState("");
+  // const [linkFlag, setLinkFlag] = useState(0);
   const handleCurrentSelection = (item) => {
     let listSelection = document.querySelectorAll(".page-button");
     listSelection.forEach((i) => {
@@ -14,10 +14,10 @@ function Menu(props) {
   }
 
   useEffect(() => {
-    console.log(props.currentPage);
-    let currentForm = localStorage.getItem("selectedForm");
-    currentForm = JSON.parse(currentForm);
-    setSelectedForm(currentForm['formId']);
+    let currentForm = JSON.parse(localStorage.getItem("selectedForm"));
+    if(currentForm) {
+      setSelectedForm(currentForm['formId']);
+    }
   }, [props.currentPage]);
 
   useEffect(() => {
@@ -54,6 +54,7 @@ function Menu(props) {
   }
 
   return (
+    // linkFlag != 0 ? (
     <div className="menu-container" id="menu-container">
       <div className="menu-close-container">
         <ion-icon name="close-outline" id="menu-close"></ion-icon>
@@ -86,6 +87,7 @@ function Menu(props) {
         Admin
       </Link> */}
     </div>
+  // ) : null
   );
 }
 

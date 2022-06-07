@@ -6,7 +6,7 @@ const BASE_URL = "http://10.61.38.193:8080";
 class LandingPage extends Component {
     state = {
         showPopup: false,
-        isValidInput: false,
+        isValidInput: null,
         loginData : {}
     }
 
@@ -53,7 +53,10 @@ class LandingPage extends Component {
                 Selamat bekerja!
             </div>
             <div className='popup-confirm-btn'>
-                <button onClick={() => this.props.handleSetLoggedInUser(this.state.loginData)}>Konfirmasi</button>
+                <button onClick={() => {
+                    this.props.handleSetLoggedInUser(this.state.loginData);
+                    this.setState({isValidInput : null});
+                }}>Konfirmasi</button>
             </div>
         </React.Fragment>
         );
@@ -88,8 +91,8 @@ class LandingPage extends Component {
                     <div className='popup-close-btn'>
                         <ion-icon name="close-outline" onClick={() => this.setState({showPopup: false})}></ion-icon>
                     </div>
-                    <div className='popup-title'>Login Authentication</div>
-                    {this.state.isValidInput ? this.successAuthentication() : this.throwsAuthenticationError()}
+                    {this.state.isValidInput != null ? <div className='popup-title'>Login Authentication</div> : null}
+                    {this.state.isValidInput != null ? (this.state.isValidInput ? this.successAuthentication() : this.throwsAuthenticationError()) : <div className='popup-message'>Loading...</div>}
                 </div>
             </div>
         </React.Fragment>

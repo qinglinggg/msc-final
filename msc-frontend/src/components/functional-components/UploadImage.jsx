@@ -14,48 +14,75 @@ class UploadImage extends React.Component {
     selectedImage: null,
   };
 
+  componentDidMount() {
+    let currentForm = localStorage.getItem("selectedForm");
+    if(currentForm) currentForm = JSON.parse(currentForm);
+    else return;
+    if(currentForm.backgroundLink || currentForm.backgroundLink != "") {
+      this.setState({isImageUploaded : true});
+      this.setState({selectedImage: currentForm.backgroundLink})
+    }
+  }
+
+  async fetchImage() {
+    let dropArea = document.querySelector("#design-background-uploadimage-area");
+    if(!dropArea) return;
+    const res = await fetch(this.state.selectedImage);
+    const imageBlob = await res.blob();
+    const imageUrl = URL.createObjectURL(imageBlob);
+    dropArea.style.backgroundImage = `url(${imageUrl})`;
+    dropArea.style.animation = "fade-in 1s forwards";
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    let currentForm = localStorage.getItem("selectedForm");
+    if(currentForm) currentForm = JSON.parse(currentForm);
+    else return;
+    if(prevState.selectedImage != this.state.selectedImage && this.state.selectedImage != null) {
+      this.fetchImage();
+      currentForm.backgroundLink = this.state.selectedImage;
+      axios({
+        method: "put",
+        url: "http://10.61.38.193:8080/api/v1/forms/" + currentForm.formId,
+        data: currentForm
+      }).then(() => {
+        this.setState({ isImageUploaded: true });
+        let lists = localStorage.getItem("formLists");
+        
+        if(lists) {
+          lists = JSON.parse(lists);
+          lists.map((item, idx) => {
+            if(item.formId == currentForm.formId) lists[idx] = currentForm;
+          });
+          localStorage.setItem("formLists", JSON.stringify(lists));
+        }
+        localStorage.setItem("selectedForm", JSON.stringify(currentForm));
+      });
+    }
+    if(prevState.isImageUploaded != this.state.isImageUploaded && this.state.isImageUploaded == true) {
+      setTimeout(this.setState({ isImageUploaded: false}));
+    }
+  }
+
   handleUploadFile(file) {
-    console.log("Enter handle file");
-    console.log(file);
-
     // image validation
-
+    if(!file) return;
     let validExtensions = ["image/jpeg", "image/png", "image/jpg"];
     if (validExtensions.includes(file.type)) {
-      console.log(file);
+      console.log("file", file);
       let formData = new FormData();
-      formData.append("image", file);
-
+      formData.append("file", file);
+      console.log("formData", formData);
       axios({
-        url: "http://localhost:8080/api/v1/forms/background",
+        url: "http://10.61.38.193:8080/api/v1/upload",
         method: "POST",
-        data: { formData },
-      }).then(
-        (res) => {
-          // console.log("successfully uploaded");
-        },
-        (err) => {
-          // error
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data'
         }
-      );
-
-      this.setState({ isImageUploaded: true });
-
-      let fileReader = new FileReader();
-      let fileURL;
-      fileReader.onload = () => {
-        fileURL = fileReader.result;
-
-        let imageContainer = document.querySelector(
-          "#design-background-uploadimage-image"
-        );
-        let image = `<img src=${fileURL} alt="" />`;
-        imageContainer.insertAdjacentHTML("afterbegin", image);
-      };
-
-      fileReader.readAsDataURL(file);
-      // console.log(this.state.selectedImage);
-
+      }).then((res) => {
+          this.setState({selectedImage : "http://10.61.38.193:8080/api/v1/files/" + res.data.id});
+        });
       // animation
       const dropArea = document.querySelector(
           "#design-background-uploadimage-area"
@@ -63,7 +90,6 @@ class UploadImage extends React.Component {
         filename = dropArea.querySelector(
           "#design-background-uploadimage-filename"
         );
-
       filename.classList.add("active");
       filename.textContent = file.name;
     }
@@ -95,8 +121,6 @@ class UploadImage extends React.Component {
         "#design-background-uploadimage-text-header"
       );
 
-    // file is dragged on drag area
-    console.log("File is dragged");
     e.preventDefault();
     dropArea.classList.add("active");
     dragText.textContent = "Release to Upload File";
@@ -110,15 +134,11 @@ class UploadImage extends React.Component {
         "#design-background-uploadimage-text-header"
       );
 
-    // file is dragged over drag area
-    console.log("File is dragged outside from drag area");
     dropArea.classList.remove("active");
     dragText.textContent = "Drag & Drop to Upload File";
   }
 
   handleAreaDrop(e) {
-    // file is dropped on drag area
-    console.log("File is dropped on drag area");
     e.preventDefault();
     let file = e.dataTransfer.files[0];
     this.handleUploadFile(file);
@@ -183,9 +203,7 @@ class UploadImage extends React.Component {
             type="file"
             onChange={(e) => {
               let file = e.target.files[0];
-              this.setState({ selectedImage: file });
               this.handleUploadFile(file);
-
               // animation
               let dropArea = document.querySelector(
                 "#design-background-uploadimage-area"

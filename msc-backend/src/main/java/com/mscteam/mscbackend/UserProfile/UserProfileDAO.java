@@ -44,7 +44,6 @@ public class UserProfileDAO {
     }
 
     public UserProfile insertUser(UserProfile user) {
-        System.out.println("UserProfileDAO start");
         final String query = "INSERT INTO User VALUES (?,?,?,?,?,?)";
         int res = jdbcTemplate.update(query, user.getUserId().toString(), user.getUsername(), user.getFullname(),
                 user.getEmail(), user.getPassword(), user.getProfileImage());
@@ -118,5 +117,33 @@ public class UserProfileDAO {
             return userId;
         }, userEmail);
         return res;
+    }
+
+    public Logins getSession(String id) {
+        final String query = "SELECT * FROM LoginSessions WHERE userId = ?";
+        List<Logins> resToken = jdbcTemplate.query(query, (resultSet, i) -> {
+            String userId = resultSet.getString("userId");
+            String bearer = resultSet.getString("bearerToken");
+            return new Logins(userId, bearer);
+        }, id);
+        if(resToken.size() > 0) {
+            Logins curData = resToken.get(0);
+            return curData;
+        }
+        return null;
+    }
+
+    public Logins insertSession(Logins login) {
+        String query = "INSERT INTO LoginSessions VALUES ('";
+        query += login.getUserId() + "','";
+        query += login.getBearerToken() + "')";
+        jdbcTemplate.update(query);
+        return login;
+    }
+
+    public Logins removeSession(Logins login) {
+        String query = "DELETE FROM LoginSessions WHERE userId = ?";
+        jdbcTemplate.update(query, login.getUserId());
+        return login;
     }
 }

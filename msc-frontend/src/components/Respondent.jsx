@@ -34,7 +34,6 @@ function Respondent (props) {
   const [primaryColor, setPrimaryColor] = useState("Default");
   const [secondaryColor, setSecondaryColor] = useState("Default");
   const [bgLink, setBgLink] = useState("./images/woman.jpg");
-
   const [intervalId, setIntervalId] = useState(0);
 
   useEffect(() => {
@@ -44,6 +43,7 @@ function Respondent (props) {
             method: "get",
             url: `${BASE_URL}/api/v1/forms/${formId}`
         }).then((res) => {
+            console.log(res.data);
             setFormMetadata(res.data);
             localStorage.setItem("selectedForm", JSON.stringify(res.data));
         })
@@ -113,17 +113,24 @@ function Respondent (props) {
     displayContainer.addEventListener('animationend', () => {
       displayContainer.style.animation = '';
     });
+    localStorage.removeItem("navigator");
+    localStorage.removeItem("tempFormResponse");
     return () => {
-      let check = undefined;
-      axios({
-        method: "get",
-        url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
-      }).then((res) => {
-        check = res.data;
-      }).finally(() => {
-        if(check == undefined) axios.delete(`${BASE_URL}/api/v1/feedback/${feedbackId}`).catch((error) => console.log(error));
-      })
+      if(!previewMode){
+        let check = undefined;
+        axios({
+          method: "get",
+          url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
+        }).then((res) => {
+          check = res.data;
+        }).finally(() => {
+          if(check == undefined) axios.delete(`${BASE_URL}/api/v1/feedback/${feedbackId}`).catch((error) => console.log(error));
+        })
+      }
+      localStorage.removeItem("navigator");
+      localStorage.removeItem("tempFormResponse");
     };
+    
   }, []);
 
   useEffect(() => {
@@ -133,31 +140,34 @@ function Respondent (props) {
   useEffect(() => {
     if(!formRespondentId) return;
     if(!formItems || formItems.length == 0) return;
-    if(formResponse && formResponse.length > 0) return;
-    // inisialisasi untuk formResponse
     let loadData = localStorage.getItem("tempFormResponse");
     let validator = false;
     if (loadData) {
       let selectedId = null;
       loadData = JSON.parse(loadData);
+      console.log("loadData");
+      console.log(loadData);
       if(loadData.length)
         formItems.map((data, idx) => {
-          console.log("data: " + data + ", idx: " + idx);
           if(data.type != "CB" && !selectedId) {
             selectedId = loadData[idx]['formRespondentId'];
+            console.log("if(data.type != CB && !selectedId)")
+            console.log("selectedId: ", selectedId);
           } else {
             let currentResp = loadData[idx];
             if(currentResp && currentResp.length > 0) currentResp.map((resp) => {
               if(!selectedId) selectedId = resp['formRespondentId'];
             });
+            console.log("else, selectedId: ", selectedId);
           }
         });
       if(selectedId == formRespondentId) {
-        setFormResponse(loadData)
+        setFormResponse(loadData);
         validator = true;
       }
     }
     if(!validator) {
+      console.log("!validator");
       loadData = [];
       formItems.map((fi) => {
         if (fi.type == "CB") loadData.push([]);
@@ -165,17 +175,16 @@ function Respondent (props) {
       });
       setFormResponse(loadData);
     }
-  }, [formRespondentId]);
+  }, [formRespondentId, answerSelection]);
 
   useEffect(() => {
+    if(previewMode) return;
     let userId = JSON.parse(localStorage.getItem("loggedInUser"));
     if(feedbackId == undefined){
       let newFeedback = {
         formId: formId,
         userId: userId,
       }
-      console.log("newFeedback");
-      console.log(newFeedback);
       try {
         axios({
           method: "post",
@@ -239,11 +248,6 @@ function Respondent (props) {
       setNavigator(tempNav);
       localStorage.setItem("navigator", JSON.stringify(tempNav));
     }
-
-    return (() => {
-      localStorage.removeItem("navigator");
-      localStorage.removeItem("tempFormResponse");
-    })
   }, [formResponse])
 
   useEffect(() => {
@@ -293,25 +297,35 @@ function Respondent (props) {
 
   useEffect(() => {
     let navbar = document.getElementById("navbar");
-    let chatHeader = document.getElementById("respondent-chat-header");
-    let chatIcon = document.getElementById("respondent-chat-button-float");
-    let background = document.getElementById("page-container");
-
+    let background = document.getElementById("display-background");
+    let chatHeader;
+    let chatIcon;
+    if(!previewMode){
+      chatHeader = document.getElementById("respondent-chat-header");
+      chatIcon = document.getElementById("respondent-chat-button-float");
+      chatHeader.style.backgroundColor = primaryColor;
+      chatIcon.style.backgroundColor = primaryColor;
+    }
     navbar.style.backgroundColor = primaryColor;
-    chatHeader.style.backgroundColor = primaryColor;
-    chatIcon.style.backgroundColor = primaryColor;
     if(bgLink == "") background.style.backgroundColor = secondaryColor;
     else {
-      background.style.backgroundImage = bgLink;
-      background.style.backgroundSize = "cover";
+      async function fetchImage() {
+        const res = await fetch(bgLink);
+        const imageBlob = await res.blob();
+        const imageUrl = URL.createObjectURL(imageBlob);
+        background.style.backgroundImage = `url(${imageUrl})`;
+      }
+      fetchImage();
     }
     return () => {
       navbar.style.backgroundColor = "";
-      chatHeader.style.backgroundColor = "";
-      chatIcon.style.backgroundColor = "";
       background.style.backgroundColor = "";
       background.style.backgroundImage = "";
       background.style.backgroundSize = "";
+      if(!previewMode && chatHeader && chatIcon){
+        chatHeader.style.backgroundColor = "";
+        chatIcon.style.backgroundColor = "";
+      }
     }
   }, [bgLink, primaryColor]);
   
@@ -381,7 +395,6 @@ function Respondent (props) {
       setPrimaryColor("rgb(248, 174, 186)");
       setSecondaryColor("rgb(245, 233, 239)");
     }
-    // setBgLink(`url('${dummyProfile}')`);
     setBgLink(selectedForm.backgroundLink);
   }
 
@@ -407,20 +420,20 @@ function Respondent (props) {
   const checkIsRequired = (formItem, formResponse) => {
     let checker = true;
     if(!(formItem.type == "CB" || formItem.type == "LS")) {
-      if(!formResponse || formResponse.answerSelectionValue == "") checker = false;
+      // SA, MC
+      if(!formResponse || formResponse.answerSelectionValue == "" || !(formResponse.answerSelectionValue)) checker = false;
     }
     else if(formItem.type == "CB"){
+      if(!formResponse || formResponse.length == 0) checker = false;
+      else
       formResponse.map(resp => {
         if(resp || resp.answerSelectionValue != "") return;
         checker = false;
       });
-      if(!formResponse || formResponse.length == 0) checker = false;
     }
     else if(formItem.type == "LS"){
       if(!formResponse || !formResponse.answerSelectionValue) checker = false;
-    } else if(formItem.type == "SA"){
-      if(!formResponse || !formResponse.answerSelectionValue) checker = false;
-    }
+    } 
     return checker;
   }
 
@@ -435,9 +448,26 @@ function Respondent (props) {
     return -1;
   }
 
+  const warningStyle = () => {
+    let displayContainer = document.querySelector('.inner-display-container');
+    if(!navToggle){
+      displayContainer.style.border = "2px solid #f16f6f";
+      displayContainer.style.backgroundColor = "#fde6e6";
+    } else {
+      displayContainer.style.border = "2px solid #c4c4c4";
+      displayContainer.style.backgroundColor = "white";
+      displayContainer.style.animation = 'show-transition 1s forwards';
+    }
+  }
+
   const handleNext = () => {
     console.log("nextNav:", nextNav);
-    if(!navToggle) return;
+    // console.log(navToggle);
+    // let displayContainer = document.querySelector('.inner-display-container');
+    warningStyle();
+    if(!navToggle){
+      return;
+    } 
     console.log("cek Navigator:",navigator);
     if(navigator && navigator.length != formItems.length + 1) return;
     if(nextNav == -1) {
@@ -462,17 +492,28 @@ function Respondent (props) {
     } else {
       setIndex(index + 1);
     }
-    let displayContainer = document.querySelector('.inner-display-container');
-    displayContainer.style.animation = 'show-transition 1s forwards';
+    let answerTextarea = document.getElementById("preview-sa-text");
+    if(answerTextarea){
+      answerTextarea.value = "";
+    }
+    // displayContainer.style.animation = 'show-transition 1s forwards';
   }
     
   const handleBack = () => {
-    if(!navToggle) return;
+    warningStyle();
+    if(!navToggle){
+      return;
+    }
     if(navigator[index-1] == -1) setIndex(index - 1);
     else setIndex(navigator[index-1]);
 
     let displayContainer = document.querySelector('.inner-display-container');
     displayContainer.style.animation = 'hide-transition 1s forwards';
+
+    let answerTextarea = document.getElementById("preview-sa-text");
+    if(answerTextarea){
+      answerTextarea.value = "";
+    }
   }
      
   const displayQuestion = () => {
@@ -563,7 +604,16 @@ function Respondent (props) {
       answerSelectionValue: value,
     }
     responses[index-1] = formItemResponse;
-    if(formResponse && formResponse.length == formItems.length) localStorage.setItem("tempFormResponse", JSON.stringify(responses));
+    console.log("responses ");
+    console.log(responses);
+    console.log("formResponse");
+    console.log(formResponse);
+    console.log("formItems.length");
+    console.log(formItems.length);
+    if(formResponse && formResponse.length == formItems.length){
+      console.log("set item");
+      localStorage.setItem("tempFormResponse", JSON.stringify(responses));
+    }
     setFormResponse(responses);
     setNextNav(selectedAnswerSelection.nextItem);
   }
@@ -913,10 +963,11 @@ function Respondent (props) {
                   {props.previewMode ? null : formMetadata.description}
               </div>
               <div className="display-container" id="display-respondent">
+                <div id="display-background"></div>
                 {index == 1 ? 
                   null : (
                   <div id="preview-back-icon-animation"
-                    style={navToggle ? {backgroundColor: "transparent"} : {backgroundColor: "gray"}}>
+                    style={navToggle ? {backgroundColor: "white"} : {backgroundColor: "gray"}}>
                     <ion-icon
                       name="chevron-back-outline"
                       id="preview-back-icon"
@@ -927,7 +978,7 @@ function Respondent (props) {
                 {displayQuestion()}
                 {(index > formItems.length && !props.previewMode) || (index > formItems.length - 1 && props.previewMode) ? null : (
                   <div id="preview-next-icon-animation"
-                    style={navToggle ? {backgroundColor: "transparent"} : {backgroundColor: "gray"}}>
+                    style={navToggle ? {backgroundColor: "white"} : {backgroundColor: "gray"}}>
                     <ion-icon
                       name="chevron-forward-outline"
                       id="preview-next-icon"
@@ -949,7 +1000,8 @@ function Respondent (props) {
                 </div>
                 <div className="text-indicator"><span id="page-num">{index}</span><span id="max-page">/{formItems.length}</span></div>
               </div>
-              <div id="respondent-chat">
+              {!previewMode ? (
+                <div id="respondent-chat">
                 {respondentChat()}
                 <div id="respondent-chat-button-float" 
                   onClick={() => {
@@ -960,6 +1012,18 @@ function Respondent (props) {
                   <ion-icon name={openChat ? "close" : "chatbubbles"} id="respondent-chat-icon"></ion-icon>
                 </div>
               </div>
+              ) : null}
+              {/* <div id="respondent-chat">
+                {respondentChat()}
+                <div id="respondent-chat-button-float" 
+                  onClick={() => {
+                    handleOpenChat();
+                    displayChatBox();
+                  }}
+                >
+                  <ion-icon name={openChat ? "close" : "chatbubbles"} id="respondent-chat-icon"></ion-icon>
+                </div>
+              </div> */}
           </div>
       </React.Fragment>
   );

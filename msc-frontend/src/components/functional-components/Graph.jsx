@@ -45,17 +45,34 @@ class Graph extends React.Component {
         el.style.width = 15 + "px";
       }
     });
-    let data = {
-      labels: this.props.answerList,
-      datasets: [
-        {
-          data: this.props.countData,
-          backgroundColor: colorData,
-          borderWidth: 1,
-          borderColor: "white"
-        }
-      ],
-    };
+    let data = {};
+    if(this.state.type != "bubble"){
+      data = {
+        // setup
+        labels: this.props.answerList,
+        datasets: [
+          {
+            data: this.props.countData,
+            backgroundColor: colorData,
+            borderWidth: 1,
+            borderColor: "white"
+          }
+        ],
+      };
+    } else {
+      data = {
+        // setup
+        labels: this.props.answerList,
+        datasets: [
+          {
+            data: this.countingAnswers(),
+            backgroundColor: colorData,
+            borderWidth: 1,
+            borderColor: "white"
+          }
+        ],
+      };
+    }
     let count = this.props.count;
     let canvas = document.getElementById("graph-" + count);
     if (canvas != null) {
@@ -131,6 +148,7 @@ class Graph extends React.Component {
   }
 
   showCountedLabels() {
+    console.log(this.props.countData);
     return this.props.countData.map((countSum, ci) => {
       return (
         <React.Fragment key={"graph-" + ci}>
@@ -143,19 +161,55 @@ class Graph extends React.Component {
     });
   }
 
+  countingAnswers() {
+    let data = [];
+    this.props.answerList.map((d, idx) => {
+      data.push({
+        index: idx,
+        answer: d,
+        flag: false
+      })
+    })
+    data.map((current) => {
+      if(current.flag) return;
+      let count = 1;
+      data.map((d, idx) => {
+        if(idx == current.index || d.flag) return;
+        if(d.answer.toLowerCase() == current.answer.toLowerCase()) {
+          count++;
+          d.flag = true;
+        }
+      })
+      current.count = count;
+      current.flag = true;
+    })
+    // data.filter((d) => {
+    //   if(d.count == undefined) return;
+    // })
+    return data;
+  }
+
   showListedAnswers() {
+    let countedAns = this.countingAnswers();
+    console.log(countedAns);
+    let idx = -1;
     return (
       <div className="shortanswer-list">
       {
-      this.props.answerList.map((ans, ai) => {
-        return (
-          <div className="shortanswer-item" key={"shortanswerList-" + ai}>
-            <span>{ ans }</span>
-          </div>
-        )
-      })
-    }
-    </div>
+        countedAns.map((ans) => {
+          idx++;
+          if(ans.count == undefined) return;
+          return (
+            <React.Fragment>
+              <div className="shortanswer-item" key={"shortanswerList-" + idx}>
+                <div className="shortanswer-ans">{ ans.answer }</div>
+                <div className="shortanswer-count">{ ans.count }</div>
+              </div>
+            </React.Fragment>
+          )
+        })
+      }
+      </div>
     )
   }
 

@@ -1,22 +1,21 @@
 package com.mscteam.mscbackend.Form;
 
-import java.util.Date;
 import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Form {
+public class Form implements Comparable<Form> {
     private UUID formId;
     private UUID authorUserId;
     private String title;
     private String description;
     private String privacySetting;
-    private Date createDate;
-    private Date modifyDate;
+    private Long createDate;
+    private Long modifyDate;
     private String backgroundLink;
     private String backgroundColor;
 
     // Get Forms
-    public Form(String formId, String authorUserId, String title, String description, String privacySetting, Date createDate, Date modifyDate) {
+    public Form(String formId, String authorUserId, String title, String description, String privacySetting, Long createDate, Long modifyDate, String backgroundColor, String backgroundLink) {
         this.formId = UUID.fromString(formId);
         this.authorUserId = UUID.fromString(authorUserId);
         this.title = title;
@@ -24,22 +23,21 @@ public class Form {
         this.privacySetting = privacySetting;
         this.createDate = createDate;
         this.modifyDate = modifyDate;
-        this.backgroundLink = "";
-        this.backgroundColor = "";
+        this.backgroundLink = backgroundLink;
+        this.backgroundColor = backgroundColor;
     }
 
     // Create and Insert mode
-    public Form(@JsonProperty("authorUserId") String authorUserId, @JsonProperty("title") String title, @JsonProperty("description") String description, @JsonProperty("privacySetting") String privacySetting,
-    @JsonProperty("backgroundLink") String backgroundLink, @JsonProperty("backgroundColor") String backgroundColor){
+    public Form(@JsonProperty("authorUserId") String authorUserId, @JsonProperty("title") String title, @JsonProperty("description") String description, @JsonProperty("privacySetting") String privacySetting){
         this.formId = UUID.randomUUID();
         this.authorUserId = UUID.fromString(authorUserId);
         this.title = title;
         this.description = description;
         this.privacySetting = privacySetting;
-        this.setCreateDate();
-        this.setModifyDate();
-        this.backgroundLink = backgroundLink;
-        this.backgroundColor = backgroundColor;
+        this.createDate = System.currentTimeMillis();
+        this.modifyDate = System.currentTimeMillis();
+        this.backgroundLink = "";
+        this.backgroundColor = "";
     }
 
     public UUID getFormId(){
@@ -74,22 +72,16 @@ public class Form {
         this.privacySetting = privacySetting;
     }    
 
-    public Date getCreateDate(){
+    public Long getCreateDate(){
         return this.createDate;
     }
 
-    private void setCreateDate(){
-        Date date = new Date();
-        this.createDate = date;
-    }
-
-    public Date getModifyDate(){
+    public Long getModifyDate(){
         return this.modifyDate;
     }
 
     public void setModifyDate(){
-        Date date = new Date();
-        this.modifyDate = date;
+        this.modifyDate = System.currentTimeMillis();
     }
 
     public String getBackgroundLink(){
@@ -106,5 +98,10 @@ public class Form {
 
     public void setBackgroundColor(String color){
         this.backgroundColor = color;
+    }
+
+    @Override
+    public int compareTo(Form o) {
+        return this.getModifyDate().compareTo(o.getModifyDate());
     }
 }

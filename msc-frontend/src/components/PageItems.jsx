@@ -12,9 +12,10 @@ class PageItems extends React.Component {
 
   componentDidMount() {
     if(this.props.currentPage == 2 && !this.props.data.submitDate){
-      let itemBg = document.getElementById("item-bg");
+      let itemBg = document.getElementById("item-bg-" + this.props.data.formId);
       itemBg.style.backgroundColor = "rgb(252, 207, 207)";
     }
+    if(!this.props.data) return;
   }
   
   async refreshFormList() {
@@ -38,8 +39,12 @@ class PageItems extends React.Component {
 
   render() {
     return (
-      <div className="item-wrapper" id="item-bg" >
-        <Link to={this.props.currentPage == 1 ? `/dashboard/formId/${this.props.data.formId}` : `/response/formId/${this.props.data.formId}`} className="item-container">
+      <div className="item-wrapper" id={"item-bg-" + this.props.data.formId} >
+        <Link to={this.props.currentPage == 1 ? `/dashboard/formId/${this.props.data.formId}` : `/response/formId/${this.props.data.formId}`} className="item-container"
+          onClick={() => {
+            localStorage.setItem("selectedForm", JSON.stringify(this.props.data));
+          }}
+        >
           <div className="item-img">
             <img id="item-image" src={dummyItemImage} />
           </div>
@@ -66,7 +71,7 @@ class PageItems extends React.Component {
                   this.processDeletion();
                 }}
               >
-                Delete this form
+                <div className="popup-text">Delete this form</div>
               </div>
             </div>
           </Popup> 
