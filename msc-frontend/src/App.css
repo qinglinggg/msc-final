@@ -2927,6 +2927,7 @@ body {
 }
 
 #preview-sa-text {
+  background-color: transparent;
   font-size: 15px;
   font-style: italic;
   color: gray;
