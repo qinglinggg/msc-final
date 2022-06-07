@@ -751,35 +751,33 @@ function Respondent (props) {
   }
 
   const submitForm = async () => {
-    formResponse.map(async(response) => {
+    formResponse.map(async(response, resIdx) => {
       if(!Array.isArray(response)) {
         try {
           await axios({
             method: "post",
             url: `${BASE_URL}/api/v1/forms/insert-response/${formRespondentId}`,
             data: response
-          }).then(() => {
-            localStorage.setItem("tempFormResponse", JSON.stringify([]));
           })
         } catch(error) {
           console.log(error);
         }
       } else {
         response.map(async (respItem, respIndex) => {
-          if (navigator[respIndex] == -1 && respIndex != 0) return;
           console.log("Submitting form item index: " + respIndex);
           try {
             await axios({
               method: "post",
               url: `${BASE_URL}/api/v1/forms/insert-response/${formRespondentId}`,
               data: respItem
-            }).then(() => {if(respIndex == response.length - 1) localStorage.setItem("tempFormResponse", JSON.stringify([]))});
+            })
           } catch(error) {
             console.log(error);
           }
         });
       }
-    })
+      if(resIdx == formResponse.length - 1) localStorage.setItem("tempFormResponse", JSON.stringify([]));
+    });
   }
     
   const handleOpenChat = () => {
