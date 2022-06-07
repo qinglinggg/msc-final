@@ -45,17 +45,34 @@ class Graph extends React.Component {
         el.style.width = 15 + "px";
       }
     });
-    let data = {
-      labels: this.props.answerList,
-      datasets: [
-        {
-          data: this.props.countData,
-          backgroundColor: colorData,
-          borderWidth: 1,
-          borderColor: "white"
-        }
-      ],
-    };
+    let data = {};
+    if(this.state.type != "bubble"){
+      data = {
+        // setup
+        labels: this.props.answerList,
+        datasets: [
+          {
+            data: this.props.countData,
+            backgroundColor: colorData,
+            borderWidth: 1,
+            borderColor: "white"
+          }
+        ],
+      };
+    } else {
+      data = {
+        // setup
+        labels: this.props.answerList,
+        datasets: [
+          {
+            data: this.countingAnswers(),
+            backgroundColor: colorData,
+            borderWidth: 1,
+            borderColor: "white"
+          }
+        ],
+      };
+    }
     let count = this.props.count;
     let canvas = document.getElementById("graph-" + count);
     if (canvas != null) {
@@ -131,6 +148,7 @@ class Graph extends React.Component {
   }
 
   showCountedLabels() {
+    console.log(this.props.countData);
     return this.props.countData.map((countSum, ci) => {
       return (
         <React.Fragment key={"graph-" + ci}>
