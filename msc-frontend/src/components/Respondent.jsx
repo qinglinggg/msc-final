@@ -455,6 +455,7 @@ function Respondent (props) {
       displayContainer.style.backgroundColor = "#fde6e6";
     } else {
       displayContainer.style.border = "2px solid #c4c4c4";
+      displayContainer.style.backgroundColor = "rgba(255, 255, 255, 0.76)";
       displayContainer.style.animation = 'show-transition 1s forwards';
     }
   }

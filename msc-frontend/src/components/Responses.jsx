@@ -145,7 +145,7 @@ function Responses(props) {
         {changeSelectedResponse(-1, false) ? (<button onClick={() => changeSelectedResponse(-1, true)}>{"<< Prev"}</button>) : null}
         {changeSelectedResponse(1, false) ? (<button onClick={() => changeSelectedResponse(1, true)}>{"Next >>"}</button>) : null}
       </div>
-      { props.data && props.data.length > 0 ? (
+      { props.data && props.data.length > 0 && props.responses && props.responses.length > 0 ? (
         <React.Fragment>
           {props.data.map((item, idx) => {
             return (

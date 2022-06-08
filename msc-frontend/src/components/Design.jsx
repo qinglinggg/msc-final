@@ -2,7 +2,6 @@ import React, { Component, useEffect, useState } from "react";
 import iconMenubarGrey from "./images/menubarGrey.png";
 import Select from "react-select";
 import UploadImage from "./functional-components/UploadImage";
-import UploadImageReact from "./functional-components/UploadImageWithProgressBar-React";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
@@ -11,6 +10,7 @@ const BASE_URL = "http://10.61.38.193:8080";
 function Design(props) {
   const [selectedBackground, setSelectedBackground] = useState("");
   const [selectedColor, setSelectedColor] = useState("Default");
+  const [colorValue, setColorValue] = useState();
   const [formItems, setFormItems] = useState();
   const [openMenu, setOpenMenu] = useState(false);
   const [currentStep, setCurrentStep] = useState([]);
@@ -53,10 +53,22 @@ function Design(props) {
     if(selectedForm && selectedForm.backgroundLink != ""){
       setSelectedBackground(selectedForm.backgroundLink);
     }
+    if(selectedForm && selectedForm.backgroundColor != ""){
+      setSelectedColor(selectedForm.backgroundColor);
+    }
     tempBreadcrumbs.push({page: "Design - " + selectedForm['title'], path: window.location.href});
     setCurrentStep(tempBreadcrumbs);
     localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
   }, []);
+
+  useEffect (() => {
+    if(!selectedColor) return;
+    colorOptions.map((color) => {
+      if (color.value == selectedColor) {
+        setColorValue(color);
+      }
+    })
+  }, [selectedColor])
 
   const handleMenu = () => {
     setOpenMenu(!openMenu);
@@ -130,7 +142,7 @@ function Design(props) {
             />
             <div id="design-background-input-uploadimage">
               {selectedBackground != "" ? (
-                <UploadImage />
+                <UploadImage mode="design"/>
               ) : null}
             </div>
           </div>
@@ -138,9 +150,8 @@ function Design(props) {
         <div id="design-color-container">
           <div id="design-color-title">Choose color theme...</div>
           <Select
-            value={colorOptions.value}
+            value={colorValue}
             options={colorOptions}
-            defaultValue={colorOptions[0]}
             className="design-selection"
             onChange={(data) => handleColorChange(data)}
           />

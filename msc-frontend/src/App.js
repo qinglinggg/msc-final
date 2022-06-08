@@ -1,11 +1,7 @@
 import logo from "./logo.svg";
 import "./App.css";
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route
-} from "react-router-dom";
+import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import axios from "axios";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
@@ -16,11 +12,10 @@ import Design from "./components/Design";
 import DataVisualization from "./components/Data-visualization";
 import Feedback from "./components/Feedback";
 import Message from "./components/Message";
-import RouteDashboard from "./components/Dashboard";
-import { render } from "react-dom";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import Respondent from "./components/Respondent";
 import LandingPage from "./components/LandingPage";
+import UpdateProfile from "./components/functional-components/UpdateProfile"
 
 const BASE_URL = "http://10.61.38.193:8080";
 const APP_URL = "http://10.61.38.193:3001";
@@ -33,14 +28,19 @@ class App extends React.Component {
     this.handleSetLoggedInUser = this.handleSetLoggedInUser.bind(this);
     this.handleUpdateCurrentPage = this.handleUpdateCurrentPage.bind(this);
     this.checkLoggedInUser = this.checkLoggedInUser.bind(this);
+    this.handleUpdateProfile = this.handleUpdateProfile.bind(this);
+    this.handleUpdate = this.handleUpdate.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
+    this.handleOpenedPopup = this.handleOpenedPopup.bind(this);
   }
 
   state = {
     allForms: [],
     rawInvitedFormLists: [],
     loggedInUser: null,
-    currentPage: ""
+    currentUser: null,
+    currentPage: "",
+    openedPopup: false,
   }
 
   checkLoggedInUser(loggedIn) {
@@ -62,6 +62,10 @@ class App extends React.Component {
         localStorage.clear();
       }
     });
+  }
+
+  handleUpdate() {
+    this.setState({ updateState: !this.state.updateState });
   }
 
   handleLogout() {
@@ -87,6 +91,7 @@ class App extends React.Component {
           console.log("test");
           this.setState({ loggedInUser : "" });
           localStorage.setItem("loggedInUser", "");
+          if(window.location.pathname != "/") window.location = "/";
         }
         if (currentToken) sessionStorage.removeItem("bearer_token");
         return;
@@ -104,16 +109,18 @@ class App extends React.Component {
   }
   
   componentDidUpdate(prevProps, prevState) {
-    if(this.state.loggedInUser != prevProps.loggedInUser){
-      console.log("Difference: ", prevState.loggedInUser, this.state.loggedInUser, prevState.loggedInUser == this.state.loggedInUser);
-    }
     if(this.state.loggedInUser && this.state.loggedInUser != prevState.loggedInUser && this.state.loggedInUser != "") {
-      console.log("Updating user Dataaaa");
       this.updateUserdata(this.state.loggedInUser);
     }
   }
 
   async updateUserdata(userId) {
+    axios({
+      method: "get",
+      url: `${BASE_URL}/api/v1/user-profiles/${userId}`
+    }).then((res) => {
+      if(res.data) this.setState({currentUser: res.data});
+    });
     await axios.get(`${BASE_URL}/api/v1/forms/owned-form/${userId}`).then((res) => {
       const forms = res.data;
       localStorage.setItem("formLists", JSON.stringify(forms));
@@ -145,6 +152,18 @@ class App extends React.Component {
         console.log(error);
       });
     }
+  }
+
+  handleUpdateProfile(newLink) {
+    if(!this.state.currentUser) return;
+    let currentUser = this.state.currentUser;
+    currentUser.profileImage = newLink;
+    console.log(currentUser);
+    this.setState({currentUser : currentUser});
+  }
+
+  handleOpenedPopup(value) {
+    this.setState({openedPopup : value});
   }
 
   handleUpdateCurrentPage(value) {
@@ -225,8 +244,13 @@ class App extends React.Component {
       <React.Fragment>
         <Navbar 
           handleLogout={this.handleLogout}
+          handleUpdate={this.handleUpdate}
+          currentUser={this.state.currentUser}
         />
         <div className="background"></div>
+        {this.state.updateState ? 
+          <UpdateProfile currentUser={this.state.currentUser} handleUpdate={this.handleUpdate}
+            handleUpdateProfile={this.handleUpdateProfile} handleOpenedPopup={this.handleOpenedPopup}/> : null}
         <Menu currentPage={this.state.currentPage}/>
         <div className="page-container" id="page-container">
             <Routes>
@@ -235,6 +259,7 @@ class App extends React.Component {
                 element={
                   <Home
                     handleCreateNewForm={this.handleCreateNewForm}
+                    openedPopup={this.state.openedPopup}
                   />
                 }
                 key={"homePage"}

@@ -16,6 +16,7 @@ function Dashboard(props) {
   const [showTutorial, setShowTutorial] = useState(false);
   const [openVisibility, setOpenVisibility] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [loadDisplayed, setLoadDisplayed] = useState(false);
   const [updated, setUpdated] = useState([])
   const [formItems, setFormItems] = useState([]);
   const [optionCheck, setOptionCheck] = useState(false);
@@ -94,10 +95,30 @@ function Dashboard(props) {
         i.addEventListener('webkitAnimationEnd', () => {
           i.classList.remove("loading-transition-onload");
           i.classList.add("loading-transition-done");
+          setLoadDisplayed(true);
         });
       });
     }
   }, []); // run once
+
+  useEffect(() => {
+    console.log(loadDisplayed);
+    if(!isLoaded || !loadDisplayed) return;
+    let el = document.querySelectorAll("#loading-transition");
+    el.forEach((i) => {
+      i.style.display = "none";
+    });
+  })
+
+  useEffect(() => {
+    if(!isLoaded) return;
+    let el = document.querySelectorAll("#loading-transition");
+    el.forEach((i) => {
+      if(i.classList.contains("loading-transition-onload")) {
+        i.style.animation = "done-trans 2s forwards"
+      }
+    });
+  }, [isLoaded])
 
   useEffect(() => {
     if(!formItems || formItems.length == 0) return;
@@ -115,17 +136,8 @@ function Dashboard(props) {
         return;
       }
     })
-    if (validator) setTimeout(() => setIsLoaded(true), 3000);
+    if (validator) setTimeout(() => setIsLoaded(true), 2000);
   }, [updated]);
-
-  useEffect(() => {
-    let el = document.querySelectorAll("#loading-transition");
-    if (isLoaded) {
-      el.forEach((i) => {
-        i.style.animation = "done-trans 2s forwards";
-      });
-    }
-  }, [isLoaded]);
 
   useEffect(() => {
     let body = document.getElementById("body");
