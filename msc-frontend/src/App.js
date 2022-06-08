@@ -99,12 +99,12 @@ class App extends React.Component {
   }
   
   componentDidUpdate(prevProps, prevState) {
-    console.log(this.state.loggedInUser);
+    // console.log(this.state.loggedInUser);
     if(this.state.loggedInUser != prevProps.loggedInUser){
-      console.log("Difference: ", prevState.loggedInUser, this.state.loggedInUser, prevState.loggedInUser == this.state.loggedInUser);
+      // console.log("Difference: ", prevState.loggedInUser, this.state.loggedInUser, prevState.loggedInUser == this.state.loggedInUser);
     }
     if(this.state.loggedInUser && this.state.loggedInUser != prevState.loggedInUser && this.state.loggedInUser != "") {
-      console.log("Updating user Dataaaa");
+      // console.log("Updating user Dataaaa");
       this.updateUserdata(this.state.loggedInUser);
     }
   }
