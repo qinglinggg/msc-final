@@ -15,7 +15,7 @@ class Home extends React.Component {
     this.searchOnChange = this.searchOnChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.updatePopupData = this.updatePopupData.bind(this);
-    this.handleFormDeletion = this.handleFormDeletion.bind(this);
+    this.handleFormUpdate = this.handleFormUpdate.bind(this);
     this.checkLoggedInUser = this.checkLoggedInUser.bind(this);
   }
 
@@ -279,10 +279,13 @@ class Home extends React.Component {
     this.setState({ nullFlag : 0 });
   }
 
-  handleFormDeletion() {
-    let tempList = localStorage.getItem("formLists");
-    tempList = JSON.parse(tempList);
-    this.setState({ forms: tempList }); 
+  async handleFormUpdate() {
+    let tempUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    await this.props.updateUserdata(tempUser);
+    let tempList = JSON.parse(localStorage.getItem("formLists"));
+    this.setState({ forms: tempList });
+    let tempInvList = JSON.parse(localStorage.getItem("invitedFormLists"));
+    this.setState({ invitedForms: tempInvList });
   }
 
   displayPage1() {
@@ -293,7 +296,7 @@ class Home extends React.Component {
           <PageItems
             key={data.formId} 
             data={data}
-            handleFormDeletion={this.handleFormDeletion}
+            handleFormUpdate={this.handleFormUpdate}
             currentPage={1}
           />
         )) : null}
@@ -317,6 +320,7 @@ class Home extends React.Component {
           <PageItems 
             key={data.formId} 
             data={data} 
+            handleFormUpdate={this.handleFormUpdate}
             currentPage={2} 
           />
         )) : null}

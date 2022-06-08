@@ -84,7 +84,6 @@ class App extends React.Component {
       } else {
         let currentToken = sessionStorage.getItem("bearer_token");
         if(this.state.loggedInUser != "" || !this.state.loggedInUser) {
-          console.log("test");
           this.setState({ loggedInUser : "" });
           localStorage.setItem("loggedInUser", "");
         }
@@ -114,6 +113,7 @@ class App extends React.Component {
   }
 
   async updateUserdata(userId) {
+    console.log("updateUserdata dulu");
     await axios.get(`${BASE_URL}/api/v1/forms/owned-form/${userId}`).then((res) => {
       const forms = res.data;
       localStorage.setItem("formLists", JSON.stringify(forms));
@@ -133,10 +133,12 @@ class App extends React.Component {
         headers: {"Content-Type": "application/json"}
       }).then((res) => {
         let index = 0;
-        const invitedForms = res.data;
+        let invitedForms = res.data;
+        console.log(invitedForms);
         invitedForms.map((form) => {
           form['formRespondentId'] = tempInvitedForms[index].formRespondentId;
           form['submitDate'] = tempInvitedForms[index].submitDate;
+          form['inviteDate'] = tempInvitedForms[index].inviteDate;
           index++;
         });
         localStorage.setItem("invitedFormLists", JSON.stringify(invitedForms));
@@ -234,6 +236,7 @@ class App extends React.Component {
                 path="/"
                 element={
                   <Home
+                    updateUserdata={this.updateUserdata}
                     handleCreateNewForm={this.handleCreateNewForm}
                   />
                 }

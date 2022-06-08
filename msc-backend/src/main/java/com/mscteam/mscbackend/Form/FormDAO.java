@@ -345,7 +345,7 @@ public class FormDAO {
     }
 
     public List<FormRespondent> getFormTargetedUserList(String formId){
-        final String query = "SELECT * FROM FormRespondent WHERE formId = ? AND isTargeted = 1 ORDER BY inviteDate DESC";
+        final String query = "SELECT * FROM FormRespondent WHERE formId = ? AND isTargeted = 1 ORDER BY inviteDate ASC";
         List<FormRespondent> formTargetedUserList = jdbcTemplate.query(query, (resultSet, i) -> {
             String formRespondentId = resultSet.getString("formRespondentId");
             String userId = resultSet.getString("userId");
@@ -359,7 +359,7 @@ public class FormDAO {
     }
 
     public List<FormRespondent> getInvitedFormRespondent(String userId){
-        final String query = "SELECT * FROM FormRespondent WHERE userId = ? AND isTargeted = 1 ORDER BY inviteDate ASC";
+        final String query = "SELECT * FROM FormRespondent WHERE userId = ? AND isTargeted = 1 ORDER BY inviteDate DESC";
         List<FormRespondent> invitedFormList = jdbcTemplate.query(query, (resultSet, i) -> {
             String formRespondentId = resultSet.getString("formRespondentId");
             String formId = resultSet.getString("formId");
@@ -373,7 +373,6 @@ public class FormDAO {
     }
 
     public int insertTargetedUser(String formId, String userId){
-        System.out.println("masuk insertTargetedUser");
         FormRespondent targetedUser = new FormRespondent(formId, userId, 1);
         Long submitDate = targetedUser.getSubmitDate();
         String resultDate = "";

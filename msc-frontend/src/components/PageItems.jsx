@@ -11,21 +11,13 @@ class PageItems extends React.Component {
   }
 
   componentDidMount() {
+    let tempUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    if (tempUser) this.props.handleFormUpdate();
     if(this.props.currentPage == 2 && !this.props.data.submitDate){
       let itemBg = document.getElementById("item-bg-" + this.props.data.formId);
       itemBg.style.backgroundColor = "rgb(252, 207, 207)";
     }
     if(!this.props.data) return;
-  }
-  
-  async refreshFormList() {
-    let tempUser = JSON.parse(localStorage.getItem("loggedInUser"));
-    if (tempUser)
-    await axios.get(`${BASE_URL}/api/v1/forms/owned-form/${tempUser}`).then((res) => {
-      const forms = res.data;
-      localStorage.setItem("formLists", JSON.stringify(forms));
-      this.props.handleFormDeletion();
-    });
   }
 
   async processDeletion() {
