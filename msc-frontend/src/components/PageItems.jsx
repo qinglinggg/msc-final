@@ -8,6 +8,7 @@ const BASE_URL = "http://10.61.38.193:8080";
 class PageItems extends React.Component {
   constructor(props) {
     super(props);
+    this.refreshFormList = this.refreshFormList.bind(this);
   }
 
   componentDidMount() {
@@ -17,15 +18,10 @@ class PageItems extends React.Component {
     }
     if(!this.props.data) return;
   }
-  
-  async refreshFormList() {
+
+  refreshFormList() {
     let tempUser = JSON.parse(localStorage.getItem("loggedInUser"));
-    if (tempUser)
-    await axios.get(`${BASE_URL}/api/v1/forms/owned-form/${tempUser}`).then((res) => {
-      const forms = res.data;
-      localStorage.setItem("formLists", JSON.stringify(forms));
-      this.props.handleFormDeletion();
-    });
+    if (tempUser) this.props.handleFormUpdate();
   }
 
   async processDeletion() {

@@ -11,7 +11,7 @@ class Graph extends React.Component {
     this.resetGraph = this.resetGraph.bind(this);
     this.generateColor = this.generateColor.bind(this);
     this.showCountedLabels = this.showCountedLabels.bind(this);
-    this.showListedAnswers = this.showListedAnswers.bind(this);
+    this.generateOptionsConfig = this.generateOptionsConfig.bind(this);
   }
 
   state = {
@@ -46,33 +46,18 @@ class Graph extends React.Component {
       }
     });
     let data = {};
-    if(this.state.type != "bubble"){
-      data = {
-        // setup
-        labels: this.props.answerList,
-        datasets: [
-          {
-            data: this.props.countData,
-            backgroundColor: colorData,
-            borderWidth: 1,
-            borderColor: "white"
-          }
-        ],
-      };
-    } else {
-      data = {
-        // setup
-        labels: this.props.answerList,
-        datasets: [
-          {
-            data: this.countingAnswers(),
-            backgroundColor: colorData,
-            borderWidth: 1,
-            borderColor: "white"
-          }
-        ],
-      };
-    }
+    data = {
+      // setup
+      labels: this.props.answerList,
+      datasets: [
+        {
+          data: this.props.countData,
+          backgroundColor: colorData,
+          borderWidth: 1,
+          borderColor: "white"
+        }
+      ],
+    };
     let count = this.props.count;
     let canvas = document.getElementById("graph-" + count);
     if (canvas != null) {
@@ -84,29 +69,39 @@ class Graph extends React.Component {
     } catch(e) {
       console.log("Failed to destroy chart");
     }
-    // Chart.register(ChartDataLabels);
-    // Chart.defaults.set('plugins.datalabels', {
-    //   anchor: 'end',
-    //   align: 'end',
-    //   color: 'white'
-    // });
+    // config
     charts[count] = new Chart(canvas, {
       type: this.state.type,
       data: data,
       options: this.state.optionData,
-      plugins: [ChartDataLabels]
+      plugins: [ChartDataLabels],
     });
   }
 
-  componentDidMount() {
+  generateOptionsConfig() {
     let totalCount = 0;
     this.props.countData.map((val) => {
-      totalCount += val;
+      if(this.props.type != "SA") totalCount += val;
+      else totalCount += val.y;
     });
     let tempOpt = {
+      responsive: true,
+      maintainAspectRatio: true,
+      scales: {
+        x: {
+          min: 0,
+          ticks: {
+            stepSize: 1
+          }
+        },
+        y: {
+          min: 0,
+          ticks: {
+            stepSize: 1
+          }
+        }
+      },
       plugins: {
-        responsive: true,
-        maintainAspectRatio: true,
         title: {
           display: true,
           text: 'Persentase data - ' + totalCount + ' pilihan responden',
@@ -119,9 +114,13 @@ class Graph extends React.Component {
               textAlign: 'center'
             }
           },
-          formatter: function(value) {
-            let calculateVal = Math.round((value / totalCount) * 100);
-            return calculateVal + '%\n' + value + " votes";
+          formatter: this.props.type != "SA" ? (
+            function(value) {
+              let calculateVal = Math.round((value / totalCount) * 100);
+              return calculateVal + '%\n' + value + " votes";
+            }
+          ) : function(value) {
+            return value.y;
           }
         },
         legend: {
@@ -129,7 +128,15 @@ class Graph extends React.Component {
         },
         tooltip: {
           enabled: true,
-        },
+          callbacks: {
+            label: function(tooltipItem){
+              let idx = tooltipItem.formattedValue;
+              idx = idx.slice(1, idx.length-1);
+              idx = idx.split(',')[0];
+              return tooltipItem.dataset.data[idx-1].title;
+            }
+          }
+        }
       },
       layout: {
         padding: {
@@ -140,22 +147,27 @@ class Graph extends React.Component {
         },
       },
     };
+    if(this.props.type != "SA") delete tempOpt.scales;
+    console.log(tempOpt);
     this.setState({optionData : tempOpt});
+  }
+
+  componentDidMount() {
+    this.generateOptionsConfig();
     if(this.props.type == "MC") this.setState({type : "pie"}, () => this.resetGraph());
     else if(this.props.type == "CB") this.setState({type : "doughnut"}, () => this.resetGraph());
-    else if(this.props.type == "SA") this.setState({type : "N/A"}, () => this.resetGraph());
+    else if(this.props.type == "SA") this.setState({type : "bubble"}, () => this.resetGraph());
     else if(this.props.type == "LS") this.setState({type : "bar"}, () => this.resetGraph());
   }
 
   showCountedLabels() {
-    console.log(this.props.countData);
     return this.props.countData.map((countSum, ci) => {
       return (
         <React.Fragment key={"graph-" + ci}>
-            <div className="item-subgraph" id={"item-subgraph-" + this.props.count + ci}>
-              <span id={"color-subgraph-" + this.props.count + ci} className="item-color"></span>
-              <span className="item-text">{ this.props.answerList[ci] } : { countSum }</span>
-            </div>
+          <div className="item-subgraph" id={"item-subgraph-" + this.props.count + ci}>
+            <span id={"color-subgraph-" + this.props.count + ci} className="item-color"></span>
+            <span className="item-text">{ this.props.answerList[ci] } : { this.props.type != "SA" ? countSum : countSum.y}</span>
+          </div>
         </React.Fragment>
       );
     });
@@ -183,35 +195,36 @@ class Graph extends React.Component {
       current.count = count;
       current.flag = true;
     })
-    // data.filter((d) => {
-    //   if(d.count == undefined) return;
-    // })
     return data;
   }
 
-  showListedAnswers() {
-    let countedAns = this.countingAnswers();
-    console.log(countedAns);
-    let idx = -1;
-    return (
-      <div className="shortanswer-list">
-      {
-        countedAns.map((ans) => {
-          idx++;
-          if(ans.count == undefined) return;
-          return (
-            <React.Fragment>
-              <div className="shortanswer-item" key={"shortanswerList-" + idx}>
-                <div className="shortanswer-ans">{ ans.answer }</div>
-                <div className="shortanswer-count">{ ans.count }</div>
-              </div>
-            </React.Fragment>
-          )
-        })
-      }
-      </div>
-    )
-  }
+  // showListedAnswers() {
+  //   // let countedAns = this.countingAnswers();
+  //   // console.log(countedAns);
+  //   let idx = -1;
+  //   return (
+  //     <div className="shortanswer-list">
+  //     {
+  //       countedAns.map((ans) => {
+  //         idx++;
+  //         // if(ans.count == undefined) return;
+  //         return (
+  //           <React.Fragment>
+  //             {/* <div className="shortanswer-item" key={"shortanswerList-" + idx}>
+  //               <div className="shortanswer-ans">{ ans.answer }</div>
+  //               <div className="shortanswer-count">{ ans.count }</div>
+  //             </div> */}
+  //             <div className="shortanswer-item" key={"shortanswerList-" + idx}>
+  //               <div className="shortanswer-ans">{ ans.answer }</div>
+  //               <div className="shortanswer-count">{ ans.count }</div>
+  //             </div>
+  //           </React.Fragment>
+  //         )
+  //       })
+  //     }
+  //     </div>
+  //   )
+  // }
 
   render() {
     return (
@@ -219,15 +232,14 @@ class Graph extends React.Component {
         { this.props.countData.length > 0 ?
         (
         <div className="graph-section">
-          { this.state.type != "N/A" ?
-          (
+          {/* { this.state.type != "N/A" ? ( */}
           <React.Fragment>
             <canvas id={"graph-" + this.props.count} className="graph-chart"></canvas>
             <div className="sub-graph">
               { this.showCountedLabels() }
             </div>
           </React.Fragment>
-          ) : this.showListedAnswers()}
+          {/* ) : this.showListedAnswers()} */}
         </div>
         ) :
         (

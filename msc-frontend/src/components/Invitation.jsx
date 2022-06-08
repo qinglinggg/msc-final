@@ -212,8 +212,8 @@ function Invitation(props) {
         console.log(res);
         if(res.data){
           userInvitedList = res.data;
-          console.log("---- userInvitedList, inside res.data:");
-          console.log(userInvitedList);
+          // console.log("---- userInvitedList, inside res.data:");
+          // console.log(userInvitedList);
           userInvitedList.map((u) => {
             if(!u.submitDate){
               u['status'] = "Invited";
@@ -261,6 +261,7 @@ function Invitation(props) {
       submitDate: obj.submitDate,
       isTargeted: obj.isTargeted,
     }
+    console.log(deletedUser);
     try {
       axios({
         method: "delete",

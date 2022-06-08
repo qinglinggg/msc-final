@@ -88,7 +88,6 @@ class App extends React.Component {
       } else {
         let currentToken = sessionStorage.getItem("bearer_token");
         if(this.state.loggedInUser != "" || !this.state.loggedInUser) {
-          console.log("test");
           this.setState({ loggedInUser : "" });
           localStorage.setItem("loggedInUser", "");
           if(window.location.pathname != "/") window.location = "/";
@@ -140,10 +139,12 @@ class App extends React.Component {
         headers: {"Content-Type": "application/json"}
       }).then((res) => {
         let index = 0;
-        const invitedForms = res.data;
+        let invitedForms = res.data;
+        console.log(invitedForms);
         invitedForms.map((form) => {
           form['formRespondentId'] = tempInvitedForms[index].formRespondentId;
           form['submitDate'] = tempInvitedForms[index].submitDate;
+          form['inviteDate'] = tempInvitedForms[index].inviteDate;
           index++;
         });
         localStorage.setItem("invitedFormLists", JSON.stringify(invitedForms));
@@ -212,7 +213,6 @@ class App extends React.Component {
   }
 
   authentication() {
-    // console.log("this.authentication");
     return (
         <Routes>
             <Route 
@@ -258,6 +258,7 @@ class App extends React.Component {
                 path="/"
                 element={
                   <Home
+                    updateUserdata={this.updateUserdata}
                     handleCreateNewForm={this.handleCreateNewForm}
                     openedPopup={this.state.openedPopup}
                   />
@@ -326,7 +327,6 @@ class App extends React.Component {
               />
               
           </Routes>
-          {/* {this.formRouting()} */}
         </div>
       </React.Fragment>
     );

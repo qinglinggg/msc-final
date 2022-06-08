@@ -345,7 +345,7 @@ public class FormDAO {
     }
 
     public List<FormRespondent> getFormTargetedUserList(String formId){
-        final String query = "SELECT * FROM FormRespondent WHERE formId = ? AND isTargeted = 1 ORDER BY inviteDate DESC";
+        final String query = "SELECT * FROM FormRespondent WHERE formId = ? AND isTargeted = 1 ORDER BY inviteDate ASC";
         List<FormRespondent> formTargetedUserList = jdbcTemplate.query(query, (resultSet, i) -> {
             String formRespondentId = resultSet.getString("formRespondentId");
             String userId = resultSet.getString("userId");
@@ -359,7 +359,7 @@ public class FormDAO {
     }
 
     public List<FormRespondent> getInvitedFormRespondent(String userId){
-        final String query = "SELECT * FROM FormRespondent WHERE userId = ? AND isTargeted = 1 ORDER BY inviteDate ASC";
+        final String query = "SELECT * FROM FormRespondent WHERE userId = ? AND isTargeted = 1 ORDER BY inviteDate DESC";
         List<FormRespondent> invitedFormList = jdbcTemplate.query(query, (resultSet, i) -> {
             String formRespondentId = resultSet.getString("formRespondentId");
             String formId = resultSet.getString("formId");
@@ -373,23 +373,18 @@ public class FormDAO {
     }
 
     public int insertTargetedUser(String formId, String userId){
-        System.out.println("masuk insertTargetedUser");
         FormRespondent targetedUser = new FormRespondent(formId, userId, 1);
-        Long submitDate = targetedUser.getSubmitDate();
-        String resultDate = "";
-        if(submitDate != null) resultDate = dateFormat.format(targetedUser.getSubmitDate());
-        else resultDate = null;
         final String query = "INSERT INTO FormRespondent VALUES (?,?,?,?,?,?)";
-        int res = jdbcTemplate.update(query, targetedUser.getFormRespondentId().toString(), targetedUser.getFormId().toString(), targetedUser.getUserId().toString(), resultDate, targetedUser.getIsTargeted(), targetedUser.getInviteDate());
+        int res = jdbcTemplate.update(query, targetedUser.getFormRespondentId().toString(), targetedUser.getFormId().toString(), targetedUser.getUserId().toString(), targetedUser.getSubmitDate(), targetedUser.getIsTargeted(), targetedUser.getInviteDate());
         return res;
     }
 
     public int deleteTargetedUser(String formRespondentId, FormRespondent targetedUser){
         String query = "";
-        if(targetedUser.getSubmitDate() == null) {
-            query = "DELETE FROM FormRespondent WHERE formRespondentId = ? AND submitDate IS NULL";
+        if(targetedUser.getSubmitDate() == 0) {
+            query = "DELETE FROM FormRespondent WHERE formRespondentId = ? AND submitDate = 0";
         } else {
-            query = "UPDATE FormRespondent SET isTargeted = 0, invitedDate = 0 WHERE formRespondentId = ?";
+            query = "UPDATE FormRespondent SET isTargeted = 0, inviteDate = 0 WHERE formRespondentId = ?";
         }
         int res = jdbcTemplate.update(query, formRespondentId);
         return res;

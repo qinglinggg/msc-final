@@ -70,17 +70,31 @@ function DataVisualization(props) {
           resData.forEach(ri => {
             let validator = true;
             listOfAnswers.forEach(a => {
-              if(a === ri.answerSelectionValue) validator = false;
+              if(a.toLowerCase() === ri.answerSelectionValue.toLowerCase()) validator = false;
             });
-            if (validator && item.type != "SA") listOfAnswers.push(ri.answerSelectionValue);
-            else if(item.type == "SA") listOfAnswers.push(ri.answerSelectionValue);
+            if (validator) listOfAnswers.push(ri.answerSelectionValue);
           });
           tempAnswerList[fi] = listOfAnswers;
-          if(count[fi].length === 0) for(let i=0; i < listOfAnswers.length; i++) count[fi].push(0);
-          if(item.type == "SA") return;
+          if(count[fi].length === 0){
+            for(let i=0; i < listOfAnswers.length; i++){
+              if(item.type != "SA"){
+                count[fi].push(0);
+              }
+              else count[fi].push({x: i+1, y: 0, r: 10, title: listOfAnswers[i]});
+            }
+          } 
           resData.forEach((ri) => {
             listOfAnswers.map((a, idx) => {
-              if (ri.answerSelectionValue == a) count[fi][idx] += 1;
+              if (ri.answerSelectionValue == a){
+                if(item.type != "SA"){
+                  count[fi][idx] += 1;
+                }
+                else {
+                  let prevCount = count[fi][idx];
+                  prevCount.y += 1;
+                  prevCount.r += 5;
+                }
+              }
             })
           });
         });
@@ -264,11 +278,6 @@ function DataVisualization(props) {
           <div className="page-title" id="page-title-home">
             Data Visualization
           </div>
-          {/* <div className="dashboard-icon">
-            <img src={iconVisibility} alt="" className="icon-image" />
-            <img src={iconSettings} alt="" className="icon-image" />
-            {openSettings ? displaySettings() : null}
-          </div> */}
         </div>
         <div className="page-breadcrumbs">
         {
