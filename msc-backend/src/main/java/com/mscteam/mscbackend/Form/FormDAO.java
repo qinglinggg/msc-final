@@ -381,7 +381,7 @@ public class FormDAO {
 
     public int deleteTargetedUser(String formRespondentId, FormRespondent targetedUser){
         String query = "";
-        if(targetedUser.getSubmitDate() == null) {
+        if(targetedUser.getSubmitDate() == 0) {
             query = "DELETE FROM FormRespondent WHERE formRespondentId = ? AND submitDate = 0";
         } else {
             query = "UPDATE FormRespondent SET isTargeted = 0, inviteDate = 0 WHERE formRespondentId = ?";
