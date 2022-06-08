@@ -261,6 +261,7 @@ function Invitation(props) {
       submitDate: obj.submitDate,
       isTargeted: obj.isTargeted,
     }
+    console.log(deletedUser);
     try {
       axios({
         method: "delete",

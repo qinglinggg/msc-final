@@ -375,18 +375,15 @@ public class FormDAO {
     public int insertTargetedUser(String formId, String userId){
         FormRespondent targetedUser = new FormRespondent(formId, userId, 1);
         Long submitDate = targetedUser.getSubmitDate();
-        String resultDate = "";
-        if(submitDate != null) resultDate = dateFormat.format(targetedUser.getSubmitDate());
-        else resultDate = null;
         final String query = "INSERT INTO FormRespondent VALUES (?,?,?,?,?,?)";
-        int res = jdbcTemplate.update(query, targetedUser.getFormRespondentId().toString(), targetedUser.getFormId().toString(), targetedUser.getUserId().toString(), resultDate, targetedUser.getIsTargeted(), targetedUser.getInviteDate());
+        int res = jdbcTemplate.update(query, targetedUser.getFormRespondentId().toString(), targetedUser.getFormId().toString(), targetedUser.getUserId().toString(), submitDate, targetedUser.getIsTargeted(), targetedUser.getInviteDate());
         return res;
     }
 
     public int deleteTargetedUser(String formRespondentId, FormRespondent targetedUser){
         String query = "";
         if(targetedUser.getSubmitDate() == null) {
-            query = "DELETE FROM FormRespondent WHERE formRespondentId = ? AND submitDate IS NULL";
+            query = "DELETE FROM FormRespondent WHERE formRespondentId = ? AND submitDate = 0";
         } else {
             query = "UPDATE FormRespondent SET isTargeted = 0, invitedDate = 0 WHERE formRespondentId = ?";
         }
