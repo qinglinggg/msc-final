@@ -455,7 +455,6 @@ function Respondent (props) {
       displayContainer.style.backgroundColor = "#fde6e6";
     } else {
       displayContainer.style.border = "2px solid #c4c4c4";
-      displayContainer.style.backgroundColor = "white";
       displayContainer.style.animation = 'show-transition 1s forwards';
     }
   }
@@ -538,8 +537,8 @@ function Respondent (props) {
       current = formItems[index-1];
     }
     return (
-      <React.Fragment>
-        <div className="preview-flex">
+      <div className="preview-flex">
+        <React.Fragment>
           {index <= length ? (
             <React.Fragment>
               <div id="loading-transition"/>
@@ -576,13 +575,14 @@ function Respondent (props) {
             </React.Fragment>
           ) : (
             <div className="respondent-endpage" >
+              <div className="loading-transition"></div>
               <div className="respondent-endpage-title" style={{ backgroundColor: primaryColor }}>Congratulations!</div>
               <div className="respondent-endpage-description">You are at the end of the form. Click the button below to submit your answer! :)</div>
               { displayOnSubmission() }
             </div>
-          )}
-        </div>
+        )}
       </React.Fragment>
+      </div>
     );
   }
 

@@ -39,7 +39,7 @@ class App extends React.Component {
   state = {
     allForms: [],
     rawInvitedFormLists: [],
-    loggedInUser: "",
+    loggedInUser: null,
     currentPage: ""
   }
 
@@ -59,7 +59,7 @@ class App extends React.Component {
       if(currentKey == ownedKey) {
         this.setState({ loggedInUser : res.data["userId"] });
       } else {
-        // localStorage.clear();
+        localStorage.clear();
       }
     });
   }
@@ -76,13 +76,18 @@ class App extends React.Component {
   componentDidMount() {
     setInterval(() => {
       let loggedIn = localStorage.getItem("loggedInUser");
-      console.log(loggedIn);
-      if (loggedIn || loggedIn != "") {
+      console.log(this.state.loggedInUser);
+      if (loggedIn && loggedIn != "") {
+        // console.log("yes");
         loggedIn = JSON.parse(loggedIn);
         this.checkLoggedInUser(loggedIn);
       } else {
         let currentToken = sessionStorage.getItem("bearer_token");
-        if(this.state.loggedInUser != "") this.setState({ loggedInUser : "" });
+        if(this.state.loggedInUser != "" || !this.state.loggedInUser) {
+          console.log("test");
+          this.setState({ loggedInUser : "" });
+          localStorage.setItem("loggedInUser", "");
+        }
         if (currentToken) sessionStorage.removeItem("bearer_token");
         return;
       }
@@ -99,7 +104,6 @@ class App extends React.Component {
   }
   
   componentDidUpdate(prevProps, prevState) {
-    // console.log(this.state.loggedInUser);
     if(this.state.loggedInUser != prevProps.loggedInUser){
       // console.log("Difference: ", prevState.loggedInUser, this.state.loggedInUser, prevState.loggedInUser == this.state.loggedInUser);
     }
@@ -306,7 +310,7 @@ class App extends React.Component {
   render() {
     return (
       <Router>
-        { this.state.loggedInUser != null ? ( this.state.loggedInUser == "" ? this.authentication() : this.appRouting()) : <div>Loading application...</div>}
+        { this.state.loggedInUser || this.state.loggedInUser == "" ? ( this.state.loggedInUser == "" ? this.authentication() : this.appRouting()) : <div>Loading application...</div>}
       </Router>
     );
   }
