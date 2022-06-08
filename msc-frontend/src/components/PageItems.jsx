@@ -8,16 +8,20 @@ const BASE_URL = "http://10.61.38.193:8080";
 class PageItems extends React.Component {
   constructor(props) {
     super(props);
+    this.refreshFormList = this.refreshFormList.bind(this);
   }
 
   componentDidMount() {
-    let tempUser = JSON.parse(localStorage.getItem("loggedInUser"));
-    if (tempUser) this.props.handleFormUpdate();
     if(this.props.currentPage == 2 && !this.props.data.submitDate){
       let itemBg = document.getElementById("item-bg-" + this.props.data.formId);
       itemBg.style.backgroundColor = "rgb(252, 207, 207)";
     }
     if(!this.props.data) return;
+  }
+
+  refreshFormList() {
+    let tempUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    if (tempUser) this.props.handleFormUpdate();
   }
 
   async processDeletion() {
