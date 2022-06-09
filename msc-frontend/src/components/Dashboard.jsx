@@ -16,7 +16,6 @@ function Dashboard(props) {
   const [showTutorial, setShowTutorial] = useState(false);
   const [openVisibility, setOpenVisibility] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [loadDisplayed, setLoadDisplayed] = useState(false);
   const [updated, setUpdated] = useState([])
   const [formItems, setFormItems] = useState([]);
   const [optionCheck, setOptionCheck] = useState(false);
@@ -95,20 +94,10 @@ function Dashboard(props) {
         i.addEventListener('webkitAnimationEnd', () => {
           i.classList.remove("loading-transition-onload");
           i.classList.add("loading-transition-done");
-          setLoadDisplayed(true);
         });
       });
     }
   }, []); // run once
-
-  useEffect(() => {
-    console.log(loadDisplayed);
-    if(!isLoaded || !loadDisplayed) return;
-    let el = document.querySelectorAll("#loading-transition");
-    el.forEach((i) => {
-      i.style.display = "none";
-    });
-  })
 
   useEffect(() => {
     if(!isLoaded) return;
@@ -514,7 +503,7 @@ function Dashboard(props) {
     let counter = 0;
     return (
       <React.Fragment>
-        <div id="loading-transition">Loading your contents...</div>
+        <div id="loading-transition">{isLoaded ? null : "Loading your contents..."}</div>
         {formItems ? formItems.map((res, idx) => {
           counter += 1;
           return (
