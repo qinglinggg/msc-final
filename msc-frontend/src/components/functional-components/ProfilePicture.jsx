@@ -5,7 +5,7 @@ const ProfilePicture = (props) => {
     const [userState, setUserState] = useState(false);
 
     useEffect(() => {
-        console.log(props.user);
+        if(!props.user || !props.user.profileImage) return;
         let profileImage = props.user.profileImage;
         if(profileImage != "null" && profileImage) {
             setUserState(true);

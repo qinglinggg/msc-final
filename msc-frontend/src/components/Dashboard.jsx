@@ -100,6 +100,16 @@ function Dashboard(props) {
   }, []); // run once
 
   useEffect(() => {
+    if(!isLoaded) return;
+    let el = document.querySelectorAll("#loading-transition");
+    el.forEach((i) => {
+      if(i.classList.contains("loading-transition-onload")) {
+        i.style.animation = "done-trans 2s forwards"
+      }
+    });
+  }, [isLoaded])
+
+  useEffect(() => {
     if(!formItems || formItems.length == 0) return;
     let updateArray = [];
     for(let i=0; i<formItems.length; i++) updateArray.push(false);
@@ -115,17 +125,8 @@ function Dashboard(props) {
         return;
       }
     })
-    if (validator) setTimeout(() => setIsLoaded(true), 3000);
+    if (validator) setTimeout(() => setIsLoaded(true), 2000);
   }, [updated]);
-
-  useEffect(() => {
-    let el = document.querySelectorAll("#loading-transition");
-    if (isLoaded) {
-      el.forEach((i) => {
-        i.style.animation = "done-trans 2s forwards";
-      });
-    }
-  }, [isLoaded]);
 
   useEffect(() => {
     let body = document.getElementById("body");
@@ -502,7 +503,7 @@ function Dashboard(props) {
     let counter = 0;
     return (
       <React.Fragment>
-        <div id="loading-transition">Loading your contents...</div>
+        <div id="loading-transition">{isLoaded ? null : "Loading your contents..."}</div>
         {formItems ? formItems.map((res, idx) => {
           counter += 1;
           return (

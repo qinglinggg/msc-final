@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import imgWoman from "../images/woman.jpg";
 import axios from "axios";
 
+const BASE_URL = "http://10.61.38.193:8080";
 class UploadImage extends React.Component {
   constructor() {
     super();
@@ -18,6 +19,8 @@ class UploadImage extends React.Component {
     let currentForm = localStorage.getItem("selectedForm");
     if(currentForm) currentForm = JSON.parse(currentForm);
     else return;
+    if(!this.props.mode) return
+    if(this.props.mode == "design")
     if(currentForm.backgroundLink || currentForm.backgroundLink != "") {
       this.setState({isImageUploaded : true});
       this.setState({selectedImage: currentForm.backgroundLink})
@@ -34,10 +37,7 @@ class UploadImage extends React.Component {
     dropArea.style.animation = "fade-in 1s forwards";
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    let currentForm = localStorage.getItem("selectedForm");
-    if(currentForm) currentForm = JSON.parse(currentForm);
-    else return;
+  handleForm(currentForm, prevState){
     if(prevState.selectedImage != this.state.selectedImage && this.state.selectedImage != null) {
       this.fetchImage();
       currentForm.backgroundLink = this.state.selectedImage;
@@ -48,7 +48,6 @@ class UploadImage extends React.Component {
       }).then(() => {
         this.setState({ isImageUploaded: true });
         let lists = localStorage.getItem("formLists");
-        
         if(lists) {
           lists = JSON.parse(lists);
           lists.map((item, idx) => {
@@ -57,11 +56,42 @@ class UploadImage extends React.Component {
           localStorage.setItem("formLists", JSON.stringify(lists));
         }
         localStorage.setItem("selectedForm", JSON.stringify(currentForm));
+        setTimeout(this.setState({ isImageUploaded: false}));
       });
     }
-    if(prevState.isImageUploaded != this.state.isImageUploaded && this.state.isImageUploaded == true) {
-      setTimeout(this.setState({ isImageUploaded: false}));
+  }
+
+  handleProfile(logIn, prevState) {
+    if(prevState.selectedImage != this.state.selectedImage && this.state.selectedImage != null) {
+      let currentUser = this.props.currentUser;
+      if(!currentUser) return;
+      console.log("Checking user: ", currentUser);
+      currentUser.profileImage = this.state.selectedImage;
+      axios({
+        method: "put",
+        data: currentUser,
+        url: `${BASE_URL}/api/v1/user-profiles/${logIn}`
+      }).then(() => {
+        this.props.handleUpdateProfile(this.state.selectedImage);
+        this.setState({ isImageUploaded: true });
+        setTimeout(this.setState({ isImageUploaded: false}));
+      });
     }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    let currentForm = localStorage.getItem("selectedForm");
+    let logIn = localStorage.getItem("loggedInUser");
+    if(currentForm && this.props.mode == "design") {
+      currentForm = JSON.parse(currentForm);
+      this.handleForm(currentForm, prevState);
+    }
+    else if(logIn && this.props.mode == "profile") {
+      console.log("test");
+      logIn = JSON.parse(logIn);
+      this.handleProfile(logIn, prevState);
+    }
+    else return;
   }
 
   handleUploadFile(file) {
@@ -105,10 +135,34 @@ class UploadImage extends React.Component {
 
     dropArea.classList.remove("active");
     filename.classList.remove("active");
-
-    axios.get("http://localhost:8080/api/v1/forms/background").then((res) => {
-      axios.delete("http://localhost:8080/api/v1/forms/background");
-    });
+    
+    if(this.props.mode == "form") {
+      let currentForm = localStorage.getItem("currentForm");
+      if(!currentForm) return;
+      currentForm.backgroundLink = ""
+      axios({
+        method: "put",
+        url: "http://10.61.38.193:8080/api/v1/forms/" + currentForm.formId,
+        data: currentForm
+      }).then(() => {
+        console.log("Deleted successfully!")
+        this.setState({selectedImage : ""});
+        localStorage.setItem("selectedForm", currentForm);
+      })
+    } else if(this.props.mode == "profile") {
+      let currentUser = this.props.currentUser;
+      if(!currentUser) return;
+      currentUser.profileImage = "";
+      console.log("Deleting: ", currentUser);
+      axios({
+        method: "put",
+        data: currentUser,
+        url: `${BASE_URL}/api/v1/user-profiles/${currentUser.userId}`
+      }).then(() => {
+        console.log("Deleted successfully!")
+        this.setState({selectedImage : ""});
+      });
+    }
 
     this.setState({ isImageUploaded: false });
   }

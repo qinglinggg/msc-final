@@ -9,19 +9,7 @@ const BASE_URL = "http://10.61.38.193:8080";
 
 class Navbar extends React.Component {
   state = {
-    currentUser: {},
     prImage: null,
-  }
-  
-  componentDidMount() {
-    let currentId = JSON.parse(localStorage.getItem("loggedInUser"));
-    console.log(currentId);
-    if(currentId) axios({
-      method: "get",
-      url: `${BASE_URL}/api/v1/user-profiles/${currentId}`
-    }).then((res) => {
-      if(res.data) this.setState({currentUser: res.data});
-    });
   }
 
   render() {
@@ -31,28 +19,32 @@ class Navbar extends React.Component {
           MySurveyCompanion
         </Link>
         <Popup
-            trigger={(open) => 
-              <div 
-                id="profile-container">
-                {this.state.currentUser ? (
-                    <React.Fragment>
-                      <div className="profile-preview">
-                        <span id="pr-username">{this.state.currentUser.fullname}</span>
-                        <span id="pr-email">{this.state.currentUser.email}</span>
-                      </div>
-                      <ProfilePicture user={this.state.currentUser}></ProfilePicture>
-                    </React.Fragment>
-                  ) : null
-                }
+          trigger={(open) => 
+            <div 
+              id="profile-container">
+              {this.props.currentUser ? (
+                  <React.Fragment>
+                    <div className="profile-preview">
+                      <span id="pr-username">{this.props.currentUser.fullname}</span>
+                      <span id="pr-email">{this.props.currentUser.email}</span>
+                    </div>
+                    <ProfilePicture user={this.props.currentUser}></ProfilePicture>
+                  </React.Fragment>
+                ) : null
+              }
+            </div>
+          } position="bottom center">
+            <div className="popup-wrapper">
+              <div className="popup-content" id="popup-update" onClick={this.props.handleUpdate}>
+               <ion-icon name="cloud-upload-outline" className="popup-icon"></ion-icon>
+               <div className="popup-text">Update Profile</div>
               </div>
-            } position="bottom center">
-             <div className="popup-wrapper">
-               <div className="popup-content" id="popup-logout" onClick={this.props.handleLogout}>
-                <ion-icon name="log-out" id="popup-icon-logout"></ion-icon>
-                <div className="popup-text">Sign out</div>
-               </div>
-             </div>
-          </Popup>
+              <div className="popup-content" id="popup-logout" onClick={this.props.handleLogout}>
+               <ion-icon name="log-out" className="popup-icon"></ion-icon>
+               <div className="popup-text">Sign out</div>
+              </div>
+            </div>
+        </Popup>
       </nav>
     );
   }

@@ -97,6 +97,7 @@ class Home extends React.Component {
 
   componentDidUpdate(prevProps, prevState){
     let body = document.getElementById("body");
+    if(this.props.openedPopup) return;
     if (this.state.isAdd == true){
       let closePopup = document.querySelector(".closePopup");
       if (closePopup) {
