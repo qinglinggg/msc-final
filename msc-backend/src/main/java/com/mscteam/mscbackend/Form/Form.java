@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Form implements Comparable<Form> {
     private UUID formId;
-    private UUID authorUserId;
     private String title;
     private String description;
     private String privacySetting;
@@ -15,9 +14,8 @@ public class Form implements Comparable<Form> {
     private String backgroundColor;
 
     // Get Forms
-    public Form(String formId, String authorUserId, String title, String description, String privacySetting, Long createDate, Long modifyDate, String backgroundColor, String backgroundLink) {
+    public Form(String formId, String title, String description, String privacySetting, Long createDate, Long modifyDate, String backgroundColor, String backgroundLink) {
         this.formId = UUID.fromString(formId);
-        this.authorUserId = UUID.fromString(authorUserId);
         this.title = title;
         this.description = description;
         this.privacySetting = privacySetting;
@@ -28,9 +26,8 @@ public class Form implements Comparable<Form> {
     }
 
     // Create and Insert mode
-    public Form(@JsonProperty("authorUserId") String authorUserId, @JsonProperty("title") String title, @JsonProperty("description") String description, @JsonProperty("privacySetting") String privacySetting){
+    public Form(@JsonProperty("title") String title, @JsonProperty("description") String description, @JsonProperty("privacySetting") String privacySetting){
         this.formId = UUID.randomUUID();
-        this.authorUserId = UUID.fromString(authorUserId);
         this.title = title;
         this.description = description;
         this.privacySetting = privacySetting;
@@ -42,10 +39,6 @@ public class Form implements Comparable<Form> {
 
     public UUID getFormId(){
         return formId;
-    }
-
-    public UUID getAuthorUserId() {
-        return authorUserId;
     }
 
     public String getTitle(){

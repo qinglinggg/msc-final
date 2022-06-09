@@ -175,7 +175,7 @@ class App extends React.Component {
     try {
       await axios({
         method: "post",
-        url: `${BASE_URL}/api/v1/forms/insert`,
+        url: `${BASE_URL}/api/v1/forms/insert/${this.state.currentUser}`,
         data: obj,
         headers: { "Content-Type": "application/json" },
       }).then((response) => {

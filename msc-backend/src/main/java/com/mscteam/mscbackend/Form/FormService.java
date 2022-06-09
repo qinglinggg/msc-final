@@ -31,8 +31,11 @@ public class FormService {
         return formDAO.getFormById(id);
     }
 
-    public Form insertForm(Form form) {
-        return formDAO.insertForm(form);
+    public Form insertForm(Form form, String userId) {
+        Form res = formDAO.insertForm(form);
+        FormAuthor formAuthor = new FormAuthor(res.getFormId().toString(), userId);
+        Integer addAuthor = formDAO.insertFormAuthor(formAuthor);
+        return res;
     }
 
     public int removeForm(String id) {
@@ -152,7 +155,15 @@ public class FormService {
     }
 
     public List<Form> getAuthoredForms(String userId){
-        return formDAO.getAuthoredForms(userId);
+        List<FormAuthor> authoredFormsData = formDAO.getAuthoredForms(userId);
+        List<Form> authoredForms = new ArrayList<>();
+        for(int i=0; i<authoredFormsData.size(); i++){
+            String formId = authoredFormsData.get(i).getFormAuthorId().toString();
+            Optional<Form> form = formDAO.getFormById(formId);
+            if(form.isPresent()) authoredForms.add(form.get());
+        }
+        Collections.sort(authoredForms);
+        return authoredForms;
     }
 
     public List<FormRespondent> getInvitedFormRespondent(String userId){

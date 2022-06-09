@@ -338,7 +338,6 @@ class Home extends React.Component {
     } else {
       this.setState({ isRequired: false });
       let obj = {};
-      obj.authorUserId = this.state.loggedInUser;
       obj.title = this.state.title;
       obj.description = this.state.description;
       obj.privacySetting = this.state.privacySetting;
