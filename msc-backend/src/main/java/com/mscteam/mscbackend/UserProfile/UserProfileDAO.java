@@ -102,12 +102,15 @@ public class UserProfileDAO {
     }
 
     public String userAuthentication(UserProfile user) {
-        final String query = "SELECT userId FROM User WHERE email = ? AND password = ?";
-        String res = (String) jdbcTemplate.queryForObject(query, (resultSet, i) -> {
+        final String query = "SELECT userId FROM User WHERE email = ?";
+        List<String> res = jdbcTemplate.query(query, (resultSet, i) -> {
             String userId = resultSet.getString("userId");
             return userId;
         }, user.getEmail(), user.getPassword());
-        return res;
+        if(res.size() > 0) {
+            return res.get(0);
+        }
+        return null;
     }
 
     public List<String> getUserByEmail(String userEmail) {

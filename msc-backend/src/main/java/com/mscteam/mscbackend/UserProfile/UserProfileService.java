@@ -1,10 +1,17 @@
 package com.mscteam.mscbackend.UserProfile;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.json.JsonParser;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.mscteam.mscbackend.EAI.EaiLoginResponse;
+import com.mscteam.mscbackend.EAI.RemoteEaiAuth;
 
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 public class UserProfileService {
@@ -37,7 +44,20 @@ public class UserProfileService {
     }
 
     public String userAuthentication(UserProfile user) {
-        return userProfileDAO.userAuthentication(user);
+        String clientId = "CD9634C0A0212F5DE05400144FFA3B5D";
+        RemoteEaiAuth auth = new RemoteEaiAuth(clientId);
+        ObjectMapper mapper = new ObjectMapper();
+        String response = null;
+        EaiLoginResponse eaiResponse = new EaiLoginResponse();
+        try {
+            response = auth.sendRequest(user.getEmail(), user.getPassword());
+            eaiResponse = mapper.readValue(response, EaiLoginResponse.class);
+            String status = eaiResponse.getOutputSchema().getStatus();
+            if(status == "0") return userProfileDAO.userAuthentication(user);
+        } catch(Exception e) {
+            System.out.println("Failed to do Authentication using EAI API-Calls ---");
+        }
+        return null;
     }
 
     public Logins getSession(String id) {
