@@ -31,8 +31,11 @@ public class FormService {
         return formDAO.getFormById(id);
     }
 
-    public Form insertForm(Form form) {
-        return formDAO.insertForm(form);
+    public Form insertForm(Form form, String userId) {
+        Form res = formDAO.insertForm(form);
+        FormAuthor formAuthor = new FormAuthor(res.getFormId().toString(), userId);
+        Integer addAuthor = formDAO.insertFormAuthor(formAuthor);
+        return res;
     }
 
     public int removeForm(String id) {

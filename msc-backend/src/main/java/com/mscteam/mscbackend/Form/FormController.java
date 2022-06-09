@@ -39,9 +39,9 @@ public class FormController {
         return formService.getFormById(id);
     }
 
-    @PostMapping(path = "/insert", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Form insertForm(@RequestBody Form form) {
-        return formService.insertForm(form);
+    @PostMapping(path = "/insert/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Form insertForm(@RequestBody Form form, @PathVariable("userId") String userId) {
+        return formService.insertForm(form, userId);
     }
 
     @DeleteMapping(path = "/{id}")

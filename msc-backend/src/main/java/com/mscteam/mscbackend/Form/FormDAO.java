@@ -410,4 +410,10 @@ public class FormDAO {
         int res = jdbcTemplate.update(query, submitDate, formRespondentId);
         return res;
     }
+
+    public int insertFormAuthor(FormAuthor formAuthor){
+        final String query = "INSERT INTO FormAuthor VALUES (?,?,?)";
+        int res = jdbcTemplate.update(query, formAuthor.getFormAuthorId().toString(), formAuthor.getFormId().toString(), formAuthor.getUserId().toString());
+        return res;
+    }
 }
