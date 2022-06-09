@@ -3,7 +3,6 @@ package com.mscteam.mscbackend.Form;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +26,6 @@ public class FormDAO {
         final String query = "SELECT * FROM Form";
         List<Form> formList = jdbcTemplate.query(query, (resultSet, i) -> {
             String formId = resultSet.getString("formId");
-            String authorUserId = resultSet.getString("authorUserId");
             String title = resultSet.getString("title");
             String description = resultSet.getString("description");
             String privacySetting = resultSet.getString("privacySetting");
@@ -35,7 +33,7 @@ public class FormDAO {
             String backgroundLink = resultSet.getString("backgroundLink");
             Long createDate = resultSet.getLong("createDate");
             Long modifyDate = resultSet.getLong("modifyDate");
-            return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate, backgroundColor, backgroundLink);
+            return new Form(formId, title, description, privacySetting, createDate, modifyDate, backgroundColor, backgroundLink);
         });
         return formList;
     }
@@ -44,7 +42,6 @@ public class FormDAO {
         final String query = "SELECT * FROM Form WHERE formId=?";
         List<Form> form = jdbcTemplate.query(query, (resultSet, i) -> {
             String formId = resultSet.getString("formId");
-            String authorUserId = resultSet.getString("authorUserId");
             String title = resultSet.getString("title");
             String description = resultSet.getString("description");
             String privacySetting = resultSet.getString("privacySetting");
@@ -52,15 +49,15 @@ public class FormDAO {
             String backgroundLink = resultSet.getString("backgroundLink");
             Long createDate = resultSet.getLong("createDate");
             Long modifyDate = resultSet.getLong("modifyDate");
-            return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate, backgroundColor, backgroundLink);
+            return new Form(formId, title, description, privacySetting, createDate, modifyDate, backgroundColor, backgroundLink);
         }, id);
         if(form.isEmpty()) return null;
         return Optional.ofNullable(form.get(0));
     }
 
     public Form insertForm(Form form) {
-        final String query = "INSERT INTO Form VALUES (?,?,?,?,?,?,?,?,?)";
-        int res = jdbcTemplate.update(query, form.getFormId().toString(), form.getAuthorUserId().toString(), form.getTitle(), form.getDescription(),
+        final String query = "INSERT INTO Form VALUES (?,?,?,?,?,?,?,?)";
+        int res = jdbcTemplate.update(query, form.getFormId().toString(), form.getTitle(), form.getDescription(),
                 form.getPrivacySetting(), form.getCreateDate(), form.getModifyDate(), form.getBackgroundColor(), form.getBackgroundLink());
         return form;
     }
@@ -325,23 +322,15 @@ public class FormDAO {
         return res;
     }
 
-    public List<Form> getAuthoredForms(String userId){
-        final String query = "SELECT * FROM Form WHERE authorUserId = ? ORDER BY modifyDate DESC";
-        List<Form> authoredForms = jdbcTemplate.query(query, (resultSet, i) -> {
+    public List<FormAuthor> getAuthoredForms(String userId) {
+        final String query = "SELECT * FROM FormAuthor WHERE userId = ?";
+        List<FormAuthor> authoredFormsData = jdbcTemplate.query(query, (resultSet, i) -> {
+            String formAuthorId = resultSet.getString("formAuthorId");
             String formId = resultSet.getString("formId");
-            String authorUserId = resultSet.getString("authorUserId");
-            String title = resultSet.getString("title");
-            String description = resultSet.getString("description");
-            String privacySetting = resultSet.getString("privacySetting");
-            Long createDate = resultSet.getLong("createDate");
-            Long modifyDate = resultSet.getLong("modifyDate");
-            String backgroundColor = resultSet.getString("backgroundColor");
-            String backgroundLink = resultSet.getString("backgroundLink");
-            System.out.println("Checking: " + title);
-            return new Form(formId, authorUserId, title, description, privacySetting, createDate, modifyDate, backgroundColor, backgroundLink);
+            return new FormAuthor(formAuthorId, formId, userId);
         }, userId);
 
-        return authoredForms;
+        return authoredFormsData;
     }
 
     public List<FormRespondent> getFormTargetedUserList(String formId){

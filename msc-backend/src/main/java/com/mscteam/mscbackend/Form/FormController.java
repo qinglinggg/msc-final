@@ -147,8 +147,13 @@ public class FormController {
         return formService.updateFormItemResponse(formRespondentId, formItemResponse);
     }
 
-    @GetMapping(path="/owned-form/{authorUserId}")
-    public List<Form> getAuthoredForms(@PathVariable("authorUserId") String userId){
+    // @GetMapping(path = "/get-form-author-list/{userId}")
+    // public List<FormAuthor> getAuthoredFormsData(@PathVariable("userId") String userId){
+    //     return formService.getAuthoredFormsData(userId);
+    // }
+
+    @GetMapping(path="/owned-form/{userId}")
+    public List<Form> getAuthoredForms(@PathVariable("userId") String userId){
         return formService.getAuthoredForms(userId);
     }
 
