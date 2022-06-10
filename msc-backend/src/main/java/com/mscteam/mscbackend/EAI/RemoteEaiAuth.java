@@ -38,8 +38,9 @@ public class RemoteEaiAuth {
         System.out.println("cek desCipher");
 
         byte[] cipherText = desCipher.doFinal(user.getPassword().getBytes(StandardCharsets.UTF_8));
+        System.out.println("Check do Final...");
         String encodedMsg = Base64.getEncoder().encodeToString(cipherText);
-        
+        System.out.println("Check encode...");
         return encodedMsg;
     }
 
