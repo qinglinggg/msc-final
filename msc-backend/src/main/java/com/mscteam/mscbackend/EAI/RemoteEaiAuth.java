@@ -41,18 +41,11 @@ public class RemoteEaiAuth {
 
     public String encodeTDes(UserAuth user) throws Exception{
         byte[] secretKey = "AdiNIadp9ipKWKGI5838hdfa".getBytes();
-        byte[] iv = new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-        // IvParameterSpec ivSpec = new IvParameterSpec(iv);
-
         SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey, "TripleDES");
         Cipher desCipher = Cipher.getInstance("DESede/ECB/NoPadding");
         desCipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
-        System.out.println("cek desCipher");
-
         byte[] cipherText = desCipher.doFinal(paddData(user.getPassword()).getBytes());
-        System.out.println("Check do Final...");
         String encodedMsg = HexUtils.toHexString(cipherText);
-        System.out.println("Check encode...");
         return encodedMsg;
     }
 
@@ -73,6 +66,7 @@ public class RemoteEaiAuth {
             HttpEntity<UserAuth> entity = new HttpEntity<UserAuth>(userAuth, header);
             System.out.println(entity);
             String response = restTemplate.exchange(login_uri, HttpMethod.POST, entity, String.class).getBody();
+            System.out.println("Response successfully sent!");
             System.out.println(">> Response from EAI Login --- " + response);
             return response;
         }
