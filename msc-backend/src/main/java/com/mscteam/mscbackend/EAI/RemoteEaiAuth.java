@@ -65,7 +65,7 @@ public class RemoteEaiAuth {
 
             HttpEntity<UserAuth> entity = new HttpEntity<UserAuth>(userAuth, header);
             System.out.println(entity);
-            String response = restTemplate.exchange(login_uri, HttpMethod.POST, entity, String.class).getBody();
+            String response = restTemplate.postForObject(login_uri, entity, String.class);
             System.out.println("Response successfully sent!");
             System.out.println(">> Response from EAI Login --- " + response);
             return response;
