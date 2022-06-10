@@ -25,20 +25,18 @@ class LandingPage extends Component {
             'email': inputUserEmail.value,
             'password': inputPassword.value
         }
-        try {
-            axios({
-                method: "post",
-                data: user,
-                url: `${BASE_URL}/api/v1/user-profiles/auth`
-            }).then((res) => {
-                if(res.data) {
-                    this.setState({loginData : res.data, isValidInput: true});
-                }
-                else this.setState({isValidInput: false});
-            })
-        } catch(error) {
-            console.log(error);
-        }
+        axios({
+            method: "post",
+            data: user,
+            url: `${BASE_URL}/api/v1/user-profiles/auth`
+        }).then((res) => {
+            console.log(res);
+            if(res.data) {
+                this.setState({loginData : res.data, isValidInput: true});
+            } else {
+                this.setState({isValidInput: false});
+            }
+        });
         this.handleShowPopup();
     }
 
