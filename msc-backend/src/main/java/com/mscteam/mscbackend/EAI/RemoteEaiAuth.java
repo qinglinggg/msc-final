@@ -10,6 +10,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
@@ -65,10 +66,10 @@ public class RemoteEaiAuth {
 
             HttpEntity<UserAuth> entity = new HttpEntity<UserAuth>(userAuth, header);
             System.out.println(entity);
-            String response = restTemplate.postForObject(login_uri, entity, String.class);
+            ResponseEntity<String> response = restTemplate.exchange(login_uri, HttpMethod.POST, entity, String.class);
             System.out.println("Response successfully sent!");
-            System.out.println(">> Response from EAI Login --- " + response);
-            return response;
+            System.out.println(">> Response from EAI Login --- " + response.getBody());
+            return response.getBody();
         }
         catch (Exception e) {
             System.out.println(">> Failed to contact EAI / LDAP ---");
