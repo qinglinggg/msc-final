@@ -50,7 +50,7 @@ public class RemoteEaiAuth {
         header.setContentType(MediaType.APPLICATION_JSON);
         header.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         header.add("ClientID", this.clientId);
-        // try{
+        try{
             String[] splitted = email.split("@");
             if(splitted.length != 2) return null;
             UserAuth userAuth = new UserAuth("PAKAR", splitted[0], password);
@@ -62,10 +62,11 @@ public class RemoteEaiAuth {
             String response = restTemplate.exchange(login_uri, HttpMethod.POST, entity, String.class).getBody();
             System.out.println(">> Response from EAI Login --- " + response);
             return response;
-        // }
-        // catch (Exception e) {
-        //     System.out.println(">> Failed to contact EAI / LDAP ---");
-        // }
+        }
+        catch (Exception e) {
+            System.out.println(">> Failed to contact EAI / LDAP ---");
+            e.printStackTrace();
+        }
         return null;
     }
 }
