@@ -33,6 +33,7 @@ class LandingPage extends Component {
             console.log(res);
             if(res.data) {
                 this.setState({loginData : res.data, isValidInput: true});
+                console.log(res.data);
             } else {
                 this.setState({isValidInput: false});
             }

@@ -53,6 +53,7 @@ public class RemoteEaiAuth {
             if(splitted.length != 2) return null;
             UserAuth userAuth = new UserAuth("PAKAR", splitted[0], password);
             String encoded = this.encodeTDes(userAuth);
+            System.out.println("Encoded: " + encoded);
             userAuth.renewPassword(encoded);
 
             HttpEntity<UserAuth> entity = new HttpEntity<UserAuth>(userAuth, header);
