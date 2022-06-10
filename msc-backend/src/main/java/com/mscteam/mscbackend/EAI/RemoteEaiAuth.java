@@ -35,6 +35,7 @@ public class RemoteEaiAuth {
         SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey, "TripleDES");
         Cipher desCipher = Cipher.getInstance("DESede/CBC/NoPadding");
         desCipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivSpec);
+        System.out.println("cek desCipher");
 
         byte[] cipherText = desCipher.doFinal(user.getPassword().getBytes(StandardCharsets.UTF_8));
         String encodedMsg = Base64.getEncoder().encodeToString(cipherText);
