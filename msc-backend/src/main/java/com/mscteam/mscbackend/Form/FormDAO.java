@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.naming.spi.DirStateFactory.Result;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -60,6 +62,12 @@ public class FormDAO {
         int res = jdbcTemplate.update(query, form.getFormId().toString(), form.getTitle(), form.getDescription(),
                 form.getPrivacySetting(), form.getCreateDate(), form.getModifyDate(), form.getBackgroundColor(), form.getBackgroundLink());
         return form;
+    }
+
+    public FormAuthor insertFormAuthor(FormAuthor formAuthor){
+        final String query = "INSERT INTO FormAuthor VALUES (?,?,?)";
+        int res = jdbcTemplate.update(query, formAuthor.getFormAuthorId().toString(), formAuthor.getFormId().toString(), formAuthor.getUserId().toString());
+        return formAuthor;
     }
 
     public int removeForm(String id) {
@@ -411,9 +419,22 @@ public class FormDAO {
         return res;
     }
 
-    public int insertFormAuthor(FormAuthor formAuthor){
-        final String query = "INSERT INTO FormAuthor VALUES (?,?,?)";
-        int res = jdbcTemplate.update(query, formAuthor.getFormAuthorId().toString(), formAuthor.getFormId().toString(), formAuthor.getUserId().toString());
-        return res;
+    public List<FormAuthor> isFormAuthorExist(String formId, String userId){
+        final String query = "SELECT * FROM FormAuthor WHERE formId = ? AND userId = ?";
+        List<FormAuthor> formAuthor = jdbcTemplate.query(query, (resultSet, i) -> {
+            String formAuthorId = resultSet.getString("formAuthorId");
+            return new FormAuthor(formAuthorId, formId, userId);
+        }, formId, userId);
+        return formAuthor;
+    }
+
+    public List<FormAuthor> getFormAuthors(String formId){
+        final String query = "SELECT * FROM FormAuthor WHERE formId = ?";
+        List<FormAuthor> formAuthors = jdbcTemplate.query(query, (resultSet, i) -> {
+            String formAuthorId = resultSet.getString("formAuthorId");
+            String userId = resultSet.getString("userId");
+            return new FormAuthor(formAuthorId, formId, userId);
+        }, formId);
+        return formAuthors;
     }
 }

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.print.attribute.standard.Media;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.mscteam.mscbackend.UserProfile.UserProfile;
 
 @RestController
 @RequestMapping("/api/v1/forms")
@@ -42,6 +46,11 @@ public class FormController {
     @PostMapping(path = "/insert/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Form insertForm(@RequestBody Form form, @PathVariable("userId") String userId) {
         return formService.insertForm(form, userId);
+    }
+
+    @PostMapping(path = "/insert-author/{formId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Optional<FormAuthor> insertFormAuthor(@PathVariable("formId") String formId, String userEmail){
+        return formService.insertFormAuthor(formId, userEmail);
     }
 
     @DeleteMapping(path = "/{id}")
@@ -191,6 +200,11 @@ public class FormController {
     @PutMapping(path="/submit-form/{formRespondentId}")
     public int submitForm(@PathVariable("formRespondentId") String formRespondentId){
         return formService.submitForm(formRespondentId);
+    }
+    
+    @GetMapping(path="/get-form-authors/{formId}")
+    public List<UserProfile> getFormAuthors(@PathVariable("formId") String formId){
+        return formService.getFormAuthors(formId);
     }
 
 }
