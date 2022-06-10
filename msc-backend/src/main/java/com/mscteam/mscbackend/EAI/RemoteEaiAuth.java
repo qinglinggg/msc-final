@@ -71,6 +71,7 @@ public class RemoteEaiAuth {
             userAuth.renewPassword(encoded);
 
             HttpEntity<UserAuth> entity = new HttpEntity<UserAuth>(userAuth, header);
+            System.out.println(entity);
             String response = restTemplate.exchange(login_uri, HttpMethod.POST, entity, String.class).getBody();
             System.out.println(">> Response from EAI Login --- " + response);
             return response;
