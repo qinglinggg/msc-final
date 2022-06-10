@@ -42,11 +42,11 @@ public class RemoteEaiAuth {
     public String encodeTDes(UserAuth user) throws Exception{
         byte[] secretKey = "AdiNIadp9ipKWKGI5838hdfa".getBytes();
         byte[] iv = new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-        IvParameterSpec ivSpec = new IvParameterSpec(iv);
+        // IvParameterSpec ivSpec = new IvParameterSpec(iv);
 
         SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey, "TripleDES");
         Cipher desCipher = Cipher.getInstance("DESede/ECB/NoPadding");
-        desCipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivSpec);
+        desCipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
         System.out.println("cek desCipher");
 
         byte[] cipherText = desCipher.doFinal(paddData(user.getPassword()).getBytes());
