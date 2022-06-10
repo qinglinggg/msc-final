@@ -13,7 +13,7 @@ import axios, { Axios } from "axios";
 
 function Invitation(props) {
   const [openMenu, setOpenMenu] = useState(false);
-  const [pageSelection, setPageSelection] = useState(true);
+  const [pageSelection, setPageSelection] = useState(1);
 
   const [userInvited, setUserInvited] = useState([]); // data
   const [index, setIndex] = useState(0); // length of userinvited, saved progress
@@ -21,6 +21,7 @@ function Invitation(props) {
   const [openTargetedUserEmail, setOpenTargetedUserEmail] = useState(false);
   const [tags, setTags] = useState([]);
   const [tagsElement, setTagsElement] = useState([]);
+  const [teamMember, setTeamMember] = useState([]);
 
   const [currentStep, setCurrentStep] = useState([]);
 
@@ -43,24 +44,6 @@ function Invitation(props) {
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
-
-    // setUserInvited([
-    //   {
-    //     number: 1,
-    //     name: "Albert Cony Pramudita",
-    //     email: "albert_pramudita@bca.co.id",
-    //     status: "Completed",
-    //     datetime: "Submitted at 08/12/2021 09:30PM",
-    //   },
-    //   {
-    //     number: 2,
-    //     name: "Dian Fransiska Handayani",
-    //     email: "dian_fransiska@bca.co.id",
-    //     status: "Completed",
-    //     datetime: "Submitted at 08/12/2021 09:30PM",
-    //   },
-    // ]);
-
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
     tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
     if(tempBreadcrumbs.length >= 2) {
@@ -84,6 +67,7 @@ function Invitation(props) {
       })
     });
     getTargetedUserList();
+    getTeamMember();
   }, []);
 
   useEffect(() => {
@@ -115,12 +99,51 @@ function Invitation(props) {
     }
   }, [userInvited]);
 
+  const getTargetedUserList = () => {
+    let userInvitedList = [];
+    try {
+      axios({
+        method: "get",
+        url: `${BASE_URL}/api/v1/forms/get-targeted-user-list/${formId}`,
+      }).then((res) => {
+        console.log(res);
+        if(res.data){
+          userInvitedList = res.data;
+          // console.log("---- userInvitedList, inside res.data:");
+          // console.log(userInvitedList);
+          userInvitedList.map((u) => {
+            if(!u.submitDate){
+              u['status'] = "Invited";
+              u['datetime'] = "-";
+            } else {
+              u['status'] = "Completed"
+              u['datetime'] = "Submitted at " + u.submitDate;
+            }
+          })
+          setUserInvited(userInvitedList);
+        }
+      }) 
+    } catch(error) {
+      console.log(error);
+    }
+  }
+
+  const getTeamMember = () => {
+    let teamMember = [];
+    axios({
+      method: "get",
+      url: `${BASE_URL}/api/v1/forms/get-form-authors/${formId}`
+    }).then((res) => {
+      if(res.data) setTeamMember(res.data);
+    }).catch((error) => console.log(error));
+  }
+
   const handleMenu = () => {
     setOpenMenu(!openMenu);
   }
 
   const handleOpenSharePage = () => {
-    setPageSelection(true);
+    setPageSelection(1);
   }
 
   const displaySharePage = () => {
@@ -202,35 +225,6 @@ function Invitation(props) {
     setOpenTargetedUserEmail(true);
   }
 
-  const getTargetedUserList = () => {
-    let userInvitedList = [];
-    try {
-      axios({
-        method: "get",
-        url: `${BASE_URL}/api/v1/forms/get-targeted-user-list/${formId}`,
-      }).then((res) => {
-        console.log(res);
-        if(res.data){
-          userInvitedList = res.data;
-          // console.log("---- userInvitedList, inside res.data:");
-          // console.log(userInvitedList);
-          userInvitedList.map((u) => {
-            if(!u.submitDate){
-              u['status'] = "Invited";
-              u['datetime'] = "-";
-            } else {
-              u['status'] = "Completed"
-              u['datetime'] = "Submitted at " + u.submitDate;
-            }
-          })
-          setUserInvited(userInvitedList);
-        }
-      }) 
-    } catch(error) {
-      console.log(error);
-    }
-  }
-
   const handleSubmitTargetedUserEmail = () => {
     tags.map((userEmail) => {
       try {
@@ -297,7 +291,6 @@ function Invitation(props) {
             Notes: you may seperated each email with comma (,) or simply by pressing spacebar.
           </div>
         </div>
-        
         <TargetedUserEmail 
           tags={tags}
           tagsElement={tagsElement}
@@ -313,7 +306,7 @@ function Invitation(props) {
   }
 
   const handleOpenTrackPage = () => {
-    setPageSelection(false);
+    setPageSelection(2);
   }
 
   const displayTrackPage = () => {
@@ -371,13 +364,79 @@ function Invitation(props) {
     );
   }
 
+  const handleOpenCollaborators = () => {
+    setTags([]);
+    setTagsElement([]);
+    setPageSelection(3);
+  }
+
+  const handleSubmitCollaborators = () => {
+    let formId = JSON.parse(localStorage.getItem("selectedForm")).formId;
+    tags.map((userEmail) => {
+      axios({
+        method: "post",
+        data: userEmail,
+        url: `${BASE_URL}/api/v1/forms/insert-author/${formId}`
+      }).then((res) => {
+        if(res.data){
+          // add to collab list
+          let tempTeamMember = teamMember;
+          tempTeamMember.push(res.data);
+          setTeamMember(tempTeamMember);
+        }
+      }).catch((error) => console.log(error));
+    })
+  }
+
+  const displayCollaboratorsPage = () => {
+    return (
+      <React.Fragment>
+        <div id="invitation-collab-container">
+          <div id="invitation-collab-invite-box">
+            <div id="invitation-collab-title">
+              Collaborators
+            </div>
+            <div id="invitation-collab-desc">
+              Collaborators have full access to edit this document. Input email addresses to invite people.
+            </div>
+          </div>
+          <div id="invitation-collab-email">
+            <TargetedUserEmail
+              tags={tags}
+              tagsElement={tagsElement}
+              setTags={setTags}
+              setTagsElement={setTagsElement}
+            />
+          </div>
+          <div id="invitation-collab-invite-button"
+            onClick={() => handleSubmitCollaborators()}
+            style={tags.length > 0 ? {backgroundColor : "rgb(61, 224, 178)", cursor : "pointer"} : {backgroundColor : "rgb(155, 233, 209)", cursor : "default"}}>
+            Invite
+          </div>
+          <div id="invitation-collab-divider"/>
+          <div id="invitation-collab-invite-box">
+            <div id="invitation-collab-title">
+              Team Member
+            </div>
+            {teamMember.length > 0 ? teamMember.map((member) => {
+              <div id="invitation-collab-list-item">
+                {member.userId}
+              </div>
+            }) : null}
+          </div>
+        </div>
+      </React.Fragment>
+    );
+  }
 
   const displayInvitation = () => {
     let page;
-    if (pageSelection) {
+    if (pageSelection == 1) {
       page = displaySharePage();
-    } else {
+    } else if(pageSelection == 2) {
       page = displayTrackPage();
+    } else {
+      page = displayCollaboratorsPage();
     }
     return (
       <React.Fragment>
@@ -429,6 +488,15 @@ function Invitation(props) {
                 id="btn-page2"
               >
                 Track
+              </div>
+              <div 
+                onClick={(e) => {
+                  handleOpenCollaborators();
+                }}
+                className="page-button"
+                id="btn-page3"
+              >
+                Add Collaborators
               </div>
             </div>
           </div>

@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.mscteam.mscbackend.UserProfile.UserProfile;
 import com.mscteam.mscbackend.UserProfile.UserProfileDAO;
 
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,9 +35,26 @@ public class FormService {
 
     public Form insertForm(Form form, String userId) {
         Form res = formDAO.insertForm(form);
-        FormAuthor formAuthor = new FormAuthor(res.getFormId().toString(), userId);
-        Integer addAuthor = formDAO.insertFormAuthor(formAuthor);
+        FormAuthor addAuthor = formDAO.insertFormAuthor(new FormAuthor(res.getFormId().toString(), userId));
         return res;
+    }
+
+    public Optional<FormAuthor> insertFormAuthor(String formId, String userEmail){
+        List<String> userId = userProfileDAO.getUserByEmail(userEmail);
+        if(userId.size() > 0){
+            String resUserId = userId.get(0);
+            System.out.println("userEmail " + userEmail + " with resId = " + resUserId);
+            // check if user already invited
+            List<FormAuthor> formAuthor = formDAO.isFormAuthorExist(formId, resUserId);
+            if(formAuthor.size() > 0){
+                String resFormAuthorId = formAuthor.get(0).getFormAuthorId().toString();
+                System.out.println("formAuthorId is not null, the value is " + resFormAuthorId);
+                return null;
+            }
+            System.out.println("formAuthorId is null");
+            return Optional.ofNullable(formDAO.insertFormAuthor(new FormAuthor(formId, resUserId)));
+        } 
+        return null;
     }
 
     public int removeForm(String id) {
@@ -237,5 +256,16 @@ public class FormService {
 
     public int submitForm(String formRespondentId){
         return formDAO.submitForm(formRespondentId);
+    }
+
+    public List<UserProfile> getFormAuthors(String formId){
+        List<FormAuthor> formAuthors = formDAO.getFormAuthors(formId);
+        List<UserProfile> userProfiles = new ArrayList<UserProfile>();
+        for(int i=0; i<formAuthors.size(); i++){
+            String userId = formAuthors.get(i).getUserId().toString();
+            UserProfile user = userProfileDAO.getUserById(userId).get();
+            userProfiles.add(user);
+        }
+        return userProfiles;
     }
 }

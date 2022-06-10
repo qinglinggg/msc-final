@@ -450,7 +450,7 @@ class Home extends React.Component {
               <button onClick={(e) => {
                 this.handleSubmit(e);
                 console.log(this.state.title);
-                }}>
+              }}>
                 Confirm
               </button>
             </form>
