@@ -48,8 +48,8 @@ public class FormController {
         return formService.insertForm(form, userId);
     }
 
-    @PostMapping(path = "/insert-author/{formId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Optional<FormAuthor> insertFormAuthor(@PathVariable("formId") String formId, String userEmail){
+    @PostMapping(path = "/insert-author/{formId}")
+    public Optional<FormAuthor> insertFormAuthor(@PathVariable("formId") String formId, @RequestBody String userEmail){
         return formService.insertFormAuthor(formId, userEmail);
     }
 
