@@ -40,21 +40,17 @@ public class FormService {
     }
 
     public Optional<FormAuthor> insertFormAuthor(String formId, String userEmail){
-        List<String> userId = userProfileDAO.getUserByEmail(userEmail);
-        if(userId.size() > 0){
-            String resUserId = userId.get(0);
-            System.out.println("userEmail " + userEmail + " with resId = " + resUserId);
-            // check if user already invited
-            List<FormAuthor> formAuthor = formDAO.isFormAuthorExist(formId, resUserId);
-            if(formAuthor.size() > 0){
-                String resFormAuthorId = formAuthor.get(0).getFormAuthorId().toString();
-                System.out.println("formAuthorId is not null, the value is " + resFormAuthorId);
-                return null;
-            }
-            System.out.println("formAuthorId is null");
-            return Optional.ofNullable(formDAO.insertFormAuthor(new FormAuthor(formId, resUserId)));
-        } 
-        return null;
+        String userId = userProfileDAO.getUserByEmail(userEmail);
+        System.out.println("userEmail " + userEmail + " with resId = " + userId);
+        // check if user already invited
+        List<FormAuthor> formAuthor = formDAO.isFormAuthorExist(formId, userId);
+        if(formAuthor.size() > 0){
+            String resFormAuthorId = formAuthor.get(0).getFormAuthorId().toString();
+            System.out.println("formAuthorId is not null, the value is " + resFormAuthorId);
+            return null;
+        }
+        System.out.println("formAuthorId is null");
+        return Optional.ofNullable(formDAO.insertFormAuthor(new FormAuthor(formId, userId)));
     }
 
     public int removeForm(String id) {

@@ -172,15 +172,17 @@ class App extends React.Component {
   }
 
   async handleCreateNewForm(obj) {
+    console.log(obj);
     try {
       await axios({
         method: "post",
-        url: `${BASE_URL}/api/v1/forms/insert/${this.state.currentUser}`,
+        url: `${BASE_URL}/api/v1/forms/insert/${this.state.currentUser.userId}`,
         data: obj,
         headers: { "Content-Type": "application/json" },
       }).then((response) => {
         let tempList = localStorage.getItem("formLists");
-        tempList = JSON.parse(tempList);
+        if(!tempList) tempList = [];
+        else tempList = JSON.parse(tempList);
         tempList.push(response.data);
         localStorage.setItem("formLists", JSON.stringify(tempList));
         localStorage.setItem("selectedForm", JSON.stringify(response.data));
