@@ -134,6 +134,8 @@ function Invitation(props) {
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-form-authors/${formId}`
     }).then((res) => {
+      console.log("get team member");
+      console.log(res.data);
       if(res.data) setTeamMember(res.data);
     }).catch((error) => console.log(error));
   }
@@ -372,11 +374,14 @@ function Invitation(props) {
 
   const handleSubmitCollaborators = () => {
     let formId = JSON.parse(localStorage.getItem("selectedForm")).formId;
+    console.log(tags);
     tags.map((userEmail) => {
+      console.log("test", userEmail);
       axios({
         method: "post",
         data: userEmail,
-        url: `${BASE_URL}/api/v1/forms/insert-author/${formId}`
+        url: `${BASE_URL}/api/v1/forms/insert-author/${formId}`,
+        headers: { "Content-Type": "text/plain" },
       }).then((res) => {
         if(res.data){
           // add to collab list
