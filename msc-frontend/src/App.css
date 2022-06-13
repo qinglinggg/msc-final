@@ -272,6 +272,7 @@ body {
   overflow: hidden;
   text-overflow: clip;
   white-space: nowrap;
+  border-radius: 25px;
 }
 
 #pr-email {
