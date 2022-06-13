@@ -41,6 +41,7 @@ public class FormService {
 
     public Optional<FormAuthor> insertFormAuthor(String formId, String userEmail){
         String userId = userProfileDAO.getUserByEmail(userEmail);
+
         System.out.println("userEmail " + userEmail + " with resId = " + userId);
         // check if user already invited
         List<FormAuthor> formAuthor = formDAO.isFormAuthorExist(formId, userId);
@@ -50,6 +51,7 @@ public class FormService {
             return null;
         }
         System.out.println("formAuthorId is null");
+        
         return Optional.ofNullable(formDAO.insertFormAuthor(new FormAuthor(formId, userId)));
     }
 

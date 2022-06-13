@@ -45,7 +45,7 @@ public class UserProfileDAO {
     public UserProfile insertUser(UserProfile user) {
         final String query = "INSERT INTO User VALUES (?,?,?,?)";
         jdbcTemplate.update(query, user.getUserId().toString(), user.getFullname(),
-                user.getEmail(), user.getProfileImage());
+                user.getEmail().toLowerCase(), user.getProfileImage());
         return user;
     }
 
@@ -75,7 +75,7 @@ public class UserProfileDAO {
             } else {
                 query += ",";
             }
-            query += " email = '" + toBeUpdated.getEmail() + "'";
+            query += " email = '" + toBeUpdated.getEmail().toLowerCase() + "'";
         }
         if (toBeUpdated.getProfileImage() != "" && toBeUpdated.getProfileImage() != null) {
             if (firstCheck == false) {
@@ -108,7 +108,7 @@ public class UserProfileDAO {
         List<String> res = jdbcTemplate.query(query, (resultSet, i) -> {
             String userId = resultSet.getString("userId");
             return userId;
-        }, userEmail);
+        }, userEmail.toLowerCase());
         if(res.size() > 0){
             return res.get(0);
         }
