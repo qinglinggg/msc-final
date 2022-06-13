@@ -202,21 +202,17 @@ public class FormService {
     public int insertTargetedUser(String formId, String userEmail){
         // Get User Email
         int res = this.updateModifyDate(formId, 0);
-        List<String> userId = userProfileDAO.getUserByEmail(userEmail);
-        if(userId.size() > 0){
-            String resUserId = userId.get(0);
-            System.out.println("userEmail " + userEmail + " with resId = " + resUserId);
-            // check if user already invited
-            List<String> formRespondentId = formDAO.getFormRespondentByInvitedUserId(formId, resUserId);
-            if(formRespondentId.size() > 0){
-                String resRespondentId = formRespondentId.get(0);
-                System.out.println("formRespondentId is not null, the value is " + resRespondentId);
-                return -1;
-            }
-            System.out.println("formRespondentId is null");
-            return formDAO.insertTargetedUser(formId, resUserId);
-        } 
-        return -1;
+        String userId = userProfileDAO.getUserByEmail(userEmail);
+        System.out.println("userEmail " + userEmail + " with resId = " + userId);
+        // check if user already invited
+        List<String> formRespondentId = formDAO.getFormRespondentByInvitedUserId(formId, userId);
+        if(formRespondentId.size() > 0){
+            String resRespondentId = formRespondentId.get(0);
+            System.out.println("formRespondentId is not null, the value is " + resRespondentId);
+            return -1;
+        }
+        System.out.println("formRespondentId is null");
+        return formDAO.insertTargetedUser(formId, userId);
     }
 
     public int deleteTargetedUser(String formRespondentId, FormRespondent targetedUser){
