@@ -7,32 +7,25 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class UserProfile {
     
     private final UUID userId;
-    private String username;
     private String fullname;
     private String email;
     private String password;
     private String profileImage;
 
-    public UserProfile(String userId, String username, String fullname, String email, String password, String profileImage){
+    public UserProfile(String userId, String fullname, String email, String password, String profileImage){
         this.userId = UUID.fromString(userId);
-        this.username = username;
         this.fullname = fullname;
         this.email = email;
         this.password = password;
         this.profileImage = profileImage;
     }
 
-    public UserProfile(@JsonProperty("username") String username, @JsonProperty("fullname") String fullname, @JsonProperty("email") String email, @JsonProperty("password") String password, @JsonProperty("profileImage") String profileImage){
+    public UserProfile(@JsonProperty("fullname") String fullname, @JsonProperty("email") String email, @JsonProperty("password") String password, @JsonProperty("profileImage") String profileImage){
         this.userId = UUID.randomUUID();
-        this.username = username;
         this.fullname = fullname;
         this.email = email;
         this.password = password;
         this.profileImage = profileImage;
-    }
-
-    public void setUsername(String newUsername){
-        this.username = newUsername;
     }
 
     public void setFullname(String newFullname){
@@ -49,10 +42,6 @@ public class UserProfile {
 
     public UUID getUserId(){
         return this.userId;
-    }
-
-    public String getUsername(){
-        return this.username;
     }
 
     public String getFullname(){

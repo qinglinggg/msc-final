@@ -1,17 +1,21 @@
 package com.mscteam.mscbackend.EAI;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class EaiOutputSchema {
     // if 0 success, -1 salah user/password
     @JsonProperty("Status")
-    private String status;
+    private Integer status;
+    @JsonProperty("Value")
+    private List<String> value;
 
-    public String getStatus() {
-        return status;
+    public Integer getStatus() {
+        return this.status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public List<String> getValue() {
+        return this.value;
     }
 }

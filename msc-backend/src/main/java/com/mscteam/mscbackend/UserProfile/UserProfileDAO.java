@@ -18,35 +18,34 @@ public class UserProfileDAO {
     }
 
     public List<UserProfile> getAllUsers() {
-        final String query = "SELECT userid, username, fullname, email FROM User";
+        final String query = "SELECT userid, fullname, email FROM User";
         List<UserProfile> userlist = jdbcTemplate.query(query, ((resultSet, i) -> {
             String userId = resultSet.getString("userId");
-            String username = resultSet.getString("username");
             String fullname = resultSet.getString("fullname");
             String email = resultSet.getString("email");
-            return new UserProfile(userId, username, fullname, email, null, null);
+            String image = resultSet.getString("profileImage");
+            return new UserProfile(userId, fullname, email, null, image);
         }));
         return userlist;
     }
 
     public Optional<UserProfile> getUserById(String id) {
-        final String query = "SELECT userId, username, fullname, email, profileImage FROM User WHERE userId = ?";
+        final String query = "SELECT userId, fullname, email, profileImage FROM User WHERE userId = ?";
         UserProfile user = jdbcTemplate.queryForObject(query, (resultSet, i) -> {
             String userId = resultSet.getString("userId");
-            String username = resultSet.getString("username");
             String fullname = resultSet.getString("fullname");
             String email = resultSet.getString("email");
             String image = resultSet.getString("profileImage");
-            return new UserProfile(userId, username, fullname, email, null, image);
+            return new UserProfile(userId, fullname, email, null, image);
         }, id);
 
         return Optional.ofNullable(user);
     }
 
     public UserProfile insertUser(UserProfile user) {
-        final String query = "INSERT INTO User VALUES (?,?,?,?,?,?)";
-        int res = jdbcTemplate.update(query, user.getUserId().toString(), user.getUsername(), user.getFullname(),
-                user.getEmail(), user.getPassword(), user.getProfileImage());
+        final String query = "INSERT INTO User VALUES (?,?,?,?)";
+        jdbcTemplate.update(query, user.getUserId().toString(), user.getFullname(),
+                user.getEmail(), user.getProfileImage());
         return user;
     }
 
@@ -60,15 +59,6 @@ public class UserProfileDAO {
         String query = "UPDATE User SET";
         System.out.println(id);
         boolean firstCheck = false;
-        if (toBeUpdated.getUsername() != "" && toBeUpdated.getUsername() != null) {
-            if (firstCheck == false) {
-                query += "";
-                firstCheck = true;
-            } else {
-                query += ",";
-            }
-            query += " username = '" + toBeUpdated.getUsername() + "'";
-        }
         if (toBeUpdated.getFullname() != "" && toBeUpdated.getFullname() != null) {
             if (firstCheck == false) {
                 query += "";
@@ -106,7 +96,7 @@ public class UserProfileDAO {
         List<String> res = jdbcTemplate.query(query, (resultSet, i) -> {
             String userId = resultSet.getString("userId");
             return userId;
-        }, user.getEmail(), user.getPassword());
+        }, user.getEmail());
         if(res.size() > 0) {
             return res.get(0);
         }

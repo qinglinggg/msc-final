@@ -1,8 +1,13 @@
 package com.mscteam.mscbackend.EAI;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class UserAuth {
+    @JsonProperty("ApplicationID")
     private String appId;
+    @JsonProperty("UserID")
     private String userDomain;
+    @JsonProperty("Password")
     private String password;
 
     public UserAuth(String appId, String userDomain, String password) {

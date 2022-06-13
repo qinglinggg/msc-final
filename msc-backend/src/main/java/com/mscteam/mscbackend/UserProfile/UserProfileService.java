@@ -1,12 +1,11 @@
 package com.mscteam.mscbackend.UserProfile;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.json.JsonParser;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.mscteam.mscbackend.EAI.EaiLoginResponse;
+import com.mscteam.mscbackend.EAI.EaiOutputSchema;
 import com.mscteam.mscbackend.EAI.RemoteEaiAuth;
 
 import java.util.List;
@@ -52,8 +51,19 @@ public class UserProfileService {
         try {
             response = auth.sendRequest(user.getEmail(), user.getPassword());
             eaiResponse = mapper.readValue(response, EaiLoginResponse.class);
-            String status = eaiResponse.getOutputSchema().getStatus();
-            if(status == "0") return userProfileDAO.userAuthentication(user);
+            Integer status = eaiResponse.getOutputSchema().getStatus();
+            if(status != null && status == 0) {
+                String candidateId = userProfileDAO.userAuthentication(user);
+                if (candidateId != null) return candidateId;
+                String props = auth.getProps(user.getEmail(), "2.5.4.3");
+                eaiResponse = mapper.readValue(props, EaiLoginResponse.class);
+
+                String fullname = eaiResponse.getOutputSchema().getValue().get(0);
+                if(fullname == null) return null;
+
+                UserProfile newUser = new UserProfile(fullname, user.getEmail(), user.getPassword(), null);
+                return userProfileDAO.insertUser(newUser).getUserId().toString();
+            }
         } catch(Exception e) {
             System.out.println("Failed to do Authentication using EAI API-Calls ---");
         }

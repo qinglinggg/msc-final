@@ -13,17 +13,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Base64;
+import java.util.HashMap;
 
 public class RemoteEaiAuth {
 
     private String clientId;
     private String login_uri = "http://10.20.215.10:9311/ad-gateways/verify1";
-
-    @Autowired
-    private RestTemplate restTemplate;
+    private String props_uri = "http://10.20.215.10:9311/ad-gateways/property-value2";
 
     public RemoteEaiAuth(String clientId) {
         this.clientId = clientId;
@@ -54,7 +51,6 @@ public class RemoteEaiAuth {
         System.out.println("Sending request to EAI Server...");
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
-        header.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         header.add("ClientID", this.clientId);
         try{
             String[] splitted = email.split("@");
@@ -64,16 +60,37 @@ public class RemoteEaiAuth {
             System.out.println("Encoded: " + encoded);
             userAuth.renewPassword(encoded);
 
-            HttpEntity<UserAuth> entity = new HttpEntity<UserAuth>(userAuth, header);
-            System.out.println(entity);
+            HttpEntity<UserAuth> entity = new HttpEntity<>(userAuth, header);
+            RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<String> response = restTemplate.exchange(login_uri, HttpMethod.POST, entity, String.class);
             System.out.println("Response successfully sent!");
             System.out.println(">> Response from EAI Login --- " + response.getBody());
             return response.getBody();
         }
         catch (Exception e) {
-            System.out.println(">> Failed to contact EAI / LDAP ---");
-            e.printStackTrace();
+            System.out.println(">> User not found on EAI / LDAP Server ---");
+        }
+        return null;
+    }
+
+    public String getProps(String email, String injectProp) {
+        System.out.println("Getting properties from EAI...");
+        HttpHeaders header = new HttpHeaders();
+        header.setContentType(MediaType.APPLICATION_JSON);
+        header.add("ClientID", this.clientId);
+        try {
+            String[] splitted = email.split("@");
+            if(splitted.length != 2) return null;
+            EaiProps props = new EaiProps(splitted[0], injectProp);
+
+            HttpEntity<EaiProps> entity = new HttpEntity<>(props, header);
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.exchange(props_uri, HttpMethod.POST, entity, String.class);
+            System.out.println(">> Response from EAI Props --- " + response.getBody());
+            return response.getBody();
+        }
+        catch (Exception e) {
+            System.out.println(">> User not found on EAI / LDAP Server ---");
         }
         return null;
     }

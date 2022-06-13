@@ -72,7 +72,10 @@ class LandingPage extends Component {
                 tidak ditemukan!
             </div>
             <div className='popup-confirm-btn'>
-                <button onClick={() => this.setState({showPopup: false})}>Konfirmasi</button>
+                <button onClick={() => {
+                    this.setState({showPopup: false});
+                    this.setState({isValidInput : null});
+                }}>Konfirmasi</button>
             </div>
         </React.Fragment>
         )
