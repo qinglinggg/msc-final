@@ -173,7 +173,7 @@ public class FormService {
         List<FormAuthor> authoredFormsData = formDAO.getAuthoredForms(userId);
         List<Form> authoredForms = new ArrayList<>();
         for(int i=0; i<authoredFormsData.size(); i++){
-            String formId = authoredFormsData.get(i).getFormAuthorId().toString();
+            String formId = authoredFormsData.get(i).getFormId().toString();
             Optional<Form> form = formDAO.getFormById(formId);
             if(form.isPresent()) authoredForms.add(form.get());
         }

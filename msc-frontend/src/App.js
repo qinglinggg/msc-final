@@ -122,6 +122,8 @@ class App extends React.Component {
     });
     await axios.get(`${BASE_URL}/api/v1/forms/owned-form/${userId}`).then((res) => {
       const forms = res.data;
+      console.log("owned form");
+      console.log(res.data);
       localStorage.setItem("formLists", JSON.stringify(forms));
     })
     await axios.get(`${BASE_URL}/api/v1/forms/invited-form-respondent/${userId}`).then((res) => {

@@ -70,7 +70,7 @@ class UploadImage extends React.Component {
       axios({
         method: "put",
         data: currentUser,
-        url: `${BASE_URL}/api/v1/user-profiles/${logIn}`
+        url: `${BASE_URL}/api/v1/user-profiles/${logIn.userId}`
       }).then(() => {
         this.props.handleUpdateProfile(this.state.selectedImage);
         this.setState({ isImageUploaded: true });
