@@ -65,7 +65,7 @@ public class FormDAO {
     }
 
     public FormAuthor insertFormAuthor(FormAuthor formAuthor){
-        final String query = "INSERT INTO FormAuthor VALUES (?,?,?)";
+        final String query = "INSERT INTO FormAuthor VALUES (?,?,?,?)";
         int res = jdbcTemplate.update(query, formAuthor.getFormAuthorId().toString(), formAuthor.getFormId().toString(), formAuthor.getUserId().toString());
         return formAuthor;
     }
