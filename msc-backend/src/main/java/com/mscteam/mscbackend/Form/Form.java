@@ -95,6 +95,6 @@ public class Form implements Comparable<Form> {
 
     @Override
     public int compareTo(Form o) {
-        return this.getModifyDate().compareTo(o.getModifyDate());
+        return o.getModifyDate().compareTo(this.getModifyDate());
     }
 }

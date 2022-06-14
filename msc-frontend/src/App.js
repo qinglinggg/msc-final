@@ -326,7 +326,7 @@ class App extends React.Component {
 
               <Route 
                 path={`/response/formId/:formId`}
-                element={<Respondent/>}
+                element={<Respondent />}
                 key={"respondentPage"}
               />
               

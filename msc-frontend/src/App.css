@@ -1639,7 +1639,7 @@ body {
   font-style: italic;
 }
 
-#invitation-track-trash-icon {
+#invitation-trash-icon {
   width: 20px;
   height: 20px;
   align-self: center;
@@ -1739,7 +1739,7 @@ body {
 }
 
 #invitation-collab-innerbox-no {
-  width: 7px;
+  width: 15px;
 }
 
 #invitation-collab-innerbox-name {
@@ -1750,6 +1750,18 @@ body {
   width: 200px;
 }
 
+#invitation-collab-innerbox-icon {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-self: center;
+  justify-content: center;
+}
+
+#invitation-collab-innerbox-details {
+  min-width: fit-content;
+  font-style: italic;
+}
 
 /* DESIGN */
 

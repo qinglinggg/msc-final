@@ -16,12 +16,12 @@ function Invitation(props) {
   const [pageSelection, setPageSelection] = useState(1);
 
   const [userInvited, setUserInvited] = useState([]); // data
+  const [teamMember, setTeamMember] = useState([]);
   const [index, setIndex] = useState(0); // length of userinvited, saved progress
 
   const [openTargetedUserEmail, setOpenTargetedUserEmail] = useState(false);
   const [tags, setTags] = useState([]);
   const [tagsElement, setTagsElement] = useState([]);
-  const [teamMember, setTeamMember] = useState([]);
 
   const [currentStep, setCurrentStep] = useState([]);
 
@@ -102,7 +102,7 @@ function Invitation(props) {
   useEffect(() => {
     setTags([]);
     setTagsElement([]);
-  }, [pageSelection])
+  }, [pageSelection, teamMember])
 
   const getTargetedUserList = () => {
     let userInvitedList = [];
@@ -323,10 +323,6 @@ function Invitation(props) {
   }
 
   const displayTrackPage = () => {
-    // for (let i = 0; i < 4; i++) {
-    //   // push data asli disini
-    //   userInvited.push(i);
-    // }
     return (
       <React.Fragment>
         <div id="invitation-track-container">
@@ -364,7 +360,7 @@ function Invitation(props) {
                   >
                     {value.datetime}
                   </div>
-                  <ion-icon name="trash-outline" id="invitation-track-trash-icon"
+                  <ion-icon name="trash-outline" id="invitation-trash-icon"
                     onClick={(e) => handleDeleteTargetedUserEmail(value)}
                   />
                 </div>
@@ -385,18 +381,21 @@ function Invitation(props) {
     let formId = JSON.parse(localStorage.getItem("selectedForm")).formId;
     console.log(tags);
     tags.map((userEmail) => {
-      console.log("test", userEmail);
       axios({
         method: "post",
         data: userEmail,
         url: `${BASE_URL}/api/v1/forms/insert-author/${formId}`,
         headers: { "Content-Type": "text/plain" },
       }).then((res) => {
+        console.log(res);
         if(res.data){
           // add to collab list
-          let tempTeamMember = teamMember;
-          tempTeamMember.push(res.data);
-          setTeamMember(tempTeamMember);
+          console.log("masuk ni");
+          getTeamMember();
+          // let tempTeamMember = teamMember;
+          // tempTeamMember.push(res.data);
+          // setTeamMember(tempTeamMember);
+          // console.log(tempTeamMember);
         }
       }).catch((error) => console.log(error));
     })
@@ -450,6 +449,7 @@ function Invitation(props) {
             </div>
             <div id="invitation-collab-list-wrapper">
               {teamMember ? teamMember.map((member, idx) => {
+                let currentUser = JSON.parse(localStorage.getItem("loggedInUser"));
                 return (
                   <div id="invitation-collab-box">
                     <div className="invitation-collab-innerbox" id="invitation-collab-innerbox-no">
@@ -461,9 +461,17 @@ function Invitation(props) {
                     <div className="invitation-collab-innerbox" id="invitation-collab-innerbox-email">
                       {member.email}
                     </div>
-                    <ion-icon name="trash-outline" id="invitation-track-trash-icon"
-                      onClick={(e) => handleDeleteTeamMember(member.userId)}
-                    />
+                    <div id="invitation-collab-innerbox-icon">
+                    {
+                      currentUser != member.userId ? (
+                        <ion-icon name="trash-outline" id="invitation-trash-icon"
+                          onClick={(e) => handleDeleteTeamMember(member.userId)}
+                        />
+                      ) : <div className="invitation-collab-innerbox" id="invitation-collab-innerbox-details">
+                        (You)
+                      </div>
+                    }
+                    </div>
                   </div>
                 )
               }) : null}

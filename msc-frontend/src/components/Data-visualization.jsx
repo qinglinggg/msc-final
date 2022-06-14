@@ -85,7 +85,7 @@ function DataVisualization(props) {
           } 
           resData.forEach((ri) => {
             listOfAnswers.map((a, idx) => {
-              if (ri.answerSelectionValue == a){
+              if (ri.answerSelectionValue.toLowerCase() == a.toLowerCase()){
                 if(item.type != "SA"){
                   count[fi][idx] += 1;
                 }
