@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -47,15 +48,13 @@ public class RemoteEaiAuth {
         return encodedMsg;
     }
 
-    public String sendRequest(String email, String password) {
+    public String sendRequest(String userdomain, String password) {
         System.out.println("Sending request to EAI Server...");
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
         header.add("ClientID", this.clientId);
         try{
-            String[] splitted = email.split("@");
-            if(splitted.length != 2) return null;
-            UserAuth userAuth = new UserAuth("PAKAR", splitted[0], password);
+            UserAuth userAuth = new UserAuth("PAKAR", userdomain, password);
             String encoded = this.encodeTDes(userAuth);
             System.out.println("Encoded: " + encoded);
             userAuth.renewPassword(encoded);
@@ -73,20 +72,19 @@ public class RemoteEaiAuth {
         return null;
     }
 
-    public String getProps(String email, String injectProp) {
+    public String getProps(String udomain, String injectProp) {
         System.out.println("Getting properties from EAI...");
+        ArrayList<String> propLists = new ArrayList<>();
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
         header.add("ClientID", this.clientId);
         try {
-            String[] splitted = email.split("@");
-            if(splitted.length != 2) return null;
-            EaiProps props = new EaiProps(splitted[0], injectProp);
-
+            EaiProps props = new EaiProps(udomain, injectProp);
             HttpEntity<EaiProps> entity = new HttpEntity<>(props, header);
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<String> response = restTemplate.exchange(props_uri, HttpMethod.POST, entity, String.class);
             System.out.println(">> Response from EAI Props --- " + response.getBody());
+            propLists.add(response.getBody());
             return response.getBody();
         }
         catch (Exception e) {

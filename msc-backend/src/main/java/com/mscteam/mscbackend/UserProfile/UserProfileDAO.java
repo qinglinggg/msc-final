@@ -18,33 +18,35 @@ public class UserProfileDAO {
     }
 
     public List<UserProfile> getAllUsers() {
-        final String query = "SELECT userid, fullname, email FROM User";
+        final String query = "SELECT userId, userDomain, fullname, email FROM User";
         List<UserProfile> userlist = jdbcTemplate.query(query, ((resultSet, i) -> {
             String userId = resultSet.getString("userId");
+            String userDomain = resultSet.getString("userDomain");
             String fullname = resultSet.getString("fullname");
             String email = resultSet.getString("email");
             String image = resultSet.getString("profileImage");
-            return new UserProfile(userId, fullname, email, null, image);
+            return new UserProfile(userId, userDomain, fullname, email, null, image);
         }));
         return userlist;
     }
 
     public Optional<UserProfile> getUserById(String id) {
-        final String query = "SELECT userId, fullname, email, profileImage FROM User WHERE userId = ?";
+        final String query = "SELECT userId, userDomain, fullname, email, profileImage FROM User WHERE userId = ?";
         UserProfile user = jdbcTemplate.queryForObject(query, (resultSet, i) -> {
             String userId = resultSet.getString("userId");
+            String userDomain = resultSet.getString("userDomain");
             String fullname = resultSet.getString("fullname");
             String email = resultSet.getString("email");
             String image = resultSet.getString("profileImage");
-            return new UserProfile(userId, fullname, email, null, image);
+            return new UserProfile(userId, userDomain, fullname, email, null, image);
         }, id);
 
         return Optional.ofNullable(user);
     }
 
     public UserProfile insertUser(UserProfile user) {
-        final String query = "INSERT INTO User VALUES (?,?,?,?)";
-        jdbcTemplate.update(query, user.getUserId().toString(), user.getFullname(),
+        final String query = "INSERT INTO User VALUES (?,?,?,?,?)";
+        jdbcTemplate.update(query, user.getUserId().toString(), user.getUserdomain(), user.getFullname(),
                 user.getEmail().toLowerCase(), user.getProfileImage());
         return user;
     }
@@ -92,11 +94,11 @@ public class UserProfileDAO {
     }
 
     public String userAuthentication(UserProfile user) {
-        final String query = "SELECT userId FROM User WHERE email = ?";
+        final String query = "SELECT userId FROM User WHERE userDomain = ?";
         List<String> res = jdbcTemplate.query(query, (resultSet, i) -> {
             String userId = resultSet.getString("userId");
             return userId;
-        }, user.getEmail());
+        }, user.getUserdomain());
         if(res.size() > 0) {
             return res.get(0);
         }

@@ -49,19 +49,23 @@ public class UserProfileService {
         String response = null;
         EaiLoginResponse eaiResponse = new EaiLoginResponse();
         try {
-            response = auth.sendRequest(user.getEmail(), user.getPassword());
+            response = auth.sendRequest(user.getUserdomain(), user.getPassword());
             eaiResponse = mapper.readValue(response, EaiLoginResponse.class);
             Integer status = eaiResponse.getOutputSchema().getStatus();
             if(status != null && status == 0) {
                 String candidateId = userProfileDAO.userAuthentication(user);
                 if (candidateId != null) return candidateId;
-                String props = auth.getProps(user.getEmail(), "2.5.4.3");
+                String props = auth.getProps(user.getUserdomain(), "2.5.4.3");
                 eaiResponse = mapper.readValue(props, EaiLoginResponse.class);
-
                 String fullname = eaiResponse.getOutputSchema().getValue().get(0);
                 if(fullname == null) return null;
 
-                UserProfile newUser = new UserProfile(fullname, user.getEmail(), user.getPassword(), null);
+                props = auth.getProps(user.getUserdomain(), "1.2.840.113556.1.4.656");
+                eaiResponse = mapper.readValue(props, EaiLoginResponse.class);
+                String email = eaiResponse.getOutputSchema().getValue().get(0);
+                if(email == null) return null;
+
+                UserProfile newUser = new UserProfile(user.getUserdomain(), fullname, email, user.getPassword(), null);
                 return userProfileDAO.insertUser(newUser).getUserId().toString();
             }
         } catch(Exception e) {
