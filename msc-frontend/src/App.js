@@ -247,6 +247,7 @@ class App extends React.Component {
     let user = localStorage.getItem("loggedInUser");
     if(user){
       user = JSON.parse(user);
+      console.log(user);
       await axios({
         method:"get",
         url: `${BASE_URL}/api/v1/forms/is-author-exist/${formId}`,
