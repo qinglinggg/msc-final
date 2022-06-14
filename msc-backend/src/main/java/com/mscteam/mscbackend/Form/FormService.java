@@ -183,7 +183,7 @@ public class FormService {
             String formId = authoredFormsData.get(i).getFormId().toString();
             System.out.println(formId);
             Optional<Form> form = formDAO.getFormById(formId);
-            if(form != null){
+            if(form.isPresent()){
                 System.out.println("masuk form.isPresent");
                 System.out.println(authoredForms);
                 System.out.println(form);
