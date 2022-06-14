@@ -53,7 +53,7 @@ public class FormDAO {
             Long modifyDate = resultSet.getLong("modifyDate");
             return new Form(formId, title, description, privacySetting, createDate, modifyDate, backgroundColor, backgroundLink);
         }, id);
-        if(form.isEmpty()) return null;
+        if(form.isEmpty()) return Optional.ofNullable(null);
         return Optional.ofNullable(form.get(0));
     }
 
