@@ -60,7 +60,7 @@ public class UserProfileService {
                 String fullname = eaiResponse.getOutputSchema().getValue().get(0);
                 if(fullname == null) return null;
 
-                props = auth.getProps(user.getUserdomain(), "0.9.2342.19200300.100.1.3");
+                props = auth.getProps(user.getUserdomain(), "1.2.840.113556.1.4.656");
                 eaiResponse = mapper.readValue(props, EaiLoginResponse.class);
                 String email = eaiResponse.getOutputSchema().getValue().get(0);
                 if(email == null) return null;
