@@ -8,8 +8,38 @@ import Popup from "reactjs-popup";
 const BASE_URL = "http://10.61.38.193:8080";
 
 class Navbar extends React.Component {
+  constructor() {
+    super();
+    this.updateDisplayName = this.updateDisplayName.bind(this);
+    this.updateDisplayEmail = this.updateDisplayEmail.bind(this);
+  }
+
   state = {
     prImage: null,
+    displayName: null,
+    displayEmail: null
+  }
+
+  updateDisplayName() {
+    let currentName = this.props.currentUser.fullname;
+    let splitted = currentName.toLowerCase().split(' ');
+    for (let i=0; i<splitted.length; i++) {
+      splitted[i] = splitted[i].charAt(0).toUpperCase() + splitted[i].substring(1);
+    }
+    this.setState({ displayName: splitted.join(' ') });
+  }
+
+  updateDisplayEmail() {
+    let currentEmail = this.props.currentUser.email;
+    let lower = currentEmail.toLowerCase();
+    this.setState({ displayEmail: lower });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if(this.props.currentUser != prevProps.currentUser && this.props.currentUser != null) {
+      this.updateDisplayName();
+      this.updateDisplayEmail();
+    }
   }
 
   render() {
@@ -25,8 +55,8 @@ class Navbar extends React.Component {
               {this.props.currentUser ? (
                   <React.Fragment>
                     <div className="profile-preview">
-                      <span id="pr-username">{this.props.currentUser.fullname}</span>
-                      <span id="pr-email">{this.props.currentUser.email}</span>
+                      <span id="pr-username">{this.state.displayName}</span>
+                      <span id="pr-email">{this.state.displayEmail}</span>
                     </div>
                     <ProfilePicture user={this.props.currentUser}></ProfilePicture>
                   </React.Fragment>
