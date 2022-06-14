@@ -341,7 +341,8 @@ public class FormDAO {
         List<FormAuthor> authoredFormsData = jdbcTemplate.query(query, (resultSet, i) -> {
             String formAuthorId = resultSet.getString("formAuthorId");
             String formId = resultSet.getString("formId");
-            return new FormAuthor(formAuthorId, formId, userId);
+            Long inviteDate = resultSet.getLong("inviteDate");
+            return new FormAuthor(formAuthorId, formId, userId, inviteDate);
         }, userId);
 
         return authoredFormsData;
@@ -429,17 +430,19 @@ public class FormDAO {
         final String query = "SELECT * FROM FormAuthor WHERE formId = ? AND userId = ?";
         List<FormAuthor> formAuthor = jdbcTemplate.query(query, (resultSet, i) -> {
             String formAuthorId = resultSet.getString("formAuthorId");
-            return new FormAuthor(formAuthorId, formId, userId);
+            Long inviteDate = resultSet.getLong("inviteDate");
+            return new FormAuthor(formAuthorId, formId, userId, inviteDate);
         }, formId, userId);
         return formAuthor;
     }
 
     public List<FormAuthor> getFormAuthors(String formId){
-        final String query = "SELECT * FROM FormAuthor WHERE formId = ?";
+        final String query = "SELECT * FROM FormAuthor WHERE formId = ? ORDER BY inviteDate ASC";
         List<FormAuthor> formAuthors = jdbcTemplate.query(query, (resultSet, i) -> {
             String formAuthorId = resultSet.getString("formAuthorId");
             String userId = resultSet.getString("userId");
-            return new FormAuthor(formAuthorId, formId, userId);
+            Long inviteDate = resultSet.getLong("inviteDate");
+            return new FormAuthor(formAuthorId, formId, userId, inviteDate);
         }, formId);
         return formAuthors;
     }

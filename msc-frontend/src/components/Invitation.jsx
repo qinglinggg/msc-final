@@ -390,12 +390,7 @@ function Invitation(props) {
         console.log(res);
         if(res.data){
           // add to collab list
-          console.log("masuk ni");
           getTeamMember();
-          // let tempTeamMember = teamMember;
-          // tempTeamMember.push(res.data);
-          // setTeamMember(tempTeamMember);
-          // console.log(tempTeamMember);
         }
       }).catch((error) => console.log(error));
     })
