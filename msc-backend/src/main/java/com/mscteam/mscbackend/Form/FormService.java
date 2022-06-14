@@ -183,7 +183,7 @@ public class FormService {
             Optional<Form> form = formDAO.getFormById(formId);
             if(form.isPresent()) authoredForms.add(form.get());
         }
-        Collections.sort(authoredForms);
+        if(authoredForms.size() > 0) Collections.sort(authoredForms);
         return authoredForms;
     }
 
