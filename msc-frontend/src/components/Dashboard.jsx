@@ -28,6 +28,7 @@ function Dashboard(props) {
   const [privacyCheck, setPrivacyCheck] = useState(false);
 
   useEffect(() => {
+    props.isAuthor(formId);
     props.handleUpdateCurrentPage(formId);
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");

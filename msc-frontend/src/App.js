@@ -16,6 +16,7 @@ import AdminDashboard from "./components/admin/AdminDashboard";
 import Respondent from "./components/Respondent";
 import LandingPage from "./components/LandingPage";
 import UpdateProfile from "./components/functional-components/UpdateProfile"
+import NotFound from "./components/NotFound";
 
 const BASE_URL = "http://10.61.38.193:8080";
 const APP_URL = "http://10.61.38.193:3001";
@@ -241,21 +242,21 @@ class App extends React.Component {
     )
   }
 
-  isAuthor(formId) {
+  async isAuthor(formId) {
     let flag = false;
     let user = localStorage.getItem("loggedInUser");
     if(user){
       user = JSON.parse(user);
-      axios({
+      await axios({
         method:"get",
         url: `${BASE_URL}/api/v1/forms/is-author-exist/${formId}`,
         data: user,
         headers: { "Content-Type" : "text/plain" },
       }).then((res) => {
-        console.log("check author");
-        console.log(res);
+        if(res.data == 1) flag = true;
       })
     }
+    if(!flag) window.location = `/404-not-found`;
     return flag;
   }
 
@@ -347,7 +348,12 @@ class App extends React.Component {
                 element={<Respondent />}
                 key={"respondentPage"}
               />
-              
+              <Route 
+                path="/404-not-found"
+                element={
+                  <NotFound />
+                }
+              />
           </Routes>
         </div>
       </React.Fragment>
