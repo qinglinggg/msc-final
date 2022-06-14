@@ -337,7 +337,7 @@ public class FormDAO {
     }
 
     public List<FormAuthor> getAuthoredForms(String userId) {
-        final String query = "SELECT * FROM FormAuthor WHERE userId = ? ORDER BY modifyDate DESC";
+        final String query = "SELECT * FROM FormAuthor WHERE userId = ?";
         List<FormAuthor> authoredFormsData = jdbcTemplate.query(query, (resultSet, i) -> {
             String formAuthorId = resultSet.getString("formAuthorId");
             String formId = resultSet.getString("formId");
