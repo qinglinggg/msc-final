@@ -241,6 +241,24 @@ class App extends React.Component {
     )
   }
 
+  isAuthor(formId) {
+    let flag = false;
+    let user = localStorage.getItem("loggedInUser");
+    if(user){
+      user = JSON.parse(user);
+      axios({
+        method:"get",
+        url: `${BASE_URL}/api/v1/forms/is-author-exist/${formId}`,
+        data: user,
+        headers: { "Content-Type" : "text/plain" },
+      }).then((res) => {
+        console.log("check author");
+        console.log(res);
+      })
+    }
+    return flag;
+  }
+
   appRouting() {
     let count = 0;
     return (
@@ -272,7 +290,8 @@ class App extends React.Component {
                 path={`/dashboard/formId/:formId`}
                 element={
                   <Dashboard 
-                  handleUpdateCurrentPage={this.handleUpdateCurrentPage}
+                    handleUpdateCurrentPage={this.handleUpdateCurrentPage}
+                    isAuthor={this.isAuthor}
                   />
                 }
                 key={"dashboardPage"}

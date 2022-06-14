@@ -212,4 +212,9 @@ public class FormController {
         return formService.getFormAuthors(formId);
     }
 
+    @GetMapping(path="/is-author-exist/{formId}")
+    public int isFormAuthorExist(@PathVariable("formId") String formId, @RequestBody String userId){
+        return formService.isFormAuthorExist(formId, userId);
+    }
+
 }
