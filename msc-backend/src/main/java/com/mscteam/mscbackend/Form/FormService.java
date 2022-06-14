@@ -193,7 +193,7 @@ public class FormService {
                 authoredForms.add(form.get());
             }
         }
-        // if(authoredForms.size() > 0) Collections.sort(authoredForms);
+        if(authoredForms.size() > 1) Collections.sort(authoredForms);
         return authoredForms;
     }
 
