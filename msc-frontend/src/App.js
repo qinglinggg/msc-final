@@ -80,7 +80,6 @@ class App extends React.Component {
   componentDidMount() {
     setInterval(() => {
       let loggedIn = localStorage.getItem("loggedInUser");
-      console.log(this.state.loggedInUser);
       if (loggedIn && loggedIn != "") {
         // console.log("yes");
         loggedIn = JSON.parse(loggedIn);
