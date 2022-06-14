@@ -53,6 +53,11 @@ public class FormController {
         return formService.insertFormAuthor(formId, userEmail);
     }
 
+    @DeleteMapping(path = "/delete-author/{formId}")
+    public int deleteFormAuthor(@PathVariable("formId") String formId, @RequestBody String userId){
+        return formService.deleteFormAuthor(formId, userId);
+    }
+
     @DeleteMapping(path = "/{id}")
     public int removeForm(@PathVariable("id") String id) {
         return formService.removeForm(id);

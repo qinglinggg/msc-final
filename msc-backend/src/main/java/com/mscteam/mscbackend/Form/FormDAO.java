@@ -70,6 +70,12 @@ public class FormDAO {
         return formAuthor;
     }
 
+    public int deleteFormAuthor(String formId, String userId){
+        final String query = "DELETE FROM FormAuthor WHERE formId = ? AND userId = ?";
+        int res = jdbcTemplate.update(query, formId, userId);
+        return res;
+    }
+
     public int removeForm(String id) {
         final String query = "DELETE FROM Form WHERE formId=?";
         int res = jdbcTemplate.update(query, id);

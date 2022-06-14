@@ -1611,8 +1611,6 @@ body {
 
 .invitation-track-innerbox {
   height: fit-content;
-  /* padding-left: 2.5%; */
-  /* padding-right: 2.5%; */
   align-self: center;
   font-family: var(--font-roboto);
   font-size: small;
@@ -1664,7 +1662,7 @@ body {
   padding: 0 150px 15px 150px;
   display: flex;
   flex-direction: column;
-  justify-items: center;
+  justify-content: flex-start;
 }
 
 #invitation-collab-title {
@@ -1705,13 +1703,52 @@ body {
   margin: 40px 0 40px 0;
 }
 
-#invitation-collab-list-item {
-  
+#invitation-collab-list-wrapper {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  /* align-items: center; */
 }
 
-/* #invitation-collab-list-wrapper {
-  width: 100%;
-} */
+#invitation-collab-box {
+  border: var(--border-page);
+  border-radius: 10px;
+  width: 90%;
+  height: fit-content;
+  min-height: 5vh;
+  max-height: 10vh;
+  display: flex;
+  flex-direction: row;
+  align-self: center;
+  justify-content: space-around;
+  margin-bottom: 15px;
+  background-color: rgba(224, 224, 224, 0.233);
+  padding: 0 5px 0 5px;
+}
+
+.invitation-collab-innerbox {
+  height: fit-content;
+  align-self: center;
+  font-family: var(--font-roboto);
+  font-size: small;
+  word-break: break-all;
+}
+
+#invitation-collab-innerbox-no {
+  width: 7px;
+}
+
+#invitation-collab-innerbox-name {
+  width: 200px;
+}
+
+#invitation-collab-innerbox-email {
+  width: 200px;
+}
 
 
 /* DESIGN */

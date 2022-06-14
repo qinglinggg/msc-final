@@ -99,6 +99,11 @@ function Invitation(props) {
     }
   }, [userInvited]);
 
+  useEffect(() => {
+    setTags([]);
+    setTagsElement([]);
+  }, [pageSelection])
+
   const getTargetedUserList = () => {
     let userInvitedList = [];
     try {
@@ -117,7 +122,13 @@ function Invitation(props) {
               u['datetime'] = "-";
             } else {
               u['status'] = "Completed"
-              u['datetime'] = "Submitted at " + u.submitDate;
+              const submitDate = new Date(u.submitDate);
+              let date = submitDate.getDate() + "/" + (submitDate.getMonth() + 1) + "/" + submitDate.getFullYear();
+              let time = submitDate.getHours() + ':';
+              if(submitDate.getMinutes() == 0) time = time + submitDate.getMinutes() + '0';
+              else if(submitDate.getMinutes() < 10) time = time + '0' + submitDate.getMinutes();
+              else time = time + submitDate.getMinutes();
+              u['datetime'] = "Submitted at " + date + " " + time;
             }
           })
           setUserInvited(userInvitedList);
@@ -367,8 +378,6 @@ function Invitation(props) {
   }
 
   const handleOpenCollaborators = () => {
-    setTags([]);
-    setTagsElement([]);
     setPageSelection(3);
   }
 
@@ -391,6 +400,22 @@ function Invitation(props) {
         }
       }).catch((error) => console.log(error));
     })
+  }
+
+  const handleDeleteTeamMember = (memberId) => {
+    let formId = JSON.parse(localStorage.getItem("selectedForm")).formId;
+    axios({
+      method: "delete",
+      data: memberId,
+      url: `${BASE_URL}/api/v1/forms/delete-author/${formId}`,
+      headers: { "Content-Type": "text/plain" },
+    }).then((res) => {
+      let tempTeamMember = teamMember;
+      tempTeamMember = tempTeamMember.filter((member) => {
+        return member.userId != memberId;
+      })
+      setTeamMember(tempTeamMember);
+    }).catch((error) => console.log(error))
   }
 
   const displayCollaboratorsPage = () => {
@@ -423,11 +448,26 @@ function Invitation(props) {
             <div id="invitation-collab-title">
               Team Member
             </div>
-            {teamMember.length > 0 ? teamMember.map((member) => {
-              <div id="invitation-collab-list-item">
-                {member.userId}
-              </div>
-            }) : null}
+            <div id="invitation-collab-list-wrapper">
+              {teamMember ? teamMember.map((member, idx) => {
+                return (
+                  <div id="invitation-collab-box">
+                    <div className="invitation-collab-innerbox" id="invitation-collab-innerbox-no">
+                      {idx + 1}.
+                    </div>
+                    <div className="invitation-collab-innerbox" id="invitation-collab-innerbox-name">
+                      {member.fullname}
+                    </div>
+                    <div className="invitation-collab-innerbox" id="invitation-collab-innerbox-email">
+                      {member.email}
+                    </div>
+                    <ion-icon name="trash-outline" id="invitation-track-trash-icon"
+                      onClick={(e) => handleDeleteTeamMember(member.userId)}
+                    />
+                  </div>
+                )
+              }) : null}
+            </div>
           </div>
         </div>
       </React.Fragment>

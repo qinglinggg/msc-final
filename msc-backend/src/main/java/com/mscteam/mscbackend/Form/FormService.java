@@ -55,6 +55,10 @@ public class FormService {
         return Optional.ofNullable(formDAO.insertFormAuthor(new FormAuthor(formId, userId)));
     }
 
+    public int deleteFormAuthor(String formId, String userId){
+        return formDAO.deleteFormAuthor(formId, userId);
+    }
+
     public int removeForm(String id) {
         return formDAO.removeForm(id);
     }
