@@ -103,6 +103,8 @@ class LandingPage extends Component {
 
     render() { 
         return (
+        <React.Fragment>
+            <div className="landing-page-background"/>
             <div id="landing-page-container">
                 {this.state.showPopup? this.displayPopup() : null}
                 <div id="landing-page-welcome">
@@ -144,6 +146,7 @@ class LandingPage extends Component {
                     </div>
                 </div>
             </div>
+        </React.Fragment>
         );
     }
 }
