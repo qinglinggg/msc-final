@@ -64,13 +64,14 @@ class UploadImage extends React.Component {
   handleProfile(logIn, prevState) {
     if(prevState.selectedImage != this.state.selectedImage && this.state.selectedImage != null) {
       let currentUser = this.props.currentUser;
+
       if(!currentUser) return;
       console.log("Checking user: ", currentUser);
       currentUser.profileImage = this.state.selectedImage;
       axios({
         method: "put",
         data: currentUser,
-        url: `${BASE_URL}/api/v1/user-profiles/${logIn.userId}`
+        url: `${BASE_URL}/api/v1/user-profiles/${logIn}`
       }).then(() => {
         this.props.handleUpdateProfile(this.state.selectedImage);
         this.setState({ isImageUploaded: true });
@@ -87,7 +88,6 @@ class UploadImage extends React.Component {
       this.handleForm(currentForm, prevState);
     }
     else if(logIn && this.props.mode == "profile") {
-      console.log("test");
       logIn = JSON.parse(logIn);
       this.handleProfile(logIn, prevState);
     }
