@@ -265,6 +265,7 @@ class App extends React.Component {
     let count = 0;
     return (
       <React.Fragment>
+        <div className="landing-page-background" style={{backgroundColor: "rgba(215,215,215)"}}/>
         <Navbar 
           handleLogout={this.handleLogout}
           handleUpdate={this.handleUpdate}
