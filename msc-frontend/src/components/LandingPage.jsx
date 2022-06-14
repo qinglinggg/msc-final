@@ -19,10 +19,10 @@ class LandingPage extends Component {
     }
 
     handleLogin() {
-        let inputUserEmail = document.getElementById('login-useremail');
+        let inputUser = document.getElementById('login-userdomain');
         let inputPassword = document.getElementById('login-password');
         let user = {
-            'email': inputUserEmail.value,
+            'userDomain': inputUser.value,
             'password': inputPassword.value
         }
         axios({
@@ -116,11 +116,11 @@ class LandingPage extends Component {
                     <div className="landing-page-login-container">
                         <div className="landing-page-login-row">
                             <div className="landing-page-login-title">
-                                <span>Email</span>
+                                <span>User Domain</span>
                                 <span className='span-asterisk' style={{marginLeft: '5px'}}>*</span>
                             </div>
                             <div className="landing-page-input-container">
-                                <input type="email" className="landing-page-login-field" id="login-useremail" />
+                                <input type="text" className="landing-page-login-field" id="login-userdomain" />
                             </div>
                         </div>
                         <div className="landing-page-login-row">
