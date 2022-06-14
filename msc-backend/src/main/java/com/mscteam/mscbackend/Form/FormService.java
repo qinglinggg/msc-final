@@ -179,11 +179,18 @@ public class FormService {
         List<FormAuthor> authoredFormsData = formDAO.getAuthoredForms(userId);
         List<Form> authoredForms = new ArrayList<>();
         for(int i=0; i<authoredFormsData.size(); i++){
+            System.out.println("masuk loop");
             String formId = authoredFormsData.get(i).getFormId().toString();
+            System.out.println(formId);
             Optional<Form> form = formDAO.getFormById(formId);
-            if(form.isPresent()) authoredForms.add(form.get());
+            if(form.isPresent()){
+                System.out.println("masuk form.isPresent");
+                System.out.println(authoredForms);
+                System.out.println(form);
+                authoredForms.add(form.get());
+            }
         }
-        Collections.sort(authoredForms);
+        // if(authoredForms.size() > 1) Collections.sort(authoredForms);
         return authoredForms;
     }
 
