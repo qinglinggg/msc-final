@@ -8,7 +8,7 @@ import axios from "axios";
 
 const BASE_URL = "http://10.61.38.193:8080";
 
-function Message() {
+function Message(props) {
   const [messageMetadata, setMessageMetadata] = useState({});
   const [formMessages, setFormMessages] = useState([]);
   const [tempMessage, setTempMessage] = useState("");
@@ -20,6 +20,7 @@ function Message() {
   const [intervalId, setIntervalId] = useState(0);
 
   useEffect(() => {
+    props.isAuthor(formId);
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
     tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
     if(tempBreadcrumbs.length >= 2) {

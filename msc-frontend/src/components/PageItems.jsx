@@ -12,6 +12,7 @@ class PageItems extends React.Component {
   }
 
   componentDidMount() {
+    this.refreshFormList();
     if(this.props.currentPage == 2 && !this.props.data.submitDate){
       let itemBg = document.getElementById("item-bg-" + this.props.data.formId);
       itemBg.style.backgroundColor = "rgb(252, 207, 207)";

@@ -1,5 +1,5 @@
 import React, { Component, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import iconMenubarGrey from "./images/menubarGrey.png";
 import iconVisibility from "./images/visibility.png";
 import iconSettings from "./images/settings.png";
@@ -23,6 +23,7 @@ function DataVisualization(props) {
   const [answerList, setAnswerList] = useState([]);
   const [responses, setResponses] = useState([]);
   let componentRef = useRef();
+  const { formId } = useParams();
 
   const exportOptions = [
     { value: "pdf", label: ".pdf" },
@@ -134,6 +135,7 @@ function DataVisualization(props) {
   }
 
   useEffect(() => {
+    props.isAuthor(formId);
     let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
     if(tempBreadcrumbs) tempBreadcrumbs = JSON.parse(localStorage.getItem("breadcrumbs"));
     if(tempBreadcrumbs.length >= 2) {

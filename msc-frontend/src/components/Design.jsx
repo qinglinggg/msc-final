@@ -33,6 +33,7 @@ function Design(props) {
   ];
 
   useEffect (() => {
+    props.isAuthor(formId);
     setFormItems(props.formItems_data)
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");

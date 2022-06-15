@@ -39,6 +39,7 @@ function Invitation(props) {
   const [formUrl] = useState(`http://10.61.38.193:3000/response/formId/${formId}`);
 
   useEffect(() => {
+    props.isAuthor(formId);
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {

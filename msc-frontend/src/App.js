@@ -33,6 +33,7 @@ class App extends React.Component {
     this.handleUpdate = this.handleUpdate.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
     this.handleOpenedPopup = this.handleOpenedPopup.bind(this);
+    this.updateUserdata = this.updateUserdata.bind(this);
   }
 
   state = {
@@ -114,11 +115,14 @@ class App extends React.Component {
   }
 
   async updateUserdata(userId) {
-    axios({
+    await axios({
       method: "get",
       url: `${BASE_URL}/api/v1/user-profiles/${userId}`
     }).then((res) => {
-      if(res.data) this.setState({currentUser: res.data});
+      if(res.data){
+        const user = res.data;
+        this.setState({ currentUser: user });
+      }
     });
     await axios.get(`${BASE_URL}/api/v1/forms/owned-form/${userId}`).then((res) => {
       const forms = res.data;
@@ -249,16 +253,16 @@ class App extends React.Component {
       user = JSON.parse(user);
       console.log(user);
       await axios({
-        method:"get",
+        method:"post",
         url: `${BASE_URL}/api/v1/forms/is-author-exist/${formId}`,
         data: user,
         headers: { "Content-Type" : "text/plain" },
       }).then((res) => {
         if(res.data == 1) flag = true;
+      }).finally(() => {
+        if(!flag) window.location = `/404-not-found`;
       })
     }
-    if(!flag) window.location = `/404-not-found`;
-    return flag;
   }
 
   appRouting() {
@@ -302,14 +306,14 @@ class App extends React.Component {
               <Route
                 path={`/design/formId/:formId`}
                 element={
-                  <Design />
+                  <Design isAuthor={this.isAuthor} />
                 }
                 key={"designPage"}
               />
               <Route
                 path={`/invitation/formId/:formId`}
                 element={
-                  <Invitation />
+                  <Invitation isAuthor={this.isAuthor} />
                 }
                 key={"invitationPage"}
               />
@@ -318,6 +322,7 @@ class App extends React.Component {
                 element={
                   <DataVisualization
                     formItems_data={this.state.formItems}
+                    isAuthor={this.isAuthor}
                   />}
                 key={"dataVisualizationPage"}
               />
@@ -326,7 +331,7 @@ class App extends React.Component {
                 path={`/feedback/formId/:formId`}
                 element={
                   <Feedback
-                    // handleSetFormMessages={this.handleSetFormMessages}
+                    isAuthor={this.isAuthor}
                   />}
                 key={"feedbackPage"}
               />
@@ -334,7 +339,7 @@ class App extends React.Component {
                 path={`/feedback/formId/:formId/:feedbackId`}
                 element={
                   <Message
-                    // handleSendNewMessage={this.handleSendNewMessage}
+                    isAuthor={this.isAuthor}
                   />
                 }
                 key={"feedbackMessagePage"}
@@ -344,7 +349,6 @@ class App extends React.Component {
                 element={<AdminDashboard />}
                 key={"adminPage"}
               />
-
               <Route 
                 path={`/response/formId/:formId`}
                 element={<Respondent />}

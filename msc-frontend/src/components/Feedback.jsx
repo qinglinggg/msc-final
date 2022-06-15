@@ -39,6 +39,7 @@ function Feedback(props) {
   }, []);
 
   useEffect(() => {
+    props.isAuthor(formId);
     let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
     let feedbacks = [];
     if(feedbackList.length == 0){
