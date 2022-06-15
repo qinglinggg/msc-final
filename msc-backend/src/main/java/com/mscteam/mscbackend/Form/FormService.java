@@ -277,6 +277,6 @@ public class FormService {
     public int isFormAuthorExist(String formId, String userId){
         List<FormAuthor> formAuthor = formDAO.isFormAuthorExist(formId, userId);
         if(formAuthor.get(0) != null) return 1;
-        return 0;
+        return 0; 
     }
 }
