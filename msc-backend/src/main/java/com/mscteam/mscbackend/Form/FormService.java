@@ -279,4 +279,8 @@ public class FormService {
         if(formAuthor.get(0) != null) return 1;
         return 0; 
     }
+
+    public FormAnswerSelection getAnswerSelectionById(String answerSelectionId) {
+        return formDAO.getAnswerSelectionById(answerSelectionId);
+    }
 }

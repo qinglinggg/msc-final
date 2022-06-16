@@ -15,6 +15,7 @@ function Question(props) {
   const prevBranchSelection = useRef();
   const [intervalId, setIntervalId] = useState(0);
   const [questionContent, setQuestionContent] = useState("");
+  const [arrayOptions, setArrayOptions] = useState([]);
 
   const resetBranchingSelection = () => {
     if(branchingSelection.length > 0) prevBranchSelection.current = branchingSelection;
@@ -91,13 +92,12 @@ function Question(props) {
       } else {
         setSelectedQuestionOption("MC");
       }
-      getAnswerSelection();
       let interval = setInterval(() => {
         updateQuestionContent();
+        getAnswerSelection();
       }, 250);
       setIntervalId(interval);
     }
-
     return (() => {
       clearInterval(intervalId);
     })
@@ -125,9 +125,8 @@ function Question(props) {
   }, [questionContent]);
 
   useEffect(() => {
-    if(!props.arrayOptions) return;
-    if(props.arrayOptions.length > 0) {
-      props.arrayOptions.map((obj) => {
+    if(arrayOptions.length > 0) {
+      arrayOptions.map((obj) => {
         let optionId =
         "question-" + props.questionData.id + "-options-" + obj.id;
         let el = document.getElementById(optionId);
@@ -138,7 +137,7 @@ function Question(props) {
         }
       });
     }
-  }, [props.arrayOptions])
+  }, [arrayOptions])
 
   useEffect(() => {
     if(!prevBranchSelection.current) return;

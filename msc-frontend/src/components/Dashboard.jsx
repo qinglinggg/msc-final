@@ -349,7 +349,7 @@ function Dashboard(props) {
       }
       return elem;
     });
-    setFormItems(tempFormItems);
+    if(formItems.length != tempFormItems.length) setFormItems(tempFormItems);
     setUpdated(updateArray);
   };
 

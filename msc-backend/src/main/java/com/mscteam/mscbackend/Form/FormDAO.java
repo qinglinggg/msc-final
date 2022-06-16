@@ -446,4 +446,19 @@ public class FormDAO {
         }, formId);
         return formAuthors;
     }
+
+    public FormAnswerSelection getAnswerSelectionById(String answerSelectionId) {
+        final String query = "SELECT * FROM FormAnswerSelection WHERE answerSelectionId = ?";
+        List<FormAnswerSelection> res = jdbcTemplate.query(query, (resultSet, i) -> {
+            String formItemsId = resultSet.getString("formItemsId");
+            Integer answerSelectionNo = resultSet.getInt("answerSelectionNo");
+            String answerSelectionLabel = resultSet.getString("answerSelectionLabel");
+            String answerSelectionValue = resultSet.getString("answerSelectionValue");
+            Integer prevItem = resultSet.getInt("prevItem");
+            Integer nextItem = resultSet.getInt("nextItem");
+            return new FormAnswerSelection(UUID.fromString(formItemsId), UUID.fromString(answerSelectionId), answerSelectionNo, answerSelectionLabel, answerSelectionValue, nextItem, prevItem);
+        }, answerSelectionId);
+        if(res.size() > 0) return res.get(0);
+        return null;
+    }
 }

@@ -121,6 +121,11 @@ public class FormController {
         return listAnswer;
     }
 
+    @GetMapping(path = "/get-answer-selection-by-id/{answerSelectionId}")
+    public FormAnswerSelection getAnswerSelectionById(@PathVariable("answerSelectionId") String answerSelectionId){
+        return formService.getAnswerSelectionById(answerSelectionId);
+    }
+
     @DeleteMapping(path = "/remove-answer-selection/{answerSelectionId}")
     public int removeAnswerSelection(@PathVariable("answerSelectionId") String answerSelectionId) {
         return formService.removeAnswerSelection(answerSelectionId);
