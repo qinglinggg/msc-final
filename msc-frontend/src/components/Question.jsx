@@ -13,6 +13,8 @@ function Question(props) {
   const [branchingState, setBranchingState] = useState(false);
   const [branchingSelection, setBranchingSelection] = useState([]);
   const prevBranchSelection = useRef();
+  const [intervalId, setIntervalId] = useState(0);
+  const [questionContent, setQuestionContent] = useState("");
 
   const resetBranchingSelection = () => {
     if(branchingSelection.length > 0) prevBranchSelection.current = branchingSelection;
@@ -69,15 +71,15 @@ function Question(props) {
   ];
 
   const autoResizeContent = (el) => {
-    el.style.height = "25px";
+    el.style.height = "15px";
     el.style.height = (el.scrollHeight)+"px";
   }
 
   useEffect(() => {
     if(props.questionData) {
-      let questionContent = document.getElementById("question-input-" + props.questionData.id);
-      questionContent.value = "";
-      if(props.questionData.questionContent) questionContent.value = props.questionData.questionContent;
+      let questionContentTextarea = document.getElementById("question-input-" + props.questionData.id);
+      questionContentTextarea.value = "";
+      if(questionContent) questionContentTextarea.value = questionContent;
       if(props.questionData.isRequired){
         if(props.questionData.isRequired == 1) setSelectedIsRequired(true);
         else setSelectedIsRequired(false);
@@ -89,26 +91,38 @@ function Question(props) {
       } else {
         setSelectedQuestionOption("MC");
       }
-      axios({
-        method: "get",
-        url: `${BASE_URL}/api/v1/forms/get-answer-selection/${props.questionData.id}`,
-      }).then((res) => {
-        props.handleOptionList(props.questionData.id, res.data);
-      });
+      getAnswerSelection();
+      let interval = setInterval(() => {
+        updateQuestionContent();
+      }, 250);
+      setIntervalId(interval);
     }
+
+    return (() => {
+      clearInterval(intervalId);
+    })
   }, []);
 
+  const getAnswerSelection = () => {
+    axios({
+      method: "get",
+      url: `${BASE_URL}/api/v1/forms/get-answer-selection/${props.questionData.id}`,
+    }).then((res) => {
+      props.handleOptionList(props.questionData.id, res.data);
+    });
+  }
+
   useEffect(() => {
-    if(props.questionData) {
-      let questionContent = document.getElementById("question-input-" + props.questionData.id);
-      questionContent.value = "";
-      if(props.questionData.questionContent) {
-        questionContent.value = props.questionData.questionContent;
-        questionContent.style.height = "25px";
-        autoResizeContent(questionContent);
+    if(questionContent) {
+      let questionContentTextarea = document.getElementById("question-input-" + props.questionData.id);
+      questionContentTextarea.value = "";
+      if(questionContent) {
+        questionContentTextarea.value = questionContent;
+        questionContentTextarea.style.height = "25px";
+        autoResizeContent(questionContentTextarea);
       }
     }
-  }, [props.questionData]);
+  }, [questionContent]);
 
   useEffect(() => {
     if(!props.arrayOptions) return;
@@ -134,6 +148,16 @@ function Question(props) {
       });
     }
   }, [branchingState]);
+
+  const updateQuestionContent = () => {
+    axios({
+      method: "get",
+      url: `${BASE_URL}/api/v1/forms/get-a-form-item/${props.questionData.id}`,
+    }).then((res) => {
+      let content = res.data.content;
+      if(questionContent != content) setQuestionContent(content);
+    });
+  }
 
   const handleShowBranching = () => {
     setBranchingState(!branchingState);
@@ -169,7 +193,7 @@ function Question(props) {
             <div id="border"></div>
             <br />
             <div className="char-counter">
-              <span style={props.questionData && props.questionData.questionContent.length <= 255 ? {color: "gray"} : {color: "red"}}>{props.questionData ? props.questionData.questionContent.length : null}</span>
+              <span style={props.questionData && questionContent.length <= 255 ? {color: "gray"} : {color: "red"}}>{props.questionData ? questionContent.length : null}</span>
             </div>
           </div>
           <div id="question-selection">
@@ -227,12 +251,16 @@ function Question(props) {
             >
               {/* isi dari popup, konten yg mau dishow */}
               <div className="popup-wrapper">
-                <div
-                  className="popup-content"
-                  onClick={() => handleShowBranching()}>
-                  {!branchingState ? `Enable branching` : `Disable branching`}
-                </div>
-                <div className="popup-divider"></div>
+                {props.questionData.questionType == "MC" ? (
+                  <React.Fragment>
+                    <div
+                      className="popup-content"
+                      onClick={() => handleShowBranching()}>
+                      {!branchingState ? `Enable branching` : `Disable branching`}
+                    </div>
+                    <div className="popup-divider"></div>
+                  </React.Fragment>
+                ) : null}
                 <div
                   className="popup-content"
                   onClick={() => {

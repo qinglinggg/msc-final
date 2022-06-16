@@ -66,25 +66,7 @@ function Dashboard(props) {
       setShowTutorial(true);
     }
     try {
-      axios({
-        method: "get",
-        url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`,
-      }).then((res) => {
-        let currentStateData = [...formItems];
-        res.data.map((data) => {
-          let newItem = {
-            id: data.id,
-            itemNumber: data.itemNumber,
-            questionContent: data.content,
-            questionType: data.type,
-            arrayOptions: [],
-            optionCounter: 0,
-            isRequired: data.isRequired
-          };
-          currentStateData.push(newItem);
-        });
-        setFormItems(currentStateData);
-      });
+      getFormItems();
     } catch (error) {
       console.log(error);
     }
@@ -99,6 +81,28 @@ function Dashboard(props) {
       });
     }
   }, []); // run once
+
+  const getFormItems = () => {
+    axios({
+      method: "get",
+      url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`,
+    }).then((res) => {
+      let currentStateData = [...formItems];
+      res.data.map((data) => {
+        let newItem = {
+          id: data.id,
+          itemNumber: data.itemNumber,
+          questionContent: data.content,
+          questionType: data.type,
+          arrayOptions: [],
+          optionCounter: 0,
+          isRequired: data.isRequired
+        };
+        currentStateData.push(newItem);
+      });
+      setFormItems(currentStateData);
+    });
+  }
 
   useEffect(() => {
     if(!isLoaded) return;
@@ -229,8 +233,6 @@ function Dashboard(props) {
         url: `${BASE_URL}/api/v1/forms/update-form-items/${questionId}`,
         data: currentForm,
         headers: { "Content-Type": "application/json" },
-      }).then((res) => {
-        setFormItems(tempFormItems);
       });
     } catch (error) {
       console.log(error);
@@ -347,8 +349,8 @@ function Dashboard(props) {
       }
       return elem;
     });
-    setUpdated(updateArray);
     setFormItems(tempFormItems);
+    setUpdated(updateArray);
   };
 
   const handleAddOption = (id, iterCount, finalCount) => {

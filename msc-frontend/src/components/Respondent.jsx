@@ -500,10 +500,10 @@ function Respondent (props) {
   }
     
   const handleBack = () => {
-    warningStyle();
-    if(!navToggle){
-      return;
-    }
+    // warningStyle();
+    // if(!navToggle){
+    //   return;
+    // }
     if(navigator[index-1] == -1) setIndex(index - 1);
     else setIndex(navigator[index-1]);
 
@@ -972,7 +972,7 @@ function Respondent (props) {
                 {index == 1 ? 
                   null : (
                   <div id="preview-back-icon-animation"
-                    style={navToggle ? {backgroundColor: "white"} : {backgroundColor: "gray"}}>
+                    style={navToggle ? {backgroundColor: "white"} : null}>
                     <ion-icon
                       name="chevron-back-outline"
                       id="preview-back-icon"

@@ -1033,6 +1033,7 @@ body {
   flex-direction: row;
   align-items: flex-start;
   justify-content: center;
+  margin-bottom: 10px;
 }
 
 #question-title-font {
@@ -1049,7 +1050,6 @@ body {
   border-bottom: 1px solid #fff;
   outline: none;
   width: 95%;
-  margin-bottom: 10px;
   font-size: 15px;
   display: inline;
   resize: none;
@@ -2219,8 +2219,8 @@ body {
   background-color: var(--white-use);
   border: 1px solid rgb(105, 105, 105);
   border-radius: 5px;
-  min-width: fit-content;
-  max-width: fit-content;
+  width: fit-content;
+  max-width: 200px;
   height: fit-content;
   padding: 7px;
   display: flex;

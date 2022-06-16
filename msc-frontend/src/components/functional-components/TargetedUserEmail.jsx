@@ -25,7 +25,7 @@ class TargetedUserEmail extends React.Component {
       let tag = e.target.value.replace(/\s+/g, "").replace(",", "");
       let tags = this.props.tags;
 
-      if (tag.length > 1 && tag.endsWith("@bca.co.id") && !tags.includes(tag)) {
+      if (tag.length > 1 && tag.includes("@") && !tags.includes(tag)) {
         tags.push(tag);
         this.props.setTags(tags);
 
