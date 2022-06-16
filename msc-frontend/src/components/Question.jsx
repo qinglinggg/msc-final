@@ -4,6 +4,7 @@ import AutoHeightTextarea from "./functional-components/AutoheightTextarea";
 import Popup from "reactjs-popup";
 import axios from "axios";
 import { useState, useEffect, useRef } from "react";
+import Option from "./Option";
 
 const BASE_URL = "http://10.61.38.193:8080";
 
@@ -15,6 +16,7 @@ function Question(props) {
   const prevBranchSelection = useRef();
   const [intervalId, setIntervalId] = useState(0);
   const [questionContent, setQuestionContent] = useState("");
+  const [questionType, setQuestionType] = useState("");
   const [arrayOptions, setArrayOptions] = useState([]);
 
   const resetBranchingSelection = () => {
@@ -87,13 +89,13 @@ function Question(props) {
       }
     }
     if (props.mode) {
-      if (props.questionData.questionType != "") {
-        setSelectedQuestionOption(props.questionData.questionType);
+      if (questionType != "") {
+        setSelectedQuestionOption(questionType);
       } else {
         setSelectedQuestionOption("MC");
       }
       let interval = setInterval(() => {
-        updateQuestionContent();
+        updateQuestion();
         getAnswerSelection();
       }, 250);
       setIntervalId(interval);
@@ -125,17 +127,8 @@ function Question(props) {
   }, [questionContent]);
 
   useEffect(() => {
-    if(arrayOptions.length > 0) {
-      arrayOptions.map((obj) => {
-        let optionId =
-        "question-" + props.questionData.id + "-options-" + obj.id;
-        let el = document.getElementById(optionId);
-        if(el){
-          if (props.questionData.questionType != "LS") el.value = obj.value;
-          else el.value = obj.label;
-          autoResizeContent(el);
-        }
-      });
+    if(arrayOptions.length == 0 && props.questionData){
+      setArrayOptions(props.questionData.arrayOptions);
     }
   }, [arrayOptions])
 
@@ -148,13 +141,15 @@ function Question(props) {
     }
   }, [branchingState]);
 
-  const updateQuestionContent = () => {
+  const updateQuestion = () => {
     axios({
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-a-form-item/${props.questionData.id}`,
     }).then((res) => {
       let content = res.data.content;
+      let type = res.data.type;
       if(questionContent != content) setQuestionContent(content);
+      if(questionType != type) setQuestionType(type);
     });
   }
 
@@ -198,9 +193,9 @@ function Question(props) {
           <div id="question-selection">
             <Select
               value={questionOptions.map((option) => {
-                if (props.questionData.questionType == "")
+                if (questionType == "")
                   return questionOptions[0];
-                if (option.value == props.questionData.questionType)
+                if (option.value == questionType)
                   return option;
               })}
               options={questionOptions}
@@ -209,14 +204,14 @@ function Question(props) {
               onChange={(e) => {
                 if (
                   !(
-                    props.questionData.questionType == "MC" && e.value == "CB"
+                    questionType == "MC" && e.value == "CB"
                   ) &&
-                  !(props.questionData.questionType == "CB" && e.value == "MC")
+                  !(questionType == "CB" && e.value == "MC")
                 ) {
                   props.handleResetOption(props.questionData.id);
                 }
                 props.handleUpdateQuestionType(props.questionData.id, e);
-                setSelectedQuestionOption(props.questionData.questionType);
+                setSelectedQuestionOption(questionType);
               }}
             />
           </div>
@@ -250,7 +245,7 @@ function Question(props) {
             >
               {/* isi dari popup, konten yg mau dishow */}
               <div className="popup-wrapper">
-                {props.questionData.questionType == "MC" ? (
+                {questionType == "MC" ? (
                   <React.Fragment>
                     <div
                       className="popup-content"
@@ -286,66 +281,19 @@ function Question(props) {
                   "question-" + props.questionData.id + "-options-" + obj.id;
                 // this.handleUpdateTextarea(obj);
                 return (
-                  <React.Fragment key={"mc-" + idx}>
-                    <div className="answer-selection">
-                      <input
-                        className="answerSelection"
-                        type="radio"
-                        disabled
-                      />
-                      <AutoHeightTextarea
-                        key={optionId}
-                        className="inputText"
-                        id={optionId}
-                        type="text"
-                        placeholder={obj.label}
-                        wrap="soft"
-                        onChange={(e) => {
-                          props.handleOptionValue(
-                            props.questionData.id,
-                            e, obj, false
-                          );
-                        }} />
-                      {branchingState ? (
-                        <Select
-                          className="branching-selection"
-                          options={branchingSelection}
-                          defaultValue={() => {
-                            if(obj.nextItem != -1) {
-                              let defaultVal = null;
-                              let tempBranch = null;
-                              if (branchingSelection.length > 0) tempBranch = branchingSelection;
-                              else tempBranch = prevBranchSelection.current;
-                              if (tempBranch) tempBranch.forEach((sel) => {
-                                if(sel.value == obj.nextItem) {
-                                  defaultVal = sel;
-                                }
-                              });
-                              return defaultVal;
-                            } else {
-                              return null;
-                            }
-                          }}
-                          onChange={(e) => {
-                            // console.log(e);
-                            props.handleOptionValue(
-                              props.questionData.id,
-                              e, obj, true
-                            );
-                          }}/>
-                      ) : null}
-                      <div className="form-item-remove"
-                        onClick={() => {
-                          props.handleRemoveOption(
-                            props.questionData.id,
-                            obj.id,
-                            obj
-                          );
-                      }}>
-                        <ion-icon name="close-outline"></ion-icon>
-                      </div>
-                    </div>
-                  </React.Fragment>
+                  <Option 
+                    key={optionId}
+                    idx={idx}
+                    optionId={optionId}
+                    obj={obj}
+                    handleOptionValue={props.handleOptionValue}
+                    branchingState={branchingState}
+                    branchingSelection={branchingSelection}
+                    prevBranchSelection={prevBranchSelection}
+                    handleRemoveOption={props.handleRemoveOption}
+                    questionData={props.questionData}
+                    formItems={props.formItems}
+                  />
                 );
               })
             : null}
