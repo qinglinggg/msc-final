@@ -28,6 +28,7 @@ function Dashboard(props) {
   const [privacyCheck, setPrivacyCheck] = useState(false);
 
   useEffect(() => {
+    localStorage.setItem("isInit", JSON.stringify(false));
     props.isAuthor(formId);
     props.handleUpdateCurrentPage(formId);
     let body = document.getElementById("body");
@@ -65,11 +66,9 @@ function Dashboard(props) {
     if(!checkTutorial) {
       setShowTutorial(true);
     }
-    try {
+    // var interval = setInterval(() => {
       getFormItems();
-    } catch (error) {
-      console.log(error);
-    }
+    // }, 250);
     let el = document.querySelectorAll("#loading-transition");
     if (el) {
       el.forEach((i) => {
@@ -80,6 +79,11 @@ function Dashboard(props) {
         });
       });
     }
+
+    return () => {
+      // console.log("dashboard unmounted");
+      // clearInterval(interval);
+    }
   }, []); // run once
 
   const getFormItems = () => {
@@ -88,19 +92,49 @@ function Dashboard(props) {
       url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`,
     }).then((res) => {
       let currentStateData = [...formItems];
-      res.data.map((data) => {
-        let newItem = {
-          id: data.id,
-          itemNumber: data.itemNumber,
-          questionContent: data.content,
-          questionType: data.type,
-          arrayOptions: [],
-          optionCounter: 0,
-          isRequired: data.isRequired
-        };
-        currentStateData.push(newItem);
-      });
-      setFormItems(currentStateData);
+      let isInit = localStorage.getItem("isInit");
+      if(!isInit) {
+        localStorage.setItem("isInit", JSON.stringify(false));
+        isInit = false;
+      } else {
+        isInit = JSON.parse(isInit);
+      }
+      console.log(isInit);
+      if(isInit == false) {
+        console.log("masuk kah", formItems, res.data);
+        res.data.map((data) => {
+          let newItem = {
+            id: data.id,
+            itemNumber: data.itemNumber,
+            questionContent: data.content,
+            questionType: data.type,
+            arrayOptions: [],
+            optionCounter: 0,
+            isRequired: data.isRequired
+          };
+          currentStateData.push(newItem);
+        });
+        console.log("getFormItems init", currentStateData);
+        setFormItems(currentStateData);
+        localStorage.setItem("isInit", JSON.stringify(true));
+      } else if(currentStateData.length != res.data.length) {
+        if(res.data.length > currentStateData.length) {
+          console.log(currentStateData.length);
+          let newData = res.data[res.data.length - 1];
+          let newItem = {
+            id: newData.id,
+            itemNumber: newData.itemNumber,
+            questionContent: newData.content,
+            questionType: newData.type,
+            arrayOptions: [],
+            optionCounter: 0,
+            isRequired: newData.isRequired
+          };
+          currentStateData.push(newItem);
+          console.log("length berbeda", currentStateData);
+          setFormItems(currentStateData);
+        }
+      }
     });
   }
 
@@ -116,6 +150,7 @@ function Dashboard(props) {
 
   useEffect(() => {
     if(!formItems || formItems.length == 0) return;
+    console.log(formItems);
     let updateArray = [];
     for(let i=0; i<formItems.length; i++) updateArray.push(false);
     setUpdated(updateArray);
@@ -328,29 +363,54 @@ function Dashboard(props) {
   };
 
   const handleOptionList = (id, data) => {
-    // console.log("Handle Add Option: " + id);
-    let tempFormItems = [...formItems];
+    if(data.length == 0){
+      handleAddOption(id, null, null);
+      return;
+    } 
     let updateArray = [...updated];
-    let currentForm = tempFormItems.filter((elem) => {
+    let currentForm = formItems.filter((elem) => {
       return elem.id == id;
     });
     currentForm = currentForm[0];
-    currentForm["optionCounter"] = 0;
-    currentForm["arrayOptions"] = [];
-    if(data.length == 0) handleAddOption(id, null, null);
-      data.map((obj) => {
-        currentForm["optionCounter"] += 1;
-        currentForm["arrayOptions"].push(obj);
-      })
-    tempFormItems = tempFormItems.map((elem, idx) => {
-      if (elem.id == id) {
-        updateArray[idx] = true;
-        return currentForm;
+    let changes = false;
+    let arrayLen = -1;
+    formItems.map((elem, idx) => {
+      if(elem.id == id) {
+        if(elem.arrayOptions.length != data.length) {
+          changes = true;
+          arrayLen = elem.arrayOptions.length;
+          console.log("masuk changes");
+          return;
+        }
       }
-      return elem;
     });
-    if(formItems.length != tempFormItems.length) setFormItems(tempFormItems);
-    setUpdated(updateArray);
+    if(!changes) return;
+    console.log("diikuti");
+    if(arrayLen != data.length){
+      if(arrayLen == 0 || arrayLen > data.length){
+        currentForm["arrayOptions"] = [];
+        data.map((obj) => {
+          currentForm["optionCounter"] += 1;
+          console.log("pushing obj");
+          currentForm["arrayOptions"].push(obj);
+        });
+      } else if(arrayLen < data.length) {
+        let obj = data[data.length - 1];
+        currentForm["optionCounter"] += 1;
+        console.log("pushing obj");
+        currentForm["arrayOptions"].push(obj);
+      }
+      let tempFormItems = formItems.map((elem, idx) => {
+        if (elem.id == id) {
+          updateArray[idx] = true;
+          return currentForm;
+        }
+        return elem;
+      });
+      console.log("iyes", tempFormItems);
+      setFormItems(tempFormItems);
+      setUpdated(updateArray);
+    }
   };
 
   const handleAddOption = (id, iterCount, finalCount) => {
@@ -384,6 +444,7 @@ function Dashboard(props) {
   };
 
   const handleRemoveOption = (questionId, objId, obj) => {
+    console.log("masuk handle remove option");
     let tempFormItems = [...formItems];
     let currentForm = tempFormItems.filter((elem) => {
       return elem.id == questionId;
@@ -406,47 +467,6 @@ function Dashboard(props) {
       });
       setFormItems(tempFormItems);
     });
-  };
-
-  const handleOptionValue = async (questionId, event, object, nextToggle) => {
-    let value = null;
-    if(event.target){
-      value = event.target.value;
-    } else {
-      value = event.value;
-    }
-    setTimeout(() => {
-      let tempFormItems = [...formItems];
-      let currentForm = tempFormItems.filter((elem) => {
-        return elem.id == questionId;
-      });
-      currentForm = currentForm[0];
-      let arrayOptions = currentForm["arrayOptions"];
-      let answerSelection;
-      arrayOptions.map((elem) => {
-        if (elem.id == object.id) {
-          if (nextToggle == true) elem.nextItem = value;
-          else elem.value = value;
-          answerSelection = elem;
-        }
-      });
-      currentForm["arrayOptions"] = arrayOptions;
-      //  answerSelectionId -> object.id
-      axios({
-        method: "put",
-        url: `${BASE_URL}/api/v1/forms/update-answer-selection/${object.id}`,
-        data: answerSelection,
-        headers: { "Content-Type": "application/json" },
-      }).then((res) => {
-        tempFormItems = tempFormItems.map((elem) => {
-          if (elem.id == questionId) {
-            return currentForm;
-          }
-          return elem;
-        });
-        setFormItems(tempFormItems);
-      });
-    }, 3000);
   };
 
   const handleOptionLabel = async (questionId, event, object, index) => {
@@ -502,6 +522,48 @@ function Dashboard(props) {
     setFormItems(tempFormItems);
   };
 
+  const handleOptionValue = async (questionId, event, object, nextToggle) => {
+    let value = null;
+    if(event.target){
+      value = event.target.value;
+    } else {
+      value = event.value;
+    }
+    setTimeout(() => {
+      let tempFormItems = [...formItems];
+      let currentForm = tempFormItems.filter((elem) => {
+        return elem.id == questionId;
+      });
+      currentForm = currentForm[0];
+      let arrayOptions = currentForm["arrayOptions"];
+      let answerSelection;
+      arrayOptions.map((elem) => {
+        if (elem.id == object.id) {
+          if (nextToggle == true) elem.nextItem = value;
+          else elem.value = value;
+          answerSelection = elem;
+        }
+      });
+      currentForm["arrayOptions"] = arrayOptions;
+      //  answerSelectionId -> object.id
+      axios({
+        method: "put",
+        url: `${BASE_URL}/api/v1/forms/update-answer-selection/${object.id}`,
+        data: answerSelection,
+        headers: { "Content-Type": "application/json" },
+      }).then((res) => {
+        tempFormItems = tempFormItems.map((elem) => {
+          if (elem.id == questionId) {
+            return currentForm;
+          }
+          return elem;
+        });
+        console.log(tempFormItems);
+        setFormItems(tempFormItems);
+      });
+    }, 3000);
+  };
+
   const displayQuestion = () => {
     let counter = 0;
     return (
@@ -541,7 +603,7 @@ function Dashboard(props) {
           id="addQuestion"
           onClick={() => handleAddItem()}
         >
-          <Question mode={false} />
+          <Question mode={false} key={"addItems"}/>
         </div>
       </React.Fragment>
     );

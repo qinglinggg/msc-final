@@ -11,12 +11,17 @@ function Option(props) {
     const [value, setValue] = useState("");
 
     useEffect(() => {
-        setInterval(() => {
+        var valueInterval = setInterval(() => {
             setOptionValue();
         }, 250);
+
+        return () => {
+            console.log("unmount");
+        }
     }, [])
 
     useEffect(() => {
+        // console.log(props.formItems);
         setOptionValue();
     }, [props.formItems])
 
@@ -30,12 +35,13 @@ function Option(props) {
         let optionId =
         "question-" + props.questionData.id + "-options-" + props.obj.id;
         let el = document.getElementById(optionId);
-        console.log(props.obj);
+        // console.log(props.obj);
         if(!el) return;
         autoResizeContent(el);
     }, [value])
 
     const setOptionValue = () => {
+        // console.log("jalan nih");
         axios({
             method: "get",
             url: `${BASE_URL}/api/v1/forms/get-answer-selection-by-id/${props.obj.id}`,
@@ -45,11 +51,35 @@ function Option(props) {
                 let selectedValue = null;
                 if (props.questionData.questionType != "LS") selectedValue = resValue;
                 else selectedValue = res.data.label;
-                console.log(selectedValue);
+                // console.log(selectedValue);
                 setValue(selectedValue);
             }
         }).catch((error) => console.log(error));
     }
+
+    const handleOptionValue = async (event, nextToggle) => {
+        console.log(event.target.value);
+        let input = null;
+        if(event.target){
+            input = event.target.value;
+        } else {
+            input = event.value;
+        }
+        let tempObj = props.obj;
+        if(nextToggle){
+            tempObj.nextItem = input;
+        } else {
+            tempObj.value = input;
+        }
+        axios({
+            method: "put",
+            url: `${BASE_URL}/api/v1/forms/update-answer-selection/${tempObj.id}`,
+            data: tempObj,
+            headers: { "Content-Type": "application/json" },
+        }).then((res) => {
+            if(!nextToggle) setValue(input);
+        });
+    };
 
     return (
         <React.Fragment key={"mc-" + props.idx}>
@@ -67,10 +97,7 @@ function Option(props) {
                 placeholder={props.obj.label}
                 wrap="soft"
                 onChange={(e) => {
-                    props.handleOptionValue(
-                    props.questionData.id,
-                    e, props.obj, false
-                    );
+                    handleOptionValue(e, false);
                 }} 
                 value={value}
                 />
@@ -96,10 +123,7 @@ function Option(props) {
                     }}
                     onChange={(e) => {
                     // console.log(e);
-                    props.handleOptionValue(
-                        props.questionData.id,
-                        e, props.obj, true
-                    );
+                    handleOptionValue(e, true);
                     }}/>
                 ) : null}
                 <div className="form-item-remove"

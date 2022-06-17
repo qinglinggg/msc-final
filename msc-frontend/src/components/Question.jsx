@@ -94,18 +94,21 @@ function Question(props) {
       } else {
         setSelectedQuestionOption("MC");
       }
-      let interval = setInterval(() => {
+      var interval = setInterval(() => {
         updateQuestion();
         getAnswerSelection();
       }, 250);
       setIntervalId(interval);
+      setArrayOptions(props.arrayOptions);
     }
-    return (() => {
-      clearInterval(intervalId);
-    })
+    return () => {
+      console.log("unmount question");
+      clearInterval(interval);
+    }
   }, []);
 
   const getAnswerSelection = () => {
+    if(!props.questionData) return;
     axios({
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-answer-selection/${props.questionData.id}`,
@@ -127,10 +130,13 @@ function Question(props) {
   }, [questionContent]);
 
   useEffect(() => {
-    if(arrayOptions.length == 0 && props.questionData){
-      setArrayOptions(props.questionData.arrayOptions);
+    if(!props.arrayOptions) return;
+    console.log("perubahan", props.arrayOptions);
+    if(arrayOptions.length != props.arrayOptions.length){
+      console.log("updating array options:", arrayOptions.length, props.arrayOptions.length);
+      setArrayOptions(props.arrayOptions);
     }
-  }, [arrayOptions])
+  }, [props.arrayOptions]);
 
   useEffect(() => {
     if(!prevBranchSelection.current) return;
@@ -142,6 +148,7 @@ function Question(props) {
   }, [branchingState]);
 
   const updateQuestion = () => {
+    if(!props.questionData) return;
     axios({
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-a-form-item/${props.questionData.id}`,
@@ -150,7 +157,7 @@ function Question(props) {
       let type = res.data.type;
       if(questionContent != content) setQuestionContent(content);
       if(questionType != type) setQuestionType(type);
-    });
+    }).catch(() => clearInterval(intervalId));
   }
 
   const handleShowBranching = () => {
@@ -275,8 +282,8 @@ function Question(props) {
     return (
       <React.Fragment>
         <div id="answer-selection-container">
-          {props.arrayOptions
-            ? props.arrayOptions.map((obj, idx) => {
+          {arrayOptions
+            ? arrayOptions.map((obj, idx) => {
                 let optionId =
                   "question-" + props.questionData.id + "-options-" + obj.id;
                 // this.handleUpdateTextarea(obj);
@@ -286,7 +293,6 @@ function Question(props) {
                     idx={idx}
                     optionId={optionId}
                     obj={obj}
-                    handleOptionValue={props.handleOptionValue}
                     branchingState={branchingState}
                     branchingSelection={branchingSelection}
                     prevBranchSelection={prevBranchSelection}
