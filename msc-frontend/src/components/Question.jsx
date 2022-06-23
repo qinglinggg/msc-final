@@ -4,6 +4,7 @@ import AutoHeightTextarea from "./functional-components/AutoheightTextarea";
 import Popup from "reactjs-popup";
 import axios from "axios";
 import { useState, useEffect, useRef } from "react";
+import { v4 as uuid } from "uuid";
 import Option from "./Option";
 
 const BASE_URL = "http://10.61.38.193:8080";
@@ -14,15 +15,32 @@ function Question(props) {
   const [branchingState, setBranchingState] = useState(false);
   const [branchingSelection, setBranchingSelection] = useState([]);
   const prevBranchSelection = useRef();
-  const [intervalId, setIntervalId] = useState(0);
   const [questionContent, setQuestionContent] = useState("");
   const [questionType, setQuestionType] = useState("");
   const [arrayOptions, setArrayOptions] = useState([]);
+  const [linearOpt, setLinearOpt] = useState("");
+  const [intervalObj, setIntervalObj] = useState([]);
+  // const [flag, setFlag] = useState(false);
 
-  const resetBranchingSelection = () => {
-    if(branchingSelection.length > 0) prevBranchSelection.current = branchingSelection;
-    setBranchingSelection([]);
-  }
+  const questionOptions = [
+    { value: "MC", label: "Multiple choice" },
+    { value: "SA", label: "Short answer" },
+    { value: "CB", label: "Checkbox" },
+    { value: "LS", label: "Linear scale" },
+  ];
+
+  const inputOptions = [
+    { value: 1, label: "1" },
+    { value: 2, label: "2" },
+    { value: 3, label: "3" },
+    { value: 4, label: "4" },
+    { value: 5, label: "5" },
+    { value: 6, label: "6" },
+    { value: 7, label: "7" },
+    { value: 8, label: "8" },
+    { value: 9, label: "9" },
+    { value: 10, label: "10" },
+  ];
 
   useEffect(() => {
     if(!props.formItems) return;
@@ -43,8 +61,8 @@ function Question(props) {
     }
     setBranchingSelection(tempSelection);
     let branch_check = false;
-    for(let x=0; x<props.questionData.arrayOptions.length; x++){
-      let currentData = props.questionData.arrayOptions[x];
+    for(let x=0; x<arrayOptions.length; x++){
+      let currentData = arrayOptions[x];
       if (currentData.nextItem != -1) branch_check = true;
     }
     if (branch_check && !branchingState) handleShowBranching();
@@ -54,31 +72,10 @@ function Question(props) {
     if(props.questionData) resetBranchingSelection();
   }, [props.formItems]);
 
-  const questionOptions = [
-    { value: "MC", label: "Multiple choice" },
-    { value: "SA", label: "Short answer" },
-    { value: "CB", label: "Checkbox" },
-    { value: "LS", label: "Linear scale" },
-  ];
-
-  const inputOptions = [
-    { value: 2, label: "2" },
-    { value: 3, label: "3" },
-    { value: 4, label: "4" },
-    { value: 5, label: "5" },
-    { value: 6, label: "6" },
-    { value: 7, label: "7" },
-    { value: 8, label: "8" },
-    { value: 9, label: "9" },
-    { value: 10, label: "10" },
-  ];
-
-  const autoResizeContent = (el) => {
-    el.style.height = "15px";
-    el.style.height = (el.scrollHeight)+"px";
-  }
-
   useEffect(() => {
+    // console.log("initi")
+    localStorage.setItem("contentLogger", JSON.stringify(false));
+    localStorage.setItem("typeLogger", JSON.stringify(false));
     if(props.questionData) {
       let questionContentTextarea = document.getElementById("question-input-" + props.questionData.id);
       questionContentTextarea.value = "";
@@ -89,23 +86,65 @@ function Question(props) {
       }
     }
     if (props.mode) {
-      if (questionType != "") {
-        setSelectedQuestionOption(questionType);
-      } else {
-        setSelectedQuestionOption("MC");
-      }
-      var interval = setInterval(() => {
-        updateQuestion();
-        getAnswerSelection();
-      }, 250);
-      setIntervalId(interval);
-      setArrayOptions(props.arrayOptions);
+      setQuestionContent(props.questionData.questionContent);
+      setQuestionType(props.questionData.questionType);
     }
-    return () => {
-      console.log("unmount question");
-      clearInterval(interval);
-    }
+    return (() => {
+      console.log("unmounted");
+    })
   }, []);
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     console.log("useeffect jalan");
+  //     updateQuestion();
+  //     getAnswerSelection();
+  //     setFlag(!flag);
+  //   }, 500);
+  // });
+
+  useEffect(() => {
+    if(intervalObj.length != 0) return;
+    let interval = setInterval(() => {
+      updateQuestion();
+      getAnswerSelection();
+    }, 500);
+    let currentInterval = [...intervalObj];
+    currentInterval.push(interval);
+    setIntervalObj(currentInterval);
+  }, [intervalObj]);
+
+  useEffect(() => {
+    // if(questionContent != "") localStorage.setItem("contentLogger", JSON.stringify(false));
+    removeInterval();
+    console.log("questionContent berubah menjadi", questionContent);
+  }, [questionContent]);
+
+  useEffect(() => {
+    // if(questionType != "") localStorage.setItem("typeLogger", JSON.stringify(false));
+    removeInterval();
+    console.log("questionType berubah menjadi", questionType);
+  }, [questionType]);
+
+  useEffect(() => {
+    if(arrayOptions.length > 0) removeInterval();
+    console.log("arrayOptions berubah menjadi", arrayOptions);
+  }, [arrayOptions]);
+
+  useEffect(() => {
+    console.log("question type", questionType);
+    if(!questionType) return;
+    // if(questionType != "") localStorage.setItem("typeLogger", JSON.stringify(false));
+    if (questionType != "" && selectedQuestionOption != questionType) { 
+      setSelectedQuestionOption(questionType);
+    } else if(selectedQuestionOption != questionType){
+      setSelectedQuestionOption("MC");
+    }
+    if(questionType == "LS"){
+      handleLinearOpt(arrayOptions.length);
+    }
+    setTimeout(() => props.handleUpdatedList(props.questionIdx, true), 1000)
+  }, [questionType]);
 
   const getAnswerSelection = () => {
     if(!props.questionData) return;
@@ -113,7 +152,9 @@ function Question(props) {
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-answer-selection/${props.questionData.id}`,
     }).then((res) => {
-      props.handleOptionList(props.questionData.id, res.data);
+      handleOptionList(props.questionData.id, res.data);
+    }).catch(() => {
+      removeInterval();
     });
   }
 
@@ -130,34 +171,52 @@ function Question(props) {
   }, [questionContent]);
 
   useEffect(() => {
-    if(!props.arrayOptions) return;
-    console.log("perubahan", props.arrayOptions);
-    if(arrayOptions.length != props.arrayOptions.length){
-      console.log("updating array options:", arrayOptions.length, props.arrayOptions.length);
-      setArrayOptions(props.arrayOptions);
-    }
-  }, [props.arrayOptions]);
-
-  useEffect(() => {
     if(!prevBranchSelection.current) return;
     if (branchingState && prevBranchSelection.current.length > 0 && props.mode) {
-      props.questionData.arrayOptions.forEach(obj => {
+      arrayOptions.forEach(obj => {
         props.handleOptionValue(props.questionData.id, -1, obj, true);
       });
     }
   }, [branchingState]);
 
+  const removeInterval = () => {
+    intervalObj.map((value) => clearInterval(value));
+    setIntervalObj([]);
+  }
+
+  const resetBranchingSelection = () => {
+    if(branchingSelection.length > 0) prevBranchSelection.current = branchingSelection;
+    setBranchingSelection([]);
+  }
+
+  const autoResizeContent = (el) => {
+    el.style.height = "15px";
+    el.style.height = (el.scrollHeight)+"px";
+  }
+
   const updateQuestion = () => {
     if(!props.questionData) return;
-    axios({
-      method: "get",
-      url: `${BASE_URL}/api/v1/forms/get-a-form-item/${props.questionData.id}`,
-    }).then((res) => {
-      let content = res.data.content;
-      let type = res.data.type;
-      if(questionContent != content) setQuestionContent(content);
-      if(questionType != type) setQuestionType(type);
-    }).catch(() => clearInterval(intervalId));
+      axios({
+        method: "get",
+        url: `${BASE_URL}/api/v1/forms/get-a-form-item/${props.questionData.id}`,
+      }).then((res) => {
+        let content = res.data.content;
+        let type = res.data.type;
+        // let contentLogger = JSON.parse(localStorage.getItem("contentLogger"));
+        // let typeLogger = JSON.parse(localStorage.getItem("typeLogger"));
+        if(questionContent != content){
+          console.log("set question content");
+          // localStorage.setItem("contentLogger", JSON.stringify(true));
+          setQuestionContent(content);
+        }
+        if(questionType != type){
+          console.log("set question type");
+          // localStorage.setItem("typeLogger", JSON.stringify(true));
+          setQuestionType(type);
+        } 
+      }).catch((error) => {
+        removeInterval();
+      })
   }
 
   const handleShowBranching = () => {
@@ -172,6 +231,70 @@ function Question(props) {
     props.handleUpdateQuestionIsRequired(props.questionData.id, value);
     setSelectedIsRequired(!selectedIsRequired);
   }
+
+  const handleLinearOpt = (value) => {
+    inputOptions.map((option) => {
+      if (value == option.value) {
+        setLinearOpt(option);
+      }
+    });
+  }
+
+  const handleAddOption = (id, iterCount, finalCount) => {
+    let obj = {};
+    obj["formItemsId"] = id;
+    obj["value"] = "";
+    axios({
+      method: "post",
+      url: `${BASE_URL}/api/v1/forms/add-answer-selection/${id}`,
+      data: obj,
+      headers: { "Content-Type": "application/json" },
+    }).then((res) => {
+      let tempOpt = [...arrayOptions];
+      tempOpt.push(res.data);
+      console.log("set arrayoptions");
+      setArrayOptions(tempOpt);
+      if (finalCount && iterCount < finalCount){
+        handleAddOption(id, iterCount + 1, finalCount);
+      }
+    });;
+  };
+
+  const handleRemoveOption = (optionId) => {
+    axios({
+      method: "delete",
+      url: `${BASE_URL}/api/v1/forms/remove-answer-selection/${optionId}`,
+    });
+  };
+
+  const handleResetOption = (id) => {
+    try {
+      axios({
+        method: "delete",
+        url: `${BASE_URL}/api/v1/forms/remove-all-answer-selection/${id}`,
+      }).then(() => {
+        handleOptionList(id, []);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleOptionList = (id, data) => {
+    console.log("masuk option list", arrayOptions);
+    if(data.length == 0 && props.questionData.questionType != "LS"){
+      console.log("add option lagi ni");
+      handleAddOption(id, null, null);
+    } else {
+      console.log("masuk 1");
+      if(data.length != arrayOptions.length){
+        // console.log(data.length, "set terus kah", arrayOptions.length);
+        console.log("masuk 2");
+        console.log("set arrayoptions");
+        setArrayOptions(data);
+      }
+    }
+  };
 
   const displayQuestion = () => {
     let textareaId = "question-input-" + props.questionData.id;
@@ -207,7 +330,6 @@ function Question(props) {
               })}
               options={questionOptions}
               id="questionSelection"
-              defaultValue={questionOptions[0]}
               onChange={(e) => {
                 if (
                   !(
@@ -215,10 +337,12 @@ function Question(props) {
                   ) &&
                   !(questionType == "CB" && e.value == "MC")
                 ) {
-                  props.handleResetOption(props.questionData.id);
+                  handleResetOption(props.questionData.id);
                 }
+                console.log("onchangee");
                 props.handleUpdateQuestionType(props.questionData.id, e);
-                setSelectedQuestionOption(questionType);
+                setSelectedQuestionOption(e.value);
+                setQuestionType(e.value);
               }}
             />
           </div>
@@ -279,27 +403,31 @@ function Question(props) {
   };
 
   const multipleChoiceOption = () => {
+    console.log("render yg ini ya kak");
     return (
-      <React.Fragment>
+      <React.Fragment key={uuid()}>
         <div id="answer-selection-container">
-          {arrayOptions
+          {arrayOptions.length > 0
             ? arrayOptions.map((obj, idx) => {
                 let optionId =
                   "question-" + props.questionData.id + "-options-" + obj.id;
                 // this.handleUpdateTextarea(obj);
                 return (
-                  <Option 
-                    key={optionId}
-                    idx={idx}
-                    optionId={optionId}
-                    obj={obj}
-                    branchingState={branchingState}
-                    branchingSelection={branchingSelection}
-                    prevBranchSelection={prevBranchSelection}
-                    handleRemoveOption={props.handleRemoveOption}
-                    questionData={props.questionData}
-                    formItems={props.formItems}
-                  />
+                  <React.Fragment key={optionId}>
+                    <Option 
+                      key={uuid()}
+                      idx={idx}
+                      optionId={optionId}
+                      obj={obj}
+                      branchingState={branchingState}
+                      branchingSelection={branchingSelection}
+                      prevBranchSelection={prevBranchSelection}
+                      handleRemoveOption={handleRemoveOption}
+                      questionData={props.questionData}
+                      formItems={props.formItems}
+                      arrayOptions={arrayOptions}
+                    />
+                  </React.Fragment>
                 );
               })
             : null}
@@ -313,7 +441,7 @@ function Question(props) {
 
   const displayNewOptionMultipleChoice = () => {
     return (
-      <React.Fragment>
+      <React.Fragment key={uuid()}>
         <input type="radio" className="answerSelection" disabled />
         <input
           className="inputText"
@@ -322,7 +450,7 @@ function Question(props) {
           wrap="soft"
           readOnly
           onClick={() => {
-            props.handleAddOption(props.questionData.id, null, null);
+            handleAddOption(props.questionData.id, null, null);
           }}
         />
       </React.Fragment>
@@ -330,45 +458,25 @@ function Question(props) {
   };
 
   const checkBoxOption = () => {
+    // console.log(uuid());
     return (
-      <React.Fragment>
+      <React.Fragment key={uuid()}>
         <div id="answer-selection-container">
           {/* nilai true untuk pertama kali */}
-          {props.arrayOptions
-            ? props.arrayOptions.map((obj, idx) => {
+          {arrayOptions
+            ? arrayOptions.map((obj, idx) => {
                 let optionId =
                   "question-" + props.questionData.id + "-options-" + obj.id;
                 return (
-                  <div className="answer-selection" key={"cb-" + idx}>
-                    <input
-                      className="answerSelection"
-                      type="checkbox"
-                      disabled
-                    />
-                    <AutoHeightTextarea
-                      key={optionId}
-                      className="inputText"
-                      id={optionId}
-                      type="text"
-                      placeholder={obj.label}
-                      wrap="soft"
-                      onChange={(e) => {
-                        props.handleOptionValue(props.questionData.id, e, obj, false);
-                      }}
-                    />
-                    <div
-                      className="dashboard-remove-options-button"
-                      onClick={() => {
-                        props.handleRemoveOption(
-                          props.questionData.id,
-                          obj.id,
-                          obj
-                        );
-                      }}
-                    >
-                      <i className="fas fa-times"></i>
-                    </div>
-                  </div>
+                  <Option 
+                    key={uuid()}
+                    idx={idx}
+                    optionId={optionId}
+                    obj={obj}
+                    handleRemoveOption={handleRemoveOption}
+                    questionData={props.questionData}
+                    arrayOptions={arrayOptions}
+                  />
                 );
               })
             : null}
@@ -389,7 +497,7 @@ function Question(props) {
           wrap="soft"
           readOnly
           onClick={() => {
-            props.handleAddOption(props.questionData.id, null, null);
+            handleAddOption(props.questionData.id, null, null);
           }}
         />
       </React.Fragment>
@@ -397,12 +505,8 @@ function Question(props) {
   };
 
   const linearScaleOption = () => {
-    let labelOptions = [];
-    for (let i = 0; i < props.questionData.optionCounter; i++) {
-      labelOptions.push({ value: i+1, label: i+1 });
-    }
     return (
-      <React.Fragment>
+      <React.Fragment key={uuid()}>
         <div className="linear-container">
           <div className="linear-input-container">
             <div className="linear-title" id="linear-title-input">
@@ -411,18 +515,13 @@ function Question(props) {
             <div id="linear-input-box">
               <Select
                 options={inputOptions}
-                value={
-                  labelOptions.map((option) => {
-                    if (props.questionData.optionCounter == option.value) {
-                      return option;
-                    }
-                  })
-                }
-                placeholder="Select inputs..."
+                value={linearOpt}
+                placeholder="Select"
                 id="questionSelection"
                 onChange={(e) => {
-                  props.handleResetOption(props.questionData.id, 0, e.value - 1);
-                  props.handleOptionCount(props.questionData.id, e.value);
+                  handleResetOption(props.questionData.id);
+                  handleAddOption(props.questionData.id, 0, e.value - 1);
+                  handleLinearOpt(e.value);
                 }}
               />
             </div>
@@ -433,43 +532,19 @@ function Question(props) {
               Label
             </div>
             <div className="linear-label-loop">
-              {props.questionData.arrayOptions.map((object, idx) => {
+              {arrayOptions.map((obj, idx) => {
                 let optionId =
-                  "question-" + props.questionData.id + "-options-" + object.id;
+                  "question-" + props.questionData.id + "-options-" + obj.id;
                 return (
-                  <div className="linear-label-row" key={"ls-" + idx}>
-                    <div className="linear-label-userinput">
-                      <AutoHeightTextarea
-                        key={optionId}
-                        id={optionId}
-                        className="inputText"
-                        type="text"
-                        placeholder={object.label}
-                        wrap="soft"
-                        defaultValue={object.label ? object.label : null}
-                        onChange={(e) => {
-                          console.log(object);
-                          props.handleOptionLabel(
-                            props.questionData.id,
-                            e,
-                            object,
-                            idx+1
-                          );
-                        }}
-                      />
-                    </div>
-                    <div id="linear-label-select">
-                      <div id="linear-label-select-box">
-                        <div id="linear-label-select-value">
-                          {/* {console.log("Current Label IDX:")}
-                          {console.log(labelIdx)} */}
-                          {labelOptions.length > 0
-                            ? labelOptions[idx].value
-                            : null}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <Option 
+                    key={uuid()}
+                    idx={idx}
+                    optionId={optionId}
+                    obj={obj}
+                    questionData={props.questionData}
+                    arrayOptions={arrayOptions}
+                    labelOptions={inputOptions}
+                  />
                 );
               })}
             </div>
@@ -479,30 +554,9 @@ function Question(props) {
     );
   };
 
-  // const displayNewOptionLinearLabel = () => {
-  //   return (
-  //     <React.Fragment>
-  //       <div className="linear-label-row">
-  //         <div className="linear-label-userinput">
-  //           <AutoHeightTextarea
-  //             className="inputText"
-  //             type="text"
-  //             placeholder="Insert label..."
-  //             wrap="soft"
-  //             onClick={(e) => {
-  //               props.handleAddOption(props.questionData.id, null, null);
-  //             }}
-  //           />
-  //         </div>
-  //         <div id="linear-label-select"></div>
-  //       </div>
-  //     </React.Fragment>
-  //   );
-  // };
-
   const shortAnswerOption = () => {
     return (
-      <div id="shortanswer-container">
+      <div id="shortanswer-container" key={uuid()}>
         <input
           type="text"
           className="inputText"
