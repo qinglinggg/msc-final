@@ -64,7 +64,6 @@ public class FormService {
     }
 
     public int updateForm(String id, Form toBeUpdated) {
-        int res = this.updateModifyDate(id, 0);
         return formDAO.updateForm(id, toBeUpdated);
     }
 
@@ -82,7 +81,6 @@ public class FormService {
     }
 
     public FormItems addFormItems(String id, FormItems item) {
-        int res = this.updateModifyDate(id, 0);
         List<FormItems> listItems = this.getFormItems(id);
         int num = this.getLastItemNum(listItems);
         item.setItemNumber(num);
@@ -90,7 +88,6 @@ public class FormService {
     }
 
     public int removeFormItems(String formItemsId) {
-        int res = this.updateModifyDate(formItemsId, 1);
         return formDAO.removeFormItems(formItemsId);
     }
 
@@ -104,7 +101,6 @@ public class FormService {
     }
 
     public int updateFormItems(String formItemsId, FormItems toBeUpdated) {
-        int res = this.updateModifyDate(formItemsId, 1);
         System.out.println("sudah update modifyDate");
         System.out.println("updateFormItems");
         return formDAO.updateFormItems(formItemsId, toBeUpdated);
@@ -113,7 +109,6 @@ public class FormService {
     Integer highestNo = 0;
 
     public FormAnswerSelection addAnswerSelection(String formItemsId, FormAnswerSelection answerSelection) {
-        int res = this.updateModifyDate(formItemsId, 1);
         List<FormAnswerSelection> listAnswers = this.getAnswerSelection(formItemsId);
         highestNo = 0;
         listAnswers.forEach((answer) -> {
@@ -127,7 +122,6 @@ public class FormService {
     }
 
     public int updateAnswerSelection(String answerSelectionId, FormAnswerSelection toBeUpdated) {
-        int res = this.updateModifyDate(answerSelectionId, 2);
         return formDAO.updateAnswerSelection(answerSelectionId, toBeUpdated);
     }
 
@@ -138,12 +132,10 @@ public class FormService {
     }
 
     public int removeAnswerSelection(String answerSelectionId) {
-        int res = this.updateModifyDate(answerSelectionId, 2);
         return formDAO.removeAnswerSelection(answerSelectionId);
     }
 
     public int removeAllAnswerSelection(String formItemsId) {
-        int res = this.updateModifyDate(formItemsId, 1);
         return formDAO.removeAllAnswerSelection(formItemsId);
     }
 
@@ -214,7 +206,6 @@ public class FormService {
 
     public int insertTargetedUser(String formId, String userEmail){
         // Get User Email
-        int res = this.updateModifyDate(formId, 0);
         String userId = userProfileDAO.getUserByEmail(userEmail);
         System.out.println("userEmail " + userEmail + " with resId = " + userId);
         // check if user already invited
@@ -230,7 +221,6 @@ public class FormService {
 
     public int deleteTargetedUser(String formRespondentId, FormRespondent targetedUser){
         String formId = targetedUser.getFormId().toString();
-        int res = this.updateModifyDate(formId, 0);
         return formDAO.deleteTargetedUser(formRespondentId, targetedUser);
     }
 
@@ -238,26 +228,27 @@ public class FormService {
         return formDAO.forceDeleteFormRespondent(formId, userId);
     }
 
-    public int updateModifyDate(String givenId, int steps){
-        String resId = givenId;
-        Integer res = -1;
-        while(steps >= 0){
-            if(steps == 0){
-                // formId
-                Integer updated = formDAO.updateModifyDate(resId);
-                System.out.println("form modify date is updated with res: " + updated);
-                res = 0;
-            } else if(steps == 1){
-                // formItemsId, formId = ?
-                resId = formDAO.getFormIdByFormItemsId(resId);
-            } else if(steps == 2){
-                // answerId, formItemsId = ?, formId = ?
-                resId = formDAO.getFormItemsIdByAnswerId(resId);
-            }
-            steps--;
-        }
-        return res;
-    }
+    // public int updateModifyDate(String givenId, int steps, String userId){
+    //     String resId = givenId;
+    //     Integer res = -1;
+    //     while(steps >= 0){
+    //         if(steps == 0){
+    //             // formId
+    //             Integer updated = formDAO.updateModifyDate(resId, userId);
+    //             System.out.println("form modify date is updated with res: " + updated);
+    //             res = 0;
+    //         } else if(steps == 1){
+    //             // formItemsId, formId = ?
+    //             resId = formDAO.getFormIdByFormItemsId(resId);
+    //         } else if(steps == 2){
+    //             // answerId, formItemsId = ?, formId = ?
+    //             resId = formDAO.getFormItemsIdByAnswerId(resId);
+    //         }
+    //         steps--;
+    //     }
+    //     return res;
+    // }
+
 
     public int submitForm(String formRespondentId){
         return formDAO.submitForm(formRespondentId);
@@ -282,5 +273,17 @@ public class FormService {
 
     public FormAnswerSelection getAnswerSelectionById(String answerSelectionId) {
         return formDAO.getAnswerSelectionById(answerSelectionId);
+    }
+
+    public int createLastEdited(String formId, String formAuthorId) {
+        return formDAO.createLastEdited(formId, formAuthorId);
+    }
+
+    public int updateLastEdited(String formId, FormLastEdited updatedForm) {
+        return formDAO.updateLastEdited(formId, updatedForm);
+    }
+
+    public FormLastEdited getLastEdited(String formId){
+        return formDAO.getLastEdited(formId);
     }
 }

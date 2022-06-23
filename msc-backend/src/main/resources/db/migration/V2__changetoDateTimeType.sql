@@ -4,7 +4,6 @@ CREATE TABLE Form (
     description VARCHAR(200),
     privacySetting VARCHAR(30) NOT NULL,
     createDate BIGINT,
-    modifyDate BIGINT,
     backgroundColor VARCHAR(25),
     backgroundLink VARCHAR(100)
 )

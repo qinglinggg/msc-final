@@ -5,6 +5,7 @@ import iconMenubarGrey from "./images/menubarGrey.png";
 import ProfilePicture from "./functional-components/ProfilePicture"
 import Chat from "./Message";
 import axios from "axios";
+import DateTimeService from "./functional-components/services/DateTimeService";
 
 function Feedback(props) {
   const [index, setIndex] = useState(0);
@@ -50,29 +51,27 @@ function Feedback(props) {
         }).finally(() => { 
           let i = 0;
           feedbacks.map(async (feedback) => {
-            console.log("awal feedback");
             i++;
             await axios.get(`${BASE_URL}/api/v1/feedback/by-feedback/get-last-message/${feedback.feedbackId}`)
             .then((res) => {
-              console.log("get-last-message");
-              console.log(res.data);
               feedback["lastMessage"] = res.data.feedbackMessage;
               feedback["isRead"] = res.data.isRead;
-              const datetime = new Date(res.data.createDateTime);
-              let date = datetime.getDate() + "/" + (datetime.getMonth() + 1) + "/" + datetime.getFullYear();
-              let time = datetime.getHours() + ':';
-              if(datetime.getMinutes() == 0) time = time + datetime.getMinutes() + '0';
-              else if(datetime.getMinutes() < 10) time = time + '0' + datetime.getMinutes();
-              else time = time + datetime.getMinutes();
-              feedback["date"] = date;
-              feedback["time"] = time;
+              // const datetime = new Date(res.data.createDateTime);
+              // let date = datetime.getDate() + "/" + (datetime.getMonth() + 1) + "/" + datetime.getFullYear();
+              // let time = datetime.getHours() + ':';
+              // if(datetime.getMinutes() == 0) time = time + datetime.getMinutes() + '0';
+              // else if(datetime.getMinutes() < 10) time = time + '0' + datetime.getMinutes();
+              // else time = time + datetime.getMinutes();
+              // feedback["date"] = date;
+              // feedback["time"] = time;
+              let convertedDateTime = DateTimeService("convertToDateTime", res.data.createDateTime);
+              feedback["date"] = convertedDateTime.date;
+              feedback["time"] = convertedDateTime.time;
             }).finally(async () => {
               if(feedback["fullname"]) return;
               await axios.get(`${BASE_URL}/api/v1/user-profiles/${feedback.userId}`)
               .then((res) => {
                 feedback["fullname"] = res.data.fullname;
-                console.log("profilepicture");
-                console.log(res.data);
                 feedback["user"] = res.data;
               }).finally(async () => {
                 await axios.get(`${BASE_URL}/api/v1/feedback/by-feedback-message/new-message-count/${feedback.feedbackId}/${loggedInUser}`)

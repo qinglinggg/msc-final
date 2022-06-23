@@ -17,6 +17,7 @@ import Respondent from "./components/Respondent";
 import LandingPage from "./components/LandingPage";
 import UpdateProfile from "./components/functional-components/UpdateProfile"
 import NotFound from "./components/NotFound";
+import DateTimeService from "./components/functional-components/services/DateTimeService";
 
 const BASE_URL = "http://10.61.38.193:8081";
 const APP_URL = "http://10.61.38.193:3001";
@@ -185,15 +186,22 @@ class App extends React.Component {
         url: `${BASE_URL}/api/v1/forms/insert/${this.state.currentUser.userId}`,
         data: obj,
         headers: { "Content-Type": "application/json" },
-      }).then((response) => {
+      }).then(async (response) => {
         let tempList = localStorage.getItem("formLists");
         if(!tempList) tempList = [];
         else tempList = JSON.parse(tempList);
         tempList.push(response.data);
         localStorage.setItem("formLists", JSON.stringify(tempList));
         localStorage.setItem("selectedForm", JSON.stringify(response.data));
-        this.handleUpdateCurrentPage("Dashboard");
-        window.location = `/dashboard/formId/${response.data.formId}`;
+        let user = JSON.parse(localStorage.getItem("loggedInUser"));
+        await axios({
+          method: "post",
+          url: `${BASE_URL}/api/v1/forms/create-last-edited/${response.data.formId}`,
+          data: user
+        }).then(() => {
+          this.handleUpdateCurrentPage("Dashboard");
+          window.location = `/dashboard/formId/${response.data.formId}`;
+        }).catch((error) => console.log(error));
       });
     } catch (error) {
       console.log(error);

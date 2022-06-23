@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { Component, useEffect, useState, useRef, createRef } from 'react';
 import { Link, useParams } from "react-router-dom";
 import AutoHeightTextarea from './functional-components/AutoheightTextarea';
+import DateTimeService from './functional-components/services/DateTimeService';
 
 import dummyProfile from "./images/woman.jpg";
 
@@ -28,7 +29,7 @@ function Respondent (props) {
   const [feedbackMessages, setFeedbackMessages] = useState([]);
   const prevFeedbackMessage = useRef(0);
   const chatRef = createRef();
-  const [currDate, setCurrDate] = useState(new Date(0));
+  const [currDateTime, setCurrDateTime] = useState(new Date(0));
 
   // DESIGN
   const [primaryColor, setPrimaryColor] = useState("Default");
@@ -330,42 +331,34 @@ function Respondent (props) {
   }, [bgLink, primaryColor]);
   
   const preparingMessages = (data) => {
-    let tempDate = currDate;
+    let tempDateTime = currDateTime;
     let index = -1;
     let listOfInsert = [];
     data.map((f) => {
       index++;
       if(f['date'] && f['time']) return;
       if(!f['createDateTime']) return;
-      const messageDate = new Date(f.createDateTime);
-      let flag = 0;
-      if(tempDate.getFullYear() < messageDate.getFullYear()) flag = 1;
-      else if(tempDate.getFullYear() == messageDate.getFullYear()){
-        if(tempDate.getMonth() < messageDate.getMonth()) flag = 1;
-        else if(tempDate.getMonth() == messageDate.getMonth()){
-          if(tempDate.getDate() < messageDate.getDate()) flag = 1;
-        }
+      const current = DateTimeService("convertToDateTime", f.createDateTime);
+      let compareObj = {
+        value1: tempDateTime,
+        value2: current.datetime
       }
-      let date = messageDate.getDate() + "/" + (messageDate.getMonth() + 1) + "/" + messageDate.getFullYear();
-      let time = messageDate.getHours() + ':';
-      if(messageDate.getMinutes() == 0) time = time + messageDate.getMinutes() + '0';
-      else if(messageDate.getMinutes() < 10) time = time + '0' + messageDate.getMinutes();
-      else time = time + messageDate.getMinutes();
-      if(flag == 1){
-        tempDate = messageDate;
+      let flag = DateTimeService("compareTwoDates", compareObj);
+      if(flag == true){
+        tempDateTime = current.datetime;
         let insert = {
-          date: date,
+          date: current.date,
           index: index + listOfInsert.length,
         }
         listOfInsert.push(insert);
       }
-      f['date'] = date;
-      f['time'] = time;
+      f['date'] = current.date;
+      f['time'] = current.time;
     });
     listOfInsert.map((insert) => {
       data.splice(insert.index, 0, insert.date);
     })
-    setCurrDate(tempDate);
+    setCurrDateTime(tempDateTime);
     prevFeedbackMessage.current = data;
     setFeedbackMessages(data);
   }
