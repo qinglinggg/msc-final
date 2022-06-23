@@ -10,7 +10,7 @@ import Responses from "./Responses";
 import ReactToPrint from "react-to-print";
 import Loading from "./Loading";
 
-const BASE_URL = "http://10.61.38.193:8080";
+const BASE_URL = "http://10.61.38.193:8081";
 
 function DataVisualization(props) {
   const [openMenu, setOpenMenu] = useState(false);

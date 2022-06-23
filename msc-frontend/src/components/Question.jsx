@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from "react";
 import { v4 as uuid } from "uuid";
 import Option from "./Option";
 
-const BASE_URL = "http://10.61.38.193:8080";
+const BASE_URL = "http://10.61.38.193:8081";
 
 function Question(props) {
   const [selectedQuestionOption, setSelectedQuestionOption] = useState("");
@@ -18,9 +18,7 @@ function Question(props) {
   const [questionContent, setQuestionContent] = useState("");
   const [questionType, setQuestionType] = useState("");
   const [arrayOptions, setArrayOptions] = useState([]);
-  const [linearOpt, setLinearOpt] = useState("");
   const [intervalObj, setIntervalObj] = useState([]);
-  // const [flag, setFlag] = useState(false);
 
   const questionOptions = [
     { value: "MC", label: "Multiple choice" },
@@ -43,6 +41,36 @@ function Question(props) {
   ];
 
   useEffect(() => {
+    if(props.questionData) {
+      let questionContentTextarea = document.getElementById("question-input-" + props.questionData.id);
+      if(questionContent) questionContentTextarea.value = questionContent;
+      if(props.questionData.isRequired){
+        if(props.questionData.isRequired == 1) setSelectedIsRequired(true);
+        else setSelectedIsRequired(false);
+      }
+    }
+    if (props.mode) {
+      setQuestionContent(props.questionData.questionContent);
+      setQuestionType(props.questionData.questionType);
+      handleInterval();
+    }
+    return (() => {
+      removeInterval();
+    })
+  }, []);
+
+  useEffect(() => {
+    let branch_check = false;
+    if(!arrayOptions) return;
+    for(let x=0; x<arrayOptions.length; x++){
+      let currentData = arrayOptions[x];
+      console.log(currentData);
+      if (currentData.nextItem != -1) branch_check = true;
+    }
+    if (branch_check && !branchingState) handleShowBranching();
+  }, [arrayOptions]);
+
+  useEffect(() => {
     if(!props.formItems) return;
     if(branchingSelection.length > 0) return;
     let tempSelection = branchingSelection;
@@ -60,12 +88,6 @@ function Question(props) {
       tempSelection.push({ value: props.formItems[i+1].itemNumber, label: tempLabel});
     }
     setBranchingSelection(tempSelection);
-    let branch_check = false;
-    for(let x=0; x<arrayOptions.length; x++){
-      let currentData = arrayOptions[x];
-      if (currentData.nextItem != -1) branch_check = true;
-    }
-    if (branch_check && !branchingState) handleShowBranching();
   }, [branchingSelection]);
 
   useEffect(() => {
@@ -73,78 +95,30 @@ function Question(props) {
   }, [props.formItems]);
 
   useEffect(() => {
-    // console.log("initi")
-    localStorage.setItem("contentLogger", JSON.stringify(false));
-    localStorage.setItem("typeLogger", JSON.stringify(false));
-    if(props.questionData) {
-      let questionContentTextarea = document.getElementById("question-input-" + props.questionData.id);
-      questionContentTextarea.value = "";
-      if(questionContent) questionContentTextarea.value = questionContent;
-      if(props.questionData.isRequired){
-        if(props.questionData.isRequired == 1) setSelectedIsRequired(true);
-        else setSelectedIsRequired(false);
-      }
-    }
-    if (props.mode) {
-      setQuestionContent(props.questionData.questionContent);
-      setQuestionType(props.questionData.questionType);
-    }
-    return (() => {
-      console.log("unmounted");
-    })
-  }, []);
-
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     console.log("useeffect jalan");
-  //     updateQuestion();
-  //     getAnswerSelection();
-  //     setFlag(!flag);
-  //   }, 500);
-  // });
-
-  useEffect(() => {
-    if(intervalObj.length != 0) return;
-    let interval = setInterval(() => {
-      updateQuestion();
-      getAnswerSelection();
-    }, 500);
-    let currentInterval = [...intervalObj];
-    currentInterval.push(interval);
-    setIntervalObj(currentInterval);
-  }, [intervalObj]);
-
-  useEffect(() => {
-    // if(questionContent != "") localStorage.setItem("contentLogger", JSON.stringify(false));
-    removeInterval();
-    console.log("questionContent berubah menjadi", questionContent);
-  }, [questionContent]);
-
-  useEffect(() => {
-    // if(questionType != "") localStorage.setItem("typeLogger", JSON.stringify(false));
-    removeInterval();
-    console.log("questionType berubah menjadi", questionType);
-  }, [questionType]);
-
-  useEffect(() => {
-    if(arrayOptions.length > 0) removeInterval();
-    console.log("arrayOptions berubah menjadi", arrayOptions);
-  }, [arrayOptions]);
-
-  useEffect(() => {
-    console.log("question type", questionType);
     if(!questionType) return;
-    // if(questionType != "") localStorage.setItem("typeLogger", JSON.stringify(false));
     if (questionType != "" && selectedQuestionOption != questionType) { 
       setSelectedQuestionOption(questionType);
     } else if(selectedQuestionOption != questionType){
       setSelectedQuestionOption("MC");
     }
-    if(questionType == "LS"){
-      handleLinearOpt(arrayOptions.length);
-    }
     setTimeout(() => props.handleUpdatedList(props.questionIdx, true), 1000)
   }, [questionType]);
+
+  useEffect(() => {
+    console.log(intervalObj);
+  }, [intervalObj]);
+
+  const handleInterval = () => {
+    let interval = setInterval(() => {
+      updateQuestion();
+      getAnswerSelection();
+    }, 500);
+    setIntervalObj(intervalObj => {
+      let currentInterval = intervalObj
+      currentInterval.push(interval);
+      return currentInterval;
+    });
+  }
 
   const getAnswerSelection = () => {
     if(!props.questionData) return;
@@ -152,9 +126,8 @@ function Question(props) {
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-answer-selection/${props.questionData.id}`,
     }).then((res) => {
+      // console.log("Test", res.data);
       handleOptionList(props.questionData.id, res.data);
-    }).catch(() => {
-      removeInterval();
     });
   }
 
@@ -162,30 +135,21 @@ function Question(props) {
     if(questionContent) {
       let questionContentTextarea = document.getElementById("question-input-" + props.questionData.id);
       questionContentTextarea.value = "";
-      if(questionContent) {
-        questionContentTextarea.value = questionContent;
-        questionContentTextarea.style.height = "25px";
-        autoResizeContent(questionContentTextarea);
-      }
+      questionContentTextarea.value = questionContent;
+      questionContentTextarea.style.height = "25px";
+      autoResizeContent(questionContentTextarea);
     }
   }, [questionContent]);
 
-  useEffect(() => {
-    if(!prevBranchSelection.current) return;
-    if (branchingState && prevBranchSelection.current.length > 0 && props.mode) {
-      arrayOptions.forEach(obj => {
-        props.handleOptionValue(props.questionData.id, -1, obj, true);
-      });
-    }
-  }, [branchingState]);
-
   const removeInterval = () => {
-    intervalObj.map((value) => clearInterval(value));
-    setIntervalObj([]);
+    setIntervalObj(intervalObj => {
+      intervalObj.map((value) => clearInterval(value));
+      return [];
+    });
   }
 
   const resetBranchingSelection = () => {
-    if(branchingSelection.length > 0) prevBranchSelection.current = branchingSelection;
+    if(branchingSelection && branchingSelection.length > 0) prevBranchSelection.current = branchingSelection;
     setBranchingSelection([]);
   }
 
@@ -200,23 +164,19 @@ function Question(props) {
         method: "get",
         url: `${BASE_URL}/api/v1/forms/get-a-form-item/${props.questionData.id}`,
       }).then((res) => {
-        let content = res.data.content;
-        let type = res.data.type;
-        // let contentLogger = JSON.parse(localStorage.getItem("contentLogger"));
-        // let typeLogger = JSON.parse(localStorage.getItem("typeLogger"));
-        if(questionContent != content){
-          console.log("set question content");
-          // localStorage.setItem("contentLogger", JSON.stringify(true));
-          setQuestionContent(content);
-        }
-        if(questionType != type){
-          console.log("set question type");
-          // localStorage.setItem("typeLogger", JSON.stringify(true));
-          setQuestionType(type);
-        } 
-      }).catch((error) => {
-        removeInterval();
-      })
+        setQuestionContent(questionContent => {
+          let content = res.data.content;
+          // console.log("content refresh", content != questionContent);
+          if(content != questionContent) return content;
+          return questionContent;
+        });
+        setQuestionType(questionType => {
+          let type = res.data.type;
+          // console.log("type refresh", type != questionType);
+          if(questionType != type) return type;
+          return questionType;
+        });
+      });
   }
 
   const handleShowBranching = () => {
@@ -232,32 +192,24 @@ function Question(props) {
     setSelectedIsRequired(!selectedIsRequired);
   }
 
-  const handleLinearOpt = (value) => {
-    inputOptions.map((option) => {
-      if (value == option.value) {
-        setLinearOpt(option);
-      }
-    });
-  }
-
-  const handleAddOption = (id, iterCount, finalCount) => {
+  const handleAddOption = async (id, iterCount, finalCount) => {
     let obj = {};
     obj["formItemsId"] = id;
     obj["value"] = "";
-    axios({
-      method: "post",
-      url: `${BASE_URL}/api/v1/forms/add-answer-selection/${id}`,
-      data: obj,
-      headers: { "Content-Type": "application/json" },
-    }).then((res) => {
-      let tempOpt = [...arrayOptions];
-      tempOpt.push(res.data);
-      console.log("set arrayoptions");
-      setArrayOptions(tempOpt);
-      if (finalCount && iterCount < finalCount){
-        handleAddOption(id, iterCount + 1, finalCount);
-      }
-    });;
+    if(!finalCount) {
+      iterCount = 0;
+      finalCount = 1;
+    }
+    while(finalCount && iterCount < finalCount) {
+      console.log("test");
+      await axios({
+        method: "post",
+        url: `${BASE_URL}/api/v1/forms/add-answer-selection/${id}`,
+        data: obj,
+        headers: { "Content-Type": "application/json" },
+      });
+      iterCount = iterCount + 1;
+    }
   };
 
   const handleRemoveOption = (optionId) => {
@@ -281,19 +233,14 @@ function Question(props) {
   };
 
   const handleOptionList = (id, data) => {
-    console.log("masuk option list", arrayOptions);
-    if(data.length == 0 && props.questionData.questionType != "LS"){
-      console.log("add option lagi ni");
-      handleAddOption(id, null, null);
-    } else {
-      console.log("masuk 1");
-      if(data.length != arrayOptions.length){
-        // console.log(data.length, "set terus kah", arrayOptions.length);
-        console.log("masuk 2");
-        console.log("set arrayoptions");
-        setArrayOptions(data);
+    setArrayOptions(arrayOptions => {
+      if(data.length == 0 && props.questionData.questionType != "LS"){
+        handleAddOption(id, null, null);
+      } else {
+        if(arrayOptions.length == 0 || data.length != arrayOptions.length) return data;
       }
-    }
+      return arrayOptions;
+    });
   };
 
   const displayQuestion = () => {
@@ -317,7 +264,7 @@ function Question(props) {
             <div id="border"></div>
             <br />
             <div className="char-counter">
-              <span style={props.questionData && questionContent.length <= 255 ? {color: "gray"} : {color: "red"}}>{props.questionData ? questionContent.length : null}</span>
+              <span style={props.questionData && questionContent && questionContent.length <= 255 ? {color: "gray"} : {color: "red"}}>{props.questionData && questionContent? questionContent.length : null}</span>
             </div>
           </div>
           <div id="question-selection">
@@ -403,11 +350,10 @@ function Question(props) {
   };
 
   const multipleChoiceOption = () => {
-    console.log("render yg ini ya kak");
     return (
       <React.Fragment key={uuid()}>
         <div id="answer-selection-container">
-          {arrayOptions.length > 0
+          {arrayOptions && arrayOptions.length > 0
             ? arrayOptions.map((obj, idx) => {
                 let optionId =
                   "question-" + props.questionData.id + "-options-" + obj.id;
@@ -515,13 +461,14 @@ function Question(props) {
             <div id="linear-input-box">
               <Select
                 options={inputOptions}
-                value={linearOpt}
+                value={inputOptions.map((opt) => {
+                  if(opt.value == arrayOptions.length) return opt;
+                })}
                 placeholder="Select"
                 id="questionSelection"
                 onChange={(e) => {
                   handleResetOption(props.questionData.id);
-                  handleAddOption(props.questionData.id, 0, e.value - 1);
-                  handleLinearOpt(e.value);
+                  handleAddOption(props.questionData.id, 0, e.value);
                 }}
               />
             </div>

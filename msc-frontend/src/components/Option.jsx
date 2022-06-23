@@ -4,46 +4,27 @@ import Select from "react-select";
 import { useEffect } from 'react';
 import axios from 'axios';
 
-const BASE_URL = "http://10.61.38.193:8080";
+const BASE_URL = "http://10.61.38.193:8081";
 
 function Option(props) {
     const [value, setValue] = useState("");
     const [intervalObj, setIntervalObj] = useState([]);
-    // const [flag, setFlag] = useState(false);
 
     useEffect(() => {
-        let interval = setInterval(() => {
-            setOptionValue();
-        }, 500);
-        let currentInterval = [...intervalObj];
-        currentInterval.push(interval);
-        setIntervalObj(currentInterval);
+        if (props.questionData.questionType != "LS") setValue(props.obj.value);
+        else setValue(props.obj.label);
+        handleInterval();
         return (() => {
             removeInterval();
         });
     }, []);
 
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         console.log("useeffect jalan");
-    //         setOptionValue();
-    //         setFlag(!flag);
-    //     }, 500);
-    // })
-
     useEffect(() => {
-        removeInterval();
-    }, [props.formItems]);
-
-    useEffect(() => {
-        if(intervalObj.length != 0) return;
-        let interval = setInterval(() => {
-            setOptionValue();
-        }, 500);
-        let currentInterval = [...intervalObj];
-        currentInterval.push(interval);
-        setIntervalObj(currentInterval);
-    }, [intervalObj])
+        if(!props.prevBranchSelection) return;
+        if (props.branchingState && props.prevBranchSelection.current.length > 0 && props.mode) {
+        handleOptionValue(-1, true);
+        }
+    }, [props.branchingState]);
 
     useEffect(() => {
         if(!value || value == "") return;
@@ -53,14 +34,29 @@ function Option(props) {
         autoResizeContent(el);
     }, [value]);
 
+    useEffect(() => {
+        console.log(intervalObj);
+    }, [intervalObj]);
+
+    const handleInterval = () => {
+        let interval = setInterval(() => {
+            setOptionValue();
+        }, 500);
+        let currentInterval = [...intervalObj];
+        currentInterval.push(interval);
+        setIntervalObj(currentInterval);
+    }
+
     const autoResizeContent = (el) => {
         el.style.height = "15px";
         el.style.height = (el.scrollHeight)+"px";
     }
     
     const removeInterval = () => {
-        intervalObj.map((value) => clearInterval(value));
-        setIntervalObj([]);
+        setIntervalObj(intervalObj => {
+          intervalObj.map((value) => clearInterval(value));
+          return [];
+        });
     }
 
     const setOptionValue = () => {
@@ -68,16 +64,17 @@ function Option(props) {
             method: "get",
             url: `${BASE_URL}/api/v1/forms/get-answer-selection-by-id/${props.obj.id}`,
         }).then((res) => {
-            let resValue = res.data.value;
-            if(resValue && value != resValue) {
-                let selectedValue = null;
-                if (props.questionData.questionType != "LS") selectedValue = resValue;
-                else {
-                    selectedValue = res.data.label;
+            setValue(value => {
+                let resValue = res.data.value;
+                if(value != resValue) {
+                    let selectedValue = null;
+                    if (props.questionData.questionType != "LS") selectedValue = resValue;
+                    else selectedValue = res.data.label;
+                    return selectedValue;
                 }
-                setValue(selectedValue);
-            }
-        }).catch((error) => console.log(error));
+                return value;
+            });
+        });
     }
 
     const handleOptionValue = async (event, nextToggle) => {
@@ -98,7 +95,7 @@ function Option(props) {
             url: `${BASE_URL}/api/v1/forms/update-answer-selection/${tempObj.id}`,
             data: tempObj,
             headers: { "Content-Type": "application/json" },
-        }).then((res) => {
+        }).then(() => {
             if(!nextToggle) setValue(input);
         });
     };
@@ -113,7 +110,7 @@ function Option(props) {
             url: `${BASE_URL}/api/v1/forms/update-answer-selection/${tempObj.id}`,
             data: tempObj,
             headers: { "Content-Type": "application/json" },
-        }).then((res) => setValue(input));
+        }).then(() => setValue(input));
       };
 
     const displayMultipleChoice = () => {

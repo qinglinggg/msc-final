@@ -6,7 +6,7 @@ import ProfilePicture from "./functional-components/ProfilePicture"
 import backspaceIcon from "./images/backspaceIcon.png";
 import axios from "axios";
 
-const BASE_URL = "http://10.61.38.193:8080";
+const BASE_URL = "http://10.61.38.193:8081";
 
 function Message(props) {
   const [messageMetadata, setMessageMetadata] = useState({});

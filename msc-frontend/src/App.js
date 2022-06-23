@@ -18,7 +18,7 @@ import LandingPage from "./components/LandingPage";
 import UpdateProfile from "./components/functional-components/UpdateProfile"
 import NotFound from "./components/NotFound";
 
-const BASE_URL = "http://10.61.38.193:8080";
+const BASE_URL = "http://10.61.38.193:8081";
 const APP_URL = "http://10.61.38.193:3001";
 
 class App extends React.Component {

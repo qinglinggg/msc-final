@@ -8,8 +8,8 @@ class AdminDashboard extends Component {
       user: "MSC ADMIN", 
       currentPage: 0,
       config: {
-        IPHost: "http://10.12.50.109:8080",
-        EmailDNS: "http://kpproxygsit:8080"
+        IPHost: "http://10.12.50.109:8081",
+        EmailDNS: "http://kpproxygsit:8081"
       }
     } 
 
