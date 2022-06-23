@@ -400,12 +400,12 @@ public class FormDAO {
         return res;
     }
 
-    public int updateModifyDate(String formId){
-        final String query = "UPDATE Form SET modifyDate = ? WHERE formId = ?";
-        Long modifyDate = System.currentTimeMillis();
-        int res = jdbcTemplate.update(query, modifyDate, formId);
-        return res;
-    }
+    // public int updateModifyDate(String formId){
+    //     final String query = "UPDATE Form SET modifyDate = ? WHERE formId = ?";
+    //     Long modifyDate = System.currentTimeMillis();
+    //     int res = jdbcTemplate.update(query, modifyDate, formId);
+    //     return res;
+    // }
 
     public String getFormIdByFormItemsId(String formItemsId){
         final String query = "SELECT formId FROM FormItems WHERE formItemsId = ?";
@@ -458,6 +458,32 @@ public class FormDAO {
             Integer nextItem = resultSet.getInt("nextItem");
             return new FormAnswerSelection(UUID.fromString(formItemsId), UUID.fromString(answerSelectionId), answerSelectionNo, answerSelectionLabel, answerSelectionValue, nextItem, prevItem);
         }, answerSelectionId);
+        if(res.size() > 0) return res.get(0);
+        return null;
+    }
+
+    public int createLastEdited(String formId, String formAuthorId){
+        FormLastEdited lastEdited = new FormLastEdited(formId, formAuthorId);
+        final String query = "INSERT INTO FormLastEdited VALUES (?,?,?,?)";
+        int res = jdbcTemplate.update(query, lastEdited.getLastEditedId().toString(), lastEdited.getFormId().toString(), lastEdited.getFormAuthorId().toString(), lastEdited.getModifyDate());
+        return res;
+    }
+
+    public int updateLastEdited(String formId, FormLastEdited newEdit){
+        final String query = "UPDATE FormLastEdited SET modifyDate = ?, formAuthorId = ? WHERE formId = ?";
+        Long modifyDate = System.currentTimeMillis();
+        int res = jdbcTemplate.update(query, modifyDate, newEdit.getFormAuthorId().toString(), formId);
+        return res;
+    }
+
+    public FormLastEdited getLastEdited(String formId){
+        final String query = "SELECT * FROM FormLastEdited WHERE formId = ?";
+        List<FormLastEdited> res = jdbcTemplate.query(query, (resultSet, i) -> {
+            String lastEditedId = resultSet.getString("lastEditedId");
+            String formAuthorId = resultSet.getString("formAuthorId");
+            Long modifyDate = resultSet.getLong("modifyDate");
+            return new FormLastEdited(UUID.fromString(lastEditedId), UUID.fromString(formId), UUID.fromString(formAuthorId), modifyDate);
+        });
         if(res.size() > 0) return res.get(0);
         return null;
     }

@@ -5,8 +5,9 @@ import iconMenubarGrey from "./images/menubarGrey.png";
 import ProfilePicture from "./functional-components/ProfilePicture"
 import backspaceIcon from "./images/backspaceIcon.png";
 import axios from "axios";
+import DateTimeService from "./functional-components/services/DateTimeService";
 
-const BASE_URL = "http://10.61.38.193:8080";
+const BASE_URL = "http://10.61.38.193:8081";
 
 function Message(props) {
   const [messageMetadata, setMessageMetadata] = useState({});
@@ -16,7 +17,7 @@ function Message(props) {
   const { formId } = useParams();
   const { feedbackId } = useParams();
   const { chatRef } = createRef();
-  const [currDate, setCurrDate] = useState(new Date(0));
+  const [currDateTime, setCurrDateTime] = useState(new Date(0));
   const [intervalId, setIntervalId] = useState(0);
 
   useEffect(() => {
@@ -57,44 +58,36 @@ function Message(props) {
   }, []);
 
   const preparingMessages = (messages) => {
-    let tempDate = currDate;
+    let tempDateTime = currDateTime;
     let index = -1;
     let listOfInsert = [];
     messages.map((message) => {
       index++;
       if(message['date'] && message['time']) return;
       if(!message['createDateTime']) return;
-      const datetime = new Date(message.createDateTime);
-      let flag = 0;
-      if(tempDate.getFullYear() < datetime.getFullYear()) flag = 1;
-      else if(tempDate.getFullYear() == datetime.getFullYear()){
-        if(tempDate.getMonth() < datetime.getMonth()) flag = 1;
-        else if(tempDate.getMonth() == datetime.getMonth()){
-          if(tempDate.getDate() < datetime.getDate()) flag = 1;
-        }
-      }
-      let date = datetime.getDate() + "/" + (datetime.getMonth() + 1) + "/" + datetime.getFullYear();
-      let time = datetime.getHours() + ':';
-      if(datetime.getMinutes() == 0) time = time + datetime.getMinutes() + '0';
-      else if(datetime.getMinutes() < 10) time = time + '0' + datetime.getMinutes();
-      else time = time + datetime.getMinutes();
-      if(flag == 1){
-        tempDate = datetime;
+      const current = DateTimeService("convertToDateTime", message.createDateTime);
+      let compareObj = {
+        value1: tempDateTime,
+        value2: current.datetime
+      };
+      let flag = DateTimeService("compareTwoDates", compareObj);
+      if(flag == true){
+        tempDateTime = current.datetime;
         let insert = {
-          date: date,
+          date: current.date,
           index: index + listOfInsert.length,
         }
         listOfInsert.push(insert);
       }
-      message["date"] = date;
-      message["time"] = time;
+      message["date"] = current.date;
+      message["time"] = current.time;
     });
     console.log(listOfInsert);
     listOfInsert.map((insert) => {
       messages.splice(insert.index, 0, insert.date);
     })
     console.log(messages);
-    setCurrDate(tempDate);
+    setCurrDateTime(tempDateTime);
     setFormMessages(messages);
   }
 

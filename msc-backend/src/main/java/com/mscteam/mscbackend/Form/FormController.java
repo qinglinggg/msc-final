@@ -222,4 +222,20 @@ public class FormController {
         return formService.isFormAuthorExist(formId, userId);
     }
 
+    @PostMapping(path="/create-last-edited/{formId}")
+    public int createLastEdited(@PathVariable("formId") String formId, @RequestBody String formAuthorId){
+        return formService.createLastEdited(formId, formAuthorId);
+    }
+    
+    @PutMapping(path="/update-last-edited/{formId}", consumes = MediaType.APPLICATION_JSON_VALUE) 
+    public int updateLastEdited(@PathVariable("formId") String formId, @RequestBody FormLastEdited updatedForm){
+        return formService.updateLastEdited(formId, updatedForm);
+    }
+
+    @GetMapping(path="/get-last-edited/{formId}")
+    public FormLastEdited getLastEdited(@PathVariable("formId") String formId){
+        return formService.getLastEdited(formId);
+    }
+
+    
 }

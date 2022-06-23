@@ -9,8 +9,9 @@ import iconInvisible from './images/visibility2.png';
 import iconSettings from "./images/settings.png";
 import Respondent from "./Respondent";
 import Loading from "./Loading";
+import DateTimeService from "./functional-components/services/DateTimeService";
 
-const BASE_URL = "http://10.61.38.193:8080";
+const BASE_URL = "http://10.61.38.193:8081";
 function Dashboard(props) {
   const [showTutorial, setShowTutorial] = useState(false);
   const [openVisibility, setOpenVisibility] = useState(false);
@@ -24,7 +25,7 @@ function Dashboard(props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [privacyCheck, setPrivacyCheck] = useState(false);
-  const [flag, setFlag] = useState(false);
+  const [lastEdited, setLastEdited] = useState({});
   const [intervalObj, setIntervalObj] = useState([]);
 
   useEffect(() => {
@@ -38,31 +39,33 @@ function Dashboard(props) {
       body.classList.toggle("openMenu");
     });
     try { 
-        axios({
-          method: "get",
-          url: `${BASE_URL}/api/v1/forms/${formId}`
-        }).then((res) => {
-            if(!res.data) return;
-            setTitle(res.data.title);
-            setDescription(res.data.description);
-            setPrivacyCheck(res.data.privacyCheck);
-            let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
-            tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
-            if(tempBreadcrumbs.length >= 2) {
-              while(tempBreadcrumbs.slice(-1)[0] && !(tempBreadcrumbs.slice(-1)[0].page == "Home" || tempBreadcrumbs.slice(-1)[0].page == "/")){
-                tempBreadcrumbs.pop();
-              }
+      axios({
+        method: "get",
+        url: `${BASE_URL}/api/v1/forms/${formId}`
+      }).then((res) => {
+          if(!res.data) return;
+          setTitle(res.data.title);
+          setDescription(res.data.description);
+          setPrivacyCheck(res.data.privacyCheck);
+          let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
+          tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
+          if(tempBreadcrumbs.length >= 2) {
+            while(tempBreadcrumbs.slice(-1)[0] && !(tempBreadcrumbs.slice(-1)[0].page == "Home" || tempBreadcrumbs.slice(-1)[0].page == "/")){
+              tempBreadcrumbs.pop();
             }
-            let selectedForm = res.data;
-            if(tempBreadcrumbs){
-              tempBreadcrumbs.push({page: "Dashboard - " + selectedForm['title'], path: window.location.href});
-              setCurrentStep(tempBreadcrumbs);
-              localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
-            }
-        });
-      } catch (error) {
-        console.log(error);
-      }
+          }
+          let selectedForm = res.data;
+          if(tempBreadcrumbs){
+            tempBreadcrumbs.push({page: "Dashboard - " + selectedForm['title'], path: window.location.href});
+            setCurrentStep(tempBreadcrumbs);
+            localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
+          }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    getFormItems();
+    getLastEdited();
     let checkTutorial = localStorage.getItem("showTutorial");
     if(!checkTutorial) {
       setShowTutorial(true);
@@ -78,6 +81,45 @@ function Dashboard(props) {
       });
     }
   }, []); // run once
+
+  const getLastEdited = async () => {
+    let prevLastEdited = lastEdited;
+    let lastEditedTable = {
+      formAuthorId: "",
+      userFullname: "",
+      modifyDate: ""
+    }
+    let flag = false;
+    await axios({
+      method: "get",
+      url: `${BASE_URL}/api/v1/forms/get-last-edited/${formId}`
+    }).then((res) => {
+      if(!res.data) return;
+      if(prevLastEdited.modifyDate == res.data.modifyDate){
+        flag = true;
+        return;
+      } 
+      lastEditedTable.formAuthorId = res.data.formAuthorId;
+      lastEditedTable.modifyDate = res.data.modifyDate;
+    }).finally(async () => {
+      if(flag) return;
+      await axios({
+        method: "get",
+        url: `${BASE_URL}/api/v1/user-profiles/${lastEditedTable.formAuthorId}`
+      }).then((res) => {
+        if(res.data) lastEditedTable.userFullname = res.data.fullname;
+      }).finally(() => {
+        if(flag) return;
+        const convertedDateTime = DateTimeService("convertToDateTime", lastEditedTable.modifyDate);
+        let text = "Last edited: " + convertedDateTime.date + " at " + convertedDateTime.time + " by " + lastEditedTable.userFullname;
+        let lastEditedObj = {
+          modifyDate: lastEditedTable.modifyDate,
+          text: text
+        }
+        setLastEdited(lastEditedObj);
+      })
+    })
+  }
 
   const getFormItems = () => {
     axios({
@@ -121,18 +163,18 @@ function Dashboard(props) {
     let updateArray = [];
     for(let i=0; i<formItems.length; i++) updateArray.push(false);
     setUpdated(updateArray);
-    removeInterval();
+    // removeInterval();
   }, [formItems]);
 
-  useEffect(() => {
-    if(intervalObj.length != 0) return;
-    let currentInterval = [...intervalObj];
-    let interval = setInterval(() => {
-      getFormItems();
-    }, 500);
-    currentInterval.push(interval);
-    setIntervalObj(currentInterval);
-  }, [intervalObj]);
+  // useEffect(() => {
+  //   if(intervalObj.length != 0) return;
+  //   let currentInterval = [...intervalObj];
+  //   // let interval = setInterval(() => {
+  //     getFormItems();
+  //   // }, 500);
+  //   currentInterval.push(interval);
+  //   setIntervalObj(currentInterval);
+  // }, [intervalObj]);
 
   // useEffect(() => {
   //   setTimeout(() => {
@@ -263,7 +305,6 @@ function Dashboard(props) {
   };
 
   const handleUpdateQuestionType = (questionId, event) => {
-    console.log("WADIDAW");
     let tempFormItems = [...formItems];
     let currentForm = tempFormItems.filter((elem) => {
       return elem.id == questionId;

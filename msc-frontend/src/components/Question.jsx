@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from "react";
 import { v4 as uuid } from "uuid";
 import Option from "./Option";
 
-const BASE_URL = "http://10.61.38.193:8080";
+const BASE_URL = "http://10.61.38.193:8081";
 
 function Question(props) {
   const [selectedQuestionOption, setSelectedQuestionOption] = useState("");
@@ -89,6 +89,8 @@ function Question(props) {
       setQuestionContent(props.questionData.questionContent);
       setQuestionType(props.questionData.questionType);
     }
+    updateQuestion();
+    getAnswerSelection();
     return (() => {
       console.log("unmounted");
     })
@@ -103,31 +105,31 @@ function Question(props) {
   //   }, 500);
   // });
 
-  useEffect(() => {
-    if(intervalObj.length != 0) return;
-    let interval = setInterval(() => {
-      updateQuestion();
-      getAnswerSelection();
-    }, 500);
-    let currentInterval = [...intervalObj];
-    currentInterval.push(interval);
-    setIntervalObj(currentInterval);
-  }, [intervalObj]);
+  // useEffect(() => {
+  //   if(intervalObj.length != 0) return;
+  //   let interval = setInterval(() => {
+  //     updateQuestion();
+  //     getAnswerSelection();
+  //   }, 500);
+  //   let currentInterval = [...intervalObj];
+  //   currentInterval.push(interval);
+  //   setIntervalObj(currentInterval);
+  // }, [intervalObj]);
 
   useEffect(() => {
     // if(questionContent != "") localStorage.setItem("contentLogger", JSON.stringify(false));
-    removeInterval();
+    // removeInterval();
     console.log("questionContent berubah menjadi", questionContent);
   }, [questionContent]);
 
   useEffect(() => {
     // if(questionType != "") localStorage.setItem("typeLogger", JSON.stringify(false));
-    removeInterval();
+    // removeInterval();
     console.log("questionType berubah menjadi", questionType);
   }, [questionType]);
 
   useEffect(() => {
-    if(arrayOptions.length > 0) removeInterval();
+    // if(arrayOptions.length > 0) removeInterval();
     console.log("arrayOptions berubah menjadi", arrayOptions);
   }, [arrayOptions]);
 
@@ -154,7 +156,7 @@ function Question(props) {
     }).then((res) => {
       handleOptionList(props.questionData.id, res.data);
     }).catch(() => {
-      removeInterval();
+      // removeInterval();
     });
   }
 
@@ -179,10 +181,10 @@ function Question(props) {
     }
   }, [branchingState]);
 
-  const removeInterval = () => {
-    intervalObj.map((value) => clearInterval(value));
-    setIntervalObj([]);
-  }
+  // const removeInterval = () => {
+  //   intervalObj.map((value) => clearInterval(value));
+  //   setIntervalObj([]);
+  // }
 
   const resetBranchingSelection = () => {
     if(branchingSelection.length > 0) prevBranchSelection.current = branchingSelection;
@@ -215,7 +217,7 @@ function Question(props) {
           setQuestionType(type);
         } 
       }).catch((error) => {
-        removeInterval();
+        // removeInterval();
       })
   }
 

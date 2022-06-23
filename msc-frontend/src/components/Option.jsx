@@ -4,23 +4,23 @@ import Select from "react-select";
 import { useEffect } from 'react';
 import axios from 'axios';
 
-const BASE_URL = "http://10.61.38.193:8080";
+const BASE_URL = "http://10.61.38.193:8081";
 
 function Option(props) {
     const [value, setValue] = useState("");
-    const [intervalObj, setIntervalObj] = useState([]);
+    // const [intervalObj, setIntervalObj] = useState([]);
     // const [flag, setFlag] = useState(false);
 
     useEffect(() => {
-        let interval = setInterval(() => {
+        // let interval = setInterval(() => {
             setOptionValue();
-        }, 500);
-        let currentInterval = [...intervalObj];
-        currentInterval.push(interval);
-        setIntervalObj(currentInterval);
-        return (() => {
-            removeInterval();
-        });
+        // }, 500);
+        // let currentInterval = [...intervalObj];
+        // currentInterval.push(interval);
+        // setIntervalObj(currentInterval);
+        // return (() => {
+        //     removeInterval();
+        // });
     }, []);
 
     // useEffect(() => {
@@ -32,18 +32,18 @@ function Option(props) {
     // })
 
     useEffect(() => {
-        removeInterval();
+        // removeInterval();
     }, [props.formItems]);
 
-    useEffect(() => {
-        if(intervalObj.length != 0) return;
-        let interval = setInterval(() => {
-            setOptionValue();
-        }, 500);
-        let currentInterval = [...intervalObj];
-        currentInterval.push(interval);
-        setIntervalObj(currentInterval);
-    }, [intervalObj])
+    // useEffect(() => {
+    //     if(intervalObj.length != 0) return;
+    //     let interval = setInterval(() => {
+    //         setOptionValue();
+    //     }, 500);
+    //     let currentInterval = [...intervalObj];
+    //     currentInterval.push(interval);
+    //     setIntervalObj(currentInterval);
+    // }, [intervalObj])
 
     useEffect(() => {
         if(!value || value == "") return;
@@ -58,10 +58,10 @@ function Option(props) {
         el.style.height = (el.scrollHeight)+"px";
     }
     
-    const removeInterval = () => {
-        intervalObj.map((value) => clearInterval(value));
-        setIntervalObj([]);
-    }
+    // const removeInterval = () => {
+    //     intervalObj.map((value) => clearInterval(value));
+    //     setIntervalObj([]);
+    // }
 
     const setOptionValue = () => {
         axios({

@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { Component, useEffect, useState } from "react";
 import Select from "react-select";
 
-const BASE_URL = "http://10.61.38.193:8080";
+const BASE_URL = "http://10.61.38.193:8081";
 function Responses(props) {
   const [selectedResponse, setSelectedResponse] = useState("");
   const [answerList, setAnswerList] = useState([]);
@@ -44,10 +44,12 @@ function Responses(props) {
     }).then((res) => {
       let tempAnswers = []
       if(res.data) {
+        console.log("res.data", res.data);
         let keys = Object.keys(res.data);
         keys.map((key) => {
           tempAnswers.push({answerSelectionId: key, value: res.data[key].answerSelectionValue});
         })
+        console.log("keys", keys);
         setAnswerList(tempAnswers);
       }
     });
