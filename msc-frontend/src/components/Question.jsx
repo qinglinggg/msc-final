@@ -168,6 +168,7 @@ function Question(props) {
           let content = res.data.content;
           // console.log("content refresh", content != questionContent);
           if(content != questionContent){
+            console.log("set");
             props.handleUpdateLastEdited();
             return content;
           } 

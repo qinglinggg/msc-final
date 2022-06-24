@@ -831,6 +831,10 @@ body {
   overflow: hidden;
 }
 
+#title-dashboard {
+  margin-bottom: 0 !important;
+}
+
 #page-title-home {
   padding-left: 30px;
 }
@@ -3397,6 +3401,18 @@ body {
   padding: 15px 20px 15px 17px;
   border-radius: 10px;
   font-size: 15px;
+}
+
+/* added lastedited */
+
+.page-lastedited {
+  display: flex;
+  width: 70%;
+  justify-content: center;
+  margin-bottom: 20px;
+  font-size: 15px;
+  font-style: italic;
+  color: gray;
 }
 
 /* added breadcrumbs */
