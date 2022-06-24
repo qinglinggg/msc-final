@@ -4,7 +4,7 @@ const defaultStyle = {
   resize: "none",
   boxSizing: "border-box",
   fontSize: "15px",
-  height: "25px"
+  height: "34px"
 };
 // , 
 const AutoHeightTextarea = ({ style = defaultStyle, ...etc}, props) => {

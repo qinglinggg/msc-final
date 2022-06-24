@@ -8,7 +8,6 @@ import iconVisibility from "./images/visibility.png";
 import iconInvisible from './images/visibility2.png';
 import iconSettings from "./images/settings.png";
 import Respondent from "./Respondent";
-import Loading from "./Loading";
 import DateTimeService from "./functional-components/services/DateTimeService";
 
 const BASE_URL = "http://10.61.38.193:8081";
