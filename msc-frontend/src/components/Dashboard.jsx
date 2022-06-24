@@ -190,6 +190,7 @@ function Dashboard(props) {
     let currentInterval = [...intervalObj];
     let interval = setInterval(() => {
       getFormItems();
+      getLastEdited();
     }, 1500);
     currentInterval.push(interval);
     setIntervalObj(currentInterval);
@@ -220,6 +221,7 @@ function Dashboard(props) {
   }
 
   const handleUpdateLastEdited = () => {
+    console.log("handle update last edited");
     let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
     props.updateLastEdited(selectedForm);
   } 

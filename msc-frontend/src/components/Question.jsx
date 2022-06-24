@@ -224,6 +224,8 @@ function Question(props) {
     axios({
       method: "delete",
       url: `${BASE_URL}/api/v1/forms/remove-answer-selection/${optionId}`,
+    }).then((res) => {
+      props.handleUpdateLastEdited();
     });
   };
 

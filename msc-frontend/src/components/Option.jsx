@@ -66,11 +66,14 @@ function Option(props) {
         }).then((res) => {
             setValue(value => {
                 let resValue = res.data.value;
-                if(value != resValue) {
+                if(resValue && value != resValue) {
                     let selectedValue = null;
+                    console.log("resValue", resValue);
                     if (props.questionData.questionType != "LS") selectedValue = resValue;
                     else selectedValue = res.data.label;
+                    console.log("set terus kah");
                     props.handleUpdateLastEdited();
+                    console.log("selectedValue", selectedValue);
                     return selectedValue;
                 }
                 return value;
