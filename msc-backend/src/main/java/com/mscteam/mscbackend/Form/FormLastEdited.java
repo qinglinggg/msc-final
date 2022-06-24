@@ -2,6 +2,8 @@ package com.mscteam.mscbackend.Form;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class FormLastEdited {
 
     private UUID lastEditedId;
@@ -16,7 +18,7 @@ public class FormLastEdited {
         this.modifyDate = modifyDate;
     }
 
-    public FormLastEdited(String formId, String formAuthorId){
+    public FormLastEdited(@JsonProperty("formId") String formId, @JsonProperty("formAuthorId") String formAuthorId){
         this.lastEditedId = UUID.randomUUID();
         this.formId = UUID.fromString(formId);
         this.formAuthorId = UUID.fromString(formAuthorId);

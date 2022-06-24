@@ -230,6 +230,11 @@ function Dashboard(props) {
     setUpdated(tempUpdated);
   }
 
+  const handleUpdateLastEdited = () => {
+    let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
+    props.updateLastEdited(selectedForm);
+  } 
+
   const handleAddItem = () => {
     let currentStateData = [...formItems];
     let formItemId;
@@ -255,6 +260,7 @@ function Dashboard(props) {
         formItemId = res.data.id;
       }).finally(() => {
         setFormItems(currentStateData);
+        handleUpdateLastEdited();
       });
     } catch (error) {
       console.log(error);
@@ -271,8 +277,8 @@ function Dashboard(props) {
         method: "delete",
         url: `${BASE_URL}/api/v1/forms/remove-form-items/${deletedQuestionId}`,
       }).then((res) => {
-        console.log(newFormItems);
         setFormItems(newFormItems);
+        handleUpdateLastEdited();
       });
     } catch (error) {
       console.log(error);
@@ -298,6 +304,9 @@ function Dashboard(props) {
         url: `${BASE_URL}/api/v1/forms/update-form-items/${questionId}`,
         data: currentForm,
         headers: { "Content-Type": "application/json" },
+      }).then((res) => {
+        setFormItems(tempFormItems);
+        handleUpdateLastEdited();
       });
     } catch (error) {
       console.log(error);
@@ -326,6 +335,7 @@ function Dashboard(props) {
         headers: { "Content-Type": "application/json" },
       }).then((res) => {
         setFormItems(tempFormItems);
+        handleUpdateLastEdited();
       });
     } catch (error) {
       console.log(error);
@@ -353,6 +363,7 @@ function Dashboard(props) {
         headers: { "Content-Type": "application/json" },
       }).then((res) => {
         setFormItems(tempFormItems);
+        handleUpdateLastEdited();
       })
     } catch(error) {
       console.log(error);
@@ -383,6 +394,7 @@ function Dashboard(props) {
                   handleUpdateQuestionInput={handleUpdateQuestionInput}
                   handleUpdateQuestionType={handleUpdateQuestionType}
                   handleUpdateQuestionIsRequired={handleUpdateQuestionIsRequired}
+                  handleUpdateLastEdited={handleUpdateLastEdited}
                 />
               </div>
             </React.Fragment>
@@ -412,6 +424,8 @@ function Dashboard(props) {
         url: `${BASE_URL}/api/v1/forms/${formId}`
       }).then((res) => {
         localStorage.setItem("selectedForm", JSON.stringify(selectedForm));
+      }).finally(() => {
+        handleUpdateLastEdited();
       })
     } catch(error) {
       console.log(error);

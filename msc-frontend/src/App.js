@@ -273,6 +273,21 @@ class App extends React.Component {
     }
   }
 
+  async updateLastEdited(formMetadata) {
+    console.log("update last edited", formMetadata);
+    let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    let lastEditedObj = {
+      formId: formMetadata.formId,
+      formAuthorId: loggedInUser
+    }
+    await axios({
+      method: "put",
+      url: `${BASE_URL}/api/v1/forms/update-last-edited/${formMetadata.formId}`,
+      data: lastEditedObj,
+      headers: { "Content-Type" : "application/json" }
+    }).catch((error) => console.log(error));
+  }
+
   appRouting() {
     let count = 0;
     return (
@@ -307,6 +322,8 @@ class App extends React.Component {
                   <Dashboard 
                     handleUpdateCurrentPage={this.handleUpdateCurrentPage}
                     isAuthor={this.isAuthor}
+                    updateLastEdited={this.updateLastEdited}
+
                   />
                 }
                 key={"dashboardPage"}
@@ -314,14 +331,20 @@ class App extends React.Component {
               <Route
                 path={`/design/formId/:formId`}
                 element={
-                  <Design isAuthor={this.isAuthor} />
+                  <Design 
+                    isAuthor={this.isAuthor} 
+                    updateLastEdited={this.updateLastEdited}
+                  />
                 }
                 key={"designPage"}
               />
               <Route
                 path={`/invitation/formId/:formId`}
                 element={
-                  <Invitation isAuthor={this.isAuthor} />
+                  <Invitation 
+                    isAuthor={this.isAuthor} 
+                    updateLastEdited={this.updateLastEdited}
+                  />
                 }
                 key={"invitationPage"}
               />

@@ -206,16 +206,20 @@ function Question(props) {
         let type = res.data.type;
         // let contentLogger = JSON.parse(localStorage.getItem("contentLogger"));
         // let typeLogger = JSON.parse(localStorage.getItem("typeLogger"));
+        let flag = false;
         if(questionContent != content){
           console.log("set question content");
           // localStorage.setItem("contentLogger", JSON.stringify(true));
           setQuestionContent(content);
+          flag = true;
         }
         if(questionType != type){
           console.log("set question type");
           // localStorage.setItem("typeLogger", JSON.stringify(true));
           setQuestionType(type);
+          flag = true;
         } 
+        if(flag) props.handleUpdateLastEdited();
       }).catch((error) => {
         // removeInterval();
       })
@@ -232,6 +236,7 @@ function Question(props) {
     else value = 0;
     props.handleUpdateQuestionIsRequired(props.questionData.id, value);
     setSelectedIsRequired(!selectedIsRequired);
+    props.handleUpdateLastEdited();
   }
 
   const handleLinearOpt = (value) => {
@@ -259,7 +264,9 @@ function Question(props) {
       if (finalCount && iterCount < finalCount){
         handleAddOption(id, iterCount + 1, finalCount);
       }
-    });;
+      let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
+      props.handleUpdateLastEdited();
+    });
   };
 
   const handleRemoveOption = (optionId) => {
@@ -345,6 +352,7 @@ function Question(props) {
                 props.handleUpdateQuestionType(props.questionData.id, e);
                 setSelectedQuestionOption(e.value);
                 setQuestionType(e.value);
+                props.handleUpdateLastEdited();
               }}
             />
           </div>
@@ -428,6 +436,7 @@ function Question(props) {
                       questionData={props.questionData}
                       formItems={props.formItems}
                       arrayOptions={arrayOptions}
+                      handleUpdateLastEdited={props.handleUpdateLastEdited}
                     />
                   </React.Fragment>
                 );
@@ -478,6 +487,7 @@ function Question(props) {
                     handleRemoveOption={handleRemoveOption}
                     questionData={props.questionData}
                     arrayOptions={arrayOptions}
+                    handleUpdateLastEdited={props.handleUpdateLastEdited}
                   />
                 );
               })
@@ -546,6 +556,7 @@ function Question(props) {
                     questionData={props.questionData}
                     arrayOptions={arrayOptions}
                     labelOptions={inputOptions}
+                    handleUpdateLastEdited={props.handleUpdateLastEdited}
                   />
                 );
               })}

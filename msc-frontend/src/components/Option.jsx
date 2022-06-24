@@ -76,6 +76,7 @@ function Option(props) {
                     selectedValue = res.data.label;
                 }
                 setValue(selectedValue);
+                props.handleUpdateLastEdited();
             }
         }).catch((error) => console.log(error));
     }
@@ -99,7 +100,10 @@ function Option(props) {
             data: tempObj,
             headers: { "Content-Type": "application/json" },
         }).then((res) => {
-            if(!nextToggle) setValue(input);
+            if(!nextToggle){
+                setValue(input);
+                props.handleUpdateLastEdited();
+            }
         });
     };
 
@@ -113,7 +117,10 @@ function Option(props) {
             url: `${BASE_URL}/api/v1/forms/update-answer-selection/${tempObj.id}`,
             data: tempObj,
             headers: { "Content-Type": "application/json" },
-        }).then((res) => setValue(input));
+        }).then((res) => {
+            setValue(input);
+            props.handleUpdateLastEdited();
+        });
       };
 
     const displayMultipleChoice = () => {
@@ -165,7 +172,6 @@ function Option(props) {
                     onClick={() => {
                         props.handleRemoveOption(
                         props.obj.id,
-
                         );
                     }}>
                     <ion-icon name="close-outline"></ion-icon>

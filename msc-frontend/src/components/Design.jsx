@@ -34,7 +34,7 @@ function Design(props) {
 
   useEffect (() => {
     props.isAuthor(formId);
-    setFormItems(props.formItems_data)
+    setFormItems(props.formItems_data);
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
@@ -77,6 +77,8 @@ function Design(props) {
 
   const handleBackgroundChange = (data) => {
     setSelectedBackground(data.value);
+    let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
+    props.handleUpdateLastEdited(selectedForm);
   }
 
   const handleColorChange = (data) => {
@@ -95,6 +97,8 @@ function Design(props) {
       }).then((res) => {
         console.log(res.data);
         setSelectedColor(data.value);
+        let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
+        props.handleUpdateLastEdited(selectedForm);
       })
     } catch(error) {
       console.log(error);
