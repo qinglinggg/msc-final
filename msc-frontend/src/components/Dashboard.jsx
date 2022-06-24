@@ -8,7 +8,6 @@ import iconVisibility from "./images/visibility.png";
 import iconInvisible from './images/visibility2.png';
 import iconSettings from "./images/settings.png";
 import Respondent from "./Respondent";
-import Loading from "./Loading";
 import DateTimeService from "./functional-components/services/DateTimeService";
 
 const BASE_URL = "http://10.61.38.193:8081";
@@ -30,7 +29,6 @@ function Dashboard(props) {
 
   useEffect(() => {
     console.log("dashboard mounted");
-    localStorage.setItem("formLength", JSON.stringify(0));
     props.isAuthor(formId);
     props.handleUpdateCurrentPage(formId);
     let body = document.getElementById("body");
@@ -38,34 +36,33 @@ function Dashboard(props) {
     menuBtn.addEventListener("click", () => {
       body.classList.toggle("openMenu");
     });
-    try { 
+    try {
       axios({
         method: "get",
         url: `${BASE_URL}/api/v1/forms/${formId}`
       }).then((res) => {
-          if(!res.data) return;
-          setTitle(res.data.title);
-          setDescription(res.data.description);
-          setPrivacyCheck(res.data.privacyCheck);
-          let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
-          tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
-          if(tempBreadcrumbs.length >= 2) {
-            while(tempBreadcrumbs.slice(-1)[0] && !(tempBreadcrumbs.slice(-1)[0].page == "Home" || tempBreadcrumbs.slice(-1)[0].page == "/")){
-              tempBreadcrumbs.pop();
-            }
+        if(!res.data) return;
+        setTitle(res.data.title);
+        setDescription(res.data.description);
+        setPrivacyCheck(res.data.privacyCheck);
+        handleInterval();
+        let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
+        tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
+        if(tempBreadcrumbs.length >= 2) {
+          while(tempBreadcrumbs.slice(-1)[0] && !(tempBreadcrumbs.slice(-1)[0].page == "Home" || tempBreadcrumbs.slice(-1)[0].page == "/")){
+            tempBreadcrumbs.pop();
           }
-          let selectedForm = res.data;
-          if(tempBreadcrumbs){
-            tempBreadcrumbs.push({page: "Dashboard - " + selectedForm['title'], path: window.location.href});
-            setCurrentStep(tempBreadcrumbs);
-            localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
-          }
+        }
+        let selectedForm = res.data;
+        if(tempBreadcrumbs){
+          tempBreadcrumbs.push({page: "Dashboard - " + selectedForm['title'], path: window.location.href});
+          setCurrentStep(tempBreadcrumbs);
+          localStorage.setItem("breadcrumbs", JSON.stringify(tempBreadcrumbs));
+        }
       });
     } catch (error) {
       console.log(error);
     }
-    getFormItems();
-    getLastEdited();
     let checkTutorial = localStorage.getItem("showTutorial");
     if(!checkTutorial) {
       setShowTutorial(true);
@@ -80,6 +77,9 @@ function Dashboard(props) {
         });
       });
     }
+    return(() => {
+      removeInterval();
+    });
   }, []); // run once
 
   const getLastEdited = async () => {
@@ -126,11 +126,6 @@ function Dashboard(props) {
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`,
     }).then((res) => {
-      let currentLength = localStorage.getItem("formLength");
-      if(!currentLength) currentLength = 0;
-      else currentLength = JSON.parse(currentLength);
-      if(res.data.length == currentLength) return;
-      console.log("currentLength: ", currentLength, " res.data.length: ", res.data.length);
       let tempItems = [];
       res.data.map((newData) => {
         let newItem = {
@@ -142,10 +137,14 @@ function Dashboard(props) {
         };
         tempItems.push(newItem);
       });
-      console.log("form update");
-      localStorage.setItem("formLength", JSON.stringify(tempItems.length));
-      setFormItems(tempItems);
+      setFormItems(formItems => {
+        console.log(formItems.length, tempItems.length);
+        if(formItems.length == 0 || tempItems.length != formItems.length) return tempItems;
+        return formItems;
+      });
+      return tempItems;
     });
+    return null;
   }
 
   useEffect(() => {
@@ -163,29 +162,10 @@ function Dashboard(props) {
     let updateArray = [];
     for(let i=0; i<formItems.length; i++) updateArray.push(false);
     setUpdated(updateArray);
-    // removeInterval();
   }, [formItems]);
 
-  // useEffect(() => {
-  //   if(intervalObj.length != 0) return;
-  //   let currentInterval = [...intervalObj];
-  //   // let interval = setInterval(() => {
-  //     getFormItems();
-  //   // }, 500);
-  //   currentInterval.push(interval);
-  //   setIntervalObj(currentInterval);
-  // }, [intervalObj]);
-
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     console.log("useeffect jalan")
-  //     getFormItems();
-  //     setFlag(!flag);
-  //   }, 500);
-  // });
-
   useEffect(() => {
-    if(!updated || updated.length != formItems.length) return;
+    if(!updated || (formItems && updated.length != formItems.length)) return;
     let validator = true;
     updated.forEach((upd) => {
       if(upd == true) {
@@ -204,7 +184,16 @@ function Dashboard(props) {
     } else {
       body.classList.add("openPopup");
     }
-  }, [openSettings])
+  }, [openSettings]);
+
+  const handleInterval = () => {
+    let currentInterval = [...intervalObj];
+    let interval = setInterval(() => {
+      getFormItems();
+    }, 1500);
+    currentInterval.push(interval);
+    setIntervalObj(currentInterval);
+  }
 
   const handleVisibility = () => {
     setOpenVisibility(!openVisibility);
@@ -237,7 +226,6 @@ function Dashboard(props) {
 
   const handleAddItem = () => {
     let currentStateData = [...formItems];
-    let formItemId;
     try {
       let newItem = {
         itemNumber: -1,
@@ -257,7 +245,6 @@ function Dashboard(props) {
           questionType: res.data.type
         };
         currentStateData.push(newItem);
-        formItemId = res.data.id;
       }).finally(() => {
         setFormItems(currentStateData);
         handleUpdateLastEdited();
@@ -371,8 +358,10 @@ function Dashboard(props) {
   };
 
   const removeInterval = () => {
-    intervalObj.map((value) => clearInterval(value));
-    setIntervalObj([]);
+    setIntervalObj(intervalObj => {
+      intervalObj.map((value) => clearInterval(value));
+      return [];
+    });
   }
 
   const displayQuestion = () => {

@@ -4,7 +4,7 @@ const defaultStyle = {
   resize: "none",
   boxSizing: "border-box",
   fontSize: "15px",
-  height: "25px"
+  height: "34px"
 };
 // , 
 const AutoHeightTextarea = ({ style = defaultStyle, ...etc}, props) => {
@@ -12,7 +12,6 @@ const AutoHeightTextarea = ({ style = defaultStyle, ...etc}, props) => {
   const textareaRef = React.createRef();
 
   const autoResize = (el) => {
-    el.target.style.height = "15px";
     el.target.style.height = (el.target.scrollHeight)+"px";
     console.log("Scroll height: " + el.target.scrollHeight);
   }
@@ -20,6 +19,7 @@ const AutoHeightTextarea = ({ style = defaultStyle, ...etc}, props) => {
   return (
     <textarea
       ref={textareaRef}
+      className="text-input"
       style={style}
       onInput={(e) => autoResize(e)}
       {...etc}
