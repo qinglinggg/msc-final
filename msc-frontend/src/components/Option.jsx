@@ -70,11 +70,11 @@ function Option(props) {
                     let selectedValue = null;
                     if (props.questionData.questionType != "LS") selectedValue = resValue;
                     else selectedValue = res.data.label;
+                    props.handleUpdateLastEdited();
                     return selectedValue;
                 }
                 return value;
             });
-            props.handleUpdateLastEdited();
         });
     }
 
