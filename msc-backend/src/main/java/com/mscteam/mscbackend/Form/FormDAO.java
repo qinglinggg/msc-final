@@ -315,6 +315,12 @@ public class FormDAO {
         return list;
     }
 
+    public int deleteAllFormRespondent(String formId) {
+        final String query = "DELETE FROM FormRespondent WHERE formId = ?";
+        int res = jdbcTemplate.update(query, formId);
+        return res;
+    }
+
     public List<String> getFormRespondentByInvitedUserId(String formId, String userId){
         final String query = "SELECT formRespondentId FROM FormRespondent WHERE formId = ? AND userId = ? AND isTargeted = 1";
         List<String> formRespondentId = jdbcTemplate.query(query, (resultSet, i) -> {

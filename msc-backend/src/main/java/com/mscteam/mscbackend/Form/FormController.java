@@ -155,6 +155,11 @@ public class FormController {
         return formService.getAllFormRespondent(formId);
     }
 
+    @DeleteMapping(path = "/delete-all-resp/{formId}")
+    public int deleteAllFormRespondent(@PathVariable("formId") String formId){
+        return formService.deleteAllFormRespondent(formId);
+    }
+
     // Form Item Response
     @PostMapping(path = "/insert-response/{formRespondentId}")
     public int insertFormItemResponse(@PathVariable("formRespondentId") String formRespondentId, @RequestBody FormItemResponse formItemResponse){

@@ -24,7 +24,7 @@ const ProfilePicture = (props) => {
 
     return (
         <div className="profile-image">
-        {userState ? 
+        {userState && props.user ? 
         (<img src={props.user.profileImage} />) : (displayPicture())}
         </div>
     );

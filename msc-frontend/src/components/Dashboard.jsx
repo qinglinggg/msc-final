@@ -9,6 +9,7 @@ import iconInvisible from './images/visibility2.png';
 import iconSettings from "./images/settings.png";
 import Respondent from "./Respondent";
 import DateTimeService from "./functional-components/services/DateTimeService";
+import ProfilePicture from "./functional-components/ProfilePicture";
 
 const BASE_URL = "http://10.61.38.193:8081";
 function Dashboard(props) {
@@ -24,9 +25,20 @@ function Dashboard(props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [privacyCheck, setPrivacyCheck] = useState(false);
+  const [hasResponse, setHasResponse] = useState(false);
+  const [buttonShowed, setButtonShowed] = useState(false);
   const [intervalObj, setIntervalObj] = useState([]);
 
   useEffect(() => {
+    axios({
+      method: "get",
+      url: `${BASE_URL}/api/v1/forms/get-all-resp/${formId}`
+    }).then((res) => {
+      console.log("dashboard get all resp");
+      if(res.data.length > 0){
+        setHasResponse(true);
+      }
+    })
     let lastEditedInit = {
       modifyDate: 0,
       text: ""
@@ -89,7 +101,8 @@ function Dashboard(props) {
     let lastEditedTable = {
       formAuthorId: "",
       userFullname: "",
-      modifyDate: ""
+      modifyDate: "",
+      user: {}
     }
     let prevLastEdited = localStorage.getItem("lastEdited");
     if(prevLastEdited) prevLastEdited = JSON.parse(prevLastEdited);
@@ -112,12 +125,16 @@ function Dashboard(props) {
         method: "get",
         url: `${BASE_URL}/api/v1/user-profiles/${lastEditedTable.formAuthorId}`
       }).then((res) => {
-        if(res.data) lastEditedTable.userFullname = res.data.fullname;
+        if(res.data){
+          lastEditedTable.userFullname = res.data.fullname;
+          lastEditedTable.user = res.data;
+        }
         const convertedDateTime = DateTimeService("convertToDateTime", lastEditedTable.modifyDate);
         let text = "Last edited: " + convertedDateTime.date + " at " + convertedDateTime.time + " by " + lastEditedTable.userFullname;
         let lastEditedObj = {
           modifyDate: lastEditedTable.modifyDate,
-          text: text
+          text: text,
+          user: lastEditedTable.user
         }
         if(prevLastEdited.modifyDate != lastEditedObj.modifyDate){
           localStorage.setItem("lastEdited", JSON.stringify(lastEditedObj));
@@ -284,6 +301,15 @@ function Dashboard(props) {
     });
   }
 
+  const handleResetResponses = () => {
+    axios({
+      method: "delete",
+      url: `${BASE_URL}/api/v1/forms/delete-all-resp/${formId}`
+    }).then(() => {
+      setHasResponse(false);
+    });
+  }
+
   const displayQuestion = () => {
     return (
       <React.Fragment>
@@ -442,9 +468,6 @@ function Dashboard(props) {
     if(lastEdited) lastEdited = JSON.parse(lastEdited);
     return (
       <React.Fragment>
-        <div className="page-lastedited">
-          {lastEdited ? lastEdited.text : null}
-        </div>
         <div className="page-breadcrumbs">
           {
             currentStep.map((b, idx) => {
@@ -462,8 +485,17 @@ function Dashboard(props) {
             })
           }
         </div>
+        <div className="page-lastedited">
+          {lastEdited ? (
+          <div>
+            <span>{lastEdited.text}</span>
+            {console.log(lastEdited.user)}
+            <ProfilePicture user={lastEdited.user}/>
+          </div>): null}
+        </div>
         <div id="page-content">
           <div className="questions-container">
+            { hasResponse ? (<div className="disabler"/>) : null}
             {displayQuestion()}
           </div>
         </div>
@@ -501,6 +533,10 @@ function Dashboard(props) {
     )
   }
 
+  const showButton = () => {
+    setButtonShowed(true);
+  }
+
   return (
     <React.Fragment>
       { showTutorial ? displayTutorial() : null }
@@ -528,6 +564,19 @@ function Dashboard(props) {
           {openSettings ? displaySettings() : null}
         </div>
       </div>
+      { hasResponse ? (
+      <div className="has-response-container">
+        <span>Your questionnaire already has responses for the current changes.</span>
+        { buttonShowed ? (
+          <div className="has-response-button-container">
+            <div className="has-response-reset" onClick={() => {
+              handleResetResponses();
+              setButtonShowed(false);
+            }}>Yes</div>
+            <div className="has-response-reset" onClick={() => setButtonShowed(false)}>No</div>
+          </div>
+        ) : (<div className="has-response-reset" onClick={() => showButton()}>Reset Responses</div>)}
+      </div>) : null }
       {openVisibility ? displayPreview() : displayDashboard()}
     </React.Fragment>
   );

@@ -151,6 +151,10 @@ public class FormService {
         return formDAO.getAllFormRespondent(formId);
     } 
 
+    public int deleteAllFormRespondent(String formId) {
+        return formDAO.deleteAllFormRespondent(formId);
+    }
+
     public int insertFormItemResponse(String formRespondentId, FormItemResponse formItemResponse){
         return formDAO.insertFormItemResponse(formRespondentId, formItemResponse);
     }
