@@ -918,6 +918,18 @@ body {
   justify-content: space-between;
 }
 
+.last-edited-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.last-edited-container .profile-image {
+  width: 30px;
+  height: 30px;
+  margin-left: 10px;
+}
+
 .disabler {
   position: absolute;
   width: 100%;
@@ -4050,7 +4062,7 @@ body {
   color: gray;
   font-size: large;
   opacity: 1;
-  z-index: 5;
+  z-index: 7;
 }
 .loading-transition-done {
   width: 100%;

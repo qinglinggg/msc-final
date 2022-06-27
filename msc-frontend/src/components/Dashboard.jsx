@@ -487,9 +487,8 @@ function Dashboard(props) {
         </div>
         <div className="page-lastedited">
           {lastEdited ? (
-          <div>
+          <div className="last-edited-container">
             <span>{lastEdited.text}</span>
-            {console.log(lastEdited.user)}
             <ProfilePicture user={lastEdited.user}/>
           </div>): null}
         </div>

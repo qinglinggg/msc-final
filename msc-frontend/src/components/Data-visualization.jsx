@@ -67,6 +67,7 @@ function DataVisualization(props) {
           url: `${BASE_URL}/api/v1/forms/get-response/${item.id}`
         }).then((response) => {
           let resData = response.data;
+          if(!resData || resData.length == 0) return;
           let listOfAnswers = [];
           resData.forEach(ri => {
             let validator = true;
