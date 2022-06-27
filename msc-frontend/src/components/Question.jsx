@@ -18,6 +18,7 @@ function Question(props) {
   const [questionContent, setQuestionContent] = useState("");
   const [questionType, setQuestionType] = useState("");
   const [arrayOptions, setArrayOptions] = useState([]);
+  const [isUsed, setIsUsed] = useState(false);
   const [intervalObj, setIntervalObj] = useState([]);
 
   const questionOptions = [
@@ -53,6 +54,13 @@ function Question(props) {
       setQuestionContent(props.questionData.questionContent);
       setQuestionType(props.questionData.questionType);
       handleInterval();
+      let elem = document.getElementById("question-input-" + props.questionData.id);
+      elem.addEventListener("focusin", () => {
+          if(isUsed == false) setIsUsed(true);
+      });
+      elem.addEventListener("focusout", () => {
+          if(isUsed == true) setIsUsed(false);
+      });
     }
     return (() => {
       removeInterval();
@@ -64,7 +72,6 @@ function Question(props) {
     if(!arrayOptions) return;
     for(let x=0; x<arrayOptions.length; x++){
       let currentData = arrayOptions[x];
-      console.log(currentData);
       if (currentData.nextItem != -1) branch_check = true;
     }
     if (branch_check && !branchingState) handleShowBranching();
@@ -104,15 +111,21 @@ function Question(props) {
     setTimeout(() => props.handleUpdatedList(props.questionIdx, true), 1000)
   }, [questionType]);
 
-  useEffect(() => {
-    console.log(intervalObj);
-  }, [intervalObj]);
+  // useEffect(() => {
+  //   console.log(intervalObj);
+  // }, [intervalObj]);
 
   const handleInterval = () => {
     let interval = setInterval(() => {
+      let validator = false;
+      setIsUsed(isUsed => {
+        if(isUsed) validator = true;
+        return isUsed;
+      });
+      if(validator) return;
       updateQuestion();
       getAnswerSelection();
-    }, 500);
+    }, 1000);
     setIntervalObj(intervalObj => {
       let currentInterval = intervalObj
       currentInterval.push(interval);
@@ -126,7 +139,6 @@ function Question(props) {
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-answer-selection/${props.questionData.id}`,
     }).then((res) => {
-      // console.log("Test", res.data);
       handleOptionList(props.questionData.id, res.data);
     });
   }
@@ -160,29 +172,29 @@ function Question(props) {
 
   const updateQuestion = () => {
     if(!props.questionData) return;
-      axios({
-        method: "get",
-        url: `${BASE_URL}/api/v1/forms/get-a-form-item/${props.questionData.id}`,
-      }).then((res) => {
-        setQuestionContent(questionContent => {
-          let content = res.data.content;
-          // console.log("content refresh", content != questionContent);
-          if(content != questionContent){
-            props.handleUpdateLastEdited();
-            return content;
-          } 
-          return questionContent;
-        });
-        setQuestionType(questionType => {
-          let type = res.data.type;
-          // console.log("type refresh", type != questionType);
-          if(questionType != type){
-            props.handleUpdateLastEdited();
-            return type;
-          }
-          return questionType;
-        });
+    axios({
+      method: "get",
+      url: `${BASE_URL}/api/v1/forms/get-a-form-item/${props.questionData.id}`,
+    }).then((res) => {
+      setQuestionContent(questionContent => {
+        let content = res.data.content;
+        if(content != questionContent){
+          props.handleUpdateLastEdited();
+          return content;
+        } 
+        return questionContent;
       });
+      setQuestionType(questionType => {
+        let type = res.data.type;
+        if(questionType != type){
+          props.handleUpdateLastEdited();
+          setSelectedQuestionOption(type);
+          console.log("Type Question", type);
+          return type;
+        }
+        return questionType;
+      });
+    });
   }
 
   const handleShowBranching = () => {
@@ -194,7 +206,7 @@ function Question(props) {
     let value = !selectedIsRequired;
     if(value) value = 1;
     else value = 0;
-    props.handleUpdateQuestionIsRequired(props.questionData.id, value);
+    handleUpdateQuestionIsRequired(props.questionData.id, value);
     setSelectedIsRequired(!selectedIsRequired);
     props.handleUpdateLastEdited();
   }
@@ -203,12 +215,13 @@ function Question(props) {
     let obj = {};
     obj["formItemsId"] = id;
     obj["value"] = "";
+    console.log(iterCount, finalCount);
+    if(finalCount != null && finalCount == iterCount) return;
     if(!finalCount) {
       iterCount = 0;
       finalCount = 1;
     }
     while(finalCount && iterCount < finalCount) {
-      console.log("test");
       await axios({
         method: "post",
         url: `${BASE_URL}/api/v1/forms/add-answer-selection/${id}`,
@@ -242,13 +255,64 @@ function Question(props) {
 
   const handleOptionList = (id, data) => {
     setArrayOptions(arrayOptions => {
-      if(data.length == 0 && props.questionData.questionType != "LS"){
+      if(data.length == 0){
         handleAddOption(id, null, null);
       } else {
         if(arrayOptions.length == 0 || data.length != arrayOptions.length) return data;
       }
       return arrayOptions;
     });
+  };
+
+  const handleUpdateQuestionInput = (event) => {
+    let currentForm = props.questionData;
+    currentForm["questionContent"] = event.target.value;
+    try {
+      axios({
+        method: "put",
+        url: `${BASE_URL}/api/v1/forms/update-form-items/${props.questionData.id}`,
+        data: currentForm,
+        headers: { "Content-Type": "application/json" },
+      }).then(() => {
+        props.handleUpdateLastEdited();
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleUpdateQuestionType = (event) => {
+    let currentForm = props.questionData;
+    currentForm["questionType"] = event.value;
+    try {
+      axios({
+        method: "put",
+        url: `${BASE_URL}/api/v1/forms/update-form-items/${props.questionData.id}`,
+        data: currentForm,
+        headers: { "Content-Type": "application/json" },
+      }).then(() => {
+        props.handleUpdateLastEdited();
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleUpdateQuestionIsRequired = (value) => {
+    let currentForm = props.questionData;
+    currentForm["isRequired"] = value;
+    try {
+      axios({
+        method: "put",
+        data: currentForm,
+        url: `${BASE_URL}/api/v1/forms/update-form-items/${props.questionData.id}`,
+        headers: { "Content-Type": "application/json" },
+      }).then(() => {
+        props.handleUpdateLastEdited();
+      })
+    } catch(error) {
+      console.log(error);
+    }
   };
 
   const displayQuestion = () => {
@@ -266,7 +330,7 @@ function Question(props) {
               cols="5"
               wrap="soft"
               onChange={(e) => {
-                props.handleUpdateQuestionInput(props.questionData.id, e);
+                handleUpdateQuestionInput(e);
               }}
             />
             <div id="border"></div>
@@ -294,10 +358,7 @@ function Question(props) {
                 ) {
                   handleResetOption(props.questionData.id);
                 }
-                console.log("onchangee");
-                props.handleUpdateQuestionType(props.questionData.id, e);
-                setSelectedQuestionOption(e.value);
-                setQuestionType(e.value);
+                handleUpdateQuestionType(e);
                 props.handleUpdateLastEdited();
               }}
             />
@@ -472,14 +533,16 @@ function Question(props) {
             <div id="linear-input-box">
               <Select
                 options={inputOptions}
-                value={inputOptions.map((opt) => {
-                  if(opt.value == arrayOptions.length) return opt;
-                })}
+                value={
+                  inputOptions.map((opt) => {
+                    if(opt.value == arrayOptions.length) return opt;
+                  }
+                )}
                 placeholder="Select"
                 id="questionSelection"
                 onChange={(e) => {
                   handleResetOption(props.questionData.id);
-                  handleAddOption(props.questionData.id, 0, e.value);
+                  setTimeout(() => handleAddOption(props.questionData.id, 0, e.value - 1), 500);
                 }}
               />
             </div>

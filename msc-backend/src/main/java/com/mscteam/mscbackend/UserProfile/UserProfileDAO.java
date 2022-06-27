@@ -18,7 +18,7 @@ public class UserProfileDAO {
     }
 
     public List<UserProfile> getAllUsers() {
-        final String query = "SELECT userId, userDomain, fullname, email FROM User";
+        final String query = "SELECT userId, userDomain, fullname, email, profileImage FROM User";
         List<UserProfile> userlist = jdbcTemplate.query(query, ((resultSet, i) -> {
             String userId = resultSet.getString("userId");
             String userDomain = resultSet.getString("userDomain");
@@ -40,7 +40,6 @@ public class UserProfileDAO {
             String image = resultSet.getString("profileImage");
             return new UserProfile(userId, userDomain, fullname, email, null, image);
         }, id);
-
         return Optional.ofNullable(user);
     }
 

@@ -9,11 +9,20 @@ const BASE_URL = "http://10.61.38.193:8081";
 function Option(props) {
     const [value, setValue] = useState("");
     const [intervalObj, setIntervalObj] = useState([]);
+    const [isUsed, setIsUsed] = useState(false);
 
     useEffect(() => {
         if (props.questionData.questionType != "LS") setValue(props.obj.value);
         else setValue(props.obj.label);
         handleInterval();
+        let elem = document.getElementById(props.optionId);
+        if(!elem) return;
+        elem.addEventListener("focusin", () => {
+            if(isUsed == false) setIsUsed(true);
+        });
+        elem.addEventListener("focusout", () => {
+            if(isUsed == true) setIsUsed(false);
+        });
         return (() => {
             removeInterval();
         });
@@ -31,17 +40,18 @@ function Option(props) {
         let optionId = "question-" + props.questionData.id + "-options-" + props.obj.id;
         let el = document.getElementById(optionId);
         if(!el) return;
+        el.value = value;
         autoResizeContent(el);
     }, [value]);
 
-    useEffect(() => {
-        console.log(intervalObj);
-    }, [intervalObj]);
+    // useEffect(() => {
+    //     console.log(intervalObj);
+    // }, [intervalObj]);
 
     const handleInterval = () => {
         let interval = setInterval(() => {
             setOptionValue();
-        }, 500);
+        }, 1500);
         let currentInterval = [...intervalObj];
         currentInterval.push(interval);
         setIntervalObj(currentInterval);
@@ -60,13 +70,20 @@ function Option(props) {
     }
 
     const setOptionValue = () => {
+        let validator = false;
+        setIsUsed(isUsed => {
+            console.log("Interval >>", isUsed);
+            if(isUsed) validator = true;
+            return isUsed;
+        });
+        if(validator) return;
         axios({
             method: "get",
             url: `${BASE_URL}/api/v1/forms/get-answer-selection-by-id/${props.obj.id}`,
         }).then((res) => {
-            setValue(value => {
+            setValue((value) => {
                 let resValue = res.data.value;
-                if(value != resValue) {
+                if(resValue && value != resValue) {
                     let selectedValue = null;
                     if (props.questionData.questionType != "LS") selectedValue = resValue;
                     else selectedValue = res.data.label;
@@ -91,16 +108,15 @@ function Option(props) {
         } else {
             tempObj.value = input;
         }
+        if(!nextToggle){
+            setValue(input);
+            props.handleUpdateLastEdited();
+        }
         axios({
             method: "put",
             url: `${BASE_URL}/api/v1/forms/update-answer-selection/${tempObj.id}`,
             data: tempObj,
             headers: { "Content-Type": "application/json" },
-        }).then((res) => {
-            if(!nextToggle){
-                setValue(input);
-                props.handleUpdateLastEdited();
-            }
         });
     };
 
@@ -138,8 +154,7 @@ function Option(props) {
                     wrap="soft"
                     onChange={(e) => {
                         handleOptionValue(e, false);
-                    }} 
-                    value={value}
+                    }}
                     />
                     {props.branchingState ? (
                     <Select
@@ -193,7 +208,6 @@ function Option(props) {
                         id={props.optionId}
                         type="text"
                         placeholder={props.obj.label}
-                        value={value}
                         wrap="soft"
                         onChange={(e) => {
                             handleOptionValue(e, false);
@@ -228,11 +242,7 @@ function Option(props) {
                     // defaultValue={props.obj.label ? props.obj.label : null}
                     onChange={(e) => {
                         handleOptionLabel(
-                        e,
-                        props.idx
-                        );
-                    }}
-                    value={value}
+                        e, props.idx);}}
                     />
                 </div>
                 <div id="linear-label-select">

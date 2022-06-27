@@ -173,7 +173,7 @@ function Dashboard(props) {
         return;
       }
     })
-    if (validator) setTimeout(() => setIsLoaded(true), 2000);
+    if (validator) setTimeout(() => setIsLoaded(true), 3000);
   }, [updated]);
 
   useEffect(() => {
@@ -272,91 +272,6 @@ function Dashboard(props) {
     }
   };
 
-  const handleUpdateQuestionInput = (questionId, event) => {
-    let tempFormItems = [...formItems];
-    let currentForm = tempFormItems.filter((elem) => {
-      return elem.id == questionId;
-    });
-    currentForm = currentForm[0];
-    currentForm["questionContent"] = event.target.value;
-    tempFormItems = tempFormItems.map((elem) => {
-      if (questionId == elem.id) {
-        return currentForm;
-      }
-      return elem;
-    });
-    try {
-      axios({
-        method: "put",
-        url: `${BASE_URL}/api/v1/forms/update-form-items/${questionId}`,
-        data: currentForm,
-        headers: { "Content-Type": "application/json" },
-      }).then((res) => {
-        setFormItems(tempFormItems);
-        handleUpdateLastEdited();
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleUpdateQuestionType = (questionId, event) => {
-    let tempFormItems = [...formItems];
-    let currentForm = tempFormItems.filter((elem) => {
-      return elem.id == questionId;
-    });
-    currentForm = currentForm[0];
-    currentForm["questionType"] = event.value;
-    tempFormItems = tempFormItems.map((elem) => {
-      if (questionId == elem.id) {
-        return currentForm;
-      }
-      return elem;
-    });
-    console.log(currentForm);
-    try {
-      axios({
-        method: "put",
-        url: `${BASE_URL}/api/v1/forms/update-form-items/${questionId}`,
-        data: currentForm,
-        headers: { "Content-Type": "application/json" },
-      }).then((res) => {
-        setFormItems(tempFormItems);
-        handleUpdateLastEdited();
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleUpdateQuestionIsRequired = (questionId, value) => {
-    let tempFormItems = [...formItems];
-    let currentForm = tempFormItems.filter((elem) => {
-      return elem.id == questionId;
-    })
-    currentForm = currentForm[0];
-    currentForm["isRequired"] = value;
-    tempFormItems = tempFormItems.map((elem) => {
-      if(elem.id == questionId){
-        return currentForm;
-      }
-      return elem;
-    })
-    try {
-      axios({
-        method: "put",
-        data: currentForm,
-        url: `${BASE_URL}/api/v1/forms/update-form-items/${questionId}`,
-        headers: { "Content-Type": "application/json" },
-      }).then((res) => {
-        setFormItems(tempFormItems);
-        handleUpdateLastEdited();
-      })
-    } catch(error) {
-      console.log(error);
-    }
-  };
-
   const removeInterval = () => {
     setIntervalObj(intervalObj => {
       intervalObj.map((value) => clearInterval(value));
@@ -380,9 +295,6 @@ function Dashboard(props) {
                   mode={true}
                   onRemove={handleRemoveItem}
                   handleUpdatedList={handleUpdatedList}
-                  handleUpdateQuestionInput={handleUpdateQuestionInput}
-                  handleUpdateQuestionType={handleUpdateQuestionType}
-                  handleUpdateQuestionIsRequired={handleUpdateQuestionIsRequired}
                   handleUpdateLastEdited={handleUpdateLastEdited}
                 />
               </div>

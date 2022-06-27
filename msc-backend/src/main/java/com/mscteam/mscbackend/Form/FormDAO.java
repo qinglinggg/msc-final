@@ -483,7 +483,7 @@ public class FormDAO {
             String formAuthorId = resultSet.getString("formAuthorId");
             Long modifyDate = resultSet.getLong("modifyDate");
             return new FormLastEdited(UUID.fromString(lastEditedId), UUID.fromString(formId), UUID.fromString(formAuthorId), modifyDate);
-        });
+        }, formId);
         if(res.size() > 0) return res.get(0);
         return null;
     }
