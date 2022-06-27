@@ -91,7 +91,6 @@ function Option(props) {
                 // console.log(resValue);
                 if(resValue && value != resValue) {
                     let selectedValue = null;
-                    console.log(props.questionData.questionType);
                     if (props.questionData.questionType != "LS") selectedValue = resValue;
                     else selectedValue = res.data.label;
                     return selectedValue;
