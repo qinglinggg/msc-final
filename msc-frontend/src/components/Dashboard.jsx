@@ -24,11 +24,14 @@ function Dashboard(props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [privacyCheck, setPrivacyCheck] = useState(false);
-  const [lastEdited, setLastEdited] = useState({});
   const [intervalObj, setIntervalObj] = useState([]);
 
   useEffect(() => {
-    console.log("dashboard mounted");
+    let lastEditedInit = {
+      modifyDate: 0,
+      text: ""
+    }
+    localStorage.setItem("lastEdited", JSON.stringify(lastEditedInit));
     props.isAuthor(formId);
     props.handleUpdateCurrentPage(formId);
     let body = document.getElementById("body");
@@ -82,43 +85,45 @@ function Dashboard(props) {
     });
   }, []); // run once
 
-  const getLastEdited = async () => {
-    let prevLastEdited = lastEdited;
+  const getLastEdited = () => {
     let lastEditedTable = {
       formAuthorId: "",
       userFullname: "",
       modifyDate: ""
     }
-    let flag = false;
-    await axios({
+    let prevLastEdited = localStorage.getItem("lastEdited");
+    if(prevLastEdited) prevLastEdited = JSON.parse(prevLastEdited);
+    axios({
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-last-edited/${formId}`
     }).then((res) => {
-      if(!res.data) return;
-      if(prevLastEdited.modifyDate == res.data.modifyDate){
-        flag = true;
-        return;
-      } 
+      if(!res.data){
+        let user = JSON.parse(localStorage.getItem("loggedInUser"));
+        axios({
+          method: "post",
+          url: `${BASE_URL}/api/v1/forms/create-last-edited/${formId}`,
+          data: user,
+          headers: { "Content-Type" : "text/plain" }
+        });
+      };
       lastEditedTable.formAuthorId = res.data.formAuthorId;
       lastEditedTable.modifyDate = res.data.modifyDate;
-    }).finally(async () => {
-      if(flag) return;
-      await axios({
+      axios({
         method: "get",
         url: `${BASE_URL}/api/v1/user-profiles/${lastEditedTable.formAuthorId}`
       }).then((res) => {
         if(res.data) lastEditedTable.userFullname = res.data.fullname;
-      }).finally(() => {
-        if(flag) return;
         const convertedDateTime = DateTimeService("convertToDateTime", lastEditedTable.modifyDate);
         let text = "Last edited: " + convertedDateTime.date + " at " + convertedDateTime.time + " by " + lastEditedTable.userFullname;
         let lastEditedObj = {
           modifyDate: lastEditedTable.modifyDate,
           text: text
         }
-        setLastEdited(lastEditedObj);
-      })
-    })
+        if(prevLastEdited.modifyDate != lastEditedObj.modifyDate){
+          localStorage.setItem("lastEdited", JSON.stringify(lastEditedObj));
+        }
+      });
+    });
   }
 
   const getFormItems = () => {
@@ -138,7 +143,6 @@ function Dashboard(props) {
         tempItems.push(newItem);
       });
       setFormItems(formItems => {
-        console.log(formItems.length, tempItems.length);
         if(formItems.length == 0 || tempItems.length != formItems.length) return tempItems;
         return formItems;
       });
@@ -189,8 +193,8 @@ function Dashboard(props) {
   const handleInterval = () => {
     let currentInterval = [...intervalObj];
     let interval = setInterval(() => {
-      getFormItems();
       getLastEdited();
+      getFormItems();
     }, 1500);
     currentInterval.push(interval);
     setIntervalObj(currentInterval);
@@ -221,7 +225,6 @@ function Dashboard(props) {
   }
 
   const handleUpdateLastEdited = () => {
-    console.log("handle update last edited");
     let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
     props.updateLastEdited(selectedForm);
   } 
@@ -435,10 +438,12 @@ function Dashboard(props) {
   }
 
   const displayDashboard = () => {
+    let lastEdited = localStorage.getItem("lastEdited");
+    if(lastEdited) lastEdited = JSON.parse(lastEdited);
     return (
       <React.Fragment>
         <div className="page-lastedited">
-          {lastEdited.text}
+          {lastEdited ? lastEdited.text : null}
         </div>
         <div className="page-breadcrumbs">
           {

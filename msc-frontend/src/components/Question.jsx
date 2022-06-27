@@ -179,7 +179,6 @@ function Question(props) {
       setQuestionContent(questionContent => {
         let content = res.data.content;
         if(content != questionContent){
-          props.handleUpdateLastEdited();
           return content;
         } 
         return questionContent;
@@ -187,9 +186,7 @@ function Question(props) {
       setQuestionType(questionType => {
         let type = res.data.type;
         if(questionType != type){
-          props.handleUpdateLastEdited();
           setSelectedQuestionOption(type);
-          console.log("Type Question", type);
           return type;
         }
         return questionType;
@@ -215,7 +212,6 @@ function Question(props) {
     let obj = {};
     obj["formItemsId"] = id;
     obj["value"] = "";
-    console.log(iterCount, finalCount);
     if(finalCount != null && finalCount == iterCount) return;
     if(!finalCount) {
       iterCount = 0;
@@ -361,7 +357,6 @@ function Question(props) {
                   handleResetOption(props.questionData.id);
                 }
                 handleUpdateQuestionType(e);
-                props.handleUpdateLastEdited();
               }}
             />
           </div>

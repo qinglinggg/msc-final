@@ -12,11 +12,17 @@ function Option(props) {
     const [isUsed, setIsUsed] = useState(false);
 
     useEffect(() => {
-        if (props.questionData.questionType != "LS") setValue(props.obj.value);
-        else setValue(props.obj.label);
         handleInterval();
         let elem = document.getElementById(props.optionId);
         if(!elem) return;
+        if (props.questionData.questionType != "LS"){
+            setValue(props.obj.value);
+            if(elem.value != props.obj.value) elem.value = props.obj.value;
+        }
+        else {
+            setValue(props.obj.label);
+            if(elem.value != props.obj.label) elem.value = props.obj.label;
+        }
         elem.addEventListener("focusin", () => {
             if(isUsed == false) setIsUsed(true);
         });
@@ -37,10 +43,10 @@ function Option(props) {
 
     useEffect(() => {
         if(!value || value == "") return;
-        let optionId = "question-" + props.questionData.id + "-options-" + props.obj.id;
-        let el = document.getElementById(optionId);
+        // let optionId = "question-" + props.questionData.id + "-options-" + props.obj.id;
+        let el = document.getElementById(props.optionId);
         if(!el) return;
-        el.value = value;
+        if(el.value != value) el.value = value;
         autoResizeContent(el);
     }, [value]);
 
@@ -72,7 +78,6 @@ function Option(props) {
     const setOptionValue = () => {
         let validator = false;
         setIsUsed(isUsed => {
-            console.log("Interval >>", isUsed);
             if(isUsed) validator = true;
             return isUsed;
         });
@@ -83,14 +88,12 @@ function Option(props) {
         }).then((res) => {
             setValue((value) => {
                 let resValue = res.data.value;
+                // console.log(resValue);
                 if(resValue && value != resValue) {
                     let selectedValue = null;
-                    console.log("resValue", resValue);
+                    console.log(props.questionData.questionType);
                     if (props.questionData.questionType != "LS") selectedValue = resValue;
                     else selectedValue = res.data.label;
-                    console.log("set terus kah");
-                    props.handleUpdateLastEdited();
-                    console.log("selectedValue", selectedValue);
                     return selectedValue;
                 }
                 return value;

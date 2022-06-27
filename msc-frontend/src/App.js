@@ -84,7 +84,6 @@ class App extends React.Component {
     setInterval(() => {
       let loggedIn = localStorage.getItem("loggedInUser");
       if (loggedIn && loggedIn != "") {
-        // console.log("yes");
         loggedIn = JSON.parse(loggedIn);
         this.checkLoggedInUser(loggedIn);
       } else {
@@ -127,8 +126,6 @@ class App extends React.Component {
     });
     await axios.get(`${BASE_URL}/api/v1/forms/owned-form/${userId}`).then((res) => {
       const forms = res.data;
-      console.log("owned form");
-      console.log(res.data);
       localStorage.setItem("formLists", JSON.stringify(forms));
     })
     await axios.get(`${BASE_URL}/api/v1/forms/invited-form-respondent/${userId}`).then((res) => {
@@ -147,7 +144,6 @@ class App extends React.Component {
       }).then((res) => {
         let index = 0;
         let invitedForms = res.data;
-        console.log(invitedForms);
         invitedForms.map((form) => {
           form['formRespondentId'] = tempInvitedForms[index].formRespondentId;
           form['submitDate'] = tempInvitedForms[index].submitDate;
@@ -166,7 +162,6 @@ class App extends React.Component {
     if(!this.state.currentUser) return;
     let currentUser = this.state.currentUser;
     currentUser.profileImage = newLink;
-    console.log(currentUser);
     this.setState({currentUser : currentUser});
   }
 
@@ -179,7 +174,6 @@ class App extends React.Component {
   }
 
   async handleCreateNewForm(obj) {
-    console.log(obj);
     try {
       await axios({
         method: "post",
@@ -194,7 +188,6 @@ class App extends React.Component {
         localStorage.setItem("formLists", JSON.stringify(tempList));
         localStorage.setItem("selectedForm", JSON.stringify(response.data));
         let user = JSON.parse(localStorage.getItem("loggedInUser"));
-        console.log(user);
         await axios({
           method: "post",
           url: `${BASE_URL}/api/v1/forms/create-last-edited/${response.data.formId}`,
@@ -223,9 +216,7 @@ class App extends React.Component {
       headers: { "Content-Type" : "application/json" }
     }).then((res) => {
       let currentLogin = res.data["bearerToken"];
-      console.log("bearer", currentLogin);
       sessionStorage.setItem("bearer_token", JSON.stringify(currentLogin));
-      console.log(res.data["userId"]);
       localStorage.setItem("loggedInUser", JSON.stringify(res.data["userId"]));
     });
   }
@@ -261,7 +252,6 @@ class App extends React.Component {
     let user = localStorage.getItem("loggedInUser");
     if(user){
       user = JSON.parse(user);
-      console.log(user);
       await axios({
         method:"post",
         url: `${BASE_URL}/api/v1/forms/is-author-exist/${formId}`,
@@ -276,7 +266,6 @@ class App extends React.Component {
   }
 
   async updateLastEdited(formMetadata) {
-    console.log("update last edited", formMetadata);
     let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
     let lastEditedObj = {
       formId: formMetadata.formId,
