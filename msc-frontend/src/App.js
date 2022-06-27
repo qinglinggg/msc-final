@@ -194,10 +194,12 @@ class App extends React.Component {
         localStorage.setItem("formLists", JSON.stringify(tempList));
         localStorage.setItem("selectedForm", JSON.stringify(response.data));
         let user = JSON.parse(localStorage.getItem("loggedInUser"));
+        console.log(user);
         await axios({
           method: "post",
           url: `${BASE_URL}/api/v1/forms/create-last-edited/${response.data.formId}`,
-          data: user
+          data: user,
+          headers: { "Content-Type" : "text/plain" }
         }).then(() => {
           this.handleUpdateCurrentPage("Dashboard");
           window.location = `/dashboard/formId/${response.data.formId}`;

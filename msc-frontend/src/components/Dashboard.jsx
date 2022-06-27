@@ -190,6 +190,7 @@ function Dashboard(props) {
     let currentInterval = [...intervalObj];
     let interval = setInterval(() => {
       getFormItems();
+      getLastEdited();
     }, 1500);
     currentInterval.push(interval);
     setIntervalObj(currentInterval);
@@ -220,6 +221,7 @@ function Dashboard(props) {
   }
 
   const handleUpdateLastEdited = () => {
+    console.log("handle update last edited");
     let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
     props.updateLastEdited(selectedForm);
   } 
@@ -435,6 +437,9 @@ function Dashboard(props) {
   const displayDashboard = () => {
     return (
       <React.Fragment>
+        <div className="page-lastedited">
+          {lastEdited.text}
+        </div>
         <div className="page-breadcrumbs">
           {
             currentStep.map((b, idx) => {
@@ -494,12 +499,12 @@ function Dashboard(props) {
   return (
     <React.Fragment>
       { showTutorial ? displayTutorial() : null }
-      <div className="title-container">
+      <div className="title-container" id="title-dashboard">
         <div className="menu-icon" id="menu-icon">
           <img id="menu-icon-img" src={iconMenubarGrey} alt="" />
         </div>
         <div className="page-title" id="page-title-home">
-          {openVisibility? "Preview" : "Dashboard"}
+          {openVisibility ? "Preview" : "Dashboard"}
         </div>
         <div className="dashboard-icon">
           <img
