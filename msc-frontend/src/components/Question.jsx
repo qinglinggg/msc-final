@@ -61,6 +61,8 @@ function Question(props) {
       elem.addEventListener("focusout", () => {
           if(isUsed == true) setIsUsed(false);
       });
+      let blockerElem = document.getElementById("blocker-" + props.questionData.id);
+      blockerElem.style.display = "none";
     }
     return (() => {
       removeInterval();
@@ -114,6 +116,18 @@ function Question(props) {
   // useEffect(() => {
   //   console.log(intervalObj);
   // }, [intervalObj]);
+
+
+  const handleStyling = () => {
+    let elem = document.getElementById("question-" + props.questionData.id);
+    elem.style.border = "3px solid red";
+    let blockerElem = document.getElementById("blocker-" + props.questionData.id);
+    blockerElem.style.display = "flex";
+    setTimeout(() => {
+      elem.style.border = "";
+      blockerElem.style.display = "none";
+    }, 10000);
+  }
 
   const handleInterval = () => {
     let interval = setInterval(() => {
@@ -315,9 +329,11 @@ function Question(props) {
 
   const displayQuestion = () => {
     let textareaId = "question-input-" + props.questionData.id;
+    let elem = document.getElementById("question-" + props.questionData.id);
     return (
       <React.Fragment>
         <div className="question-area">
+          <div id={"blocker-" + props.questionData.id} className="blocker">Currently editing</div>
           <div id="question-title-font">
             <AutoHeightTextarea
               className="question-input"
@@ -436,6 +452,7 @@ function Question(props) {
                       branchingSelection={branchingSelection}
                       prevBranchSelection={prevBranchSelection}
                       handleRemoveOption={handleRemoveOption}
+                      handleStyling={handleStyling}
                       questionType={questionType}
                       formItems={props.formItems}
                       arrayOptions={arrayOptions}

@@ -42,7 +42,7 @@ function Option(props) {
     }, [props.branchingState]);
 
     useEffect(() => {
-        if(!value || value == "") return;
+        if(!value) return;
         let el = document.getElementById(props.optionId);
         if(!el) return;
         if(el.value != value) el.value = value;
@@ -89,7 +89,10 @@ function Option(props) {
                 let resValue = res.data.value;
                 // console.log(resValue);
                 if(resValue && value != resValue) {
+                    console.log("=====");
+                    console.log(res.data);
                     let selectedValue = null;
+                    props.handleStyling();
                     if (props.questionType != "LS") selectedValue = resValue;
                     else selectedValue = res.data.label;
                     return selectedValue;

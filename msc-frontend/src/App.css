@@ -885,6 +885,22 @@ body {
 
 /* question items, containers */
 
+.blocker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  z-index: 5;
+  background-color: rgba(128, 128, 128, 0.575);
+  background-image: url('./components/images/blocker.png');
+  font-size: large;
+  color: white;
+}
+
 .questions-container {
   width: 95%;
   height: 100%;
@@ -1003,6 +1019,7 @@ body {
   border: var(--gray-border) 1px solid;
   border-radius: 10px;
   background-color: white;
+  position: relative;
 }
 
 .question::-webkit-scrollbar {
