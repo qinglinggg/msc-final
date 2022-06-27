@@ -436,7 +436,7 @@ function Question(props) {
                       branchingSelection={branchingSelection}
                       prevBranchSelection={prevBranchSelection}
                       handleRemoveOption={handleRemoveOption}
-                      questionData={props.questionData}
+                      questionType={questionType}
                       formItems={props.formItems}
                       arrayOptions={arrayOptions}
                       handleUpdateLastEdited={props.handleUpdateLastEdited}
@@ -488,7 +488,7 @@ function Question(props) {
                     optionId={optionId}
                     obj={obj}
                     handleRemoveOption={handleRemoveOption}
-                    questionData={props.questionData}
+                    questionType={questionType}
                     arrayOptions={arrayOptions}
                     handleUpdateLastEdited={props.handleUpdateLastEdited}
                   />
@@ -559,7 +559,7 @@ function Question(props) {
                     idx={idx}
                     optionId={optionId}
                     obj={obj}
-                    questionData={props.questionData}
+                    questionType={questionType}
                     arrayOptions={arrayOptions}
                     labelOptions={inputOptions}
                     handleUpdateLastEdited={props.handleUpdateLastEdited}

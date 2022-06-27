@@ -15,7 +15,7 @@ function Option(props) {
         handleInterval();
         let elem = document.getElementById(props.optionId);
         if(!elem) return;
-        if (props.questionData.questionType != "LS"){
+        if (props.questionType != "LS"){
             setValue(props.obj.value);
             if(elem.value != props.obj.value) elem.value = props.obj.value;
         }
@@ -43,7 +43,6 @@ function Option(props) {
 
     useEffect(() => {
         if(!value || value == "") return;
-        // let optionId = "question-" + props.questionData.id + "-options-" + props.obj.id;
         let el = document.getElementById(props.optionId);
         if(!el) return;
         if(el.value != value) el.value = value;
@@ -91,7 +90,7 @@ function Option(props) {
                 // console.log(resValue);
                 if(resValue && value != resValue) {
                     let selectedValue = null;
-                    if (props.questionData.questionType != "LS") selectedValue = resValue;
+                    if (props.questionType != "LS") selectedValue = resValue;
                     else selectedValue = res.data.label;
                     return selectedValue;
                 }
@@ -265,9 +264,9 @@ function Option(props) {
 
     return (
         <React.Fragment>
-            {props.questionData.questionType == "MC" && displayMultipleChoice()}
-            {props.questionData.questionType == "CB" && displayCheckbox()}
-            {props.questionData.questionType == "LS" && displayLinearLabel()}
+            {props.questionType == "MC" && displayMultipleChoice()}
+            {props.questionType == "CB" && displayCheckbox()}
+            {props.questionType == "LS" && displayLinearLabel()}
         </React.Fragment>
     );
 }
