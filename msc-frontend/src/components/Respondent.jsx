@@ -90,7 +90,9 @@ function Respondent (props) {
         data: userId_data, 
       }).then((res) => {
         if(res.data && res.data.length > 0){
-          setFormRespondentId(res.data[0]);
+          // setFormRespondentId(res.data[0]);
+          setFormRespondentId(res.data.formRespondentId);
+          localStorage.setItem("alreadySubmitted", JSON.stringify(res.data.submitDate));
         }
         else {
           let newFormRespondent = {
@@ -126,6 +128,17 @@ function Respondent (props) {
           check = res.data;
         }).finally(() => {
           if(check == undefined) axios.delete(`${BASE_URL}/api/v1/feedback/${feedbackId}`).catch((error) => console.log(error));
+        })
+      }
+      let alreadySubmitted = localStorage.getItem("alreadySubmitted");
+      let isSubmitted = localStorage.getItem("isSubmitted");
+      if(!alreadySubmitted && !isSubmitted){
+        let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+        axios({
+          method: "delete",
+          url: `${BASE_URL}/api/v1/forms/force-delete-form-respondent/${formId}`,
+          data: loggedInUser,
+          headers: { "Content-Type" : "text/plain" }
         })
       }
       localStorage.removeItem("navigator");
@@ -822,6 +835,7 @@ function Respondent (props) {
       }
       if(resIdx == formResponse.length - 1) localStorage.setItem("tempFormResponse", JSON.stringify([]));
     });
+    localStorage.setItem("isSubmitted", JSON.stringify("true"));
     axios({
       method: "put",
       url: `${BASE_URL}/api/v1/forms/submit-form/${formRespondentId}`

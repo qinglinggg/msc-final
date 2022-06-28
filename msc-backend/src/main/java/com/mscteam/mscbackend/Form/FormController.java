@@ -144,7 +144,7 @@ public class FormController {
     }
 
     @PostMapping(path = "/form-respondent/{formId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public List<String> getFormRespondentByUserId(@PathVariable("formId") String formId, @RequestBody HashMap<String, String> map){
+    public FormRespondent getFormRespondentByUserId(@PathVariable("formId") String formId, @RequestBody HashMap<String, String> map){
         String userId = map.get("userId");
         System.out.println("Check ResponseBody: " + userId);
         return formService.getFormRespondentByUserId(formId, userId);
