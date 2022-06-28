@@ -297,13 +297,16 @@ public class FormDAO {
         return formRespondent.getFormRespondentId().toString();
     }
 
-    public List<String> getFormRespondentByUserId(String formId, String userId){
-        final String query = "SELECT formRespondentId FROM FormRespondent WHERE formId = ? AND userId = ?";
-        List<String> formRespondentId = jdbcTemplate.query(query, (resultSet, i) -> {
-            String resId = resultSet.getString("formRespondentId");
-            return resId;
+    public FormRespondent getFormRespondentByUserId(String formId, String userId){
+        final String query = "SELECT * FROM FormRespondent WHERE formId = ? AND userId = ?";
+        List<FormRespondent> formRespondent = jdbcTemplate.query(query, (resultSet, i) -> {
+            String formRespondentId = resultSet.getString("formRespondentId");
+            Long submitDate = resultSet.getLong("submitDate");
+            Integer isTargeted = resultSet.getInt("isTargeted");
+            Long inviteDate = resultSet.getLong("inviteDate");
+            return new FormRespondent(formRespondentId, formId, userId, submitDate, isTargeted, inviteDate);
         }, formId, userId);
-        return formRespondentId;
+        return formRespondent.get(0);
     }
 
     public List<String> getAllFormRespondent(String formId){

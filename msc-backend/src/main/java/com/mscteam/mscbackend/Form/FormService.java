@@ -143,7 +143,7 @@ public class FormService {
         return formDAO.insertFormRespondent(formId, formRespondent);
     }
 
-    public List<String> getFormRespondentByUserId(String formId, String userId){
+    public FormRespondent getFormRespondentByUserId(String formId, String userId){
         return formDAO.getFormRespondentByUserId(formId, userId);
     }
 
