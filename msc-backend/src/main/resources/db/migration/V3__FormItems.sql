@@ -1,9 +1,11 @@
 CREATE TABLE FormItems (
-    formId VARCHAR(100) NOT NULL REFERENCES Form(formId) ON UPDATE CASCADE ON DELETE CASCADE,
+    formId VARCHAR(100) NOT NULL,
     formItemsId VARCHAR(100) NOT NULL,
     itemNumber INT NOT NULL,
     questionContent VARCHAR(255),
     questionType VARCHAR(50) NOT NULL,
     isRequired INT NOT NULL,
-    PRIMARY KEY(formId, formItemsId)
+    CONSTRAINT formItemsPK PRIMARY KEY (formItemsId),
+    CONSTRAINT formItemsFK FOREIGN KEY (formId) REFERENCES Form(formId)
+        ON UPDATE CASCADE ON DELETE CASCADE
 )

@@ -8,20 +8,20 @@ public class FormLastEdited {
 
     private UUID lastEditedId;
     private UUID formId;
-    private UUID formAuthorId;
+    private UUID userId;
     private Long modifyDate;
 
-    public FormLastEdited(UUID lastEditedId, UUID formId, UUID formAuthorId, Long modifyDate){
+    public FormLastEdited(UUID lastEditedId, UUID formId, UUID userId, Long modifyDate){
         this.lastEditedId = lastEditedId;
         this.formId = formId;
-        this.formAuthorId = formAuthorId;
+        this.userId = userId;
         this.modifyDate = modifyDate;
     }
 
-    public FormLastEdited(@JsonProperty("formId") String formId, @JsonProperty("formAuthorId") String formAuthorId){
+    public FormLastEdited(@JsonProperty("formId") String formId, @JsonProperty("userId") String userId){
         this.lastEditedId = UUID.randomUUID();
         this.formId = UUID.fromString(formId);
-        this.formAuthorId = UUID.fromString(formAuthorId);
+        this.userId = UUID.fromString(userId);
         this.modifyDate = System.currentTimeMillis();
     }
 
@@ -33,8 +33,8 @@ public class FormLastEdited {
         return this.formId;
     }
 
-    public UUID getFormAuthorId(){
-        return this.formAuthorId;
+    public UUID getUserId(){
+        return this.userId;
     }
 
     public Long getModifyDate(){

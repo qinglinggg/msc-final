@@ -468,17 +468,17 @@ public class FormDAO {
         return null;
     }
 
-    public int createLastEdited(String formId, String formAuthorId){
-        FormLastEdited lastEdited = new FormLastEdited(formId, formAuthorId);
+    public int createLastEdited(String formId, String userId){
+        FormLastEdited lastEdited = new FormLastEdited(formId, userId);
         final String query = "INSERT INTO FormLastEdited VALUES (?,?,?,?)";
-        int res = jdbcTemplate.update(query, lastEdited.getLastEditedId().toString(), lastEdited.getFormId().toString(), lastEdited.getFormAuthorId().toString(), lastEdited.getModifyDate());
+        int res = jdbcTemplate.update(query, lastEdited.getLastEditedId().toString(), lastEdited.getFormId().toString(), lastEdited.getUserId().toString(), lastEdited.getModifyDate());
         return res;
     }
 
     public int updateLastEdited(String formId, FormLastEdited newEdit){
-        final String query = "UPDATE FormLastEdited SET modifyDate = ?, formAuthorId = ? WHERE formId = ?";
+        final String query = "UPDATE FormLastEdited SET modifyDate = ?, userId = ? WHERE formId = ?";
         Long modifyDate = System.currentTimeMillis();
-        int res = jdbcTemplate.update(query, modifyDate, newEdit.getFormAuthorId().toString(), formId);
+        int res = jdbcTemplate.update(query, modifyDate, newEdit.getUserId().toString(), formId);
         return res;
     }
 
@@ -486,9 +486,9 @@ public class FormDAO {
         final String query = "SELECT * FROM FormLastEdited WHERE formId = ?";
         List<FormLastEdited> res = jdbcTemplate.query(query, (resultSet, i) -> {
             String lastEditedId = resultSet.getString("lastEditedId");
-            String formAuthorId = resultSet.getString("formAuthorId");
+            String userId = resultSet.getString("userId");
             Long modifyDate = resultSet.getLong("modifyDate");
-            return new FormLastEdited(UUID.fromString(lastEditedId), UUID.fromString(formId), UUID.fromString(formAuthorId), modifyDate);
+            return new FormLastEdited(UUID.fromString(lastEditedId), UUID.fromString(formId), UUID.fromString(userId), modifyDate);
         }, formId);
         if(res.size() > 0) return res.get(0);
         return null;

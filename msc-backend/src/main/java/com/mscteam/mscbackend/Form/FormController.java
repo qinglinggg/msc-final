@@ -228,8 +228,8 @@ public class FormController {
     }
 
     @PostMapping(path="/create-last-edited/{formId}")
-    public int createLastEdited(@PathVariable("formId") String formId, @RequestBody String formAuthorId){
-        return formService.createLastEdited(formId, formAuthorId);
+    public int createLastEdited(@PathVariable("formId") String formId, @RequestBody String userId){
+        return formService.createLastEdited(formId, userId);
     }
     
     @PutMapping(path="/update-last-edited/{formId}", consumes = MediaType.APPLICATION_JSON_VALUE) 

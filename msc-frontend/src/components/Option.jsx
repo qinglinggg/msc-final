@@ -28,10 +28,16 @@ function Option(props) {
             }
         }
         elem.addEventListener("focusin", () => {
-            if(isUsed == false) setIsUsed(true);
+            setIsUsed(isUsed => {
+              if(isUsed == false) return true;
+              return isUsed;
+            });
         });
         elem.addEventListener("focusout", () => {
-            if(isUsed == true) setIsUsed(false);
+            setIsUsed(isUsed => {
+              if(isUsed == true) return false;
+              return isUsed;
+            });
         });
         return (() => {
             removeInterval();

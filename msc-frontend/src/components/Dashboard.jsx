@@ -99,7 +99,7 @@ function Dashboard(props) {
 
   const getLastEdited = () => {
     let lastEditedTable = {
-      formAuthorId: "",
+      userId: "",
       userFullname: "",
       modifyDate: "",
       user: {}
@@ -119,11 +119,11 @@ function Dashboard(props) {
           headers: { "Content-Type" : "text/plain" }
         });
       };
-      lastEditedTable.formAuthorId = res.data.formAuthorId;
+      lastEditedTable.userId = res.data.userId;
       lastEditedTable.modifyDate = res.data.modifyDate;
       axios({
         method: "get",
-        url: `${BASE_URL}/api/v1/user-profiles/${lastEditedTable.formAuthorId}`
+        url: `${BASE_URL}/api/v1/user-profiles/${lastEditedTable.userId}`
       }).then((res) => {
         if(res.data){
           lastEditedTable.userFullname = res.data.fullname;

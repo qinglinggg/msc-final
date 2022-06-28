@@ -51,15 +51,22 @@ function Question(props) {
       }
     }
     if (props.mode) {
+      console.log("mounted");
       setQuestionContent(props.questionData.questionContent);
       setQuestionType(props.questionData.questionType);
       handleInterval();
       let elem = document.getElementById("question-input-" + props.questionData.id);
       elem.addEventListener("focusin", () => {
-          if(isUsed == false) setIsUsed(true);
+        setIsUsed(isUsed => {
+          if(isUsed == false) return true;
+          return isUsed;
+        });
       });
       elem.addEventListener("focusout", () => {
-          if(isUsed == true) setIsUsed(false);
+        setIsUsed(isUsed => {
+          if(isUsed == true) return false;
+          return isUsed;
+        });
       });
       let blockerElem = document.getElementById("blocker-" + props.questionData.id);
       blockerElem.style.display = "none";
@@ -136,6 +143,7 @@ function Question(props) {
         if(isUsed) validator = true;
         return isUsed;
       });
+      console.log("validator", validator);
       if(validator) return;
       console.log("Getting update Question...");
       updateQuestion();
@@ -293,6 +301,10 @@ function Question(props) {
     } catch (error) {
       console.log(error);
     }
+    setQuestionContent((content) => {
+      console.log("content", event.target.value);
+      return event.target.value;
+    })
   };
 
   const handleUpdateQuestionType = (event) => {
@@ -310,6 +322,9 @@ function Question(props) {
     } catch (error) {
       console.log(error);
     }
+    setQuestionType((type) => {
+      return event.value;
+    })
   };
 
   const handleUpdateQuestionIsRequired = (value) => {

@@ -187,16 +187,8 @@ class App extends React.Component {
         tempList.push(response.data);
         localStorage.setItem("formLists", JSON.stringify(tempList));
         localStorage.setItem("selectedForm", JSON.stringify(response.data));
-        let user = JSON.parse(localStorage.getItem("loggedInUser"));
-        await axios({
-          method: "post",
-          url: `${BASE_URL}/api/v1/forms/create-last-edited/${response.data.formId}`,
-          data: user,
-          headers: { "Content-Type" : "text/plain" }
-        }).then(() => {
-          this.handleUpdateCurrentPage("Dashboard");
-          window.location = `/dashboard/formId/${response.data.formId}`;
-        }).catch((error) => console.log(error));
+        this.handleUpdateCurrentPage("Dashboard");
+        window.location = `/dashboard/formId/${response.data.formId}`;
       });
     } catch (error) {
       console.log(error);
@@ -269,7 +261,7 @@ class App extends React.Component {
     let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
     let lastEditedObj = {
       formId: formMetadata.formId,
-      formAuthorId: loggedInUser
+      userId: loggedInUser
     }
     await axios({
       method: "put",

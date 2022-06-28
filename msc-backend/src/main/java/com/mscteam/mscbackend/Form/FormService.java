@@ -36,6 +36,7 @@ public class FormService {
     public Form insertForm(Form form, String userId) {
         Form res = formDAO.insertForm(form);
         FormAuthor addAuthor = formDAO.insertFormAuthor(new FormAuthor(res.getFormId().toString(), userId));
+        int lastEdited = formDAO.createLastEdited(res.getFormId().toString(), addAuthor.getUserId().toString());
         return res;
     }
 
@@ -279,8 +280,8 @@ public class FormService {
         return formDAO.getAnswerSelectionById(answerSelectionId);
     }
 
-    public int createLastEdited(String formId, String formAuthorId) {
-        return formDAO.createLastEdited(formId, formAuthorId);
+    public int createLastEdited(String formId, String userId) {
+        return formDAO.createLastEdited(formId, userId);
     }
 
     public int updateLastEdited(String formId, FormLastEdited updatedForm) {
