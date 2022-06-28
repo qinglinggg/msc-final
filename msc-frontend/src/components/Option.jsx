@@ -86,7 +86,9 @@ function Option(props) {
             url: `${BASE_URL}/api/v1/forms/get-answer-selection-by-id/${props.obj.id}`,
         }).then((res) => {
             setValue((value) => {
-                let resValue = res.data.value;
+                let resValue;
+                if(props.questionType != "LS") resValue = res.data.value;
+                else resValue = res.data.label;
                 // console.log(resValue);
                 if(resValue && value != resValue) {
                     console.log("=====");
