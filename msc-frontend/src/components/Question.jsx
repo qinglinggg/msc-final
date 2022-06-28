@@ -137,6 +137,7 @@ function Question(props) {
         return isUsed;
       });
       if(validator) return;
+      console.log("Getting update Question...");
       updateQuestion();
       getAnswerSelection();
     }, 1000);
@@ -193,6 +194,7 @@ function Question(props) {
       setQuestionContent(questionContent => {
         let content = res.data.content;
         if(content != questionContent){
+          handleStyling();
           return content;
         } 
         return questionContent;
@@ -505,6 +507,7 @@ function Question(props) {
                     optionId={optionId}
                     obj={obj}
                     handleRemoveOption={handleRemoveOption}
+                    handleStyling={handleStyling}
                     questionType={questionType}
                     arrayOptions={arrayOptions}
                     handleUpdateLastEdited={props.handleUpdateLastEdited}
@@ -579,6 +582,7 @@ function Question(props) {
                     questionType={questionType}
                     arrayOptions={arrayOptions}
                     labelOptions={inputOptions}
+                    handleStyling={handleStyling}
                     handleUpdateLastEdited={props.handleUpdateLastEdited}
                   />
                 );
