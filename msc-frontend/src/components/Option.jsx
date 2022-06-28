@@ -20,8 +20,12 @@ function Option(props) {
             if(elem.value != props.obj.value) elem.value = props.obj.value;
         }
         else {
-            setValue(props.obj.label);
-            if(elem.value != props.obj.label) elem.value = props.obj.label;
+            if(props.obj.label != ("Option " + (props.idx + 1))) setValue(props.obj.label);
+            else setValue("");
+            if(elem.value != props.obj.label) {
+                if(props.obj.label != ("Option " + (props.idx + 1))) elem.value = props.obj.label;
+                else elem.value = "";
+            }
         }
         elem.addEventListener("focusin", () => {
             if(isUsed == false) setIsUsed(true);
@@ -89,14 +93,14 @@ function Option(props) {
                 let resValue;
                 if(props.questionType != "LS") resValue = res.data.value;
                 else resValue = res.data.label;
-                // console.log(resValue);
                 if(resValue && value != resValue) {
-                    console.log("=====");
-                    console.log(res.data);
                     let selectedValue = null;
                     props.handleStyling();
                     if (props.questionType != "LS") selectedValue = resValue;
-                    else selectedValue = res.data.label;
+                    else {
+                        if(res.data.label != ("Option " + (props.idx + 1))) selectedValue = res.data.label;
+                        else selectedValue = "";
+                    }
                     return selectedValue;
                 }
                 return value;
