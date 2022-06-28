@@ -143,9 +143,7 @@ function Question(props) {
         if(isUsed) validator = true;
         return isUsed;
       });
-      console.log("validator", validator);
       if(validator) return;
-      console.log("Getting update Question...");
       updateQuestion();
       getAnswerSelection();
     }, 1000);

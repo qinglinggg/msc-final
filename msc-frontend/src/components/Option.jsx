@@ -20,12 +20,8 @@ function Option(props) {
             if(elem.value != props.obj.value) elem.value = props.obj.value;
         }
         else {
-            if(props.obj.label != ("Option " + (props.idx + 1))) setValue(props.obj.label);
-            else setValue("");
-            if(elem.value != props.obj.label) {
-                if(props.obj.label != ("Option " + (props.idx + 1))) elem.value = props.obj.label;
-                else elem.value = "";
-            }
+            setValue(props.obj.label);
+            if(elem.value != props.obj.label) elem.value = "";
         }
         elem.addEventListener("focusin", () => {
             setIsUsed(isUsed => {
@@ -55,7 +51,10 @@ function Option(props) {
         if(!value) return;
         let el = document.getElementById(props.optionId);
         if(!el) return;
-        if(el.value != value) el.value = value;
+        if(el.value != value) {
+            if(value != ("Option " + (props.idx+1))) el.value = value;
+            else el.value = "";
+        }
         autoResizeContent(el);
     }, [value]);
 
@@ -103,10 +102,7 @@ function Option(props) {
                     let selectedValue = null;
                     props.handleStyling();
                     if (props.questionType != "LS") selectedValue = resValue;
-                    else {
-                        if(res.data.label != ("Option " + (props.idx + 1))) selectedValue = res.data.label;
-                        else selectedValue = "";
-                    }
+                    else selectedValue = res.data.label;
                     return selectedValue;
                 }
                 return value;
@@ -144,6 +140,7 @@ function Option(props) {
         let tempObj = props.obj;
         tempObj.label = input;
         tempObj.value = index;
+        console.log("input", tempObj);
         axios({
             method: "put",
             url: `${BASE_URL}/api/v1/forms/update-answer-selection/${tempObj.id}`,
