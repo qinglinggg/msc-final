@@ -35,6 +35,7 @@ class Graph extends React.Component {
   resetGraph() {
     if (!this.state.type || !this.state.optionData) return;
     let colorData = [];
+    if(!this.props.answerList) return;
     for(let i=0; i < this.props.answerList.length; i++) colorData.push(this.generateColor());
     colorData.map((color, idx) => {
       let par = document.getElementById("item-subgraph-" + this.props.count + idx);
