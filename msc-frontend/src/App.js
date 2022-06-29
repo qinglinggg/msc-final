@@ -58,7 +58,6 @@ class App extends React.Component {
       if(!res.data) return;
       let currentKey = res.data["bearerToken"];
       let ownedKey = JSON.parse(sessionStorage.getItem("bearer_token"));
-      if (this.state.loggedInUser == res.data["userId"] && ownedKey) return;
       if(currentKey == ownedKey) {
         this.setState({ loggedInUser : res.data["userId"] });
       } else {
