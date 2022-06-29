@@ -252,6 +252,7 @@ function Question(props) {
   };
 
   const handleRemoveOption = (optionId) => {
+    if(arrayOptions.length <= 1) return;
     axios({
       method: "delete",
       url: `${BASE_URL}/api/v1/forms/remove-answer-selection/${optionId}`,

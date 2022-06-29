@@ -28,6 +28,7 @@ function Dashboard(props) {
   const [hasResponse, setHasResponse] = useState(false);
   const [buttonShowed, setButtonShowed] = useState(false);
   const [intervalObj, setIntervalObj] = useState([]);
+  const [pageHeight, setPageHeight] = useState(0);
 
   useEffect(() => {
     axios({
@@ -92,6 +93,12 @@ function Dashboard(props) {
         });
       });
     }
+    let questionContainer = document.querySelector(".questions-container");
+    setInterval(() => {
+      if(questionContainer) {
+        questionContainer.style.height = questionContainer.scrollHeight;
+      }
+    }, 1500);
     return(() => {
       removeInterval();
     });

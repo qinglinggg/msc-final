@@ -50,7 +50,7 @@ function Option(props) {
     useEffect(() => {
         let el = document.getElementById(props.optionId);
         if(!el) return;
-        if(el.value != value) {
+        if(value != undefined && el.value != value) {
             if(value != ("Option " + (props.idx+1))) el.value = value;
             else el.value = "";
         }
@@ -95,7 +95,7 @@ function Option(props) {
                 else resValue = res.data.label;
                 if(value != resValue) {
                     let selectedValue = resValue;
-                    props.handleStyling();
+                    if(resValue != undefined) props.handleStyling();
                     return selectedValue;
                 }
                 return value;
