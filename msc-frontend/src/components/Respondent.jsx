@@ -700,7 +700,7 @@ function Respondent (props) {
                     onClick={() => setLinearScaleValue(index, formItemId, options)}
                   />
                   <label className="option-ls-desc" id={"option-label"+"-"+innerIdx} htmlFor={"options-"+formItemId+"-"+innerIdx}>
-                    {options.label != ("Option " + (innerIdx + 1)) ? options.label : options.value}
+                    {options.label != ("Option " + (innerIdx + 1)) ? options.label : ""}
                   </label>
                 </div>
               </div>

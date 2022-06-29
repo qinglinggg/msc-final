@@ -48,7 +48,6 @@ function Option(props) {
     }, [props.branchingState]);
 
     useEffect(() => {
-        if(!value) return;
         let el = document.getElementById(props.optionId);
         if(!el) return;
         if(el.value != value) {
@@ -57,10 +56,6 @@ function Option(props) {
         }
         autoResizeContent(el);
     }, [value]);
-
-    // useEffect(() => {
-    //     console.log(intervalObj);
-    // }, [intervalObj]);
 
     const handleInterval = () => {
         let interval = setInterval(() => {
@@ -98,11 +93,9 @@ function Option(props) {
                 let resValue;
                 if(props.questionType != "LS") resValue = res.data.value;
                 else resValue = res.data.label;
-                if(resValue && value != resValue) {
-                    let selectedValue = null;
+                if(value != resValue) {
+                    let selectedValue = resValue;
                     props.handleStyling();
-                    if (props.questionType != "LS") selectedValue = resValue;
-                    else selectedValue = res.data.label;
                     return selectedValue;
                 }
                 return value;
@@ -140,7 +133,6 @@ function Option(props) {
         let tempObj = props.obj;
         tempObj.label = input;
         tempObj.value = index;
-        console.log("input", tempObj);
         axios({
             method: "put",
             url: `${BASE_URL}/api/v1/forms/update-answer-selection/${tempObj.id}`,
