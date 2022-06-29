@@ -165,13 +165,11 @@ function Question(props) {
   }
 
   useEffect(() => {
-    if(questionContent) {
-      let questionContentTextarea = document.getElementById("question-input-" + props.questionData.id);
-      questionContentTextarea.value = "";
-      questionContentTextarea.value = questionContent;
-      questionContentTextarea.style.height = "25px";
-      autoResizeContent(questionContentTextarea);
-    }
+    if(!props.questionData) return;
+    let questionContentTextarea = document.getElementById("question-input-" + props.questionData.id);
+    questionContentTextarea.value = questionContent;
+    questionContentTextarea.style.height = "25px";
+    autoResizeContent(questionContentTextarea);
   }, [questionContent]);
 
   const removeInterval = () => {
