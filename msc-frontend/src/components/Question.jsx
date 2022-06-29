@@ -571,8 +571,17 @@ function Question(props) {
                 placeholder="Select"
                 id="questionSelection"
                 onChange={(e) => {
-                  handleResetOption(props.questionData.id);
-                  setTimeout(() => handleAddOption(props.questionData.id, 0, e.value - 1), 500);
+                  let prevValue = arrayOptions.length;
+                  let nextValue = e.value;
+                  let difference = nextValue - prevValue;
+                  if(difference > 0) handleAddOption(props.questionData.id, 0, difference);
+                  else {
+                    let newLength = (difference + prevValue) - 1;
+                    arrayOptions.map((opt, idx) => {
+                      if(idx <= newLength) return;
+                      handleRemoveOption(opt.id);
+                    })
+                  }
                 }}
               />
             </div>
