@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { Component, useEffect, useState } from "react";
 import Select from "react-select";
 
-const BASE_URL = "http://10.61.38.193:8081";
+const BASE_URL = "http://10.61.38.193:8080";
 function Responses(props) {
   const [selectedResponse, setSelectedResponse] = useState("");
   const [answerList, setAnswerList] = useState([]);

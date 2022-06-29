@@ -7,7 +7,7 @@ import backspaceIcon from "./images/backspaceIcon.png";
 import axios from "axios";
 import DateTimeService from "./functional-components/services/DateTimeService";
 
-const BASE_URL = "http://10.61.38.193:8081";
+const BASE_URL = "http://10.61.38.193:8080";
 
 function Message(props) {
   const [messageMetadata, setMessageMetadata] = useState({});

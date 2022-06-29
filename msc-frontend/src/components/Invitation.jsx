@@ -33,7 +33,7 @@ function Invitation(props) {
     item.classList.add('clicked');
   }
 
-  const BASE_URL = "http://10.61.38.193:8081";
+  const BASE_URL = "http://10.61.38.193:8080";
   const { formId } = useParams();
 
   const [formUrl] = useState(`http://10.61.38.193:3000/response/formId/${formId}`);
