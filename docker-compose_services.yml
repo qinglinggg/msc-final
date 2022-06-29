@@ -22,7 +22,7 @@ services:
       dockerfile: Jenkins-Dockerfile
     image: jenkins-docker
     ports:
-      - '8070:8081'
+      - '8070:8080'
     expose:
       - '8070'
     container_name: jenkins-service
