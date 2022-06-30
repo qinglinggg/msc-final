@@ -77,7 +77,6 @@ function Question(props) {
 
   useEffect(() => {
     let branch_check = false;
-    console.log("changes arrayoptions");
     if(!arrayOptions) return;
     for(let x=0; x<arrayOptions.length; x++){
       let currentData = arrayOptions[x];
@@ -268,7 +267,6 @@ function Question(props) {
 
   const handleOptionList = (id, data) => {
     setArrayOptions(arrayOptions => {
-      console.log(data);
       if(data.length == 0){
         handleAddOption(id, null, null);
         return [];
@@ -301,6 +299,22 @@ function Question(props) {
       return event.target.value;
     })
   };
+
+  const handleUpdateQuestionNav = (navIdx) => {
+    let currentForm = props.questionData;
+    if(navIdx <= 0) return;
+    else if(navIdx == props.formItems.length) navIdx = props.formItems.length;
+    currentForm["itemNumber"] = navIdx;
+    console.log(currentForm);
+    axios({
+      method: "put",
+      url: `${BASE_URL}/api/v1/forms/update-form-items/${props.questionData.id}`,
+      data: currentForm,
+      headers: { "Content-Type": "application/json" },
+    }).then((res) => {
+      props.handleUpdateLastEdited();
+    });
+  }
 
   const handleUpdateQuestionType = (event) => {
     let currentForm = props.questionData;
@@ -396,7 +410,12 @@ function Question(props) {
         {selectedQuestionOption == "CB" && checkBoxOption()}
         {selectedQuestionOption == "LS" && linearScaleOption()}
         <div className="question-padding">
-          <div className="question-isOptional-spacer"></div>
+          <div className="question-nav">
+            <span>Question No. {props.idx+1}</span>
+            <div className="spacer">|</div>
+            <ion-icon name="arrow-back-circle-outline" onClick={() => handleUpdateQuestionNav(props.questionData.itemNumber - 1)}></ion-icon>
+            <ion-icon name="arrow-forward-circle-outline" onClick={() => handleUpdateQuestionNav(props.questionData.itemNumber + 1)}></ion-icon>
+          </div>
           <div className="question-isOptional-container">
             <div className="question-isOptional-icon">
                 <i
@@ -431,8 +450,7 @@ function Question(props) {
                   className="popup-content"
                   onClick={() => {
                     props.onRemove(props.questionData.id);
-                  }}
-                >
+                  }}>
                   Remove Card
                 </div>
               </div>
