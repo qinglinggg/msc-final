@@ -13,15 +13,17 @@ public class FormRespondent {
     private Long submitDate;
     private Integer isTargeted;
     private Long inviteDate;
+    private Integer versionNo;
 
     // get 
-    public FormRespondent(String formRespondentId, String formId, String userId, Long submitDate, Integer isTargeted, Long inviteDate){
+    public FormRespondent(String formRespondentId, String formId, String userId, Long submitDate, Integer isTargeted, Long inviteDate, Integer versionNo){
         this.formRespondentId = UUID.fromString(formRespondentId);
         this.formId = UUID.fromString(formId);
         this.userId = UUID.fromString(userId);
         this.submitDate = submitDate;
         this.isTargeted = isTargeted;
         this.inviteDate = inviteDate;
+        this.versionNo = versionNo;
     }
 
     // create
@@ -37,6 +39,7 @@ public class FormRespondent {
             this.inviteDate = null;
         }
         this.isTargeted = isTargeted;
+        this.versionNo = 0;
     }
 
     public UUID getFormRespondentId() {
@@ -73,6 +76,10 @@ public class FormRespondent {
 
     public void setInviteDate() {
         this.inviteDate = System.currentTimeMillis();
+    }
+
+    public Integer getVersionNo() {
+        return this.versionNo;
     }
 
     // public String inviteDateToTimestamp()  {

@@ -6,7 +6,7 @@ import DateTimeService from './functional-components/services/DateTimeService';
 
 import dummyProfile from "./images/woman.jpg";
 
-const BASE_URL = "http://10.61.38.193:8081";
+const BASE_URL = "http://10.61.38.193:8080";
 
 function Respondent (props) {
   let { formId } = useParams();
@@ -836,9 +836,11 @@ function Respondent (props) {
       if(resIdx == formResponse.length - 1) localStorage.setItem("tempFormResponse", JSON.stringify([]));
     });
     localStorage.setItem("isSubmitted", JSON.stringify("true"));
+    let currentVersion = JSON.parse(localStorage.getItem("selectedForm")).versionNo;
     axios({
       method: "put",
-      url: `${BASE_URL}/api/v1/forms/submit-form/${formRespondentId}`
+      url: `${BASE_URL}/api/v1/forms/submit-form/${formRespondentId}`,
+      data: currentVersion,
     }).catch((error) => console.log(error));
   }
     

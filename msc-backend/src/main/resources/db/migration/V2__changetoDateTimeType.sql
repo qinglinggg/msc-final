@@ -6,5 +6,6 @@ CREATE TABLE Form (
     createDate BIGINT,
     modifyDate BIGINT,
     backgroundColor VARCHAR(25),
-    backgroundLink VARCHAR(100)
+    backgroundLink VARCHAR(100),
+    versionNo INT NOT NULL
 )

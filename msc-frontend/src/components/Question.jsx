@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from "react";
 import { v4 as uuid } from "uuid";
 import Option from "./Option";
 
-const BASE_URL = "http://10.61.38.193:8081";
+const BASE_URL = "http://10.61.38.193:8080";
 
 function Question(props) {
   const [selectedQuestionOption, setSelectedQuestionOption] = useState("");

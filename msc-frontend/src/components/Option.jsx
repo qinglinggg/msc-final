@@ -4,7 +4,7 @@ import Select from "react-select";
 import { useEffect } from 'react';
 import axios from 'axios';
 
-const BASE_URL = "http://10.61.38.193:8081";
+const BASE_URL = "http://10.61.38.193:8080";
 
 function Option(props) {
     const [value, setValue] = useState("");

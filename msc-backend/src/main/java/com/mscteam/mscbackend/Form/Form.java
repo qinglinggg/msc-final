@@ -12,9 +12,10 @@ public class Form implements Comparable<Form> {
     private Long modifyDate;
     private String backgroundLink;
     private String backgroundColor;
+    private Integer versionNo;
 
     // Get Forms
-    public Form(String formId, String title, String description, String privacySetting, Long createDate, Long modifyDate, String backgroundColor, String backgroundLink) {
+    public Form(String formId, String title, String description, String privacySetting, Long createDate, Long modifyDate, String backgroundColor, String backgroundLink, Integer versionNo) {
         this.formId = UUID.fromString(formId);
         this.title = title;
         this.description = description;
@@ -23,6 +24,7 @@ public class Form implements Comparable<Form> {
         this.modifyDate = modifyDate;
         this.backgroundLink = backgroundLink;
         this.backgroundColor = backgroundColor;
+        this.versionNo = versionNo;
     }
 
     // Create and Insert mode
@@ -35,6 +37,7 @@ public class Form implements Comparable<Form> {
         this.modifyDate = System.currentTimeMillis();
         this.backgroundLink = "";
         this.backgroundColor = "";
+        this.versionNo = 1;
     }
 
     public UUID getFormId(){
@@ -91,6 +94,14 @@ public class Form implements Comparable<Form> {
 
     public void setBackgroundColor(String color){
         this.backgroundColor = color;
+    }
+
+    public Integer getVersionNo() {
+        return this.versionNo;
+    }
+
+    public void setVersionNo(Integer versionNo) {
+        this.versionNo = versionNo;
     }
 
     @Override

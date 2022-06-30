@@ -19,7 +19,7 @@ import UpdateProfile from "./components/functional-components/UpdateProfile"
 import NotFound from "./components/NotFound";
 import DateTimeService from "./components/functional-components/services/DateTimeService";
 
-const BASE_URL = "http://10.61.38.193:8081";
+const BASE_URL = "http://10.61.38.193:8080";
 const APP_URL = "http://10.61.38.193:3001";
 
 class App extends React.Component {

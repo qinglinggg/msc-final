@@ -4,7 +4,7 @@ import dummyItemImage from "./images/form.png";
 import Popup from "reactjs-popup";
 import axios from "axios";
 
-const BASE_URL = "http://10.61.38.193:8081";
+const BASE_URL = "http://10.61.38.193:8080";
 class PageItems extends React.Component {
   constructor(props) {
     super(props);
