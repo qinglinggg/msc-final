@@ -309,10 +309,16 @@ function Dashboard(props) {
   }
 
   const handleResetResponses = () => {
+    let formMetadata = JSON.parse(localStorage.getItem("selectedForm"));
+    formMetadata.versionNo = formMetadata.versionNo + 1;
+    console.log(formMetadata);
     axios({
-      method: "delete",
-      url: `${BASE_URL}/api/v1/forms/delete-all-resp/${formId}`
+      method: "put",
+      url: `${BASE_URL}/api/v1/forms/${formId}`,
+      data: formMetadata,
+      headers: { "Content-Type" : "application/json" }
     }).then(() => {
+      localStorage.setItem("selectedForm", JSON.stringify(formMetadata));
       setHasResponse(false);
     });
   }

@@ -255,8 +255,8 @@ public class FormService {
     // }
 
 
-    public int submitForm(String formRespondentId){
-        return formDAO.submitForm(formRespondentId);
+    public int submitForm(String formRespondentId, Integer versionNo){
+        return formDAO.submitForm(formRespondentId, versionNo);
     }
 
     public List<UserProfile> getFormAuthors(String formId){

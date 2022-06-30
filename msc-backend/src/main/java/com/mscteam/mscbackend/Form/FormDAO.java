@@ -35,7 +35,8 @@ public class FormDAO {
             String backgroundLink = resultSet.getString("backgroundLink");
             Long createDate = resultSet.getLong("createDate");
             Long modifyDate = resultSet.getLong("modifyDate");
-            return new Form(formId, title, description, privacySetting, createDate, modifyDate, backgroundColor, backgroundLink);
+            Integer versionNo = resultSet.getInt("versionNo");
+            return new Form(formId, title, description, privacySetting, createDate, modifyDate, backgroundColor, backgroundLink, versionNo);
         });
         return formList;
     }
@@ -51,16 +52,17 @@ public class FormDAO {
             String backgroundLink = resultSet.getString("backgroundLink");
             Long createDate = resultSet.getLong("createDate");
             Long modifyDate = resultSet.getLong("modifyDate");
-            return new Form(formId, title, description, privacySetting, createDate, modifyDate, backgroundColor, backgroundLink);
+            Integer versionNo = resultSet.getInt("versionNo");
+            return new Form(formId, title, description, privacySetting, createDate, modifyDate, backgroundColor, backgroundLink, versionNo);
         }, id);
         if(form.isEmpty()) return Optional.ofNullable(null);
         return Optional.ofNullable(form.get(0));
     }
 
     public Form insertForm(Form form) {
-        final String query = "INSERT INTO Form VALUES (?,?,?,?,?,?,?,?)";
+        final String query = "INSERT INTO Form VALUES (?,?,?,?,?,?,?,?,?)";
         int res = jdbcTemplate.update(query, form.getFormId().toString(), form.getTitle(), form.getDescription(),
-                form.getPrivacySetting(), form.getCreateDate(), form.getModifyDate(), form.getBackgroundColor(), form.getBackgroundLink());
+                form.getPrivacySetting(), form.getCreateDate(), form.getModifyDate(), form.getBackgroundColor(), form.getBackgroundLink(), form.getVersionNo());
         return form;
     }
 
@@ -139,6 +141,15 @@ public class FormDAO {
                 query += ",";
             }
             query += " backgroundLink = '" + toBeUpdated.getBackgroundLink() + "'";
+        }
+        if(toBeUpdated.getVersionNo() != null){
+            if (firstCheck == false) {
+                query += "";
+                firstCheck = true;
+            } else {
+                query += ",";
+            }
+            query += " versionNo = '" + toBeUpdated.getVersionNo() + "'";
         }
         query += " WHERE formId = ?";
         System.out.println(query);
@@ -293,8 +304,8 @@ public class FormDAO {
     }
 
     public String insertFormRespondent(String formId, FormRespondent formRespondent){
-        final String query = "INSERT INTO FormRespondent (formRespondentId, formId, userId, submitDate, isTargeted) VALUES (?,?,?,?,?)";
-        int res = jdbcTemplate.update(query, formRespondent.getFormRespondentId().toString(), formId, formRespondent.getUserId().toString(), formRespondent.getSubmitDate(), formRespondent.getIsTargeted());
+        final String query = "INSERT INTO FormRespondent (formRespondentId, formId, userId, submitDate, isTargeted, versionNo) VALUES (?,?,?,?,?,?)";
+        int res = jdbcTemplate.update(query, formRespondent.getFormRespondentId().toString(), formId, formRespondent.getUserId().toString(), formRespondent.getSubmitDate(), formRespondent.getIsTargeted(), formRespondent.getVersionNo());
         return formRespondent.getFormRespondentId().toString();
     }
 
@@ -305,7 +316,8 @@ public class FormDAO {
             Long submitDate = resultSet.getLong("submitDate");
             Integer isTargeted = resultSet.getInt("isTargeted");
             Long inviteDate = resultSet.getLong("inviteDate");
-            return new FormRespondent(formRespondentId, formId, userId, submitDate, isTargeted, inviteDate);
+            Integer versionNo = resultSet.getInt("versionNo");
+            return new FormRespondent(formRespondentId, formId, userId, submitDate, isTargeted, inviteDate, versionNo);
         }, formId, userId);
         return formRespondent.get(0);
     }
@@ -366,7 +378,8 @@ public class FormDAO {
             Long submitDate = resultSet.getLong("submitDate");
             Integer isTargeted = resultSet.getInt("isTargeted");
             Long inviteDate = resultSet.getLong("inviteDate");
-            return new FormRespondent(formRespondentId, formId, userId, submitDate, isTargeted, inviteDate);
+            Integer versionNo = resultSet.getInt("versionNo");
+            return new FormRespondent(formRespondentId, formId, userId, submitDate, isTargeted, inviteDate, versionNo);
         }, formId);
 
         return formTargetedUserList;
@@ -380,7 +393,8 @@ public class FormDAO {
             Long submitDate = resultSet.getLong("submitDate");
             Integer isTargeted = resultSet.getInt("isTargeted");
             Long inviteDate = resultSet.getLong("inviteDate");
-            return new FormRespondent(formRespondentId, formId, userId, submitDate, isTargeted, inviteDate); 
+            Integer versionNo = resultSet.getInt("versionNo");
+            return new FormRespondent(formRespondentId, formId, userId, submitDate, isTargeted, inviteDate, versionNo); 
         }, userId);
 
         return invitedFormList;
@@ -388,8 +402,8 @@ public class FormDAO {
 
     public int insertTargetedUser(String formId, String userId){
         FormRespondent targetedUser = new FormRespondent(formId, userId, 1);
-        final String query = "INSERT INTO FormRespondent VALUES (?,?,?,?,?,?)";
-        int res = jdbcTemplate.update(query, targetedUser.getFormRespondentId().toString(), targetedUser.getFormId().toString(), targetedUser.getUserId().toString(), targetedUser.getSubmitDate(), targetedUser.getIsTargeted(), targetedUser.getInviteDate());
+        final String query = "INSERT INTO FormRespondent VALUES (?,?,?,?,?,?,?)";
+        int res = jdbcTemplate.update(query, targetedUser.getFormRespondentId().toString(), targetedUser.getFormId().toString(), targetedUser.getUserId().toString(), targetedUser.getSubmitDate(), targetedUser.getIsTargeted(), targetedUser.getInviteDate(), targetedUser.getVersionNo());
         return res;
     }
 
@@ -403,19 +417,12 @@ public class FormDAO {
         int res = jdbcTemplate.update(query, formRespondentId);
         return res;
     }
-    // cuma untuk keperluan testing
+
     public int forceDeleteFormRespondent(String formId, String userId){
         final String query = "DELETE FROM FormRespondent WHERE formId = ? AND userId = ?";
         int res = jdbcTemplate.update(query, formId, userId);
         return res;
     }
-
-    // public int updateModifyDate(String formId){
-    //     final String query = "UPDATE Form SET modifyDate = ? WHERE formId = ?";
-    //     Long modifyDate = System.currentTimeMillis();
-    //     int res = jdbcTemplate.update(query, modifyDate, formId);
-    //     return res;
-    // }
 
     public String getFormIdByFormItemsId(String formItemsId){
         final String query = "SELECT formId FROM FormItems WHERE formItemsId = ?";
@@ -429,10 +436,10 @@ public class FormDAO {
         return res;
     }
 
-    public int submitForm(String formRespondentId){
-        final String query = "UPDATE FormRespondent SET submitDate = ? WHERE formRespondentId = ?";
+    public int submitForm(String formRespondentId, Integer versionNo){
+        final String query = "UPDATE FormRespondent SET submitDate = ?, versionNo = ? WHERE formRespondentId = ?";
         Long submitDate = System.currentTimeMillis();
-        int res = jdbcTemplate.update(query, submitDate, formRespondentId);
+        int res = jdbcTemplate.update(query, submitDate, versionNo, formRespondentId);
         return res;
     }
 

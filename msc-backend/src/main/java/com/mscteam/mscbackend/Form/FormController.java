@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.print.attribute.standard.Media;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -213,8 +211,8 @@ public class FormController {
     }
 
     @PutMapping(path="/submit-form/{formRespondentId}")
-    public int submitForm(@PathVariable("formRespondentId") String formRespondentId){
-        return formService.submitForm(formRespondentId);
+    public int submitForm(@PathVariable("formRespondentId") String formRespondentId, @RequestBody Integer versionNo){
+        return formService.submitForm(formRespondentId, versionNo);
     }
     
     @GetMapping(path="/get-form-authors/{formId}")
