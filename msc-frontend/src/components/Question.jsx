@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from "react";
 import { v4 as uuid } from "uuid";
 import Option from "./Option";
 
-const BASE_URL = "http://10.61.38.193:8080";
+const BASE_URL = "http://localhost:8080";
 
 function Question(props) {
   const [selectedQuestionOption, setSelectedQuestionOption] = useState("");
@@ -312,6 +312,7 @@ function Question(props) {
       data: currentForm,
       headers: { "Content-Type": "application/json" },
     }).then((res) => {
+      props.getFormItems(true);
       props.handleUpdateLastEdited();
     });
   }

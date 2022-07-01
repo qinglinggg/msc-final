@@ -13,7 +13,7 @@ public class FormRespondent {
     private Long submitDate;
     private Integer isTargeted;
     private Long inviteDate;
-    private Integer versionNo;
+    private Integer versionNo = 1; // acts as default value
 
     // get 
     public FormRespondent(String formRespondentId, String formId, String userId, Long submitDate, Integer isTargeted, Long inviteDate, Integer versionNo){
@@ -23,11 +23,12 @@ public class FormRespondent {
         this.submitDate = submitDate;
         this.isTargeted = isTargeted;
         this.inviteDate = inviteDate;
-        this.versionNo = versionNo;
+        if(versionNo != null) this.versionNo = versionNo;
     }
 
     // create
-    public FormRespondent(@JsonProperty("formId") String formId, @JsonProperty("userId") String userId, @JsonProperty("isTargeted") Integer isTargeted){
+    public FormRespondent(@JsonProperty("formId") String formId, @JsonProperty("userId") String userId,
+        @JsonProperty("isTargeted") Integer isTargeted, @JsonProperty("versionNo") Integer versionNo){
         this.formRespondentId = UUID.randomUUID();
         this.formId = UUID.fromString(formId);
         this.userId = UUID.fromString(userId);
@@ -39,7 +40,7 @@ public class FormRespondent {
             this.inviteDate = null;
         }
         this.isTargeted = isTargeted;
-        this.versionNo = 0;
+        if(versionNo != null) this.versionNo = versionNo;
     }
 
     public UUID getFormRespondentId() {

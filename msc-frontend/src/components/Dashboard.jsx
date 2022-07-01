@@ -11,7 +11,7 @@ import Respondent from "./Respondent";
 import DateTimeService from "./functional-components/services/DateTimeService";
 import ProfilePicture from "./functional-components/ProfilePicture";
 
-const BASE_URL = "http://10.61.38.193:8080";
+const BASE_URL = "http://localhost:8080";
 function Dashboard(props) {
   const [showTutorial, setShowTutorial] = useState(false);
   const [openVisibility, setOpenVisibility] = useState(false);
@@ -150,7 +150,7 @@ function Dashboard(props) {
     });
   }
 
-  const getFormItems = () => {
+  const getFormItems = (isUpdated) => {
     axios({
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`,
@@ -167,7 +167,7 @@ function Dashboard(props) {
         tempItems.push(newItem);
       });
       setFormItems(formItems => {
-        if(formItems.length == 0 || tempItems.length != formItems.length) return tempItems;
+        if(formItems.length == 0 || tempItems.length != formItems.length || isUpdated) return tempItems;
         return formItems;
       });
       return tempItems;
@@ -218,7 +218,7 @@ function Dashboard(props) {
     let currentInterval = [...intervalObj];
     let interval = setInterval(() => {
       getLastEdited();
-      getFormItems();
+      getFormItems(false);
     }, 1500);
     currentInterval.push(interval);
     setIntervalObj(currentInterval);
@@ -339,6 +339,7 @@ function Dashboard(props) {
                   questionData={res}
                   mode={true}
                   onRemove={handleRemoveItem}
+                  getFormItems={getFormItems}
                   handleUpdatedList={handleUpdatedList}
                   handleUpdateLastEdited={handleUpdateLastEdited}
                 />
