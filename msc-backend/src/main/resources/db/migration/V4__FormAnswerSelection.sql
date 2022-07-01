@@ -6,6 +6,7 @@ CREATE TABLE FormAnswerSelection (
     answerSelectionValue VARCHAR(255),
     nextItem INT NULL,
     prevItem INT NULL,
+    versionNo INT NOT NULL,
     CONSTRAINT formAnswerSelectionPK PRIMARY KEY (answerSelectionId),
     CONSTRAINT formAnswerSelectionFK FOREIGN KEY (formItemsId) REFERENCES FormItems(formItemsId)
         ON UPDATE CASCADE ON DELETE CASCADE

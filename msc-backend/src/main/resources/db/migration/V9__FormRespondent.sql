@@ -2,7 +2,7 @@ CREATE TABLE FormRespondent (
     formRespondentId VARCHAR(100) NOT NULL,
     formId VARCHAR(100) NOT NULL,
     userId VARCHAR(100) NOT NULL,
-    versionNo INT,
+    versionNo INT NOT NULL,
     submitDate BIGINT,
     isTargeted INT,
     inviteDate BIGINT,

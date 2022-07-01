@@ -12,10 +12,11 @@ public class FormAnswerSelection implements Comparable<FormAnswerSelection> {
     private Integer answerSelectionNo;
     private int nextItem;
     private int prevItem;
+    private Integer versionNo;
 
     // Get Items
     public FormAnswerSelection(UUID formItemsId, UUID answerSelectionId, Integer answerSelectionNo, String answerSelectionLabel,
-            String answerSelectionValue, int nextItem, int prevItem) {
+            String answerSelectionValue, int nextItem, int prevItem, Integer versionNo) {
         this.formItemsId = formItemsId;
         this.answerSelectionId = answerSelectionId;
         this.answerSelectionNo = answerSelectionNo;
@@ -23,13 +24,15 @@ public class FormAnswerSelection implements Comparable<FormAnswerSelection> {
         this.answerSelectionValue = answerSelectionValue;
         this.nextItem = nextItem;
         this.prevItem = prevItem;
+        this.versionNo = versionNo;
     }
 
     // Create and Insert Mode
     public FormAnswerSelection(@JsonProperty("formItemsId") UUID formItemsId, 
             @JsonProperty("no") Integer answerSelectionNo,
             @JsonProperty("label") String answerSelectionLabel,
-            @JsonProperty("value") String answerSelectionValue) {
+            @JsonProperty("value") String answerSelectionValue,
+            @JsonProperty("versionNo") Integer versionNo) {
         this.formItemsId = formItemsId;
         this.answerSelectionId = UUID.randomUUID();
         this.answerSelectionNo = answerSelectionNo;
@@ -37,6 +40,7 @@ public class FormAnswerSelection implements Comparable<FormAnswerSelection> {
         this.answerSelectionValue = answerSelectionValue;
         this.prevItem = -1; // Jika -1, maka display item yang sekarang...
         this.nextItem = -1;
+        this.versionNo = versionNo;
     }
 
     public UUID getFormItemsId() {
@@ -85,6 +89,14 @@ public class FormAnswerSelection implements Comparable<FormAnswerSelection> {
 
     public void setPrevItem(int val) {
         this.prevItem = val;
+    }
+
+    public Integer getVersionNo(){
+        return this.versionNo;
+    }
+
+    public void setVersionNo(Integer versionNo) {
+        this.versionNo = versionNo;
     }
 
     @Override

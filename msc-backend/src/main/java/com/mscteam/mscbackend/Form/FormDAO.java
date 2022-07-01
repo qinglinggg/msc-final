@@ -176,8 +176,9 @@ public class FormDAO {
             String questionContent = resultSet.getString("questionContent");
             String questionType = resultSet.getString("questionType");
             Integer isRequired = Integer.parseInt(resultSet.getString("isRequired"));
+            Integer versionNo = resultSet.getInt("versionNo");
             return new FormItems(UUID.fromString(formId), UUID.fromString(formItemsId), itemNumber, questionContent,
-                questionType, isRequired);
+                questionType, isRequired, versionNo);
         }, id);
         System.out.println(formItems);
         return formItems;
@@ -192,8 +193,9 @@ public class FormDAO {
             String questionContent = resultSet.getString("questionContent");
             String questionType = resultSet.getString("questionType");
             Integer isRequired = Integer.parseInt(resultSet.getString("isRequired"));
+            Integer versionNo = resultSet.getInt("versionNo");
             return new FormItems(UUID.fromString(formId), UUID.fromString(formItemsId), itemNumber, questionContent, 
-            questionType, isRequired);
+            questionType, isRequired, versionNo);
         }, id);
         return formItem;
     }
@@ -297,8 +299,9 @@ public class FormDAO {
             String answerSelectionValue = resultSet.getString("answerSelectionValue");
             int nextItem = resultSet.getInt("nextItem");
             int prevItem = resultSet.getInt("prevItem");
+            Integer versionNo = resultSet.getInt("versionNo");
             return new FormAnswerSelection(UUID.fromString(formItemsId), UUID.fromString(answerSelectionId),
-                    answerSelectionNo, answerSelectionLabel, answerSelectionValue, nextItem, prevItem);
+                    answerSelectionNo, answerSelectionLabel, answerSelectionValue, nextItem, prevItem, versionNo);
         }, id);
         return formAnswerSelections;
     }
@@ -473,7 +476,8 @@ public class FormDAO {
             String answerSelectionValue = resultSet.getString("answerSelectionValue");
             Integer prevItem = resultSet.getInt("prevItem");
             Integer nextItem = resultSet.getInt("nextItem");
-            return new FormAnswerSelection(UUID.fromString(formItemsId), UUID.fromString(answerSelectionId), answerSelectionNo, answerSelectionLabel, answerSelectionValue, nextItem, prevItem);
+            Integer versionNo = resultSet.getInt("versionNo");
+            return new FormAnswerSelection(UUID.fromString(formItemsId), UUID.fromString(answerSelectionId), answerSelectionNo, answerSelectionLabel, answerSelectionValue, nextItem, prevItem, versionNo);
         }, answerSelectionId);
         if(res.size() > 0) return res.get(0);
         return null;

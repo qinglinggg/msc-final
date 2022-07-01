@@ -10,26 +10,28 @@ public class FormItems implements Comparable<FormItems>{
     private String questionContent;
     private String questionType;
     private Integer isRequired;
-
+    private Integer versionNo;
 
     // Get Items
-    public FormItems(UUID formId, UUID formItemsId, int itemNumber, String questionContent, String questionType, Integer isRequired) {
+    public FormItems(UUID formId, UUID formItemsId, int itemNumber, String questionContent, String questionType, Integer isRequired, Integer versionNo) {
         this.formId = formId;
         this.formItemsId = formItemsId;
         this.itemNumber = itemNumber;
         this.questionContent = questionContent;
         this.questionType = questionType;
         this.isRequired = isRequired;
+        this.versionNo = versionNo;
     }
 
     // Create and Insert mode
-    public FormItems(@JsonProperty("formId") UUID formId, @JsonProperty("itemNumber") int itemNumber, @JsonProperty("questionContent") String questionContent, @JsonProperty("questionType") String questionType) {
+    public FormItems(@JsonProperty("formId") UUID formId, @JsonProperty("itemNumber") int itemNumber, @JsonProperty("questionContent") String questionContent, @JsonProperty("questionType") String questionType, @JsonProperty("versionNo") Integer versionNo) {
         this.formId = formId;
         this.formItemsId = UUID.randomUUID();
         this.itemNumber = itemNumber;
         this.questionContent = questionContent;
         this.questionType = questionType;
         this.isRequired = 0;
+        this.versionNo = versionNo;
     }
 
     public UUID getFormId() {
@@ -70,6 +72,14 @@ public class FormItems implements Comparable<FormItems>{
 
     public void setIsRequired(Integer isRequired){
         this.isRequired = isRequired;
+    }
+
+    public Integer getVersionNo(){
+        return this.versionNo;
+    }
+
+    public void setVersionNo(Integer versionNo) {
+        this.versionNo = versionNo;
     }
 
     @Override
