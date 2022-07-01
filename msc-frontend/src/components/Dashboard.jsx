@@ -11,7 +11,7 @@ import Respondent from "./Respondent";
 import DateTimeService from "./functional-components/services/DateTimeService";
 import ProfilePicture from "./functional-components/ProfilePicture";
 
-const BASE_URL = "http://10.61.38.193:8080";
+const BASE_URL = "http://localhost:8080";
 function Dashboard(props) {
   const [showTutorial, setShowTutorial] = useState(false);
   const [openVisibility, setOpenVisibility] = useState(false);
@@ -255,11 +255,13 @@ function Dashboard(props) {
 
   const handleAddItem = () => {
     let currentStateData = [...formItems];
+    let version = JSON.parse(localStorage.getItem("selectedForm")).versionNo;
     try {
       let newItem = {
         itemNumber: -1,
         questionContent: "",
-        questionType: "MC"
+        questionType: "MC",
+        versionNo: version
       };
       axios({
         method: "post",
@@ -271,7 +273,8 @@ function Dashboard(props) {
           id: res.data.id,
           itemNumber: res.data.itemNumber,
           questionContent: res.data.content,
-          questionType: res.data.type
+          questionType: res.data.type,
+          versionNo: res.data.versionNo,
         };
         currentStateData.push(newItem);
       }).finally(() => {

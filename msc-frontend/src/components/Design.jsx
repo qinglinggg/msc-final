@@ -5,7 +5,7 @@ import UploadImage from "./functional-components/UploadImage";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
-const BASE_URL = "http://10.61.38.193:8080";
+const BASE_URL = "http://localhost:8080";
 
 function Design(props) {
   const [selectedBackground, setSelectedBackground] = useState("");

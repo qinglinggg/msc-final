@@ -6,7 +6,7 @@ import DateTimeService from './functional-components/services/DateTimeService';
 
 import dummyProfile from "./images/woman.jpg";
 
-const BASE_URL = "http://10.61.38.193:8080";
+const BASE_URL = "http://localhost:8080";
 
 function Respondent (props) {
   let { formId } = useParams();

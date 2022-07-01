@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from "react";
 import { v4 as uuid } from "uuid";
 import Option from "./Option";
 
-const BASE_URL = "http://10.61.38.193:8080";
+const BASE_URL = "http://localhost:8080";
 
 function Question(props) {
   const [selectedQuestionOption, setSelectedQuestionOption] = useState("");
@@ -223,9 +223,12 @@ function Question(props) {
   }
 
   const handleAddOption = async (id, iterCount, finalCount) => {
+    let version = JSON.parse(localStorage.getItem("selectedForm")).versionNo;
     let obj = {};
     obj["formItemsId"] = id;
     obj["value"] = "";
+    obj["versionNo"] = version;
+    
     if(finalCount != null && finalCount == iterCount) return;
     if(!finalCount) {
       iterCount = 0;

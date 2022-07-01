@@ -158,9 +158,9 @@ public class FormDAO {
     }
 
     public FormItems addFormItems(String id, FormItems item) {
-        final String query = "INSERT INTO FormItems(formId, formItemsId, itemNumber, questionContent, questionType, isRequired) VALUES(?,?,?,?,?,?)";
+        final String query = "INSERT INTO FormItems(formId, formItemsId, itemNumber, questionContent, questionType, isRequired, versionNo) VALUES(?,?,?,?,?,?,?)";
         int res = jdbcTemplate.update(query, id, item.getId().toString(), item.getItemNumber(), item.getContent(),
-                item.getType(), item.getIsRequired());
+                item.getType(), item.getIsRequired(), item.getVersionNo());
         System.out.println(item);
         return item;
     }
@@ -251,10 +251,10 @@ public class FormDAO {
             FormAnswerSelection answerSelection) {
         answerSelection.setNo(answerSelectionNo + 1);
         answerSelection.setLabel("Option " + answerSelection.getNo());
-        final String query = "INSERT INTO FormAnswerSelection(formItemsId, answerSelectionId, answerSelectionNo, answerSelectionLabel, answerSelectionValue, nextItem, prevItem) VALUES(?,?,?,?,?,?,?)";
+        final String query = "INSERT INTO FormAnswerSelection(formItemsId, answerSelectionId, answerSelectionNo, answerSelectionLabel, answerSelectionValue, nextItem, prevItem, versionNo) VALUES(?,?,?,?,?,?,?,?)";
         int res = jdbcTemplate.update(query, id, answerSelection.getId().toString(), answerSelection.getNo(),
                 answerSelection.getLabel(),
-                answerSelection.getValue(), answerSelection.getNextItem(), answerSelection.getPrevItem());
+                answerSelection.getValue(), answerSelection.getNextItem(), answerSelection.getPrevItem(), answerSelection.getVersionNo());
         return answerSelection;
     }
 
@@ -498,7 +498,7 @@ public class FormDAO {
         return res;
     }
 
-    public FormLastEdited getLastEdited(String formId){
+    public FormLastEdited getLastEdited(String formId){ 
         final String query = "SELECT * FROM FormLastEdited WHERE formId = ?";
         List<FormLastEdited> res = jdbcTemplate.query(query, (resultSet, i) -> {
             String lastEditedId = resultSet.getString("lastEditedId");
