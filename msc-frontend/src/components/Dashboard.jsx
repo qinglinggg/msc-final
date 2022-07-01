@@ -335,6 +335,7 @@ function Dashboard(props) {
                 <Question
                   key={"questionInner-" + res.id}
                   formItems={formItems}
+                  idx={idx}
                   questionData={res}
                   mode={true}
                   onRemove={handleRemoveItem}

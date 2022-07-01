@@ -235,6 +235,7 @@ public class FormDAO {
         System.out.println("updateFormItems FormDAO masuk");
         String query = "UPDATE FormItems SET ";
         query = query + "questionContent = '" + toBeUpdated.getContent().toString() + "', ";
+        query = query + "itemNumber = '" + toBeUpdated.getItemNumber() + "', ";
         if (toBeUpdated.getType() != "" && toBeUpdated.getType() != null) {
             query = query + "questionType = '" + toBeUpdated.getType().toString() + "', ";
         }

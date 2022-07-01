@@ -51,7 +51,6 @@ function Question(props) {
       }
     }
     if (props.mode) {
-      console.log("mounted");
       setQuestionContent(props.questionData.questionContent);
       setQuestionType(props.questionData.questionType);
       handleInterval();
@@ -119,11 +118,6 @@ function Question(props) {
     }
     setTimeout(() => props.handleUpdatedList(props.questionIdx, true), 1000)
   }, [questionType]);
-
-  // useEffect(() => {
-  //   console.log(intervalObj);
-  // }, [intervalObj]);
-
 
   const handleStyling = () => {
     let elem = document.getElementById("question-" + props.questionData.id);
@@ -250,7 +244,6 @@ function Question(props) {
   };
 
   const handleRemoveOption = (optionId) => {
-    if(arrayOptions.length <= 1) return;
     axios({
       method: "delete",
       url: `${BASE_URL}/api/v1/forms/remove-answer-selection/${optionId}`,
@@ -276,6 +269,7 @@ function Question(props) {
     setArrayOptions(arrayOptions => {
       if(data.length == 0){
         handleAddOption(id, null, null);
+        return [];
       } else {
         if(arrayOptions.length == 0 || data.length != arrayOptions.length) return data;
       }
@@ -285,6 +279,7 @@ function Question(props) {
 
   const handleUpdateQuestionInput = (event) => {
     let currentForm = props.questionData;
+    event.persist();
     currentForm["questionContent"] = event.target.value;
     try {
       axios({
@@ -299,10 +294,27 @@ function Question(props) {
       console.log(error);
     }
     setQuestionContent((content) => {
+      if(!event.target) return content;
       console.log("content", event.target.value);
       return event.target.value;
     })
   };
+
+  const handleUpdateQuestionNav = (navIdx) => {
+    let currentForm = props.questionData;
+    if(navIdx <= 0) return;
+    else if(navIdx == props.formItems.length) navIdx = props.formItems.length;
+    currentForm["itemNumber"] = navIdx;
+    console.log(currentForm);
+    axios({
+      method: "put",
+      url: `${BASE_URL}/api/v1/forms/update-form-items/${props.questionData.id}`,
+      data: currentForm,
+      headers: { "Content-Type": "application/json" },
+    }).then((res) => {
+      props.handleUpdateLastEdited();
+    });
+  }
 
   const handleUpdateQuestionType = (event) => {
     let currentForm = props.questionData;
@@ -343,7 +355,6 @@ function Question(props) {
 
   const displayQuestion = () => {
     let textareaId = "question-input-" + props.questionData.id;
-    let elem = document.getElementById("question-" + props.questionData.id);
     return (
       <React.Fragment>
         <div className="question-area">
@@ -399,7 +410,12 @@ function Question(props) {
         {selectedQuestionOption == "CB" && checkBoxOption()}
         {selectedQuestionOption == "LS" && linearScaleOption()}
         <div className="question-padding">
-          <div className="question-isOptional-spacer"></div>
+          <div className="question-nav">
+            <span>Question No. {props.idx+1}</span>
+            <div className="spacer">|</div>
+            <ion-icon name="arrow-back-circle-outline" onClick={() => handleUpdateQuestionNav(props.questionData.itemNumber - 1)}></ion-icon>
+            <ion-icon name="arrow-forward-circle-outline" onClick={() => handleUpdateQuestionNav(props.questionData.itemNumber + 1)}></ion-icon>
+          </div>
           <div className="question-isOptional-container">
             <div className="question-isOptional-icon">
                 <i
@@ -434,8 +450,7 @@ function Question(props) {
                   className="popup-content"
                   onClick={() => {
                     props.onRemove(props.questionData.id);
-                  }}
-                >
+                  }}>
                   Remove Card
                 </div>
               </div>
@@ -448,7 +463,7 @@ function Question(props) {
 
   const multipleChoiceOption = () => {
     return (
-      <React.Fragment key={uuid()}>
+      <React.Fragment key={"fragment-opt-key" + props.questionData.id}>
         <div id="answer-selection-container">
           {arrayOptions && arrayOptions.length > 0
             ? arrayOptions.map((obj, idx) => {
@@ -458,7 +473,7 @@ function Question(props) {
                 return (
                   <React.Fragment key={optionId}>
                     <Option 
-                      key={uuid()}
+                      key={"opt-key-" + optionId}
                       idx={idx}
                       optionId={optionId}
                       obj={obj}
@@ -486,7 +501,7 @@ function Question(props) {
 
   const displayNewOptionMultipleChoice = () => {
     return (
-      <React.Fragment key={uuid()}>
+      <React.Fragment key={"new-opt-key" + props.questionData.id}>
         <input type="radio" className="answerSelection" disabled />
         <input
           className="inputText"
@@ -505,16 +520,16 @@ function Question(props) {
   const checkBoxOption = () => {
     // console.log(uuid());
     return (
-      <React.Fragment key={uuid()}>
+      <React.Fragment key={"fragment-opt-key" + props.questionData.id}>
         <div id="answer-selection-container">
           {/* nilai true untuk pertama kali */}
-          {arrayOptions
+          {arrayOptions && arrayOptions.length > 0
             ? arrayOptions.map((obj, idx) => {
                 let optionId =
                   "question-" + props.questionData.id + "-options-" + obj.id;
                 return (
                   <Option 
-                    key={uuid()}
+                    key={"opt-key-" + optionId}
                     idx={idx}
                     optionId={optionId}
                     obj={obj}
@@ -535,7 +550,7 @@ function Question(props) {
 
   const displayNewOptionCheckbox = () => {
     return (
-      <React.Fragment>
+      <React.Fragment key={"new-opt-key" + props.questionData.id}>
         <input type="checkbox" className="answerSelection" disabled />
         <input
           className="inputText"
@@ -553,7 +568,7 @@ function Question(props) {
 
   const linearScaleOption = () => {
     return (
-      <React.Fragment key={uuid()}>
+      <React.Fragment key={"fragment-opt-key" + props.questionData.id}>
         <div className="linear-container">
           <div className="linear-input-container">
             <div className="linear-title" id="linear-title-input">
@@ -596,7 +611,7 @@ function Question(props) {
                   "question-" + props.questionData.id + "-options-" + obj.id;
                 return (
                   <Option 
-                    key={uuid()}
+                    key={"opt-key-" + optionId}
                     idx={idx}
                     optionId={optionId}
                     obj={obj}
@@ -617,7 +632,7 @@ function Question(props) {
 
   const shortAnswerOption = () => {
     return (
-      <div id="shortanswer-container" key={uuid()}>
+      <div id="shortanswer-container" key={"new-opt-key" + props.questionData.id}>
         <input
           type="text"
           className="inputText"

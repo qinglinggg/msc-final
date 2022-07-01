@@ -3,6 +3,7 @@ import AutoHeightTextarea from "./functional-components/AutoheightTextarea";
 import Select from "react-select";
 import { useEffect } from 'react';
 import axios from 'axios';
+import { useRef } from 'react';
 
 const BASE_URL = "http://10.61.38.193:8080";
 
@@ -15,11 +16,14 @@ function Option(props) {
         handleInterval();
         let elem = document.getElementById(props.optionId);
         if(!elem) return;
+        console.log("mounted option");
         if (props.questionType != "LS"){
+            console.log("cek masuk 1")
             setValue(props.obj.value);
             if(elem.value != props.obj.value) elem.value = props.obj.value;
         }
         else {
+            console.log("cek masuk")
             setValue(props.obj.label);
             if(elem.value != props.obj.label) elem.value = "";
         }
@@ -42,19 +46,19 @@ function Option(props) {
 
     useEffect(() => {
         if(!props.prevBranchSelection) return;
-        if (props.branchingState && props.prevBranchSelection.current.length > 0 && props.mode) {
-        handleOptionValue(-1, true);
-        }
+        if (props.branchingState && props.prevBranchSelection.current.length > 0 && props.mode) handleOptionValue(-1, true);
     }, [props.branchingState]);
 
     useEffect(() => {
+        // if(!props.obj) return;
         let el = document.getElementById(props.optionId);
         if(!el) return;
         if(value != undefined && el.value != value) {
-            if(value != ("Option " + (props.idx+1))) el.value = value;
-            else el.value = "";
+            if(value != ("Option " + (props.idx+1))) {
+                el.value = value;
+            }
+            autoResizeContent(el);
         }
-        autoResizeContent(el);
     }, [value]);
 
     const handleInterval = () => {
@@ -73,10 +77,16 @@ function Option(props) {
     
     const removeInterval = () => {
         setIntervalObj(intervalObj => {
-          intervalObj.map((value) => clearInterval(value));
+          intervalObj.map((obj) => clearInterval(obj));
           return [];
         });
     }
+
+    useEffect(() => {
+        let el = document.getElementById(props.optionId);
+        if(props.questionType != "LS" && value != ("Option " + (props.idx+1))) el.value = value;
+        else el.value = "";
+    }, [props.arrayOptions]);
 
     const setOptionValue = () => {
         let validator = false;
@@ -94,9 +104,8 @@ function Option(props) {
                 if(props.questionType != "LS") resValue = res.data.value;
                 else resValue = res.data.label;
                 if(value != resValue) {
-                    let selectedValue = resValue;
                     if(resValue != undefined) props.handleStyling();
-                    return selectedValue;
+                    return resValue;
                 }
                 return value;
             });
@@ -104,6 +113,7 @@ function Option(props) {
     }
 
     const handleOptionValue = async (event, nextToggle) => {
+        event.persist();
         let input = null;
         if(event.target){
             input = event.target.value;
@@ -129,6 +139,7 @@ function Option(props) {
     };
 
     const handleOptionLabel = async (event, index) => {
+        event.persist();
         let input = event.target.value;
         let tempObj = props.obj;
         tempObj.label = input;
@@ -185,7 +196,7 @@ function Option(props) {
                         }
                         }}
                         onChange={(e) => {
-                        handleOptionValue(e, true);
+                            handleOptionValue(e, true);
                         }}/>
                     ) : null}
                     <div className="form-item-remove"
