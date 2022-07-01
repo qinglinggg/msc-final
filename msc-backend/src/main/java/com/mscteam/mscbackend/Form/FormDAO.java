@@ -159,7 +159,7 @@ public class FormDAO {
 
     public FormItems addFormItems(String id, FormItems item) {
         final String query = "INSERT INTO FormItems(formId, formItemsId, itemNumber, questionContent, questionType, isRequired, versionNo) VALUES(?,?,?,?,?,?,?)";
-        int res = jdbcTemplate.update(query, id, item.getId().toString(), item.getItemNumber(), item.getContent(),
+        jdbcTemplate.update(query, id, item.getId().toString(), item.getItemNumber(), item.getContent(),
                 item.getType(), item.getIsRequired(), item.getVersionNo());
         System.out.println(item);
         return item;
@@ -253,8 +253,7 @@ public class FormDAO {
         answerSelection.setLabel("Option " + answerSelection.getNo());
         final String query = "INSERT INTO FormAnswerSelection(formItemsId, answerSelectionId, answerSelectionNo, answerSelectionLabel, answerSelectionValue, nextItem, prevItem, versionNo) VALUES(?,?,?,?,?,?,?,?)";
         int res = jdbcTemplate.update(query, id, answerSelection.getId().toString(), answerSelection.getNo(),
-                answerSelection.getLabel(),
-                answerSelection.getValue(), answerSelection.getNextItem(), answerSelection.getPrevItem(), answerSelection.getVersionNo());
+                answerSelection.getLabel(), answerSelection.getValue(), answerSelection.getNextItem(), answerSelection.getPrevItem(), answerSelection.getVersionNo());
         return answerSelection;
     }
 
@@ -407,9 +406,10 @@ public class FormDAO {
     }
 
     public int insertTargetedUser(String formId, String userId){
-        FormRespondent targetedUser = new FormRespondent(formId, userId, 1);
+        FormRespondent targetedUser = new FormRespondent(formId, userId, 1, null);
         final String query = "INSERT INTO FormRespondent VALUES (?,?,?,?,?,?,?)";
-        int res = jdbcTemplate.update(query, targetedUser.getFormRespondentId().toString(), targetedUser.getFormId().toString(), targetedUser.getUserId().toString(), targetedUser.getSubmitDate(), targetedUser.getIsTargeted(), targetedUser.getInviteDate(), targetedUser.getVersionNo());
+        int res = jdbcTemplate.update(query, targetedUser.getFormRespondentId().toString(), targetedUser.getFormId().toString(), targetedUser.getUserId().toString(),
+            targetedUser.getSubmitDate(), targetedUser.getIsTargeted(), targetedUser.getInviteDate(), targetedUser.getVersionNo());
         return res;
     }
 

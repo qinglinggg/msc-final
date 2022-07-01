@@ -315,6 +315,7 @@ function Question(props) {
       data: currentForm,
       headers: { "Content-Type": "application/json" },
     }).then((res) => {
+      props.getFormItems(true);
       props.handleUpdateLastEdited();
     });
   }

@@ -10,7 +10,7 @@ public class FormItems implements Comparable<FormItems>{
     private String questionContent;
     private String questionType;
     private Integer isRequired;
-    private Integer versionNo;
+    private Integer versionNo = 1;
 
     // Get Items
     public FormItems(UUID formId, UUID formItemsId, int itemNumber, String questionContent, String questionType, Integer isRequired, Integer versionNo) {
@@ -20,7 +20,7 @@ public class FormItems implements Comparable<FormItems>{
         this.questionContent = questionContent;
         this.questionType = questionType;
         this.isRequired = isRequired;
-        this.versionNo = versionNo;
+        if(versionNo != null) this.versionNo = versionNo;
     }
 
     // Create and Insert mode
@@ -31,7 +31,7 @@ public class FormItems implements Comparable<FormItems>{
         this.questionContent = questionContent;
         this.questionType = questionType;
         this.isRequired = 0;
-        this.versionNo = versionNo;
+        if(versionNo != null) this.versionNo = versionNo;
     }
 
     public UUID getFormId() {

@@ -12,7 +12,7 @@ public class FormAnswerSelection implements Comparable<FormAnswerSelection> {
     private Integer answerSelectionNo;
     private int nextItem;
     private int prevItem;
-    private Integer versionNo;
+    private Integer versionNo = 1; // acts as default value
 
     // Get Items
     public FormAnswerSelection(UUID formItemsId, UUID answerSelectionId, Integer answerSelectionNo, String answerSelectionLabel,
@@ -24,7 +24,7 @@ public class FormAnswerSelection implements Comparable<FormAnswerSelection> {
         this.answerSelectionValue = answerSelectionValue;
         this.nextItem = nextItem;
         this.prevItem = prevItem;
-        this.versionNo = versionNo;
+        if(versionNo != null) this.versionNo = versionNo;
     }
 
     // Create and Insert Mode
@@ -40,7 +40,7 @@ public class FormAnswerSelection implements Comparable<FormAnswerSelection> {
         this.answerSelectionValue = answerSelectionValue;
         this.prevItem = -1; // Jika -1, maka display item yang sekarang...
         this.nextItem = -1;
-        this.versionNo = versionNo;
+        if(versionNo != null) this.versionNo = versionNo;
     }
 
     public UUID getFormItemsId() {
