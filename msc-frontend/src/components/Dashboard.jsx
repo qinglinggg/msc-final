@@ -25,6 +25,7 @@ function Dashboard(props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [privacyCheck, setPrivacyCheck] = useState(false);
+  const [versionNo, setVersionNo] = useState(0);
   const [hasResponse, setHasResponse] = useState(false);
   const [buttonShowed, setButtonShowed] = useState(false);
   const [intervalObj, setIntervalObj] = useState([]);
@@ -33,7 +34,7 @@ function Dashboard(props) {
   useEffect(() => {
     axios({
       method: "get",
-      url: `${BASE_URL}/api/v1/forms/get-all-resp/${formId}`
+      url: `${BASE_URL}/api/v1/forms/get-curr-resp/${formId}`
     }).then((res) => {
       console.log("dashboard get all resp");
       if(res.data.length > 0){
@@ -61,6 +62,7 @@ function Dashboard(props) {
         setTitle(res.data.title);
         setDescription(res.data.description);
         setPrivacyCheck(res.data.privacyCheck);
+        setVersionNo(res.data.versionNo);
         handleInterval();
         let tempBreadcrumbs = localStorage.getItem("breadcrumbs");
         tempBreadcrumbs = JSON.parse(tempBreadcrumbs);
@@ -255,13 +257,12 @@ function Dashboard(props) {
 
   const handleAddItem = () => {
     let currentStateData = [...formItems];
-    let version = JSON.parse(localStorage.getItem("selectedForm")).versionNo;
     try {
       let newItem = {
         itemNumber: -1,
         questionContent: "",
         questionType: "MC",
-        versionNo: version
+        versionNo: versionNo
       };
       axios({
         method: "post",
@@ -313,8 +314,7 @@ function Dashboard(props) {
 
   const handleResetResponses = () => {
     let formMetadata = JSON.parse(localStorage.getItem("selectedForm"));
-    formMetadata.versionNo = formMetadata.versionNo + 1;
-    console.log(formMetadata);
+    formMetadata.versionNo = versionNo + 1;
     axios({
       method: "put",
       url: `${BASE_URL}/api/v1/forms/${formId}`,
@@ -323,6 +323,7 @@ function Dashboard(props) {
     }).then(() => {
       localStorage.setItem("selectedForm", JSON.stringify(formMetadata));
       setHasResponse(false);
+      setVersionNo(versionNo + 1);
     });
   }
 

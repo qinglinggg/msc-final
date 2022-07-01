@@ -153,6 +153,11 @@ public class FormController {
         return formService.getAllFormRespondent(formId);
     }
 
+    @GetMapping(path = "/get-curr-resp/{formId}")
+    public List<String> getCurrentFormRespondent(@PathVariable("formId") String formId){
+        return formService.getCurrentFormRespondent(formId);
+    }
+
     @DeleteMapping(path = "/delete-all-resp/{formId}")
     public int deleteAllFormRespondent(@PathVariable("formId") String formId){
         return formService.deleteAllFormRespondent(formId);

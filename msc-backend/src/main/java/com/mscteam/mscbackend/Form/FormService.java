@@ -93,7 +93,8 @@ public class FormService {
     }
 
     public List<FormItems> getFormItems(String formId) {
-        return formDAO.getFormItems(formId);
+        Integer versionNo = formDAO.getFormVersionNo(formId);
+        return formDAO.getFormItems(formId, versionNo);
     }
 
     public FormItems getFormItemById(String itemId) {
@@ -150,6 +151,11 @@ public class FormService {
 
     public List<String> getAllFormRespondent(String formId){
         return formDAO.getAllFormRespondent(formId);
+    } 
+
+    public List<String> getCurrentFormRespondent(String formId){
+        Integer versionNo = formDAO.getFormVersionNo(formId);
+        return formDAO.getCurrentFormRespondent(formId, versionNo);
     } 
 
     public int deleteAllFormRespondent(String formId) {

@@ -165,8 +165,8 @@ public class FormDAO {
         return item;
     }
 
-    public List<FormItems> getFormItems(String id) {
-        final String query = "SELECT * FROM FormItems WHERE formId=? ORDER BY itemNumber ASC";
+    public List<FormItems> getFormItems(String id, Integer versionNo) {
+        final String query = "SELECT * FROM FormItems WHERE formId=? AND versionNo=? ORDER BY itemNumber ASC";
         System.out.println("Searching for: " + id);
         List<FormItems> formItems = jdbcTemplate.query(query, (resultSet, i) -> {
             System.out.println(query);
@@ -176,10 +176,9 @@ public class FormDAO {
             String questionContent = resultSet.getString("questionContent");
             String questionType = resultSet.getString("questionType");
             Integer isRequired = Integer.parseInt(resultSet.getString("isRequired"));
-            Integer versionNo = resultSet.getInt("versionNo");
             return new FormItems(UUID.fromString(formId), UUID.fromString(formItemsId), itemNumber, questionContent,
                 questionType, isRequired, versionNo);
-        }, id);
+        }, id, versionNo);
         System.out.println(formItems);
         return formItems;
     }
@@ -333,6 +332,15 @@ public class FormDAO {
             String id = resultSet.getString("formRespondentId");
             return id;
         }, formId);
+        return list;
+    }
+
+    public List<String> getCurrentFormRespondent(String formId, Integer versionNo){
+        final String query = "SELECT formRespondentId FROM FormRespondent WHERE formId = ? AND versionNo = ?";
+        List<String> list = jdbcTemplate.query(query, (resultSet, i) -> {
+            String id = resultSet.getString("formRespondentId");
+            return id;
+        }, formId, versionNo);
         return list;
     }
 
@@ -510,5 +518,14 @@ public class FormDAO {
         }, formId);
         if(res.size() > 0) return res.get(0);
         return null;
+    }
+
+    public Integer getFormVersionNo(String formId) {
+        final String query = "SELECT versionNo FROM Form WHERE formId = ?";
+        List<Integer> res = jdbcTemplate.query(query, (resultSet, i) -> {
+            Integer versionNo = resultSet.getInt("versionNo");
+            return versionNo;
+        }, formId);
+        return res.get(0);
     }
 }
