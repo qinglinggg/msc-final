@@ -98,9 +98,13 @@ public class UserProfileDAO {
             String userId = resultSet.getString("userId");
             return userId;
         }, user.getUserdomain());
+        System.out.println(res);
         if(res.size() > 0) {
+            System.out.println("res.size > 0");
+            System.out.println(res.size());
             return res.get(0);
         }
+        System.out.println("res.size < 0");
         return null;
     }
 

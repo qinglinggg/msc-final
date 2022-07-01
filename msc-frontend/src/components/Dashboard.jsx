@@ -255,11 +255,13 @@ function Dashboard(props) {
 
   const handleAddItem = () => {
     let currentStateData = [...formItems];
+    let version = JSON.parse(localStorage.getItem("selectedForm")).versionNo;
     try {
       let newItem = {
         itemNumber: -1,
         questionContent: "",
-        questionType: "MC"
+        questionType: "MC",
+        versionNo: version
       };
       axios({
         method: "post",
@@ -271,7 +273,8 @@ function Dashboard(props) {
           id: res.data.id,
           itemNumber: res.data.itemNumber,
           questionContent: res.data.content,
-          questionType: res.data.type
+          questionType: res.data.type,
+          versionNo: res.data.versionNo,
         };
         currentStateData.push(newItem);
       }).finally(() => {

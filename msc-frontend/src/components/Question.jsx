@@ -223,9 +223,12 @@ function Question(props) {
   }
 
   const handleAddOption = async (id, iterCount, finalCount) => {
+    let version = JSON.parse(localStorage.getItem("selectedForm")).versionNo;
     let obj = {};
     obj["formItemsId"] = id;
     obj["value"] = "";
+    obj["versionNo"] = version;
+    
     if(finalCount != null && finalCount == iterCount) return;
     if(!finalCount) {
       iterCount = 0;
