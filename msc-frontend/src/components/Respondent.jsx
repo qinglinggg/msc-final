@@ -81,34 +81,37 @@ function Respondent (props) {
     // DESIGN
     responsePageTheme();
     // CHAT
-    let userId = JSON.parse(localStorage.getItem("loggedInUser"));
-    if(userId) {
-      let userId_data = {"userId": userId}
-      axios({
-        method: "post",
-        url: `${BASE_URL}/api/v1/forms/form-respondent/${formId}`,
-        data: userId_data, 
-      }).then((res) => {
-        if(res.data && res.data.length > 0){
-          // setFormRespondentId(res.data[0]);
-          setFormRespondentId(res.data.formRespondentId);
-          localStorage.setItem("alreadySubmitted", JSON.stringify(res.data.submitDate));
-        }
-        else {
-          let newFormRespondent = {
-            formId: formId,
-            userId: userId,
-            isTargeted: 0,
+    if(!previewMode){
+      let userId = JSON.parse(localStorage.getItem("loggedInUser"));
+      if(userId) {
+        let userId_data = {"userId": userId}
+        axios({
+          method: "post",
+          url: `${BASE_URL}/api/v1/forms/form-respondent/${formId}`,
+          data: userId_data, 
+        }).then((res) => {
+          if(res.data && res.data.length > 0){
+            // setFormRespondentId(res.data[0]);
+            console.log("formres", res.data);
+            setFormRespondentId(res.data.formRespondentId);
+            localStorage.setItem("alreadySubmitted", JSON.stringify(res.data.submitDate));
           }
-          axios({
-            method: "post",
-            url: `${BASE_URL}/api/v1/forms/insert-form-respondent/${formId}`,
-            data: newFormRespondent
-          }).then((res) => {
-            setFormRespondentId(res.data[0]);
-          });
-        }
-      });
+          else {
+            let newFormRespondent = {
+              formId: formId,
+              userId: userId,
+              isTargeted: 0,
+            }
+            axios({
+              method: "post",
+              url: `${BASE_URL}/api/v1/forms/insert-form-respondent/${formId}`,
+              data: newFormRespondent
+            }).then((res) => {
+              setFormRespondentId(res.data);
+            });
+          }
+        });
+      }
     }
     let prevElement = document.querySelector('.display-container');
     if(props.previewMode) prevElement.style.marginTop = 0 + 'px';

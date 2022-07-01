@@ -323,7 +323,9 @@ public class FormDAO {
             Integer versionNo = resultSet.getInt("versionNo");
             return new FormRespondent(formRespondentId, formId, userId, submitDate, isTargeted, inviteDate, versionNo);
         }, formId, userId);
-        return formRespondent.get(0);
+        System.out.println("formRespondent:" + formRespondent);
+        if(formRespondent.size() > 0) return formRespondent.get(0);
+        return null;
     }
 
     public List<String> getAllFormRespondent(String formId){

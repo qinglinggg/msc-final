@@ -83,9 +83,10 @@ function Option(props) {
     }
 
     useEffect(() => {
+        console.log("masuk sini", value);
         let el = document.getElementById(props.optionId);
-        if(props.questionType != "LS" && value != ("Option " + (props.idx+1))) el.value = value;
-        else el.value = "";
+        if(value != ("Option " + (props.idx+1))) el.value = value;
+        // else el.value = "";
     }, [props.arrayOptions]);
 
     const setOptionValue = () => {
