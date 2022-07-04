@@ -230,7 +230,7 @@ public class FormDAO {
         return res;
     }
 
-    public int updateFormItems(String formItemsId, FormItems toBeUpdated) {
+    public int updateFormItems(String formItemsId, FormItems toBeUpdated, Integer versionNo) {
         System.out.println("updateFormItems FormDAO masuk");
         String query = "UPDATE FormItems SET ";
         query = query + "questionContent = '" + toBeUpdated.getContent().toString() + "', ";
@@ -241,7 +241,7 @@ public class FormDAO {
         if (toBeUpdated.getIsRequired() != null) {
             query = query + "isRequired = " + toBeUpdated.getIsRequired();
         }
-        query = query + " WHERE formItemsId = '" + formItemsId + "'";
+        query = query + " WHERE formItemsId = '" + formItemsId + "'" + "AND versionNo = '" + versionNo + "'";
         int res = jdbcTemplate.update(query);
         return res;
     }

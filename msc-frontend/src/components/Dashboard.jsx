@@ -192,6 +192,7 @@ function Dashboard(props) {
     let updateArray = [];
     for(let i=0; i<formItems.length; i++) updateArray.push(false);
     setUpdated(updateArray);
+    console.log("formItems", formItems);
   }, [formItems]);
 
   useEffect(() => {

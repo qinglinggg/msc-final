@@ -103,9 +103,9 @@ public class FormService {
     }
 
     public int updateFormItems(String formItemsId, FormItems toBeUpdated) {
-        System.out.println("sudah update modifyDate");
-        System.out.println("updateFormItems");
-        return formDAO.updateFormItems(formItemsId, toBeUpdated);
+        String formId = formDAO.getFormIdByFormItemsId(formItemsId);
+        Integer versionNo = formDAO.getFormVersionNo(formId);
+        return formDAO.updateFormItems(formItemsId, toBeUpdated, versionNo);
     }
 
     Integer highestNo = 0;
