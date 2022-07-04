@@ -199,6 +199,22 @@ public class FormDAO {
         return formItem;
     }
 
+    public FormItems getFormItemByNum(String id, Integer number) {
+        final String query = "SELECT * FROM FormItems WHERE formId = ? AND itemNumber = ?";
+        FormItems formItem = jdbcTemplate.queryForObject(query, (resultSet, i) -> {
+            String formId = resultSet.getString("formId");
+            String formItemsId = resultSet.getString("formItemsId");
+            int itemNumber = resultSet.getInt("itemNumber");
+            String questionContent = resultSet.getString("questionContent");
+            String questionType = resultSet.getString("questionType");
+            Integer isRequired = Integer.parseInt(resultSet.getString("isRequired"));
+            Integer versionNo = resultSet.getInt("versionNo");
+            return new FormItems(UUID.fromString(formId), UUID.fromString(formItemsId), itemNumber, questionContent, 
+            questionType, isRequired, versionNo);
+        }, id, number);
+        return formItem;
+    }
+
     public List<FormItemResponse> getFormItemResponse(String formItemsId) {
         final String query = "SELECT * FROM FormItemResponse WHERE formItemsId = ?";
         List<FormItemResponse> formItemResponses = jdbcTemplate.query(query, (resultSet, i) -> {
