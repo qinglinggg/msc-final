@@ -344,6 +344,7 @@ function Dashboard(props) {
                 <Question
                   key={"questionInner-" + res.id}
                   formItems={formItems}
+                  formId={formId}
                   idx={idx}
                   questionData={res}
                   mode={true}

@@ -303,20 +303,42 @@ function Question(props) {
     })
   };
 
-  const handleUpdateQuestionNav = (navIdx) => {
-    let currentForm = props.questionData;
+  const handleUpdateQuestionNav = async (navIdx) => {
     if(navIdx <= 0) return;
-    else if(navIdx == props.formItems.length) navIdx = props.formItems.length;
-    currentForm["itemNumber"] = navIdx;
-    console.log(currentForm);
-    axios({
-      method: "put",
-      url: `${BASE_URL}/api/v1/forms/update-form-items/${props.questionData.id}`,
-      data: currentForm,
-      headers: { "Content-Type": "application/json" },
-    }).then((res) => {
-      props.getFormItems(true);
-      props.handleUpdateLastEdited();
+    let currentForm = props.questionData;
+    let selectorIdx = currentForm.itemNumber;
+    let determiner = -1;
+    if(selectorIdx > navIdx) determiner = props.idx - 1;
+    else if(selectorIdx < navIdx) determiner = props.idx + 1;
+    if(determiner < 0) return;
+    else if(determiner >= props.formItems.length) return;
+    currentForm["itemNumber"] = props.formItems[determiner].itemNumber;
+    await axios({
+      method: "get",
+      url: `${BASE_URL}/api/v1/forms/get-a-form-item/${props.formId}/${navIdx}`,
+      headers: { "Content-Type": "application/json" }
+    }).then(async (res) => {
+      let tempItem = res.data;
+      tempItem["itemNumber"] = selectorIdx;
+      let tempItemId = props.formItems[determiner].id;
+      console.log("Check", tempItemId);
+      await axios({
+        method: "put",
+        url: `${BASE_URL}/api/v1/forms/update-form-items/${tempItemId}`,
+        data: tempItem,
+        headers: { "Content-Type": "application/json" },
+      });
+    }).finally(() => {
+      axios({
+        method: "put",
+        url: `${BASE_URL}/api/v1/forms/update-form-items/${currentForm.id}`,
+        data: currentForm,
+        headers: { "Content-Type": "application/json" },
+      }).then((res) => {
+        props.getFormItems(true);
+        props.handleUpdateLastEdited();
+        console.log("Switched successfully!");
+      });
     });
   }
 

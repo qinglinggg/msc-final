@@ -108,6 +108,10 @@ public class FormService {
         return item;
     }
 
+    public FormItems getFormItemByNum(String id, Integer number) {
+        return formDAO.getFormItemByNum(id, number);
+    }
+
     public int updateFormItems(String formItemsId, FormItems toBeUpdated) {
         String formId = formDAO.getFormIdByFormItemsId(formItemsId);
         Integer versionNo = formDAO.getFormVersionNo(formId);

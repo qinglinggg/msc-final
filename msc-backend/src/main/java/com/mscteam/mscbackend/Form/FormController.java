@@ -95,6 +95,11 @@ public class FormController {
     public FormItems getFormItemById(@PathVariable("id") String id) {
         return formService.getFormItemById(id);
     }
+
+    @GetMapping(path = "/get-a-form-item/{id}/{number}")
+    public FormItems getFormItemByNum(@PathVariable("id") String id, @PathVariable("number") Integer number) {
+        return formService.getFormItemByNum(id, number);
+    }
     
     @GetMapping(path = "/get-response/{formItemsId}")
     public List<FormItemResponse> getFormItemResponse(@PathVariable("formItemsId") String formItemsId){
