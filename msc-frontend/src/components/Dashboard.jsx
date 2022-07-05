@@ -32,15 +32,19 @@ function Dashboard(props) {
   const [pageHeight, setPageHeight] = useState(0);
 
   useEffect(() => {
-    axios({
-      method: "get",
-      url: `${BASE_URL}/api/v1/forms/get-curr-resp/${formId}`
-    }).then((res) => {
-      console.log("dashboard get all resp");
-      if(res.data.length > 0){
-        setHasResponse(true);
-      }
-    })
+    let versionNo = JSON.parse(localStorage.getItem("selectedForm")).versionNo;
+    for(let i=1; i<=versionNo; i++){
+      axios({
+        method: "get",
+        url: `${BASE_URL}/api/v1/forms/get-resp/${formId}/${i}`,
+      }).then((res) => {
+        console.log("i:", i);
+        console.log("res.data,", res.data);
+        if(i == versionNo && res.data.length > 0){
+          setHasResponse(true);
+        }
+      });
+    }
     let lastEditedInit = {
       modifyDate: 0,
       text: ""

@@ -22,6 +22,12 @@ function DataVisualization(props) {
   const [countData, setCountData] = useState([]);
   const [answerList, setAnswerList] = useState([]);
   const [responses, setResponses] = useState([]);
+
+  const [selectedVersion, setSelectedVersion] = useState(JSON.parse(localStorage.getItem("selectedForm")).versionNo);
+  const [changeVersionPopup, setChangeVersionPopup] = useState(true);
+  const [showOptions, setShowOptions] = useState(false);
+  const [versionOptions, setVersionOptions] = useState([]);
+
   let componentRef = useRef();
   const { formId } = useParams();
 
@@ -57,7 +63,7 @@ function DataVisualization(props) {
     }
     await axios({
       method: "get",
-      url: `${BASE_URL}/api/v1/forms/get-form-items/${selectedForm.formId}`
+      url: `${BASE_URL}/api/v1/forms/get-form-items/${selectedForm.formId}/${selectedVersion}`
     }).then((res) => {
       listOfFormItems = res.data;
       for(let i=0; i < listOfFormItems.length; i++) count.push([]);
@@ -116,15 +122,16 @@ function DataVisualization(props) {
     let tempResp = [];
     await axios({
       method: "get",
-      url: `${BASE_URL}/api/v1/forms/get-form-items/${selectedForm.formId}`
+      url: `${BASE_URL}/api/v1/forms/get-form-items/${selectedForm.formId}/${selectedVersion}`
     }).then(async (res) => {
+      console.log(res.data);
       listOfFormItems = res.data;
     }).finally(() => {
       setItemList(listOfFormItems);
     });
     await axios({
       method: "get",
-      url: `${BASE_URL}/api/v1/forms/get-all-resp/${selectedForm.formId}`
+      url: `${BASE_URL}/api/v1/forms/get-resp/${selectedForm.formId}/${selectedVersion}`
     }).then(async (res) => {
       let currentRes = res.data;
       currentRes.map((data) => {
@@ -145,6 +152,14 @@ function DataVisualization(props) {
       }
     }
     let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
+    let tempOptions = [];
+    for(let i=1; i<=selectedForm.versionNo; i++){
+      tempOptions.push({
+        value: i,
+        label: i
+      });
+    }
+    setVersionOptions(tempOptions);
     tempBreadcrumbs.push(
       {
         page: "Data Visualization - " + selectedForm['title'],
@@ -164,12 +179,12 @@ function DataVisualization(props) {
         item.addEventListener('click', (e) => activateLink(e.target));
       });
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (activePage == 1) processData();
     else if (activePage == 2) processResponses();
-  }, [activePage]);
+  }, [activePage, selectedVersion]);
 
   useEffect(() => {
     if(responses && inLoading == true)
@@ -282,6 +297,44 @@ function DataVisualization(props) {
             Data Visualization
           </div>
         </div>
+        {changeVersionPopup ? (
+          <div className="has-response-container">
+            { !showOptions ? (
+              <React.Fragment>
+                <span>The data visualization is displaying current version by default. Do you wish to change the selected version?</span>
+                <div className="has-response-button-container">
+                  <div className="has-response-reset" onClick={() => {
+                    setShowOptions(true);
+                  }}>Yes</div>
+                  <div className="has-response-reset" onClick={() => {
+                    setShowOptions(false);
+                    setChangeVersionPopup(false);
+                  }}>No</div>
+                </div>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <span>Please choose your preferred version:</span>
+                <Select
+                  styles={{
+                    control: base => ({
+                      ...base,
+                      border: 0,
+                      borderBottom: '1px solid gray',
+                      borderRadius: 0,
+                      boxShadow: 'none',
+                      backgroundColor: 'transparent'
+                    })
+                  }}
+                  options={versionOptions}
+                  value={versionOptions.map((option) => option.value == selectedVersion ? option : null)}
+                  id="selected-version"
+                  onChange={(e) => setSelectedVersion(e.value)}
+                />
+              </React.Fragment>
+            )}
+          </div>
+        ) : null}
         <div className="page-breadcrumbs">
         {
           currentStep.map((b, idx) => {

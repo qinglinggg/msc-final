@@ -4146,3 +4146,8 @@ body {
   border-radius: 25px;
   cursor: pointer;
 }
+
+#selected-version {
+  width: 70px;
+  margin: 0 5px 0 5px;
+}

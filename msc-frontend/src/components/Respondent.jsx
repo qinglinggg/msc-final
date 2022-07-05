@@ -840,10 +840,12 @@ function Respondent (props) {
     });
     localStorage.setItem("isSubmitted", JSON.stringify("true"));
     let currentVersion = JSON.parse(localStorage.getItem("selectedForm")).versionNo;
+    console.log("currentVersion", currentVersion);
     axios({
       method: "put",
       url: `${BASE_URL}/api/v1/forms/submit-form/${formRespondentId}`,
       data: currentVersion,
+      headers: { "Content-Type" : "text/plain" }
     }).catch((error) => console.log(error));
   }
     

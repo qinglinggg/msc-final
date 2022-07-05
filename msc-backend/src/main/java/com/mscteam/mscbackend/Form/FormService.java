@@ -97,6 +97,12 @@ public class FormService {
         return formDAO.getFormItems(formId, versionNo);
     }
 
+    public List<FormItems> getFormItemsByVersion(String formId, String versionNo) {
+        Integer version = Integer.valueOf(versionNo);
+        System.out.println("version" + version);
+        return formDAO.getFormItems(formId, version);
+    }
+
     public FormItems getFormItemById(String itemId) {
         FormItems item = formDAO.getFormItemById(itemId);
         return item;
@@ -153,10 +159,10 @@ public class FormService {
         return formDAO.getAllFormRespondent(formId);
     } 
 
-    public List<String> getCurrentFormRespondent(String formId){
-        Integer versionNo = formDAO.getFormVersionNo(formId);
-        return formDAO.getCurrentFormRespondent(formId, versionNo);
-    } 
+    public List<String> getFormRespondent(String formId, String versionNo){
+        Integer version = Integer.valueOf(versionNo);
+        return formDAO.getFormRespondent(formId, version);
+    }
 
     public int deleteAllFormRespondent(String formId) {
         return formDAO.deleteAllFormRespondent(formId);
@@ -261,8 +267,9 @@ public class FormService {
     // }
 
 
-    public int submitForm(String formRespondentId, Integer versionNo){
-        return formDAO.submitForm(formRespondentId, versionNo);
+    public int submitForm(String formRespondentId, String versionNo){
+        Integer version = Integer.valueOf(versionNo);
+        return formDAO.submitForm(formRespondentId, version);
     }
 
     public List<UserProfile> getFormAuthors(String formId){

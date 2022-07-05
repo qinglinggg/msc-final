@@ -335,7 +335,7 @@ public class FormDAO {
         return list;
     }
 
-    public List<String> getCurrentFormRespondent(String formId, Integer versionNo){
+    public List<String> getFormRespondent(String formId, Integer versionNo){
         final String query = "SELECT formRespondentId FROM FormRespondent WHERE formId = ? AND versionNo = ?";
         List<String> list = jdbcTemplate.query(query, (resultSet, i) -> {
             String id = resultSet.getString("formRespondentId");

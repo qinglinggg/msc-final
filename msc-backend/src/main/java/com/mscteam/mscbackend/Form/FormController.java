@@ -86,6 +86,11 @@ public class FormController {
         return formService.getFormItems(id);
     }
 
+    @GetMapping(path = "/get-form-items/{id}/{versionNo}")
+    public List<FormItems> getFormItemsByVersion(@PathVariable("id") String id, @PathVariable("versionNo") String versionNo) {
+        return formService.getFormItemsByVersion(id, versionNo);
+    }
+
     @GetMapping(path = "/get-a-form-item/{id}")
     public FormItems getFormItemById(@PathVariable("id") String id) {
         return formService.getFormItemById(id);
@@ -153,9 +158,9 @@ public class FormController {
         return formService.getAllFormRespondent(formId);
     }
 
-    @GetMapping(path = "/get-curr-resp/{formId}")
-    public List<String> getCurrentFormRespondent(@PathVariable("formId") String formId){
-        return formService.getCurrentFormRespondent(formId);
+    @GetMapping(path = "/get-resp/{formId}/{versionNo}")
+    public List<String> getFormRespondent(@PathVariable("formId") String formId, @PathVariable("versionNo") String versionNo){
+        return formService.getFormRespondent(formId, versionNo);
     }
 
     @DeleteMapping(path = "/delete-all-resp/{formId}")
@@ -216,7 +221,7 @@ public class FormController {
     }
 
     @PutMapping(path="/submit-form/{formRespondentId}")
-    public int submitForm(@PathVariable("formRespondentId") String formRespondentId, @RequestBody Integer versionNo){
+    public int submitForm(@PathVariable("formRespondentId") String formRespondentId, @RequestBody String versionNo){
         return formService.submitForm(formRespondentId, versionNo);
     }
     
