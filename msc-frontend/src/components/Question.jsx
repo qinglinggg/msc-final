@@ -338,7 +338,7 @@ function Question(props) {
         data: currentForm,
         headers: { "Content-Type": "application/json" },
       }).then((res) => {
-        props.getFormItems(true);
+        props.getFormItems();
         props.handleUpdateLastEdited();
         console.log("Switched successfully!");
       });

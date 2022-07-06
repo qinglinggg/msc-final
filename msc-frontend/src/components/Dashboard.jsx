@@ -156,7 +156,7 @@ function Dashboard(props) {
     });
   }
 
-  const getFormItems = (isUpdated) => {
+  const getFormItems = () => {
     axios({
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-form-items/${formId}`,
@@ -173,6 +173,10 @@ function Dashboard(props) {
         tempItems.push(newItem);
       });
       setFormItems(formItems => {
+        let isUpdated = false;
+        formItems.map((data, idx) => {
+          if(data.itemNumber != res.data[idx].itemNumber) isUpdated = true;
+        })
         if(formItems.length == 0 || tempItems.length != formItems.length || isUpdated) return tempItems;
         return formItems;
       });
@@ -225,7 +229,7 @@ function Dashboard(props) {
     let currentInterval = [...intervalObj];
     let interval = setInterval(() => {
       getLastEdited();
-      getFormItems(false);
+      getFormItems();
     }, 1500);
     currentInterval.push(interval);
     setIntervalObj(currentInterval);
