@@ -227,6 +227,8 @@ public class FormService {
 
     public int insertTargetedUser(String formId, String userEmail){
         // Get User Email
+        System.out.println("--- insert targeted user");
+        System.out.println("formId: " + formId);
         String userId = userProfileDAO.getUserByEmail(userEmail);
         System.out.println("userEmail " + userEmail + " with resId = " + userId);
         // check if user already invited

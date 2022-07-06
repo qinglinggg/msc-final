@@ -40,7 +40,7 @@ public class FormRespondent {
             this.inviteDate = null;
         }
         this.isTargeted = isTargeted;
-        if(versionNo != null) this.versionNo = versionNo;
+        this.versionNo = versionNo;
     }
 
     public UUID getFormRespondentId() {

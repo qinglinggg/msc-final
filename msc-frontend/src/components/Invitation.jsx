@@ -251,7 +251,7 @@ function Invitation(props) {
           setTags([]);
           setTagsElement([]);
           let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
-          props.handleUpdateLastEdited(selectedForm);
+          props.updateLastEdited(selectedForm);
         }).finally(() => {
           getTargetedUserList();
         })
@@ -289,7 +289,7 @@ function Invitation(props) {
         })
         setUserInvited(tempInvitedList);
         let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
-        props.handleUpdateLastEdited(selectedForm);
+        props.updateLastEdited(selectedForm);
       })
     } catch(error) {
       console.log(error);
@@ -396,7 +396,7 @@ function Invitation(props) {
           getTeamMember();
         }
         let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
-        props.handleUpdateLastEdited(selectedForm);
+        props.updateLastEdited(selectedForm);
       }).catch((error) => console.log(error));
     })
   }
@@ -415,7 +415,7 @@ function Invitation(props) {
       })
       setTeamMember(tempTeamMember);
       let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
-      props.handleUpdateLastEdited(selectedForm);
+      props.updateLastEdited(selectedForm);
     }).catch((error) => console.log(error))
   }
 

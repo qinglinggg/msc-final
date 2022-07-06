@@ -78,7 +78,7 @@ function Design(props) {
   const handleBackgroundChange = (data) => {
     setSelectedBackground(data.value);
     let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
-    props.handleUpdateLastEdited(selectedForm);
+    props.updateLastEdited(selectedForm);
   }
 
   const handleColorChange = (data) => {
@@ -98,7 +98,7 @@ function Design(props) {
         console.log(res.data);
         setSelectedColor(data.value);
         let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
-        props.handleUpdateLastEdited(selectedForm);
+        props.updateLastEdited(selectedForm);
       })
     } catch(error) {
       console.log(error);
