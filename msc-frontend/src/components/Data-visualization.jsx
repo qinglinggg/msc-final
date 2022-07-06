@@ -297,44 +297,25 @@ function DataVisualization(props) {
             Data Visualization
           </div>
         </div>
-        {changeVersionPopup ? (
-          <div className="has-response-container">
-            { !showOptions ? (
-              <React.Fragment>
-                <span>The data visualization is displaying current version by default. Do you wish to change the selected version?</span>
-                <div className="has-response-button-container">
-                  <div className="has-response-reset" onClick={() => {
-                    setShowOptions(true);
-                  }}>Yes</div>
-                  <div className="has-response-reset" onClick={() => {
-                    setShowOptions(false);
-                    setChangeVersionPopup(false);
-                  }}>No</div>
-                </div>
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                <span>Please choose your preferred version:</span>
-                <Select
-                  styles={{
-                    control: base => ({
-                      ...base,
-                      border: 0,
-                      borderBottom: '1px solid gray',
-                      borderRadius: 0,
-                      boxShadow: 'none',
-                      backgroundColor: 'transparent'
-                    })
-                  }}
-                  options={versionOptions}
-                  value={versionOptions.map((option) => option.value == selectedVersion ? option : null)}
-                  id="selected-version"
-                  onChange={(e) => setSelectedVersion(e.value)}
-                />
-              </React.Fragment>
-            )}
-          </div>
-        ) : null}
+        <div className="has-response-container">
+          <span>Please choose your preferred version:</span>
+          <Select
+            styles={{
+              control: base => ({
+                ...base,
+                border: 0,
+                borderBottom: '1px solid gray',
+                borderRadius: 0,
+                boxShadow: 'none',
+                backgroundColor: 'transparent'
+              })
+            }}
+            options={versionOptions}
+            value={versionOptions.map((option) => option.value == selectedVersion ? option : null)}
+            id="selected-version"
+            onChange={(e) => setSelectedVersion(e.value)}
+          />
+        </div>
         <div className="page-breadcrumbs">
         {
           currentStep.map((b, idx) => {

@@ -12,7 +12,7 @@ public class Form implements Comparable<Form> {
     private Long modifyDate;
     private String backgroundLink;
     private String backgroundColor;
-    private Integer versionNo = 1; // acts as default value
+    private Integer versionNo; // acts as default value
 
     // Get Forms
     public Form(String formId, String title, String description, String privacySetting, Long createDate, Long modifyDate, String backgroundColor, String backgroundLink, Integer versionNo) {

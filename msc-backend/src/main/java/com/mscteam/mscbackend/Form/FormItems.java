@@ -10,7 +10,7 @@ public class FormItems implements Comparable<FormItems>{
     private String questionContent;
     private String questionType;
     private Integer isRequired;
-    private Integer versionNo = 1;
+    private Integer versionNo;
 
     // Get Items
     public FormItems(UUID formId, UUID formItemsId, int itemNumber, String questionContent, String questionType, Integer isRequired, Integer versionNo) {

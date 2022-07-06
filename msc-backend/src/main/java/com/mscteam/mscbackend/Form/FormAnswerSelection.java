@@ -12,7 +12,7 @@ public class FormAnswerSelection implements Comparable<FormAnswerSelection> {
     private Integer answerSelectionNo;
     private int nextItem;
     private int prevItem;
-    private Integer versionNo = 1; // acts as default value
+    private Integer versionNo; // acts as default value
 
     // Get Items
     public FormAnswerSelection(UUID formItemsId, UUID answerSelectionId, Integer answerSelectionNo, String answerSelectionLabel,
