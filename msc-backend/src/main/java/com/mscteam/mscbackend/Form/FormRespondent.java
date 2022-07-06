@@ -13,7 +13,7 @@ public class FormRespondent {
     private Long submitDate;
     private Integer isTargeted;
     private Long inviteDate;
-    private Integer versionNo = 1; // acts as default value
+    private Integer versionNo; // acts as default value
 
     // get 
     public FormRespondent(String formRespondentId, String formId, String userId, Long submitDate, Integer isTargeted, Long inviteDate, Integer versionNo){
