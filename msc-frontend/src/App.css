@@ -2900,8 +2900,10 @@ body {
 }
 
 .inner-display-container {
-  width: 85%;
+  width: 80%;
   min-height: 300px;
+  min-width: 800px;
+  max-width: 1400px;
   height: fit-content;
   border-radius: 15px;
   border: 2px solid #c4c4c4;
