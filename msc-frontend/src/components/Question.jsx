@@ -220,7 +220,7 @@ function Question(props) {
     let value = !selectedIsRequired;
     if(value) value = 1;
     else value = 0;
-    handleUpdateQuestionIsRequired(props.questionData.id, value);
+    handleUpdateQuestionIsRequired(value);
     setSelectedIsRequired(!selectedIsRequired);
     props.handleUpdateLastEdited();
   }
