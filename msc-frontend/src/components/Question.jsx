@@ -442,8 +442,8 @@ function Question(props) {
           <div className="question-nav">
             <span>Question No. {props.idx+1}</span>
             <div className="spacer">|</div>
-            <ion-icon name="arrow-back-circle-outline" onClick={() => handleUpdateQuestionNav(props.questionData.itemNumber - 1)}></ion-icon>
-            <ion-icon name="arrow-forward-circle-outline" onClick={() => handleUpdateQuestionNav(props.questionData.itemNumber + 1)}></ion-icon>
+            <ion-icon name="arrow-back-circle-outline" onClick={() => handleUpdateQuestionNav(props.questionData.itemNumber - 1)} style={props.idx == 0 ? {opacity: 0.3}: {opacity: 1}}></ion-icon>
+            <ion-icon name="arrow-forward-circle-outline" onClick={() => handleUpdateQuestionNav(props.questionData.itemNumber + 1)} style={props.idx == props.formItems.length-1 ? {opacity: 0.3}: {opacity: 1}}></ion-icon>
           </div>
           <div className="question-isOptional-container">
             <div className="question-isOptional-icon">
