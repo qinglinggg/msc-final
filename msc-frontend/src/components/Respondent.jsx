@@ -811,8 +811,10 @@ function Respondent (props) {
   }
 
   const submitForm = async () => {
+    console.log("submitForm", formResponse);
     formResponse.map(async(response, resIdx) => {
       if(!Array.isArray(response)) {
+        console.log("masuk 1", response);
         try {
           await axios({
             method: "post",
@@ -825,6 +827,7 @@ function Respondent (props) {
       } else {
         response.map(async (respItem, respIndex) => {
           console.log("Submitting form item index: " + respIndex);
+          console.log("masuk 2", respItem);
           try {
             await axios({
               method: "post",

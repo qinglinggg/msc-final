@@ -430,7 +430,7 @@ public class FormDAO {
     }
 
     public int insertTargetedUser(String formId, String userId){
-        FormRespondent targetedUser = new FormRespondent(formId, userId, 1, null);
+        FormRespondent targetedUser = new FormRespondent(formId, userId, 1, 0);
         final String query = "INSERT INTO FormRespondent VALUES (?,?,?,?,?,?,?)";
         int res = jdbcTemplate.update(query, targetedUser.getFormRespondentId().toString(), targetedUser.getFormId().toString(), targetedUser.getUserId().toString(),
             targetedUser.getSubmitDate(), targetedUser.getIsTargeted(), targetedUser.getInviteDate(), targetedUser.getVersionNo());
