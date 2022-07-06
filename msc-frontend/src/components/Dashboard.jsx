@@ -174,8 +174,8 @@ function Dashboard(props) {
       });
       setFormItems(formItems => {
         let isUpdated = false;
-        formItems.map((data, idx) => {
-          if(data.itemNumber != res.data[idx].itemNumber) isUpdated = true;
+        if(formItems.length != 0 && tempItems.length == formItems.length) formItems.map((data, idx) => {
+          if(data.itemNumber != tempItems[idx].itemNumber) isUpdated = true;
         })
         if(formItems.length == 0 || tempItems.length != formItems.length || isUpdated) return tempItems;
         return formItems;
