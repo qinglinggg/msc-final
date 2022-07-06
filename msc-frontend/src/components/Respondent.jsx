@@ -91,7 +91,6 @@ function Respondent (props) {
           data: userId_data, 
         }).then((res) => {
           if(res.data && res.data.length > 0){
-            // setFormRespondentId(res.data[0]);
             console.log("formres", res.data);
             setFormRespondentId(res.data.formRespondentId);
             localStorage.setItem("alreadySubmitted", JSON.stringify(res.data.submitDate));
@@ -198,6 +197,10 @@ function Respondent (props) {
       setFormResponse(loadData);
     }
   }, [formRespondentId, answerSelection]);
+
+  useEffect(() => {
+    console.log("formRespondentId: ", formRespondentId);
+  }, [formRespondentId]);
 
   useEffect(() => {
     if(previewMode) return;
@@ -1025,7 +1028,7 @@ function Respondent (props) {
                     );
                   })}
                 </div>
-                <div className="text-indicator"><span id="page-num">{index}</span><span id="max-page">/{formItems.length}</span></div>
+                <div className="text-indicator">{ formItems && index <= formItems.length ? (<React.Fragment><span id="page-num">{index}</span><span id="max-page">/{formItems.length}</span></React.Fragment>) : "Completed"}</div>
               </div>
               {!previewMode ? (
                 <div id="respondent-chat">
