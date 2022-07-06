@@ -101,6 +101,7 @@ function Respondent (props) {
               formId: formId,
               userId: userId,
               isTargeted: 0,
+              versionNo: 0
             }
             axios({
               method: "post",
@@ -123,14 +124,18 @@ function Respondent (props) {
     localStorage.removeItem("tempFormResponse");
     return () => {
       if(!previewMode){
-        let check = undefined;
+        let feedbackMessage = [];
         axios({
           method: "get",
           url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
         }).then((res) => {
-          check = res.data;
+          feedbackMessage = res.data;
+          console.log("feedback message", feedbackMessage);
         }).finally(() => {
-          if(check == undefined) axios.delete(`${BASE_URL}/api/v1/feedback/${feedbackId}`).catch((error) => console.log(error));
+          if(feedbackMessage.length == 0){
+            axios.delete(`${BASE_URL}/api/v1/feedback/${feedbackId}`).catch((error) => console.log(error));
+            console.log("deleted");
+          } 
         })
       }
       let alreadySubmitted = localStorage.getItem("alreadySubmitted");

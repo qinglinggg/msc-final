@@ -217,7 +217,7 @@ function Question(props) {
     let value = !selectedIsRequired;
     if(value) value = 1;
     else value = 0;
-    handleUpdateQuestionIsRequired(props.questionData.id, value);
+    handleUpdateQuestionIsRequired(value);
     setSelectedIsRequired(!selectedIsRequired);
     props.handleUpdateLastEdited();
   }
@@ -365,6 +365,7 @@ function Question(props) {
   const handleUpdateQuestionIsRequired = (value) => {
     let currentForm = props.questionData;
     currentForm["isRequired"] = value;
+    console.log("updateQuestion ", currentForm);
     try {
       axios({
         method: "put",

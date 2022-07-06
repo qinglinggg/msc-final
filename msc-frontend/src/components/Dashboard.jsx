@@ -311,6 +311,7 @@ function Dashboard(props) {
   };
 
   const removeInterval = () => {
+
     setIntervalObj(intervalObj => {
       intervalObj.map((value) => clearInterval(value));
       return [];
