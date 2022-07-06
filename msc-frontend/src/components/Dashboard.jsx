@@ -11,7 +11,7 @@ import Respondent from "./Respondent";
 import DateTimeService from "./functional-components/services/DateTimeService";
 import ProfilePicture from "./functional-components/ProfilePicture";
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://10.61.44.90:8080";
 function Dashboard(props) {
   const [showTutorial, setShowTutorial] = useState(false);
   const [openVisibility, setOpenVisibility] = useState(false);

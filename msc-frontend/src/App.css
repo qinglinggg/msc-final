@@ -1427,7 +1427,7 @@ body {
   height: fit-content;
   display: flex;
   flex-direction: column;
-  justify-items: center;
+  justify-content: center;
 }
 
 #invitation-share-publicly-box {
@@ -1536,14 +1536,20 @@ body {
 }
 
 #invitation-share-privately-box {
-  width: 75%;
+  width: 90%;
   height: fit-content;
   display: flex;
   flex-direction: column;
+  align-items: center;
   align-self: center;
+  justify-content: center;
+  border: var(--border-page);
+  border-radius: 10px;
+  margin-bottom: 15px;
 }
 
 .invitation-share-privately-innerbox {
+  width: 90%;
   font-family: var(--font-roboto);
   font-display: medium;
   align-self: left;
@@ -1553,7 +1559,7 @@ body {
 #invitation-share-privately-innerbox-title {
   font-size: 1.5em;
   padding-top: 2.5%;
-  margin-bottom: 2.5%;
+  margin-bottom: 25px;
 }
 
 #invitation-share-privately-innerbox-desc {
@@ -1574,10 +1580,12 @@ body {
 }
 
 #invitation-share-privately-render {
-  width: 100%;
+  width: 80%;
   height: 100%;
   display: flex;
   flex-direction: column;
+  align-content: center;
+  justify-content: center;
   margin-bottom: 30px;
 }
 
@@ -1587,12 +1595,8 @@ body {
   font-size: small;
   color: var(--white-use);
   background-color: black;
-  align-self: left;
   margin-left: 25px;
-  padding-left: 2.5%;
-  padding-right: 2.5%;
-  padding-top: 1%;
-  padding-bottom: 1%;
+  padding: 10px 20px 10px 20px;
   border-radius: 10px;
   width: fit-content;
   cursor: pointer;
@@ -1756,7 +1760,9 @@ body {
 }
 
 #invitation-collab-container {
-  width: 100%;
+  width: 90%;
+  min-width: 500px;
+  max-width: 900px;
   height: fit-content;
   display: flex;
   flex-direction: column;
@@ -2109,6 +2115,8 @@ body {
 
 .data-visualization-container > .result-container {
   width: 90%;
+  min-width: 500px;
+  max-width: 900px;
   height: fit-content;
   padding: 25px;
   border-radius: 15px;
@@ -2264,7 +2272,7 @@ body {
 }
 
 .select-user-container {
-  width: 100%;
+  width: 90%;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -2892,8 +2900,10 @@ body {
 }
 
 .inner-display-container {
-  width: 85%;
+  width: 80%;
   min-height: 300px;
+  min-width: 800px;
+  max-width: 1400px;
   height: fit-content;
   border-radius: 15px;
   border: 2px solid #c4c4c4;

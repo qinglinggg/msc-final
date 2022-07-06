@@ -33,10 +33,10 @@ function Invitation(props) {
     item.classList.add('clicked');
   }
 
-  const BASE_URL = "http://localhost:8080";
+  const BASE_URL = "http://10.61.44.90:8080";
   const { formId } = useParams();
 
-  const [formUrl] = useState(`http://localhost:3000/response/formId/${formId}`);
+  const [formUrl] = useState(`http://10.61.44.90:3000/response/formId/${formId}`);
 
   useEffect(() => {
     props.isAuthor(formId);
