@@ -168,7 +168,10 @@ function Question(props) {
 
   const removeInterval = () => {
     setIntervalObj(intervalObj => {
-      intervalObj.map((value) => clearInterval(value));
+      intervalObj.map((value) => {
+        console.log("Removing: ", value);
+        clearInterval(value);
+      });
       return [];
     });
   }
