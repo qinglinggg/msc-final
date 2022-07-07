@@ -81,7 +81,8 @@ function Respondent (props) {
     // DESIGN
     responsePageTheme();
     // CHAT
-    if(!previewMode){
+    if(!props.previewMode){
+      console.log("previewMode: ", props.previewMode);
       let userId = JSON.parse(localStorage.getItem("loggedInUser"));
       if(userId) {
         let userId_data = {"userId": userId}
@@ -121,38 +122,13 @@ function Respondent (props) {
     });
     localStorage.removeItem("navigator");
     localStorage.removeItem("tempFormResponse");
-    return () => {
-      if(!previewMode){
-        let feedbackMessage = [];
-        axios({
-          method: "get",
-          url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
-        }).then((res) => {
-          feedbackMessage = res.data;
-          console.log("feedback message", feedbackMessage);
-        }).finally(() => {
-          if(feedbackMessage.length == 0){
-            axios.delete(`${BASE_URL}/api/v1/feedback/${feedbackId}`).catch((error) => console.log(error));
-            console.log("deleted");
-          } 
-        })
-      }
-      let alreadySubmitted = localStorage.getItem("alreadySubmitted");
-      let isSubmitted = localStorage.getItem("isSubmitted");
-      if(!alreadySubmitted && !isSubmitted){
-        let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-        axios({
-          method: "delete",
-          url: `${BASE_URL}/api/v1/forms/force-delete-form-respondent/${formId}`,
-          data: loggedInUser,
-          headers: { "Content-Type" : "text/plain" }
-        })
-      }
-      localStorage.removeItem("navigator");
-      localStorage.removeItem("tempFormResponse");
-    };
-    
+    localStorage.setItem("openState", JSON.stringify(true));
   }, []);
+
+  useEffect(() => {
+    if(!feedbackId || !formRespondentId) return;
+    localStorage.setItem("responseData", JSON.stringify({formId: formId, feedbackId: feedbackId}));
+  }, [feedbackId, formRespondentId]);
 
   useEffect(() => {
     getAnswerSelection();

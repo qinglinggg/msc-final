@@ -35,6 +35,7 @@ class App extends React.Component {
     this.handleLogout = this.handleLogout.bind(this);
     this.handleOpenedPopup = this.handleOpenedPopup.bind(this);
     this.updateUserdata = this.updateUserdata.bind(this);
+    this.refreshResponse = this.refreshResponse.bind(this);
   }
 
   state = {
@@ -105,6 +106,10 @@ class App extends React.Component {
         body.classList.toggle("openMenu");
       });
     }
+    setInterval(async () => {
+      console.log("interval is workingggg");
+      await this.refreshResponse();
+    }, 5000);
   }
   
   componentDidUpdate(prevProps, prevState) {
@@ -170,6 +175,7 @@ class App extends React.Component {
 
   handleUpdateCurrentPage(value) {
     this.setState({currentPage : value});
+    localStorage.setItem("openState", JSON.stringify(false));
   }
 
   async handleCreateNewForm(obj) {
@@ -269,6 +275,51 @@ class App extends React.Component {
       headers: { "Content-Type" : "application/json" }
     }).catch((error) => console.log(error));
   }
+
+  async refreshResponse() {
+    let openState = localStorage.getItem("openState");
+    if(openState) openState = JSON.parse(openState);
+    else return;
+    if(openState == true) return;
+    console.log("masuk");
+    let responseData = localStorage.getItem("responseData");
+    if(!responseData) return;
+    responseData = JSON.parse(responseData);
+    let feedbackId = responseData.feedbackId;
+    let formId = responseData.formId;
+    if(feedbackId){
+      let feedbackMessage = [];
+      axios({
+        method: "get",
+        url: `${BASE_URL}/api/v1/feedback/by-feedback/${feedbackId}`,
+      }).then((res) => {
+        feedbackMessage = res.data;
+        console.log("feedback message", feedbackMessage);
+      }).finally(() => {
+        console.log("feedbackMessage" , feedbackMessage.length);
+        if(feedbackMessage.length == 0){
+          axios.delete(`${BASE_URL}/api/v1/feedback/${feedbackId}`).then((res) => console.log("testt", res.data)).catch((error) => console.log(error));
+          console.log("deleted");
+        } 
+      })
+    }
+    let alreadySubmitted = localStorage.getItem("alreadySubmitted");
+    let isSubmitted = localStorage.getItem("isSubmitted");
+    if(!alreadySubmitted && !isSubmitted){
+      let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+      axios({
+        method: "delete",
+        url: `${BASE_URL}/api/v1/forms/force-delete-form-respondent/${formId}`,
+        data: loggedInUser,
+        headers: { "Content-Type" : "text/plain" }
+      }).then(() => {
+        console.log("force delete formrespondentid");
+      })
+    }
+    localStorage.removeItem("navigator");
+    localStorage.removeItem("tempFormResponse");
+    localStorage.removeItem("responseData");
+  }; 
 
   appRouting() {
     let count = 0;
