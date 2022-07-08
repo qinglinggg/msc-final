@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from "react";
 import { v4 as uuid } from "uuid";
 import Option from "./Option";
 
-const BASE_URL = "http://10.61.44.90:8080";
+const BASE_URL = "http://10.61.42.160:8080";
 
 function Question(props) {
   const [selectedQuestionOption, setSelectedQuestionOption] = useState("");
@@ -212,6 +212,7 @@ function Question(props) {
   }
 
   const handleShowBranching = () => {
+    console.log("showBranching triggered...");
     setBranchingState(!branchingState);
   }
 
@@ -278,6 +279,37 @@ function Question(props) {
         return [];
       } else {
         if(arrayOptions.length == 0 || data.length != arrayOptions.length) return data;
+        else if(data.length == arrayOptions.length) {
+          let diff_check = false;
+          arrayOptions.map((options, idx) => {
+            if(options.nextItem != data[idx].nextItem) diff_check = true;
+          });
+          if(!diff_check) return arrayOptions;
+          removeInterval();
+          let check = 0;
+          data.map((opt) => {
+            console.log("opt.nextItem:" + opt.nextItem);
+            if(opt.nextItem == -1) check--;
+            else check++;
+          });
+          console.log("check", check);
+          if(check == arrayOptions.length){
+            console.log("masuk 1");
+            setBranchingState(branchingState => {
+              console.log("branchingState: ", branchingState);
+              if(!branchingState) return true;
+              return branchingState;
+            });
+          }
+          else if(check == (arrayOptions.length * (-1))) {
+            console.log("masuk 2");
+            setBranchingState(branchingState => {
+              console.log("branchingState: ", branchingState);
+              if(branchingState) return false;
+              return branchingState;
+            })
+          }
+        }
       }
       return arrayOptions;
     });

@@ -19,8 +19,8 @@ import UpdateProfile from "./components/functional-components/UpdateProfile"
 import NotFound from "./components/NotFound";
 import DateTimeService from "./components/functional-components/services/DateTimeService";
 
-const BASE_URL = "http://10.61.44.90:8080";
-const APP_URL = "http://10.61.44.90:3001";
+const BASE_URL = "http://10.61.42.160:8080";
+const APP_URL = "http://10.61.42.160:3001";
 
 class App extends React.Component {
   constructor(props) {
@@ -107,7 +107,6 @@ class App extends React.Component {
       });
     }
     setInterval(async () => {
-      console.log("interval is workingggg");
       await this.refreshResponse();
     }, 5000);
   }
@@ -281,7 +280,6 @@ class App extends React.Component {
     if(openState) openState = JSON.parse(openState);
     else return;
     if(openState == true) return;
-    console.log("masuk");
     let responseData = localStorage.getItem("responseData");
     if(!responseData) return;
     responseData = JSON.parse(responseData);

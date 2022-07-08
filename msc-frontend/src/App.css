@@ -1499,6 +1499,10 @@ body {
   font-style: italic;
 }
 
+#invitation-share-publicly-innerbox-url:disabled {
+  background-color: transparent;
+}
+
 #invitation-share-publicly-innerbox-iconcontainer {
   display: flex;
   flex-direction: row;
@@ -2347,6 +2351,15 @@ body {
   z-index: 1;
   align-items: center;
   /* position: absolute; */
+}
+
+@keyframes popup-fade {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 .update-page {

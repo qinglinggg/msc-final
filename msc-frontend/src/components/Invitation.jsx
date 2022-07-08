@@ -22,7 +22,7 @@ function Invitation(props) {
   const [openTargetedUserEmail, setOpenTargetedUserEmail] = useState(false);
   const [tags, setTags] = useState([]);
   const [tagsElement, setTagsElement] = useState([]);
-
+  const [clipboardState, setClipboardState] = useState(false);
   const [currentStep, setCurrentStep] = useState([]);
 
   const handleCurrentSelection = (item) => {
@@ -33,10 +33,10 @@ function Invitation(props) {
     item.classList.add('clicked');
   }
 
-  const BASE_URL = "http://10.61.44.90:8080";
+  const BASE_URL = "http://10.61.42.160:8080";
   const { formId } = useParams();
 
-  const [formUrl] = useState(`http://10.61.44.90:3000/response/formId/${formId}`);
+  const [formUrl] = useState(`http://10.61.42.160:3000/response/formId/${formId}`);
 
   useEffect(() => {
     props.isAuthor(formId);
@@ -160,6 +160,21 @@ function Invitation(props) {
     setPageSelection(1);
   }
 
+  useEffect(() => {
+    if(!clipboardState) return;
+    navigator.clipboard.writeText(`${formUrl}`);
+    console.log("clipboard copiedddd");
+    setTimeout(() => setClipboardState(false), 3000);
+  }, [clipboardState])
+
+  const displayClipboard = () => {
+    return (
+      <div className="popup-wrapper">
+        Copied to clipboard.
+      </div>
+    );
+  }
+
   const displaySharePage = () => {
     return (
       <React.Fragment>
@@ -174,19 +189,16 @@ function Invitation(props) {
                 <div id="invitation-share-publicly-innerbox-linkbox">
                   <input type="url" id="invitation-share-publicly-innerbox-url" value={formUrl} disabled />
                 </div>
-                <Popup
-                  trigger={(open) => 
-                      <ion-icon id="invitation-share-publicly-innerbox-iconcopy" name="copy-outline" /> 
-                  }
-                  position="right center"
-                  onClick={() => {
-                    navigator.clipboard.writeText(`${formUrl}`);
-                  }}
-                >
-                  <div className="popup-wrapper">
-                    Copied to clipboard.
-                  </div>
-                </Popup>
+                <div onClick={() => setClipboardState(!clipboardState)}>
+                  <ion-icon id="invitation-share-publicly-innerbox-iconcopy" name="copy-outline"/>
+                  <Popup
+                    open={clipboardState}
+                    position="right center"
+                    style={{animation: "popup-fade 2s forwards"}}
+                  >
+                    {displayClipboard()}
+                  </Popup>
+                </div>
               </div>
               <div id="invitation-share-publicly-innerbox-iconcontainer">
                 <img

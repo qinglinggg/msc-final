@@ -5,10 +5,11 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { useRef } from 'react';
 
-const BASE_URL = "http://10.61.44.90:8080";
+const BASE_URL = "http://10.61.42.160:8080";
 
 function Option(props) {
     const [value, setValue] = useState("");
+    const [nextItem, setNextItem] = useState(-1);
     const [intervalObj, setIntervalObj] = useState([]);
     const [isUsed, setIsUsed] = useState(false);
 
@@ -16,14 +17,11 @@ function Option(props) {
         handleInterval();
         let elem = document.getElementById(props.optionId);
         if(!elem) return;
-        console.log("mounted option");
         if (props.questionType != "LS"){
-            console.log("cek masuk 1")
             setValue(props.obj.value);
             if(elem.value != props.obj.value) elem.value = props.obj.value;
         }
         else {
-            console.log("cek masuk")
             setValue(props.obj.label);
             if(elem.value != props.obj.label) elem.value = "";
         }
@@ -39,6 +37,7 @@ function Option(props) {
               return isUsed;
             });
         });
+        setNextItem(props.obj.nextItem);
         return (() => {
             removeInterval();
         });
@@ -46,7 +45,7 @@ function Option(props) {
 
     useEffect(() => {
         if(!props.prevBranchSelection) return;
-        if (props.branchingState && props.prevBranchSelection.current.length > 0 && props.mode) handleOptionValue(-1, true);
+        handleOptionValue(null, true);
     }, [props.branchingState]);
 
     useEffect(() => {
@@ -83,7 +82,6 @@ function Option(props) {
     }
 
     useEffect(() => {
-        console.log("masuk sini", value);
         let el = document.getElementById(props.optionId);
         if(value != ("Option " + (props.idx+1))) el.value = value;
         // else el.value = "";
@@ -100,6 +98,10 @@ function Option(props) {
             method: "get",
             url: `${BASE_URL}/api/v1/forms/get-answer-selection-by-id/${props.obj.id}`,
         }).then((res) => {
+            setNextItem((value) => {
+                if(value != res.data.nextItem) return res.data.nextItem;
+                return value;
+            });
             setValue((value) => {
                 let resValue;
                 if(props.questionType != "LS") resValue = res.data.value;
@@ -113,13 +115,21 @@ function Option(props) {
         });
     }
 
-    const handleOptionValue = async (event, nextToggle) => {
-        event.persist();
+    const handleOptionValue = (event, nextToggle) => {
         let input = null;
-        if(event.target){
-            input = event.target.value;
+        if(event) {
+            // event.persist();
+            if(event.target){
+                input = event.target.value;
+            } else {
+                input = event.value;
+            }
         } else {
-            input = event.value;
+            if(!props.branchingState){
+                input = -1;
+                console.log("masuk input = -1");
+            }
+            else input = props.branchingSelection[0].value;
         }
         let tempObj = props.obj;
         if(nextToggle){
@@ -130,12 +140,16 @@ function Option(props) {
         if(!nextToggle){
             setValue(input);
             props.handleUpdateLastEdited();
+        } else {
+            setNextItem(input);
         }
         axios({
             method: "put",
             url: `${BASE_URL}/api/v1/forms/update-answer-selection/${tempObj.id}`,
             data: tempObj,
             headers: { "Content-Type": "application/json" },
+        }).then(() => {
+            console.log("sudah terupdate, branchingState: ", props.branchingState, " nextItem: ", input);
         });
     };
 
@@ -180,22 +194,12 @@ function Option(props) {
                     <Select
                         className="branching-selection"
                         options={props.branchingSelection}
-                        defaultValue={() => {
-                        if(props.obj.nextItem != -1) {
-                            let defaultVal = null;
-                            let tempBranch = null;
-                            if (props.branchingSelection.length > 0) tempBranch = props.branchingSelection;
-                            else tempBranch = props.prevBranchSelection.current;
-                            if (tempBranch) tempBranch.forEach((sel) => {
-                            if(sel.value == props.obj.nextItem) {
-                                defaultVal = sel;
+                        value={props.branchingSelection.map((option) => {
+                            if(option.value == nextItem) {
+                                return option;
                             }
-                            });
-                            return defaultVal;
-                        } else {
                             return null;
-                        }
-                        }}
+                        })}
                         onChange={(e) => {
                             handleOptionValue(e, true);
                         }}/>

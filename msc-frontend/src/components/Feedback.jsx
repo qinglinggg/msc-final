@@ -14,7 +14,7 @@ function Feedback(props) {
   const {formId} = useParams();
   const [currentStep, setCurrentStep] = useState([]);
   const [intervalId, setIntervalId] = useState(0);
-  const BASE_URL = "http://10.61.44.90:8080";
+  const BASE_URL = "http://10.61.42.160:8080";
 
   useEffect(() => {
     let body = document.getElementById("body");
@@ -49,6 +49,7 @@ function Feedback(props) {
           feedbacks = res.data;
           console.log("---", feedbacks);
           setIndex(feedbacks.length);
+          if(feedbacks.length == 0) setRenderFlag(1);
         }).finally(() => { 
           let i = 0;
           feedbacks.map(async (feedback) => {
@@ -57,14 +58,6 @@ function Feedback(props) {
             .then((res) => {
               feedback["lastMessage"] = res.data.feedbackMessage;
               feedback["isRead"] = res.data.isRead;
-              // const datetime = new Date(res.data.createDateTime);
-              // let date = datetime.getDate() + "/" + (datetime.getMonth() + 1) + "/" + datetime.getFullYear();
-              // let time = datetime.getHours() + ':';
-              // if(datetime.getMinutes() == 0) time = time + datetime.getMinutes() + '0';
-              // else if(datetime.getMinutes() < 10) time = time + '0' + datetime.getMinutes();
-              // else time = time + datetime.getMinutes();
-              // feedback["date"] = date;
-              // feedback["time"] = time;
               let convertedDateTime = DateTimeService("convertToDateTime", res.data.createDateTime);
               feedback["date"] = convertedDateTime.date;
               feedback["time"] = convertedDateTime.time;
@@ -81,6 +74,7 @@ function Feedback(props) {
                 }).finally(() => {
                   if(i == feedbacks.length){
                     setFeedbackList(feedbacks);
+                    setRenderFlag(1);
                   }
                 })
               });
@@ -89,8 +83,6 @@ function Feedback(props) {
         });
       }, 1000);
       setIntervalId(interval);
-    } else if(feedbackList.length > 0){
-      setRenderFlag(1);
     }
 
     return () => {
@@ -128,46 +120,50 @@ function Feedback(props) {
       </div>
       <div id="page-content" className="chat-content">
         <div id="chat-container">
-          {renderFlag == 1 ? feedbackList.map((message) => {
-            count++;
-            console.log("rendering...");
-            return (
-              <React.Fragment>
-                <div id="chat-single-box">
-                  {/* <img className="profile-image" src={profilePicture} alt="" /> */}
-                  
-                  <Link to={`/feedback/formId/${message.formId}/${message.feedbackId}`} 
-                    className="link" id="link-container"
-                    onClick={() => localStorage.setItem("selectedChat", JSON.stringify(message))}
-                  >
-                    <div className="chat-display">
-                      <ProfilePicture user={message["user"]}></ProfilePicture>
-                      <div id="chat-message-box">
-                        <div id="chat-user-name">{message.fullname}</div>
-                        <div id="chat-user-message">{message["lastMessage"]}</div>
-                      </div>
-                    </div>
-                    <div id="chat-info-box">
-                      <div id="chat-timestamp">{message["date"] + " " + message["time"]}</div>
-                      {message["tag"] ?
-                        <div
-                          className="chat-tag-box"
-                          id={
-                            message.isRead
-                              ? "orange-chat-tag-box"
-                              : "green-chat-tag-box"
-                          }
-                        >
-                          <div id="chat-tag">{message["tag"]}</div>
+          {renderFlag == 1 ? 
+           (feedbackList.length == 0 ? (
+            <div style={{textAlign: "center", fontSize: "16px", color: "gray", fontStyle: "italic"}}>There is no messages yet.</div>
+           ) : (
+            feedbackList.map((message) => {
+              count++;
+              return (
+                <React.Fragment>
+                  <div id="chat-single-box">
+                    {/* <img className="profile-image" src={profilePicture} alt="" /> */}
+                    
+                    <Link to={`/feedback/formId/${message.formId}/${message.feedbackId}`} 
+                      className="link" id="link-container"
+                      onClick={() => localStorage.setItem("selectedChat", JSON.stringify(message))}
+                    >
+                      <div className="chat-display">
+                        <ProfilePicture user={message["user"]}></ProfilePicture>
+                        <div id="chat-message-box">
+                          <div id="chat-user-name">{message.fullname}</div>
+                          <div id="chat-user-message">{message["lastMessage"]}</div>
                         </div>
-                        : false}
                       </div>
-                  </Link>
-                </div>
-                {count == index ? null : <div id="chat-line"></div>}
-              </React.Fragment>
-            );
-          }) : false}
+                      <div id="chat-info-box">
+                        <div id="chat-timestamp">{message["date"] + " " + message["time"]}</div>
+                        {message["tag"] ?
+                          <div
+                            className="chat-tag-box"
+                            id={
+                              message.isRead
+                                ? "orange-chat-tag-box"
+                                : "green-chat-tag-box"
+                            }
+                          >
+                            <div id="chat-tag">{message["tag"]}</div>
+                          </div>
+                          : false}
+                        </div>
+                    </Link>
+                  </div>
+                  {count == index ? null : <div id="chat-line"></div>}
+                </React.Fragment>
+              );
+            }))
+          ) : null } 
         </div>
       </div>
     </React.Fragment>
