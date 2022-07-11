@@ -213,7 +213,7 @@ function Question(props) {
         if(content != questionContent){
           handleStyling();
           return content;
-        } 
+        }
         return questionContent;
       });
       setQuestionType(questionType => {
@@ -223,6 +223,13 @@ function Question(props) {
           return type;
         }
         return questionType;
+      });
+      setSelectedIsRequired(selectedIsRequired => {
+        let isRequired = res.data.isRequired;
+        if(isRequired != selectedIsRequired) {
+          return isRequired;
+        }
+        return selectedIsRequired;
       });
     });
   }
