@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from "react";
 import { v4 as uuid } from "uuid";
 import Option from "./Option";
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://10.61.54.168:8080";
 
 function Question(props) {
   const [selectedQuestionOption, setSelectedQuestionOption] = useState("");
@@ -224,6 +224,17 @@ function Question(props) {
         }
         return questionType;
       });
+      setBranchingState(branchingState => {
+        let state = res.data.branchEnabled;
+        let determiner = 0;
+        if(branchingState == true) determiner = 1;
+        else determiner = 0;
+        if(state != determiner) {
+          if(state == 0) return false;
+          else return true;
+        }
+        return branchingState;
+      })
       setSelectedIsRequired(selectedIsRequired => {
         let isRequired = res.data.isRequired;
         if(isRequired != selectedIsRequired) {

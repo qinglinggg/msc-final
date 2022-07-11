@@ -14,7 +14,7 @@ function Feedback(props) {
   const {formId} = useParams();
   const [currentStep, setCurrentStep] = useState([]);
   const [intervalId, setIntervalId] = useState(0);
-  const BASE_URL = "http://localhost:8080";
+  const BASE_URL = "http://10.61.54.168:8080";
 
   useEffect(() => {
     let body = document.getElementById("body");

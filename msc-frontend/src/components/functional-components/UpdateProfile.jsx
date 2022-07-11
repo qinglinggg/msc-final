@@ -3,7 +3,7 @@ import React, { Component, useEffect, useState } from 'react';
 import ProfilePicture from './ProfilePicture';
 import UploadImage from "./UploadImage";
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://10.61.54.168:8080";
 function UpdateProfile(props) {
     useEffect(() => {
         let el = document.getElementById("body");
