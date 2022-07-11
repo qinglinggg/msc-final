@@ -100,6 +100,12 @@ public class FormController {
     public FormItems getFormItemByNum(@PathVariable("id") String id, @PathVariable("number") Integer number) {
         return formService.getFormItemByNum(id, number);
     }
+
+    @PostMapping(path = "/toggle-branch/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Integer toggleBranch(@PathVariable("id") String id, @RequestBody FormItems item) {
+        System.out.println("Toggle value: " + item.getBranchEnabled());
+        return formService.toggleBranch(id, item);
+    }
     
     @GetMapping(path = "/get-response/{formItemsId}")
     public List<FormItemResponse> getFormItemResponse(@PathVariable("formItemsId") String formItemsId){

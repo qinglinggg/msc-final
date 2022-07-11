@@ -8,5 +8,4 @@ public class MscBackendApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MscBackendApplication.class, args);
 	}
-
 }

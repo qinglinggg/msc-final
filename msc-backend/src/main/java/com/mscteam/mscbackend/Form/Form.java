@@ -15,7 +15,8 @@ public class Form implements Comparable<Form> {
     private Integer versionNo; // acts as default value
 
     // Get Forms
-    public Form(String formId, String title, String description, String privacySetting, Long createDate, Long modifyDate, String backgroundColor, String backgroundLink, Integer versionNo) {
+    public Form(String formId, String title, String description, String privacySetting, Long createDate, Long modifyDate, String backgroundColor,
+        String backgroundLink, Integer versionNo) {
         this.formId = UUID.fromString(formId);
         this.title = title;
         this.description = description;

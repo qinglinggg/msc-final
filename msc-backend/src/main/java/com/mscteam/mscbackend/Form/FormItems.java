@@ -11,26 +11,31 @@ public class FormItems implements Comparable<FormItems>{
     private String questionType;
     private Integer isRequired;
     private Integer versionNo;
+    private Integer branchEnabled;
 
     // Get Items
-    public FormItems(UUID formId, UUID formItemsId, int itemNumber, String questionContent, String questionType, Integer isRequired, Integer versionNo) {
+    public FormItems(UUID formId, UUID formItemsId, int itemNumber, String questionContent, String questionType,
+        Integer isRequired, Integer versionNo, Integer branchEnabled) {
         this.formId = formId;
         this.formItemsId = formItemsId;
         this.itemNumber = itemNumber;
         this.questionContent = questionContent;
         this.questionType = questionType;
         this.isRequired = isRequired;
+        this.branchEnabled = branchEnabled;
         if(versionNo != null) this.versionNo = versionNo;
     }
 
     // Create and Insert mode
-    public FormItems(@JsonProperty("formId") UUID formId, @JsonProperty("itemNumber") int itemNumber, @JsonProperty("questionContent") String questionContent, @JsonProperty("questionType") String questionType, @JsonProperty("versionNo") Integer versionNo) {
+    public FormItems(@JsonProperty("formId") UUID formId, @JsonProperty("itemNumber") int itemNumber, @JsonProperty("questionContent") String questionContent, @JsonProperty("questionType") String questionType,
+        @JsonProperty("versionNo") Integer versionNo) {
         this.formId = formId;
         this.formItemsId = UUID.randomUUID();
         this.itemNumber = itemNumber;
         this.questionContent = questionContent;
         this.questionType = questionType;
         this.isRequired = 0;
+        this.branchEnabled = 0;
         if(versionNo != null) this.versionNo = versionNo;
     }
 
@@ -80,6 +85,14 @@ public class FormItems implements Comparable<FormItems>{
 
     public void setVersionNo(Integer versionNo) {
         this.versionNo = versionNo;
+    }
+
+    public Integer getBranchEnabled() {
+        return this.branchEnabled;
+    }
+
+    public void setBranchEnabled(Integer value) {
+        this.branchEnabled = value;
     }
 
     @Override

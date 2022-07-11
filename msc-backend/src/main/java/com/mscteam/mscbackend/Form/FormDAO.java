@@ -36,7 +36,8 @@ public class FormDAO {
             Long createDate = resultSet.getLong("createDate");
             Long modifyDate = resultSet.getLong("modifyDate");
             Integer versionNo = resultSet.getInt("versionNo");
-            return new Form(formId, title, description, privacySetting, createDate, modifyDate, backgroundColor, backgroundLink, versionNo);
+            return new Form(formId, title, description, privacySetting, createDate, modifyDate,
+                backgroundColor, backgroundLink, versionNo);
         });
         return formList;
     }
@@ -53,7 +54,8 @@ public class FormDAO {
             Long createDate = resultSet.getLong("createDate");
             Long modifyDate = resultSet.getLong("modifyDate");
             Integer versionNo = resultSet.getInt("versionNo");
-            return new Form(formId, title, description, privacySetting, createDate, modifyDate, backgroundColor, backgroundLink, versionNo);
+            return new Form(formId, title, description, privacySetting, createDate, modifyDate,
+                backgroundColor, backgroundLink, versionNo);
         }, id);
         if(form.isEmpty()) return Optional.ofNullable(null);
         return Optional.ofNullable(form.get(0));
@@ -158,9 +160,9 @@ public class FormDAO {
     }
 
     public FormItems addFormItems(String id, FormItems item) {
-        final String query = "INSERT INTO FormItems(formId, formItemsId, itemNumber, questionContent, questionType, isRequired, versionNo) VALUES(?,?,?,?,?,?,?)";
+        final String query = "INSERT INTO FormItems(formId, formItemsId, itemNumber, questionContent, questionType, isRequired, versionNo, branchEnabled) VALUES(?,?,?,?,?,?,?,?)";
         jdbcTemplate.update(query, id, item.getId().toString(), item.getItemNumber(), item.getContent(),
-                item.getType(), item.getIsRequired(), item.getVersionNo());
+                item.getType(), item.getIsRequired(), item.getVersionNo(), item.getBranchEnabled());
         System.out.println(item);
         return item;
     }
@@ -176,8 +178,10 @@ public class FormDAO {
             String questionContent = resultSet.getString("questionContent");
             String questionType = resultSet.getString("questionType");
             Integer isRequired = Integer.parseInt(resultSet.getString("isRequired"));
+            Integer branchEnabled = resultSet.getInt("branchEnabled");
+            System.out.println("Logging branchEnabled: " + branchEnabled);
             return new FormItems(UUID.fromString(formId), UUID.fromString(formItemsId), itemNumber, questionContent,
-                questionType, isRequired, versionNo);
+                questionType, isRequired, versionNo, branchEnabled);
         }, id, versionNo);
         System.out.println(formItems);
         return formItems;
@@ -193,8 +197,9 @@ public class FormDAO {
             String questionType = resultSet.getString("questionType");
             Integer isRequired = Integer.parseInt(resultSet.getString("isRequired"));
             Integer versionNo = resultSet.getInt("versionNo");
+            Integer branchEnabled = resultSet.getInt("branchEnabled");
             return new FormItems(UUID.fromString(formId), UUID.fromString(formItemsId), itemNumber, questionContent, 
-            questionType, isRequired, versionNo);
+            questionType, isRequired, versionNo, branchEnabled);
         }, id);
         return formItem;
     }
@@ -209,8 +214,9 @@ public class FormDAO {
             String questionType = resultSet.getString("questionType");
             Integer isRequired = Integer.parseInt(resultSet.getString("isRequired"));
             Integer versionNo = resultSet.getInt("versionNo");
+            Integer branchEnabled = resultSet.getInt("branchEnabled");
             return new FormItems(UUID.fromString(formId), UUID.fromString(formItemsId), itemNumber, questionContent, 
-            questionType, isRequired, versionNo);
+            questionType, isRequired, versionNo, branchEnabled);
         }, id, number);
         return formItem;
     }
@@ -250,15 +256,18 @@ public class FormDAO {
         System.out.println("updateFormItems FormDAO masuk");
         System.out.println("isrequired: " + toBeUpdated.getIsRequired());
         String query = "UPDATE FormItems SET ";
-        query = query + "questionContent = '" + toBeUpdated.getContent().toString() + "', ";
-        query = query + "itemNumber = '" + toBeUpdated.getItemNumber() + "', ";
+        query = query + "questionContent = '" + toBeUpdated.getContent().toString() + "'";
+        query = query + ", itemNumber = '" + toBeUpdated.getItemNumber() + "'";
         if (toBeUpdated.getType() != "" && toBeUpdated.getType() != null) {
-            query = query + "questionType = '" + toBeUpdated.getType().toString() + "', ";
+            query = query + ", questionType = '" + toBeUpdated.getType().toString() + "'";
         }
         if (toBeUpdated.getIsRequired() != null) {
-            query = query + "isRequired = " + toBeUpdated.getIsRequired();
+            query = query + ", isRequired = " + toBeUpdated.getIsRequired();
         }
-        query = query + " WHERE formItemsId = '" + formItemsId + "'" + "AND versionNo = '" + versionNo + "'";
+        if(toBeUpdated.getBranchEnabled() != null) {
+            query = query + ", branchEnabled = " + toBeUpdated.getBranchEnabled();
+        }
+        query = query + " WHERE formItemsId = '" + formItemsId + "'" + " AND versionNo = '" + versionNo + "'";
         System.out.println(query);
         int res = jdbcTemplate.update(query);
         return res;
@@ -291,8 +300,8 @@ public class FormDAO {
         query = query + "answerSelectionValue = '" + toBeUpdated.getValue().toString() + "'";
         System.out.println("[Update Answer Selection] To Be Updated Label: " + toBeUpdated.getLabel());
         if(toBeUpdated.getLabel() != null) query = query + ", answerSelectionLabel = '" + toBeUpdated.getLabel().toString() + "'";
-        if(toBeUpdated.getNextItem() > 0) query = query + ", nextItem = " + toBeUpdated.getNextItem();
-        if(toBeUpdated.getPrevItem() > 0) query = query + ", prevItem = " + toBeUpdated.getPrevItem();
+        query = query + ", nextItem = " + toBeUpdated.getNextItem();
+        query = query + ", prevItem = " + toBeUpdated.getPrevItem();
         query = query + " WHERE answerSelectionId = '" + answerSelectionId + "'";
         int res = jdbcTemplate.update(query);
         return res;

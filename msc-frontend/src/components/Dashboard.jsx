@@ -11,7 +11,7 @@ import Respondent from "./Respondent";
 import DateTimeService from "./functional-components/services/DateTimeService";
 import ProfilePicture from "./functional-components/ProfilePicture";
 
-const BASE_URL = "http://10.61.42.160:8080";
+const BASE_URL = "http://localhost:8080";
 function Dashboard(props) {
   const [showTutorial, setShowTutorial] = useState(false);
   const [openVisibility, setOpenVisibility] = useState(false);
@@ -168,14 +168,15 @@ function Dashboard(props) {
           itemNumber: newData.itemNumber,
           questionContent: newData.content,
           questionType: newData.type,
-          isRequired: newData.isRequired
+          isRequired: newData.isRequired,
+          branchEnabled: newData.branchEnabled
         };
         tempItems.push(newItem);
       });
       setFormItems(formItems => {
         let isUpdated = false;
         if(formItems.length != 0 && tempItems.length == formItems.length) formItems.map((data, idx) => {
-          if(data.id != tempItems[idx].id) {
+          if(data.id != tempItems[idx].id || data.branchEnabled != tempItems[idx].branchEnabled) {
             isUpdated = true;
             return;
           }
@@ -274,7 +275,8 @@ function Dashboard(props) {
         itemNumber: -1,
         questionContent: "",
         questionType: "MC",
-        versionNo: versionNo
+        versionNo: versionNo,
+        branchEnabled: 0
       };
       axios({
         method: "post",
@@ -288,6 +290,7 @@ function Dashboard(props) {
           questionContent: res.data.content,
           questionType: res.data.type,
           versionNo: res.data.versionNo,
+          branchEnabled: res.data.branchEnabled
         };
         currentStateData.push(newItem);
       }).finally(() => {

@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from "react";
 import { v4 as uuid } from "uuid";
 import Option from "./Option";
 
-const BASE_URL = "http://10.61.42.160:8080";
+const BASE_URL = "http://localhost:8080";
 
 function Question(props) {
   const [selectedQuestionOption, setSelectedQuestionOption] = useState("");
@@ -42,6 +42,7 @@ function Question(props) {
   ];
 
   useEffect(() => {
+    console.log("mounted new");
     if(props.questionData) {
       let questionContentTextarea = document.getElementById("question-input-" + props.questionData.id);
       if(questionContent) questionContentTextarea.value = questionContent;
@@ -53,6 +54,9 @@ function Question(props) {
     if (props.mode) {
       setQuestionContent(props.questionData.questionContent);
       setQuestionType(props.questionData.questionType);
+      console.log("questionData.branchEnabled", branchingState);
+      if(props.questionData.branchEnabled == 0) setBranchingState(false);
+      else setBranchingState(true);
       handleInterval();
       let elem = document.getElementById("question-input-" + props.questionData.id);
       elem.addEventListener("focusin", () => {
@@ -82,7 +86,6 @@ function Question(props) {
       let currentData = arrayOptions[x];
       if (currentData.nextItem != -1) branch_check = true;
     }
-    if (branch_check && !branchingState) handleShowBranching();
   }, [arrayOptions]);
 
   useEffect(() => {
@@ -104,6 +107,19 @@ function Question(props) {
     }
     setBranchingSelection(tempSelection);
   }, [branchingSelection]);
+
+  useEffect(() => {
+    if(!props.questionData) return;
+    let value = props.questionData;
+    console.log("branching check:", branchingState);
+    if(branchingState == true) value.branchEnabled = 1;
+    else value.branchEnabled = 0;
+    axios({
+      method: "post",
+      url: `${BASE_URL}/api/v1/forms/toggle-branch/${props.questionData.id}`,
+      data: value
+    }).then(() => console.log("Success update! ", value.branchEnabled));
+  }, [branchingState]);
 
   useEffect(() => {
     if(props.questionData) resetBranchingSelection();
@@ -279,37 +295,6 @@ function Question(props) {
         return [];
       } else {
         if(arrayOptions.length == 0 || data.length != arrayOptions.length) return data;
-        else if(data.length == arrayOptions.length) {
-          let diff_check = false;
-          arrayOptions.map((options, idx) => {
-            if(options.nextItem != data[idx].nextItem) diff_check = true;
-          });
-          if(!diff_check) return arrayOptions;
-          removeInterval();
-          let check = 0;
-          data.map((opt) => {
-            console.log("opt.nextItem:" + opt.nextItem);
-            if(opt.nextItem == -1) check--;
-            else check++;
-          });
-          console.log("check", check);
-          if(check == arrayOptions.length){
-            console.log("masuk 1");
-            setBranchingState(branchingState => {
-              console.log("branchingState: ", branchingState);
-              if(!branchingState) return true;
-              return branchingState;
-            });
-          }
-          else if(check == (arrayOptions.length * (-1))) {
-            console.log("masuk 2");
-            setBranchingState(branchingState => {
-              console.log("branchingState: ", branchingState);
-              if(branchingState) return false;
-              return branchingState;
-            })
-          }
-        }
       }
       return arrayOptions;
     });
@@ -363,6 +348,7 @@ function Question(props) {
         data: tempItem,
         headers: { "Content-Type": "application/json" },
       });
+      resetNavSelection(tempItemId);
     }).finally(() => {
       axios({
         method: "put",
@@ -375,6 +361,34 @@ function Question(props) {
         console.log("Switched successfully!");
       });
     });
+  }
+
+  const resetNavSelection = (itemId) => {
+    let tempArr = null;
+    axios({
+      method: "get",
+      url: `${BASE_URL}/api/v1/forms/get-answer-selection/${itemId}`,
+    }).then((res) => {
+      if(res.data) tempArr = res.data;
+      arrayOptions.map(async (option) => {
+        option.nextItem = -1;
+        axios({
+          method: "put",
+          url: `${BASE_URL}/api/v1/forms/update-answer-selection/${option.id}`,
+          data: option,
+          headers: { "Content-Type": "application/json" },
+        });
+      });
+      tempArr.map(async (option) => {
+        option.nextItem = -1;
+        axios({
+          method: "put",
+          url: `${BASE_URL}/api/v1/forms/update-answer-selection/${option.id}`,
+          data: option,
+          headers: { "Content-Type": "application/json" },
+        });
+      })
+    }); 
   }
 
   const handleUpdateQuestionType = (event) => {

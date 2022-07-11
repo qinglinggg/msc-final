@@ -6,7 +6,7 @@ import DateTimeService from './functional-components/services/DateTimeService';
 
 import dummyProfile from "./images/woman.jpg";
 
-const BASE_URL = "http://10.61.42.160:8080";
+const BASE_URL = "http://localhost:8080";
 
 function Respondent (props) {
   let { formId } = useParams();
@@ -529,6 +529,7 @@ function Respondent (props) {
     let current;
     if(index <= length){
       current = formItems[index-1];
+      console.log(formItems[index-1]);
     }
     return (
       <div className="preview-flex">

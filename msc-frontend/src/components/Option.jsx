@@ -5,11 +5,11 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { useRef } from 'react';
 
-const BASE_URL = "http://10.61.42.160:8080";
+const BASE_URL = "http://localhost:8080";
 
 function Option(props) {
     const [value, setValue] = useState("");
-    const [nextItem, setNextItem] = useState(-1);
+    const [nextItem, setNextItem] = useState(props.obj.nextItem);
     const [intervalObj, setIntervalObj] = useState([]);
     const [isUsed, setIsUsed] = useState(false);
 
@@ -37,7 +37,6 @@ function Option(props) {
               return isUsed;
             });
         });
-        setNextItem(props.obj.nextItem);
         return (() => {
             removeInterval();
         });
@@ -45,7 +44,7 @@ function Option(props) {
 
     useEffect(() => {
         if(!props.prevBranchSelection) return;
-        handleOptionValue(null, true);
+        handleOptionValue(null, true, false);
     }, [props.branchingState]);
 
     useEffect(() => {
@@ -115,7 +114,7 @@ function Option(props) {
         });
     }
 
-    const handleOptionValue = (event, nextToggle) => {
+    const handleOptionValue = (event, nextToggle, resetTrigger) => {
         let input = null;
         if(event) {
             // event.persist();
@@ -127,10 +126,12 @@ function Option(props) {
         } else {
             if(!props.branchingState){
                 input = -1;
-                console.log("masuk input = -1");
             }
-            else input = props.branchingSelection[0].value;
+            else if (props.branchingSelection.length > 0 && nextItem == -1) input = props.branchingSelection[0].value;
+            else if (props.branchingSelection.length == 0) input = -1;
+            console.log("Current input to update:", input);
         }
+        if(input == null) return;
         let tempObj = props.obj;
         if(nextToggle){
             tempObj.nextItem = input;
@@ -140,7 +141,7 @@ function Option(props) {
         if(!nextToggle){
             setValue(input);
             props.handleUpdateLastEdited();
-        } else {
+        } else if(!resetTrigger) {
             setNextItem(input);
         }
         axios({
@@ -187,21 +188,23 @@ function Option(props) {
                     placeholder={props.obj.label}
                     wrap="soft"
                     onChange={(e) => {
-                        handleOptionValue(e, false);
+                        handleOptionValue(e, false, false);
                     }}
                     />
                     {props.branchingState ? (
                     <Select
                         className="branching-selection"
                         options={props.branchingSelection}
-                        value={props.branchingSelection.map((option) => {
-                            if(option.value == nextItem) {
+                        value={props.branchingSelection.map((option, idx) => {
+                            if(nextItem == -1 && idx == 0) return option;
+                            else if(option.value == nextItem) {
                                 return option;
                             }
                             return null;
                         })}
+                        isDisabled={!props.branchingSelection || props.branchingSelection.length == 0}
                         onChange={(e) => {
-                            handleOptionValue(e, true);
+                            handleOptionValue(e, true, false);
                         }}/>
                     ) : null}
                     <div className="form-item-remove"
@@ -234,7 +237,7 @@ function Option(props) {
                         placeholder={props.obj.label}
                         wrap="soft"
                         onChange={(e) => {
-                            handleOptionValue(e, false);
+                            handleOptionValue(e, false, false);
                         }}
                     />
                     <div

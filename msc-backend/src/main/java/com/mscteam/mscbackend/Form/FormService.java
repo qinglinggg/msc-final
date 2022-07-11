@@ -85,6 +85,7 @@ public class FormService {
         List<FormItems> listItems = this.getFormItems(id);
         int num = this.getLastItemNum(listItems);
         item.setItemNumber(num);
+        item.setBranchEnabled(0);
         return formDAO.addFormItems(id, item);
     }
 
@@ -110,6 +111,13 @@ public class FormService {
 
     public FormItems getFormItemByNum(String id, Integer number) {
         return formDAO.getFormItemByNum(id, number);
+    }
+
+    public Integer toggleBranch(String id, FormItems item) {
+        FormItems curItem = getFormItemById(id);
+        System.out.println("Ini yang baru:" + item.getBranchEnabled());
+        curItem.setBranchEnabled(item.getBranchEnabled());
+        return updateFormItems(id, curItem);
     }
 
     public int updateFormItems(String formItemsId, FormItems toBeUpdated) {
