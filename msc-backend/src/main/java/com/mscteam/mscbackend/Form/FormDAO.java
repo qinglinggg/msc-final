@@ -291,9 +291,10 @@ public class FormDAO {
         query = query + "answerSelectionValue = '" + toBeUpdated.getValue().toString() + "'";
         System.out.println("[Update Answer Selection] To Be Updated Label: " + toBeUpdated.getLabel());
         if(toBeUpdated.getLabel() != null) query = query + ", answerSelectionLabel = '" + toBeUpdated.getLabel().toString() + "'";
-        if(toBeUpdated.getNextItem() > 0) query = query + ", nextItem = " + toBeUpdated.getNextItem();
-        if(toBeUpdated.getPrevItem() > 0) query = query + ", prevItem = " + toBeUpdated.getPrevItem();
+        if(toBeUpdated.getNextItem() != 0) query = query + ", nextItem = " + toBeUpdated.getNextItem();
+        if(toBeUpdated.getPrevItem() != 0) query = query + ", prevItem = " + toBeUpdated.getPrevItem();
         query = query + " WHERE answerSelectionId = '" + answerSelectionId + "'";
+        System.out.println(query);
         int res = jdbcTemplate.update(query);
         return res;
     }

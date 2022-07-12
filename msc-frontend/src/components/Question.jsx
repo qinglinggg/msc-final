@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from "react";
 import { v4 as uuid } from "uuid";
 import Option from "./Option";
 
-const BASE_URL = "http://10.61.42.160:8080";
+const BASE_URL = "http://10.61.54.168:8080";
 
 function Question(props) {
   const [selectedQuestionOption, setSelectedQuestionOption] = useState("");
@@ -77,13 +77,17 @@ function Question(props) {
 
   useEffect(() => {
     let branch_check = false;
-    if(!arrayOptions) return;
-    for(let x=0; x<arrayOptions.length; x++){
-      let currentData = arrayOptions[x];
-      if (currentData.nextItem != -1) branch_check = true;
-    }
-    if (branch_check && !branchingState) handleShowBranching();
-  }, [arrayOptions]);
+    if(!props.formItems || props.formItems.length == 0) return;
+    if(!arrayOptions || arrayOptions.length == 0) return;
+    arrayOptions.map((option) => {
+      if(option.nextItem != -1) branch_check = true;
+      else branch_check = false;
+    });
+    setBranchingState(branchingState => {
+      if(branch_check && !branchingState) return true;
+      return branchingState;
+    });
+  }, [props.formItems, arrayOptions]);
 
   useEffect(() => {
     if(!props.formItems) return;
@@ -103,10 +107,13 @@ function Question(props) {
       tempSelection.push({ value: props.formItems[i+1].itemNumber, label: tempLabel});
     }
     setBranchingSelection(tempSelection);
+    // if(props.idx == props.formItems.length - 2) handleResetOptionBranch(props.questionData.id, props.questionData.itemNumber);
   }, [branchingSelection]);
 
   useEffect(() => {
-    if(props.questionData) resetBranchingSelection();
+    if(props.questionData){
+      resetBranchingSelection();
+    } 
   }, [props.formItems]);
 
   useEffect(() => {
@@ -142,7 +149,7 @@ function Question(props) {
       getAnswerSelection();
     }, 1000);
     setIntervalObj(intervalObj => {
-      let currentInterval = intervalObj
+      let currentInterval = intervalObj;
       currentInterval.push(interval);
       return currentInterval;
     });
@@ -208,11 +215,17 @@ function Question(props) {
         }
         return questionType;
       });
+      setSelectedIsRequired(selectedIsRequired => {
+        let isReq = res.data.isRequired;
+        if(isReq != selectedIsRequired){
+          return isReq;
+        }
+        return selectedIsRequired;
+      })
     });
   }
 
   const handleShowBranching = () => {
-    console.log("showBranching triggered...");
     setBranchingState(!branchingState);
   }
 
@@ -272,43 +285,74 @@ function Question(props) {
     }
   };
 
+  useEffect(() => {
+    if(!arrayOptions || arrayOptions.length == 0) return;
+    console.log("branching state");
+    handleOptionBranch(branchingState);
+  }, [branchingState]);
+
+  const handleOptionBranch = (branchingState) => {
+    arrayOptions.map(async (option) => {
+      console.log("current branching state: ", branchingState);
+      if(branchingState){
+        if(branchingSelection.length > 0){
+          console.log("branching selection", branchingSelection[0]);
+          if(option.nextItem == -1) option.nextItem = branchingSelection[0].value;
+        } 
+      } else if(!branchingState){
+        option.nextItem = -1;
+      }
+      await axios({
+        method: "put",
+        url: `${BASE_URL}/api/v1/forms/update-answer-selection/${option.id}`,
+        data: option,
+        headers: { "Content-Type": "application/json" },
+      });
+    })
+  }
+
+  const handleResetOptionBranch = (formItemId, itemNumber) => {
+    console.log("handleResetOptionBranch");
+    axios({
+      method: "get",
+      url: `${BASE_URL}/api/v1/forms/get-answer-selection/${formItemId}`,
+    }).then((res) => {
+      let options = res.data;
+      let newNextItem = 0;
+      if(props.idx > props.formItems.length - 1){
+        newNextItem = -1;
+      } else {
+        newNextItem = itemNumber + 1;
+      }
+      options.map((option) => {
+        if(option.nextItem == newNextItem) return;
+        else option.nextItem = newNextItem;
+        axios({
+          method: "put",
+          url: `${BASE_URL}/api/v1/forms/update-answer-selection/${option.id}`,
+          data: option,
+          headers: { "Content-Type": "application/json" },
+        });
+      });
+    });
+  }
+
   const handleOptionList = (id, data) => {
     setArrayOptions(arrayOptions => {
       if(data.length == 0){
         handleAddOption(id, null, null);
         return [];
       } else {
-        if(arrayOptions.length == 0 || data.length != arrayOptions.length) return data;
+        if(arrayOptions.length == 0 || data.length != arrayOptions.length){
+          return data;
+        }
         else if(data.length == arrayOptions.length) {
           let diff_check = false;
           arrayOptions.map((options, idx) => {
             if(options.nextItem != data[idx].nextItem) diff_check = true;
           });
           if(!diff_check) return arrayOptions;
-          removeInterval();
-          let check = 0;
-          data.map((opt) => {
-            console.log("opt.nextItem:" + opt.nextItem);
-            if(opt.nextItem == -1) check--;
-            else check++;
-          });
-          console.log("check", check);
-          if(check == arrayOptions.length){
-            console.log("masuk 1");
-            setBranchingState(branchingState => {
-              console.log("branchingState: ", branchingState);
-              if(!branchingState) return true;
-              return branchingState;
-            });
-          }
-          else if(check == (arrayOptions.length * (-1))) {
-            console.log("masuk 2");
-            setBranchingState(branchingState => {
-              console.log("branchingState: ", branchingState);
-              if(branchingState) return false;
-              return branchingState;
-            })
-          }
+          else return data;
         }
       }
       return arrayOptions;
@@ -348,6 +392,8 @@ function Question(props) {
     if(determiner < 0) return;
     else if(determiner >= props.formItems.length) return;
     currentForm["itemNumber"] = props.formItems[determiner].itemNumber;
+    handleResetOptionBranch(currentForm.id, currentForm["itemNumber"]);
+    let id = [];
     await axios({
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-a-form-item/${props.formId}/${navIdx}`,
@@ -356,7 +402,7 @@ function Question(props) {
       let tempItem = res.data;
       tempItem["itemNumber"] = selectorIdx;
       let tempItemId = props.formItems[determiner].id;
-      console.log("Check", tempItemId);
+      handleResetOptionBranch(tempItemId, tempItem["itemNumber"]);
       await axios({
         method: "put",
         url: `${BASE_URL}/api/v1/forms/update-form-items/${tempItemId}`,
@@ -537,6 +583,7 @@ function Question(props) {
                     <Option 
                       key={"opt-key-" + optionId}
                       idx={idx}
+                      questionIdx={props.idx}
                       optionId={optionId}
                       obj={obj}
                       branchingState={branchingState}
@@ -544,6 +591,7 @@ function Question(props) {
                       prevBranchSelection={prevBranchSelection}
                       handleRemoveOption={handleRemoveOption}
                       handleStyling={handleStyling}
+                      itemNumber={props.questionData.itemNumber}
                       questionType={questionType}
                       formItems={props.formItems}
                       arrayOptions={arrayOptions}

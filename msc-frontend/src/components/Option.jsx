@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { useRef } from 'react';
 
-const BASE_URL = "http://10.61.42.160:8080";
+const BASE_URL = "http://10.61.54.168:8080";
 
 function Option(props) {
     const [value, setValue] = useState("");
@@ -37,7 +37,6 @@ function Option(props) {
               return isUsed;
             });
         });
-        setNextItem(props.obj.nextItem);
         return (() => {
             removeInterval();
         });
@@ -45,8 +44,15 @@ function Option(props) {
 
     useEffect(() => {
         if(!props.prevBranchSelection) return;
-        handleOptionValue(null, true);
+        if(props.branchingState){
+            handleOptionValue(null, true);
+        } 
     }, [props.branchingState]);
+
+    useEffect(() => {
+        setNextItem(-1);
+        handleOptionValue(null, true);
+    }, [props.formItems]);
 
     useEffect(() => {
         // if(!props.obj) return;
@@ -115,41 +121,48 @@ function Option(props) {
         });
     }
 
-    const handleOptionValue = (event, nextToggle) => {
+    const handleOptionValue = async (event, nextToggle) => {
+        console.log("handleOptionValue, branchingState: ", props.branchingState);
         let input = null;
+        let tempObj = props.obj;
         if(event) {
-            // event.persist();
             if(event.target){
                 input = event.target.value;
             } else {
                 input = event.value;
             }
+            console.log("input:", input);
         } else {
             if(!props.branchingState){
                 input = -1;
-                console.log("masuk input = -1");
             }
-            else input = props.branchingSelection[0].value;
+            else {
+                if(tempObj.nextItem > 0) {
+                    let isFound = false;
+                    props.formItems.map((item) => {
+                        if(item.itemNumber == tempObj.nextItem) isFound = true;
+                    });
+                    console.log("isFound", isFound);
+                    if(!isFound) input = -1;
+                    else input = tempObj.nextItem;
+                }
+                else input = -1;
+            }
+            console.log("Current item number: ", props.itemNumber, input);
         }
-        let tempObj = props.obj;
         if(nextToggle){
             tempObj.nextItem = input;
+            setNextItem(input);
         } else {
             tempObj.value = input;
-        }
-        if(!nextToggle){
             setValue(input);
             props.handleUpdateLastEdited();
-        } else {
-            setNextItem(input);
         }
-        axios({
+        await axios({
             method: "put",
             url: `${BASE_URL}/api/v1/forms/update-answer-selection/${tempObj.id}`,
             data: tempObj,
             headers: { "Content-Type": "application/json" },
-        }).then(() => {
-            console.log("sudah terupdate, branchingState: ", props.branchingState, " nextItem: ", input);
         });
     };
 
@@ -190,16 +203,19 @@ function Option(props) {
                         handleOptionValue(e, false);
                     }}
                     />
-                    {props.branchingState ? (
+                    {props.branchingState && nextItem != 0 ? (
                     <Select
                         className="branching-selection"
                         options={props.branchingSelection}
-                        value={props.branchingSelection.map((option) => {
-                            if(option.value == nextItem) {
+                        value={props.branchingSelection.map((option, idx) => {
+                            if(nextItem == -1 && idx == 0) return option;
+                            // else if(props.branchingSelection.length == 1) return option;
+                            else if(option.value == nextItem) {
                                 return option;
                             }
                             return null;
                         })}
+                        isDisabled={!props.branchingSelection || props.branchingSelection.length == 0}
                         onChange={(e) => {
                             handleOptionValue(e, true);
                         }}/>

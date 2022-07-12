@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import ProfilePicture from "./functional-components/ProfilePicture"
 import Popup from "reactjs-popup";
 
-const BASE_URL = "http://10.61.42.160:8080";
+const BASE_URL = "http://10.61.54.168:8080";
 
 class Navbar extends React.Component {
   constructor() {

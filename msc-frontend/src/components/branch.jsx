@@ -2,7 +2,7 @@ handleBranchingSelection() {
 
 	let formItemsId = [];
     
-    this.props.formItems.map((item) => formItemsId.push(item.id));
+  this.props.formItems.map((item) => formItemsId.push(item.id));
 	this.branchingOptions = [];
 	let tempBranch = [];
 

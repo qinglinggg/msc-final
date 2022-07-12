@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import imgWoman from "../images/woman.jpg";
 import axios from "axios";
 
-const BASE_URL = "http://10.61.42.160:8080";
+const BASE_URL = "http://10.61.54.168:8080";
 class UploadImage extends React.Component {
   constructor() {
     super();
@@ -43,7 +43,7 @@ class UploadImage extends React.Component {
       currentForm.backgroundLink = this.state.selectedImage;
       axios({
         method: "put",
-        url: "http://10.61.42.160:8080/api/v1/forms/" + currentForm.formId,
+        url: "http://10.61.54.168:8080/api/v1/forms/" + currentForm.formId,
         data: currentForm
       }).then(() => {
         this.setState({ isImageUploaded: true });
@@ -104,14 +104,14 @@ class UploadImage extends React.Component {
       formData.append("file", file);
       console.log("formData", formData);
       axios({
-        url: "http://10.61.42.160:8080/api/v1/upload",
+        url: "http://10.61.54.168:8080/api/v1/upload",
         method: "POST",
         data: formData,
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       }).then((res) => {
-          this.setState({selectedImage : "http://10.61.42.160:8080/api/v1/files/" + res.data.id});
+          this.setState({selectedImage : "http://10.61.54.168:8080/api/v1/files/" + res.data.id});
         });
       // animation
       const dropArea = document.querySelector(
@@ -142,7 +142,7 @@ class UploadImage extends React.Component {
       currentForm.backgroundLink = ""
       axios({
         method: "put",
-        url: "http://10.61.42.160:8080/api/v1/forms/" + currentForm.formId,
+        url: "http://10.61.54.168:8080/api/v1/forms/" + currentForm.formId,
         data: currentForm
       }).then(() => {
         console.log("Deleted successfully!")
