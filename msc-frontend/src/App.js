@@ -17,7 +17,6 @@ import Respondent from "./components/Respondent";
 import LandingPage from "./components/LandingPage";
 import UpdateProfile from "./components/functional-components/UpdateProfile"
 import NotFound from "./components/NotFound";
-import DateTimeService from "./components/functional-components/services/DateTimeService";
 
 const BASE_URL = "http://10.61.54.168:8080";
 const APP_URL = "http://10.61.54.168:3001";
@@ -56,9 +55,12 @@ class App extends React.Component {
       method: "get",
       url: `${BASE_URL}/api/v1/user-profiles/get-session/${loggedIn}`
     }).then((res) => {
-      if(!res.data) return;
+      if(!res.data) {
+        this.setState({ loggedInUser : "" });
+        return;
+      }
       let currentKey = res.data["bearerToken"];
-      let ownedKey = JSON.parse(sessionStorage.getItem("bearer_token"));
+      let ownedKey = JSON.parse(localStorage.getItem("bearer_token"));
       if(currentKey == ownedKey) {
         this.setState({ loggedInUser : res.data["userId"] });
       } else {
@@ -73,7 +75,7 @@ class App extends React.Component {
 
   handleLogout() {
     localStorage.clear();
-    sessionStorage.clear();
+    // sessionStorage.clear();
     this.setState({ loggedInUser: "" });
     if(window.location.pathname != '/'){
       window.location = '/';
@@ -81,20 +83,19 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    console.log("app.js");
     setInterval(() => {
       let loggedIn = localStorage.getItem("loggedInUser");
+      console.log("loggedIn value: ", loggedIn);
+      console.log("user state login", this.state.loggedInUser);
       if (loggedIn && loggedIn != "") {
         loggedIn = JSON.parse(loggedIn);
         this.checkLoggedInUser(loggedIn);
       } else {
-        let currentToken = sessionStorage.getItem("bearer_token");
-        if(this.state.loggedInUser != "" || !this.state.loggedInUser) {
-          this.setState({ loggedInUser : "" });
-          localStorage.setItem("loggedInUser", "");
-          if(window.location.pathname != "/") window.location = "/";
-        }
-        if (currentToken) sessionStorage.removeItem("bearer_token");
-        return;
+        let currentToken = localStorage.getItem("bearer_token");
+        console.log("test token", currentToken);
+        if(!this.state.loggedInUser) this.setState({ loggedInUser : "" });
+        if(!currentToken && window.location.pathname != "/") window.location = "/";
       }
     }, 1000);
     let body = document.getElementById("body");
@@ -212,7 +213,7 @@ class App extends React.Component {
       headers: { "Content-Type" : "application/json" }
     }).then((res) => {
       let currentLogin = res.data["bearerToken"];
-      sessionStorage.setItem("bearer_token", JSON.stringify(currentLogin));
+      localStorage.setItem("bearer_token", JSON.stringify(currentLogin));
       localStorage.setItem("loggedInUser", JSON.stringify(res.data["userId"]));
     });
   }

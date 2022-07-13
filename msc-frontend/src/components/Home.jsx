@@ -295,7 +295,7 @@ class Home extends React.Component {
       <React.Fragment>
         {formsData ? formsData.map((data) => (
           <PageItems
-            key={data.formId} 
+            key={data.formId}
             data={data}
             handleFormUpdate={this.handleFormUpdate}
             currentPage={1}

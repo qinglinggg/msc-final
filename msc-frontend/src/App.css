@@ -1050,7 +1050,7 @@ body {
   padding-left: 40%;
   width: fit-content;
   height: fit-content;
-  color: rgb(224, 213, 213);
+  color: gray;
   font-size: 20px;
   display: flex;
   cursor: pointer;
@@ -1060,7 +1060,7 @@ body {
   width: fit-content;
   height: 100%;
   display: flex;
-  color: rgb(209, 199, 199);
+  color: gray;
   padding: 0px 7px 0px 7px;
   font-size: 15px;
   font-family: var(--font-roboto);

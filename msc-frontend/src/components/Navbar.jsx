@@ -46,7 +46,7 @@ class Navbar extends React.Component {
     return (
       <nav className="navbar" id="navbar">
         <Link to="/" id="app-title">
-          MySurveyCompanion - Beta Testing
+          MySurveyCompanion
         </Link>
         <Popup
           trigger={(open) => 

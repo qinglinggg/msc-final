@@ -32,19 +32,26 @@ function Dashboard(props) {
   const [pageHeight, setPageHeight] = useState(0);
 
   useEffect(() => {
-    let versionNo = JSON.parse(localStorage.getItem("selectedForm")).versionNo;
-    for(let i=1; i<=versionNo; i++){
-      axios({
-        method: "get",
-        url: `${BASE_URL}/api/v1/forms/get-resp/${formId}/${i}`,
-      }).then((res) => {
-        console.log("i:", i);
-        console.log("res.data,", res.data);
-        if(i == versionNo && res.data.length > 0){
-          setHasResponse(true);
-        }
-      });
-    }
+    axios({
+      method: "get",
+      url: `${BASE_URL}/api/v1/forms/${formId}`
+    }).then((res) => {
+      if(!res.data) return;
+      localStorage.setItem("selectedForm", JSON.stringify(res.data));
+      let versionNo = JSON.parse(localStorage.getItem("selectedForm")).versionNo;
+      for(let i=1; i<=versionNo; i++){
+        axios({
+          method: "get",
+          url: `${BASE_URL}/api/v1/forms/get-resp/${formId}/${i}`,
+        }).then((res) => {
+          console.log("i:", i);
+          console.log("res.data,", res.data);
+          if(i == versionNo && res.data.length > 0){
+            setHasResponse(true);
+          }
+        });
+      }
+    });
     let lastEditedInit = {
       modifyDate: 0,
       text: ""
