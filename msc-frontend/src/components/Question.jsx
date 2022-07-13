@@ -342,33 +342,29 @@ function Question(props) {
   };
 
   const handleUpdateQuestionNav = async (navIdx) => {
-    if(navIdx <= 0) return;
-    let currentForm = props.questionData;
-    let selectorIdx = currentForm.itemNumber;
-    let determiner = -1;
-    if(selectorIdx > navIdx) determiner = props.idx - 1;
-    else if(selectorIdx < navIdx) determiner = props.idx + 1;
-    if(determiner < 0) return;
-    else if(determiner >= props.formItems.length) return;
-    currentForm["itemNumber"] = props.formItems[determiner].itemNumber;
+    if(navIdx < 0) return;
+    else if(navIdx >= props.formItems.length) return;
+    let currentForm = {...props.questionData};
+    console.log("ini test idx, navidx", props.idx, navIdx);
+    let nextItem = props.formItems[navIdx].itemNumber;
+    currentForm["itemNumber"] = nextItem;
     await axios({
       method: "get",
-      url: `${BASE_URL}/api/v1/forms/get-a-form-item/${props.formId}/${navIdx}`,
+      url: `${BASE_URL}/api/v1/forms/get-a-form-item/${props.formId}/${nextItem}`,
       headers: { "Content-Type": "application/json" }
     }).then(async (res) => {
       let tempItem = res.data;
-      tempItem["itemNumber"] = selectorIdx;
-      let tempItemId = props.formItems[determiner].id;
-      console.log("Check", tempItemId);
+      let toBeSwitched = props.questionData.itemNumber;
+      tempItem["itemNumber"] = toBeSwitched;
+      resetBranchingSelection();
       await axios({
         method: "put",
-        url: `${BASE_URL}/api/v1/forms/update-form-items/${tempItemId}`,
+        url: `${BASE_URL}/api/v1/forms/update-form-items/${tempItem.id}`,
         data: tempItem,
         headers: { "Content-Type": "application/json" },
       });
-      resetNavSelection(tempItemId);
-    }).finally(() => {
-      axios({
+    }).finally(async () => {
+      await axios({
         method: "put",
         url: `${BASE_URL}/api/v1/forms/update-form-items/${currentForm.id}`,
         data: currentForm,
@@ -507,8 +503,8 @@ function Question(props) {
           <div className="question-nav">
             <span>Question No. {props.idx+1}</span>
             <div className="spacer">|</div>
-            <ion-icon name="arrow-back-circle-outline" onClick={() => handleUpdateQuestionNav(props.questionData.itemNumber - 1)} style={props.idx == 0 ? {opacity: 0.3}: {opacity: 1}}></ion-icon>
-            <ion-icon name="arrow-forward-circle-outline" onClick={() => handleUpdateQuestionNav(props.questionData.itemNumber + 1)} style={props.idx == props.formItems.length-1 ? {opacity: 0.3}: {opacity: 1}}></ion-icon>
+            <ion-icon name="arrow-back-circle-outline" onClick={() => handleUpdateQuestionNav(props.idx - 1)} style={props.idx == 0 ? {opacity: 0.3}: {opacity: 1}}></ion-icon>
+            <ion-icon name="arrow-forward-circle-outline" onClick={() => handleUpdateQuestionNav(props.idx + 1)} style={props.idx == props.formItems.length-1 ? {opacity: 0.3}: {opacity: 1}}></ion-icon>
           </div>
           <div className="question-isOptional-container">
             <div className="question-isOptional-icon">

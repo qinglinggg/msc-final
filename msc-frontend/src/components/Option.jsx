@@ -43,12 +43,10 @@ function Option(props) {
     }, []);
 
     useEffect(() => {
-        if(!props.prevBranchSelection) return;
-        handleOptionValue(null, true, false);
-    }, [props.branchingState]);
+        handleOptionValue(null, true, true);
+    }, [props.branchingSelection]);
 
     useEffect(() => {
-        // if(!props.obj) return;
         let el = document.getElementById(props.optionId);
         if(!el) return;
         if(value != undefined && el.value != value) {
@@ -128,6 +126,13 @@ function Option(props) {
                 input = -1;
             }
             else if (props.branchingSelection.length > 0 && nextItem == -1) input = props.branchingSelection[0].value;
+            else if (props.branchingSelection.length > 0 && nextItem != -1) {
+                let validator = false;
+                props.formItems.map((item) => {
+                    if (item.itemNumber == nextItem) validator = true;
+                });
+                if(!validator) input = props.branchingSelection[0].value;
+            }
             else if (props.branchingSelection.length == 0) input = -1;
             console.log("Current input to update:", input);
         }
