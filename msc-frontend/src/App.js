@@ -83,17 +83,13 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    console.log("app.js");
     setInterval(() => {
       let loggedIn = localStorage.getItem("loggedInUser");
-      console.log("loggedIn value: ", loggedIn);
-      console.log("user state login", this.state.loggedInUser);
       if (loggedIn && loggedIn != "") {
         loggedIn = JSON.parse(loggedIn);
         this.checkLoggedInUser(loggedIn);
       } else {
         let currentToken = localStorage.getItem("bearer_token");
-        console.log("test token", currentToken);
         if(!this.state.loggedInUser) this.setState({ loggedInUser : "" });
         if(!currentToken && window.location.pathname != "/") window.location = "/";
       }
