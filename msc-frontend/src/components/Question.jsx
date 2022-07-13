@@ -345,7 +345,6 @@ function Question(props) {
     if(navIdx < 0) return;
     else if(navIdx >= props.formItems.length) return;
     let currentForm = {...props.questionData};
-    console.log("ini test idx, navidx", props.idx, navIdx);
     let nextItem = props.formItems[navIdx].itemNumber;
     currentForm["itemNumber"] = nextItem;
     await axios({

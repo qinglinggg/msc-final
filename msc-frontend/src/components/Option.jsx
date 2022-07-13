@@ -43,6 +43,7 @@ function Option(props) {
     }, []);
 
     useEffect(() => {
+        console.log("handling changes");
         handleOptionValue(null, true, true);
     }, [props.branchingSelection]);
 
@@ -134,7 +135,6 @@ function Option(props) {
                 if(!validator) input = props.branchingSelection[0].value;
             }
             else if (props.branchingSelection.length == 0) input = -1;
-            console.log("Current input to update:", input);
         }
         if(input == null) return;
         let tempObj = props.obj;
@@ -154,8 +154,6 @@ function Option(props) {
             url: `${BASE_URL}/api/v1/forms/update-answer-selection/${tempObj.id}`,
             data: tempObj,
             headers: { "Content-Type": "application/json" },
-        }).then(() => {
-            console.log("sudah terupdate, branchingState: ", props.branchingState, " nextItem: ", input);
         });
     };
 
