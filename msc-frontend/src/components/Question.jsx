@@ -208,6 +208,7 @@ function Question(props) {
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-a-form-item/${props.questionData.id}`,
     }).then((res) => {
+      console.log(res.data);
       setQuestionContent(questionContent => {
         let content = res.data.content;
         if(content != questionContent){
@@ -226,6 +227,7 @@ function Question(props) {
       });
       setBranchingState(branchingState => {
         let state = res.data.branchEnabled;
+        console.log("ini masuk brooo", state);
         let determiner = 0;
         if(branchingState == true) determiner = 1;
         else determiner = 0;
