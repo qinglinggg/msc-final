@@ -43,7 +43,6 @@ function Option(props) {
     }, []);
 
     useEffect(() => {
-        console.log("handling changes");
         handleOptionValue(null, true, true);
     }, [props.branchingSelection]);
 

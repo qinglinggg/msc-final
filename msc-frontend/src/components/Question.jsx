@@ -42,7 +42,6 @@ function Question(props) {
   ];
 
   useEffect(() => {
-    console.log("mounted new");
     if(props.questionData) {
       let questionContentTextarea = document.getElementById("question-input-" + props.questionData.id);
       if(questionContent) questionContentTextarea.value = questionContent;
@@ -54,7 +53,6 @@ function Question(props) {
     if (props.mode) {
       setQuestionContent(props.questionData.questionContent);
       setQuestionType(props.questionData.questionType);
-      console.log("questionData.branchEnabled", branchingState);
       if(props.questionData.branchEnabled == 0) setBranchingState(false);
       else setBranchingState(true);
       handleInterval();
@@ -111,14 +109,13 @@ function Question(props) {
   useEffect(() => {
     if(!props.questionData) return;
     let value = props.questionData;
-    console.log("branching check:", branchingState);
     if(branchingState == true) value.branchEnabled = 1;
     else value.branchEnabled = 0;
     axios({
       method: "post",
       url: `${BASE_URL}/api/v1/forms/toggle-branch/${props.questionData.id}`,
       data: value
-    }).then(() => console.log("Success update! ", value.branchEnabled));
+    })
   }, [branchingState]);
 
   useEffect(() => {
@@ -185,7 +182,6 @@ function Question(props) {
   const removeInterval = () => {
     setIntervalObj(intervalObj => {
       intervalObj.map((value) => {
-        console.log("Removing: ", value);
         clearInterval(value);
       });
       return [];
@@ -208,7 +204,6 @@ function Question(props) {
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-a-form-item/${props.questionData.id}`,
     }).then((res) => {
-      console.log(res.data);
       setQuestionContent(questionContent => {
         let content = res.data.content;
         if(content != questionContent){
@@ -227,7 +222,6 @@ function Question(props) {
       });
       setBranchingState(branchingState => {
         let state = res.data.branchEnabled;
-        console.log("ini masuk brooo", state);
         let determiner = 0;
         if(branchingState == true) determiner = 1;
         else determiner = 0;
@@ -248,7 +242,6 @@ function Question(props) {
   }
 
   const handleShowBranching = () => {
-    console.log("showBranching triggered...");
     setBranchingState(!branchingState);
   }
 
@@ -338,7 +331,6 @@ function Question(props) {
     }
     setQuestionContent((content) => {
       if(!event.target) return content;
-      console.log("content", event.target.value);
       return event.target.value;
     })
   };
@@ -373,7 +365,6 @@ function Question(props) {
       }).then((res) => {
         props.getFormItems();
         props.handleUpdateLastEdited();
-        console.log("Switched successfully!");
       });
     });
   }
@@ -429,7 +420,6 @@ function Question(props) {
   const handleUpdateQuestionIsRequired = (value) => {
     let currentForm = props.questionData;
     currentForm["isRequired"] = value;
-    console.log("updateQuestion ", currentForm);
     try {
       axios({
         method: "put",
