@@ -187,7 +187,6 @@ class App extends React.Component {
         else tempList = JSON.parse(tempList);
         tempList.push(response.data);
         localStorage.setItem("formLists", JSON.stringify(tempList));
-        this.handleUpdateCurrentPage("Dashboard");
         window.location = `/dashboard/formId/${response.data.formId}`;
       });
     } catch (error) {
@@ -350,7 +349,6 @@ class App extends React.Component {
                     handleUpdateCurrentPage={this.handleUpdateCurrentPage}
                     isAuthor={this.isAuthor}
                     updateLastEdited={this.updateLastEdited}
-
                   />
                 }
                 key={"dashboardPage"}

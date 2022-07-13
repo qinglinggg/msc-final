@@ -37,6 +37,8 @@ function Dashboard(props) {
       url: `${BASE_URL}/api/v1/forms/${formId}`
     }).then((res) => {
       if(!res.data) return;
+      props.isAuthor(formId);
+      props.handleUpdateCurrentPage(formId);
       localStorage.setItem("selectedForm", JSON.stringify(res.data));
       let versionNo = JSON.parse(localStorage.getItem("selectedForm")).versionNo;
       for(let i=1; i<=versionNo; i++){
@@ -57,8 +59,6 @@ function Dashboard(props) {
       text: ""
     }
     localStorage.setItem("lastEdited", JSON.stringify(lastEditedInit));
-    props.isAuthor(formId);
-    props.handleUpdateCurrentPage(formId);
     let body = document.getElementById("body");
     let menuBtn = document.getElementById("menu-icon");
     menuBtn.addEventListener("click", () => {
