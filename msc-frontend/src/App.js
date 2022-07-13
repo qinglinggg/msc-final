@@ -191,7 +191,6 @@ class App extends React.Component {
         else tempList = JSON.parse(tempList);
         tempList.push(response.data);
         localStorage.setItem("formLists", JSON.stringify(tempList));
-        localStorage.setItem("selectedForm", JSON.stringify(response.data));
         this.handleUpdateCurrentPage("Dashboard");
         window.location = `/dashboard/formId/${response.data.formId}`;
       });
