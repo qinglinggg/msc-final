@@ -11,7 +11,7 @@ pipeline {
         stage('Maven : Compile') {
             
             steps {
-                git branch: 'live-editing', url: 'https://github.com/qinglinggg/msc-final.git'
+                git branch: 'alternative-toggle', url: 'https://github.com/qinglinggg/msc-final.git'
                 // clean the target forder, so only the newer components + artifacts will be released.
                 sh "mvn -f ./msc-backend clean compile"
             }
