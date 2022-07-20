@@ -18,8 +18,8 @@ import LandingPage from "./components/LandingPage";
 import UpdateProfile from "./components/functional-components/UpdateProfile"
 import NotFound from "./components/NotFound";
 
-const BASE_URL = "http://10.61.54.168:8080";
-const APP_URL = "http://10.61.54.168:3001";
+const BASE_URL = "http://localhost:8080";
+const APP_URL = "http://localhost:3001";
 
 class App extends React.Component {
   constructor(props) {

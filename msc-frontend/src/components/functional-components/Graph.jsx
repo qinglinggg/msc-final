@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Chart from "chart.js/auto";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import autosize from "autosize";
 
 var charts = {};
 
@@ -87,7 +88,7 @@ class Graph extends React.Component {
     });
     let tempOpt = {
       responsive: true,
-      maintainAspectRatio: true,
+      maintainAspectRatio: false,
       scales: {
         x: {
           min: 0,
@@ -105,7 +106,6 @@ class Graph extends React.Component {
       plugins: {
         title: {
           display: true,
-          text: 'Persentase data - ' + totalCount + ' pilihan responden',
           position: 'bottom'
         },
         datalabels: {
@@ -140,6 +140,8 @@ class Graph extends React.Component {
         }
       },
       layout: {
+        innerWidth: 150,
+        innerHeight: autosize,
         padding: {
           left: 50,
           right: 0,
@@ -148,7 +150,10 @@ class Graph extends React.Component {
         },
       },
     };
-    if(this.props.type != "SA") delete tempOpt.scales;
+    if(this.props.type != "SA"){
+      delete tempOpt.scales;
+      delete tempOpt.plugins.tooltip;
+    }
     console.log(tempOpt);
     this.setState({optionData : tempOpt});
   }
@@ -226,6 +231,14 @@ class Graph extends React.Component {
   //     </div>
   //   )
   // }
+
+  canvas() {
+    return (
+      <React.Fragment>
+        <canvas id={"graph-" + this.props.count} className="graph-chart"></canvas>
+      </React.Fragment>
+    )
+  }
 
   render() {
     return (

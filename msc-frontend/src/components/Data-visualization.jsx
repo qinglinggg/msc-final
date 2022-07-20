@@ -1,4 +1,5 @@
 import React, { Component, useEffect, useRef, useState } from "react";
+import ReactDOMServer from 'react-dom/server';
 import { Link, useParams } from "react-router-dom";
 import iconMenubarGrey from "./images/menubarGrey.png";
 import iconVisibility from "./images/visibility.png";
@@ -9,19 +10,22 @@ import Summary from "./Summary.jsx";
 import Responses from "./Responses";
 import ReactToPrint from "react-to-print";
 import Loading from "./Loading";
+import html2pdf from "html2pdf.js";
+import { scryRenderedComponentsWithType } from "react-dom/test-utils";
 
-const BASE_URL = "http://10.61.54.168:8080";
+const BASE_URL = "http://localhost:8080";
 
 function DataVisualization(props) {
   const [openMenu, setOpenMenu] = useState(false);
   const [activePage, setActivePage] = useState(1);
-  const [selectedExport, setSelectionExport] = useState("pdf");
+  const [selectedExport, setSelectedExport] = useState("pdf");
   const [currentStep, setCurrentStep] = useState([]);
   const [inLoading, setInLoading] = useState(true);
   const [itemList, setItemList] = useState([]);
   const [countData, setCountData] = useState([]);
   const [answerList, setAnswerList] = useState([]);
   const [responses, setResponses] = useState([]);
+  const [temporarySum, setTemporarySum] = useState();
 
   const [selectedVersion, setSelectedVersion] = useState(JSON.parse(localStorage.getItem("selectedForm")).versionNo);
   const [changeVersionPopup, setChangeVersionPopup] = useState(true);
@@ -29,6 +33,7 @@ function DataVisualization(props) {
   const [versionOptions, setVersionOptions] = useState([]);
 
   let componentRef = useRef();
+  let renderCount = 0;
   const { formId } = useParams();
 
   const exportOptions = [
@@ -115,6 +120,10 @@ function DataVisualization(props) {
     });
   }
 
+  useEffect(() => {
+    setTemporarySum(displaySummaryPage());
+  }, [inLoading]);
+
   async function processResponses() {
     setInLoading(true);
     let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
@@ -184,6 +193,10 @@ function DataVisualization(props) {
   useEffect(() => {
     if (activePage == 1) processData();
     else if (activePage == 2) processResponses();
+    else if(activePage == 3) {
+      processData();
+      processResponses();
+    }
   }, [activePage, selectedVersion]);
 
   useEffect(() => {
@@ -200,18 +213,19 @@ function DataVisualization(props) {
   }
 
   const handleExportSelection = (data) => {
-    setSelectionExport(data.value);
+    setSelectedExport(data.value);
   }
 
   const displaySummaryPage = () => {
+    renderCount = renderCount + 1;
     return (
       <React.Fragment>
         {inLoading ? (<Loading text="Memuat data ringkasan..."/>) : (
         <Summary
-          ref={componentRef}
           data={itemList}
           answerList={answerList}
           countData={countData}
+          renderCount={renderCount}
         />
         )}
       </React.Fragment>
@@ -228,11 +242,31 @@ function DataVisualization(props) {
     );
   }
 
+  const generateDocHeader = () => {
+    let currentForm = localStorage.getItem("selectedForm");
+    if(!currentForm) return;
+    currentForm = JSON.parse(currentForm);
+    return (
+      <React.Fragment>
+        <div className="title">Form Results on</div>
+        <div className="h1">{currentForm.title}</div>
+        <div className="h2">{currentForm.description}</div>
+        <div className="doc-separator"/>
+      </React.Fragment>
+    )
+  }
+
+  const displayExportToCSV = () => {
+    return (
+      <React.Fragment>
+        <div className="page-title">Export to CSV</div>
+        <button id="export-save-box" onClick={() => {generateCsv()}}>Download CSV</button>
+      </React.Fragment>
+    )
+  }
+
   const displayExportPage = () => {
-    let button;
-    if (selectedExport == "pdf") {
-      button = displayExportToPdf();
-    }
+    let container = document.getElementById("export-selection-container");
     return (
       <React.Fragment>
         <div id="export-container">
@@ -240,36 +274,167 @@ function DataVisualization(props) {
             <div id="export-selection-text">Export your results in:</div>
             <div id="export-selection-dropdown">
               <Select
-                value={exportOptions.value}
+                value={exportOptions.map(option => option.value == selectedExport ? option : null)}
                 options={exportOptions}
-                defaultValue={exportOptions[0]}
                 id="exportSelection"
                 onChange={(data) => handleExportSelection(data)}
               />
             </div>
           </div>
-          {button}
+          <div style={{"width": container ? (container.clientWidth + "px") : "450px", "border-bottom": "2px solid gray", "margin-bottom": "15px"}}/>
+          {selectedExport == "pdf" ? displayExportToPdf() : null}
+          {selectedExport == "csv" ? displayExportToCSV() : null}
         </div>
       </React.Fragment>
     );
   }
 
+  const copyCanvas = (oldCanvas) => {
+      let newCanvas = document.createElement("canvas");
+      let context = newCanvas.getContext("2d");
+      newCanvas.width = oldCanvas.width;
+      newCanvas.height = oldCanvas.height;
+      context.drawImage(oldCanvas, 0, 0);
+      return newCanvas;
+  }
+
+  String.prototype.removeEnd = function() {
+    let index = this.length-1;
+    return this.substring(0, index);
+  }
+
+  const generateCsv = () => {
+    let csvContent = "data:text/csv;charset=utf-8,";
+    let selectedForm = localStorage.getItem("selectedForm");
+    if(selectedForm) selectedForm = JSON.parse(selectedForm);
+    let str = "";
+    itemList.map((item, idx) => {
+      str += item.content;
+      if(idx < itemList.length - 1) str += ",";
+    });
+    str += "\n";
+    let tempItems = [];
+    let strArray = [];
+    axios({
+      method: "get",
+      url: `${BASE_URL}/api/v1/forms/get-form-items/${selectedForm.formId}/${selectedVersion}`
+    }).then((res) => {
+      if(res.data) res.data.map(data => tempItems.push(data.id));
+    }).finally(() => {
+      responses.map((resp, outerIdx) => {
+        strArray.push([]);
+        // tempItems
+        tempItems.map((data, innerIdx) => {
+          let tempSelections = [];
+          // answer Selection
+          axios({
+            method: "get",
+            url: `${BASE_URL}/api/v1/forms/get-answer-selection/${data}`,
+          }).then((res2) => {
+            if(res2.data) res2.data.map(data2 => {
+              tempSelections.push(data2.id);
+            });
+          }).finally(() => {
+            // get responses by id
+            let tempPicks = {}
+            tempPicks.index = innerIdx;
+            tempPicks.value = [];
+            tempSelections.map((selection, selIdx) => {
+              axios({
+                method: "get",
+                url: `${BASE_URL}/api/v1/forms/get-responses-by-id/${resp}/`
+              }).then((res) => {
+                if(!res.data) return;
+                let keys = Object.keys(res.data);
+                keys.forEach((key) => {
+                  if(key == selection) {
+                    tempPicks.value.push(res.data[key].answerSelectionValue);
+                    return;
+                  }
+                });
+                if(selIdx == tempSelections.length-1) strArray[outerIdx].push(tempPicks);
+              }).finally(() => {
+                if(outerIdx == responses.length-1 && innerIdx == tempItems.length-1 && selIdx == tempSelections.length-1){
+                  setTimeout(() => {
+                    console.log("final results:", strArray);
+                    strArray.map(obj => obj.sort((a, b) => {return a.index - b.index}));
+                    str += strArray.map(e => e.map(e1 => e1.value.join(";")).join(',')).join('\n');
+                    console.log("To string joins:", str);
+                    csvContent += str;
+                    let encodedURI = encodeURI(csvContent);
+                    window.open(encodedURI);
+                  }, 3000);
+                }
+              });
+            });
+            // get responses by id
+          });
+          // answer Selection
+        });
+        // tempItems
+      });
+    });
+  }
+
+  const generatePdf = () => {
+    let worker = html2pdf();
+    let currentForm = localStorage.getItem("selectedForm");
+    if (currentForm) currentForm = JSON.parse(currentForm);
+    let elementToPrint = document.createElement('div');
+    elementToPrint.setAttribute("class", "doc-to-print");
+    elementToPrint.innerHTML = `
+      <div id="doc-header">
+        <div className="title" style="font-size: 20px;">Form Results on</div>
+        <div className="h1" style="font-size: 40px; font-weight: 500;">${currentForm.title}</div>
+        <div className="h2" style="font-weight: 300; font-size: 20px; font-style: italic;">${currentForm.description}</div>
+        <div className="doc-separator" style="height: 20px;width: 100%;border-bottom: 2px dotted black;"/>
+      </div>
+    `;
+    let structure = document.getElementById("preview");
+    let resultContainer = structure.querySelectorAll('.result-container');
+    resultContainer.forEach((item, idx) => {
+      let field = item.querySelector(".question-field");
+      let section = item.querySelector(".sub-graph");
+      let graph = document.getElementById("graph-"+(idx+1));
+      // elementToPrint.appendChild(copyCanvas(graph));
+      
+      let graph_url = graph.toDataURL("image/png");
+      elementToPrint.innerHTML += `
+      <div class="result-container" style="width: 80%;height: fit-content; padding: 15px; border: .5px solid gray; margin: 15px; border-radius: 15px; align-self: center">
+        <div class="question-field" style="width: 100%;font-size: 20px;color: black;">
+          ${field.innerHTML}
+        </div>
+        <div class="graph-section" style="width: 100%;height: fit-content;font-size: 15px;color: black;display: flex;flex-direction: row; align-items: center; justify-content: center;">
+          <img src="${graph_url}" style="max-width: 50%; height: auto;"></img>
+          <div class="sub-graph" style="width: 50%; display: flex; align-items: center; justify-content: center; color: black;">${section.innerHTML}</div>
+        </div>
+      </div>
+      `;
+    });
+    worker.from(elementToPrint).toPdf().set({
+      margin: [0, 0, 0, 0],
+      filename: `[Form Results] - ${currentForm.title}.pdf`,
+      pageBreak: { mode: 'css'},
+      jsPDF: { orientation: 'portrait', format: 'a4'}
+    }).save();
+  }
+
   const displayExportToPdf = () => {
     return (
       <React.Fragment>
-        <div className="preview-box">
-          <div className="preview" ref={ref => componentRef = ref} >
-            <Summary formItems_data={props.formItems_data}  />
+        <div id="preview-box">
+          <div id="preview">
+            <div id="doc-header">
+              {generateDocHeader()}
+            </div>
+            {temporarySum}
           </div>
         </div>
-        <ReactToPrint
-          content={() => componentRef}
-          trigger={() => (
-            <div id="export-save-box">
-              <div id="export-save-button">SAVE</div>
-            </div>
-          )}
-        />
+        <div id="export-save-box">
+          <div id="export-save-button" onClick={() => {
+            generatePdf();
+          }}>Download Results</div>
+        </div>
       </React.Fragment>
     );
   }
@@ -277,7 +442,7 @@ function DataVisualization(props) {
   const displayDataVisualization = () => {
     let loadPage = null;
     if (activePage == 1) {
-      loadPage = displaySummaryPage();
+      loadPage = temporarySum;
     } else if (activePage == 2) {
       loadPage = displayResponsePage();
     } else if (activePage == 3) {

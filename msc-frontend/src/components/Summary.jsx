@@ -1,20 +1,15 @@
 import React, { Component } from "react";
 import Graph from "./functional-components/Graph";
 
-const Summary = React.forwardRef((props, ref) => {
+const Summary = (props) => {
   let counter = 0;
   console.log(props);
   return (
     <React.Fragment>
       {props.data ? props.data.map((item, i) => {
-        // console.log("item: ");
-        // console.log(item);
-        // console.log("i: " + i);
-        // console.log("props.answerList[" + i + "] passed");
-        // console.log(props.answerList[i]);
         counter += 1;
         return (
-          <div className="result-container" key={"summary-" + i}>
+          <div className="result-container" key={"summary-" + props.renderCount + "-" + i}>
             <div className="question-field">
               {counter}. {item.content}
             </div>
@@ -27,6 +22,6 @@ const Summary = React.forwardRef((props, ref) => {
       ) : null}
     </React.Fragment>
   );
-})
+}
 
 export default Summary;
