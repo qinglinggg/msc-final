@@ -46,8 +46,6 @@ function Dashboard(props) {
           method: "get",
           url: `${BASE_URL}/api/v1/forms/get-resp/${formId}/${i}`,
         }).then((res) => {
-          console.log("i:", i);
-          console.log("res.data,", res.data);
           if(i == versionNo && res.data.length > 0){
             setHasResponse(true);
           }
@@ -211,7 +209,6 @@ function Dashboard(props) {
     let updateArray = [];
     for(let i=0; i<formItems.length; i++) updateArray.push(false);
     setUpdated(updateArray);
-    console.log("formItems", formItems);
   }, [formItems]);
 
   useEffect(() => {

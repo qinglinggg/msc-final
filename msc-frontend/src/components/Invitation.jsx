@@ -24,6 +24,7 @@ function Invitation(props) {
   const [tagsElement, setTagsElement] = useState([]);
   const [clipboardState, setClipboardState] = useState(false);
   const [currentStep, setCurrentStep] = useState([]);
+  const [toggleShareMessage, setToggleShareMessage] = useState(false);
   const [shareMessage, setShareMessage] = useState("");
   const [openedShareMessage, setOpenedShareMessage] = useState(false);
 
@@ -72,6 +73,7 @@ function Invitation(props) {
     getTargetedUserList();
     getTeamMember();
     setOpenedShareMessage(false);
+    setToggleShareMessage(false);
     setShareMessage(`Halo teman-teman,\nBolehkah meminta waktunya sebentar untuk mengisi survey berikut?\nLink Form: ${formUrl}\nTerima kasih atas bantuannya.`);
   }, []);
 
@@ -116,7 +118,6 @@ function Invitation(props) {
         method: "get",
         url: `${BASE_URL}/api/v1/forms/get-targeted-user-list/${formId}`,
       }).then((res) => {
-        console.log(res);
         if(res.data){
           userInvitedList = res.data;
           // console.log("---- userInvitedList, inside res.data:");
@@ -150,8 +151,6 @@ function Invitation(props) {
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-form-authors/${formId}`
     }).then((res) => {
-      console.log("get team member");
-      console.log(res.data);
       if(res.data) setTeamMember(res.data);
     }).catch((error) => console.log(error));
   }
@@ -169,9 +168,9 @@ function Invitation(props) {
     if(!openedShareMessage) navigator.clipboard.writeText(`${formUrl}`);
     else {
       navigator.clipboard.writeText(shareMessage);
+      setOpenedShareMessage(false)
     }
     setTimeout(() => setClipboardState(false), 3000);
-    setTimeout(() => setOpenedShareMessage(false), 5000);
   }, [clipboardState])
 
   const displayClipboard = () => {
@@ -215,7 +214,7 @@ function Invitation(props) {
                 </div>
               </div>
               <div id="invitation-share-publicly-innerbox-iconcontainer">
-                <div className="share-to-btn" onClick={() => setOpenedShareMessage(true)}>
+                <div className="share-to-btn" onClick={() => setToggleShareMessage(!toggleShareMessage)}>
                   <span>Share to:</span>
                   <img
                     className="invitation-share-publicly-innerbox-icon"
@@ -234,16 +233,16 @@ function Invitation(props) {
                   />
                 </div>
               </div>
-              {openedShareMessage ? (
+              {toggleShareMessage ? (
                 <div className="shareMessage">
                   <span>Format Message:</span>
                   <AutoHeightTextarea 
                   id="invitation-share-publicly-innerbox-textarea"
                   value={shareMessage}
                   onChange={(e) => handleShareMessage(e)}
-                  style={{height: "80px"}}
                   onClick={(e) => {
                     if(e.target) e.target.select();
+                    setOpenedShareMessage(true);
                     setClipboardState(true);
                   }}/>
                 </div>) : null}

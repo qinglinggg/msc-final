@@ -292,7 +292,6 @@ class App extends React.Component {
         console.log("feedbackMessage" , feedbackMessage.length);
         if(feedbackMessage.length == 0){
           axios.delete(`${BASE_URL}/api/v1/feedback/${feedbackId}`).then((res) => console.log("testt", res.data)).catch((error) => console.log(error));
-          console.log("deleted");
         } 
       })
     }
@@ -305,8 +304,6 @@ class App extends React.Component {
         url: `${BASE_URL}/api/v1/forms/force-delete-form-respondent/${formId}`,
         data: loggedInUser,
         headers: { "Content-Type" : "text/plain" }
-      }).then(() => {
-        console.log("force delete formrespondentid");
       })
     }
     localStorage.removeItem("navigator");

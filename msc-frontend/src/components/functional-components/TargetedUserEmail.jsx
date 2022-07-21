@@ -40,7 +40,6 @@ class TargetedUserEmail extends React.Component {
   handleRenderTag() {
     let tags = this.props.tags;
     let newTagElement = [];
-    console.log("Tag(s) : " + tags);
     // setiap ada perubahan, state tagsElement selalu dikosongkan lalu dipush ulang mengikuti updatean dari state tags
     this.props.setTagsElement([]);
 

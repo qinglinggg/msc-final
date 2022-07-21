@@ -49,11 +49,11 @@ function Option(props) {
     useEffect(() => {
         let el = document.getElementById(props.optionId);
         if(!el) return;
+        autoResizeContent(el);
         if(value != undefined && el.value != value) {
             if(value != ("Option " + (props.idx+1))) {
                 el.value = value;
             }
-            autoResizeContent(el);
         }
     }, [value]);
 
@@ -67,8 +67,7 @@ function Option(props) {
     }
 
     const autoResizeContent = (el) => {
-        el.style.height = "15px";
-        el.style.height = (el.scrollHeight)+"px";
+        el.style.minHeight = (el.scrollHeight)+"px";
     }
     
     const removeInterval = () => {
@@ -145,6 +144,8 @@ function Option(props) {
         if(!nextToggle){
             setValue(input);
             props.handleUpdateLastEdited();
+            let elem = document.getElementById(props.optionId);
+            autoResizeContent(elem);
         } else if(!resetTrigger) {
             setNextItem(input);
         }
@@ -188,8 +189,11 @@ function Option(props) {
                     id={props.optionId}
                     type="text"
                     placeholder={props.obj.label}
+                    rows="14"
+                    cols="5"
                     wrap="soft"
                     onChange={(e) => {
+                        autoResizeContent(document.getElementById(props.optionId));
                         handleOptionValue(e, false, false);
                     }}
                     />

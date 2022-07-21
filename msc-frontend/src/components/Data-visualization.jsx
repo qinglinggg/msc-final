@@ -132,7 +132,6 @@ function DataVisualization(props) {
       method: "get",
       url: `${BASE_URL}/api/v1/forms/get-form-items/${selectedForm.formId}/${selectedVersion}`
     }).then(async (res) => {
-      console.log(res.data);
       listOfFormItems = res.data;
     }).finally(() => {
       setItemList(listOfFormItems);
