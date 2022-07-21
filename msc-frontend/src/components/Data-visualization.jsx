@@ -39,7 +39,6 @@ function DataVisualization(props) {
   const exportOptions = [
     { value: "pdf", label: ".pdf" },
     { value: "csv", label: ".csv" },
-    { value: "xls", label: ".xls" },
   ];
 
   function activateLink(item) {
@@ -394,7 +393,7 @@ function DataVisualization(props) {
         graph.style.width = "500px";
         graph.style.maxHeight = "300px";
         graph.style.height = "300px";
-        graph_url = graph.toDataURL("image/png", 1);
+        graph_url = graph.toDataURL("image/png", 100);
       }
       elementToPrint.innerHTML += `
       <div class="result-container" style="width: 80%;height: fit-content; padding: 15px 15px 0 15px; border: .5px solid gray; margin: 15px; border-radius: 15px; align-self: center">
