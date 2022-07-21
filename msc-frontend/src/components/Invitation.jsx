@@ -303,7 +303,6 @@ function Invitation(props) {
   }
 
   const handleDeleteTargetedUserEmail = (obj) => {
-    console.log("delete on process");
     let deletedUser = {
       formRespondentId: obj.formRespondentId,
       formId: obj.formId,
@@ -311,7 +310,6 @@ function Invitation(props) {
       submitDate: obj.submitDate,
       isTargeted: obj.isTargeted,
     }
-    console.log(deletedUser);
     try {
       axios({
         method: "delete",
@@ -319,7 +317,6 @@ function Invitation(props) {
         data: deletedUser,
         headers: { "Content-Type": "application/json" },
       }).then((res) => {
-      console.log(userInvited);
         let tempInvitedList = userInvited.filter((u) => {
           return u.email != obj.email;
         })
@@ -423,7 +420,6 @@ function Invitation(props) {
 
   const handleSubmitCollaborators = () => {
     let formId = JSON.parse(localStorage.getItem("selectedForm")).formId;
-    console.log(tags);
     tags.map((userEmail) => {
       axios({
         method: "post",
@@ -431,7 +427,6 @@ function Invitation(props) {
         url: `${BASE_URL}/api/v1/forms/insert-author/${formId}`,
         headers: { "Content-Type": "text/plain" },
       }).then((res) => {
-        console.log(res);
         if(res.data){
           // add to collab list
           getTeamMember();

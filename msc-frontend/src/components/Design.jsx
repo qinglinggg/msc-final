@@ -84,8 +84,6 @@ function Design(props) {
   const handleColorChange = (data) => {
     let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
     selectedForm.backgroundColor = data.value;
-    console.log("selectedForm: ");
-    console.log(selectedForm);
     localStorage.setItem("selectedForm", JSON.stringify(selectedForm));
     /* backend : update selectedcolor */
     try {
@@ -95,7 +93,6 @@ function Design(props) {
         url: `${BASE_URL}/api/v1/forms/${formId}`,
         headers: {"Content-Type": "application/json"}
       }).then((res) => {
-        console.log(res.data);
         setSelectedColor(data.value);
         let selectedForm = JSON.parse(localStorage.getItem("selectedForm"));
         props.updateLastEdited(selectedForm);

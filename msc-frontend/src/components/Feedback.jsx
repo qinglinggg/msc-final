@@ -47,7 +47,6 @@ function Feedback(props) {
       let interval = setInterval(() => {
         axios.get(`${BASE_URL}/api/v1/feedback/by-form/${formId}`).then((res) => {
           feedbacks = res.data;
-          console.log("---", feedbacks);
           setIndex(feedbacks.length);
           if(feedbacks.length == 0) setRenderFlag(1);
         }).finally(() => { 

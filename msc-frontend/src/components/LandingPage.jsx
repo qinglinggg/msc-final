@@ -30,10 +30,8 @@ class LandingPage extends Component {
             data: user,
             url: `${BASE_URL}/api/v1/user-profiles/auth`
         }).then((res) => {
-            console.log(res);
             if(res.data) {
                 this.setState({loginData : res.data, isValidInput: true});
-                console.log(res.data);
             } else {
                 this.setState({isValidInput: false});
             }

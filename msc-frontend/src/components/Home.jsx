@@ -253,7 +253,6 @@ class Home extends React.Component {
       res = this.searchData(data);
       if(res.length == 0) nullValue = 1;
     } else if(this.state.selectedPage == 2){
-      console.log(data.length);
       if(data.length == 0) nullValue = 2;
       else {
         res = this.filterData(data);
@@ -332,7 +331,6 @@ class Home extends React.Component {
   handleSubmit(e) {
     let body = document.getElementById("body");
     e.preventDefault();
-    console.log(this.state);
     if (this.state.title == "" || this.state.description == "" || this.state.privacySetting == "") {
       this.setState({ isRequired: true }); 
     } else {
@@ -449,7 +447,6 @@ class Home extends React.Component {
               <br />
               <button onClick={(e) => {
                 this.handleSubmit(e);
-                console.log(this.state.title);
               }}>
                 Confirm
               </button>

@@ -345,10 +345,10 @@ function DataVisualization(props) {
               }).finally(() => {
                 if(outerIdx == responses.length-1 && innerIdx == tempItems.length-1 && selIdx == tempSelections.length-1){
                   setTimeout(() => {
-                    console.log("final results:", strArray);
+                    // console.log("final results:", strArray);
                     strArray.map(obj => obj.sort((a, b) => {return a.index - b.index}));
                     str += strArray.map(e => e.map(e1 => e1.value.join(";")).join(',')).join('\n');
-                    console.log("To string joins:", str);
+                    // console.log("To string joins:", str);
                     csvContent += str;
                     let encodedURI = encodeURI(csvContent);
                     window.open(encodedURI);

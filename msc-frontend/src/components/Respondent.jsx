@@ -44,7 +44,6 @@ function Respondent (props) {
             method: "get",
             url: `${BASE_URL}/api/v1/forms/${formId}`
         }).then((res) => {
-            console.log(res.data);
             setFormMetadata(res.data);
             localStorage.setItem("selectedForm", JSON.stringify(res.data));
         })
@@ -70,7 +69,6 @@ function Respondent (props) {
               let tempNav = [];
               res.data.map((data) => tempNav.push(-1));
               if(tempNav.length > 0) tempNav.push(-1);
-              console.log("check init navigator", tempNav);
               setNavigator(tempNav);
               localStorage.setItem("navigator", JSON.stringify(tempNav));
             }
@@ -92,7 +90,6 @@ function Respondent (props) {
           data: userId_data, 
         }).then((res) => {
           if(res.data && res.data.length > 0){
-            console.log("formres", res.data);
             setFormRespondentId(res.data.formRespondentId);
             localStorage.setItem("alreadySubmitted", JSON.stringify(res.data.submitDate));
           }
@@ -142,20 +139,15 @@ function Respondent (props) {
     if (loadData) {
       let selectedId = null;
       loadData = JSON.parse(loadData);
-      console.log("loadData");
-      console.log(loadData);
       if(loadData.length)
         formItems.map((data, idx) => {
           if(data.type != "CB" && !selectedId) {
             selectedId = loadData[idx]['formRespondentId'];
-            console.log("if(data.type != CB && !selectedId)")
-            console.log("selectedId: ", selectedId);
           } else {
             let currentResp = loadData[idx];
             if(currentResp && currentResp.length > 0) currentResp.map((resp) => {
               if(!selectedId) selectedId = resp['formRespondentId'];
             });
-            console.log("else, selectedId: ", selectedId);
           }
         });
       if(selectedId == formRespondentId) {
@@ -164,7 +156,6 @@ function Respondent (props) {
       }
     }
     if(!validator) {
-      console.log("!validator");
       loadData = [];
       formItems.map((fi) => {
         if (fi.type == "CB") loadData.push([]);
@@ -199,10 +190,8 @@ function Respondent (props) {
       }
     }
     if(feedbackId && openChat){
-      console.log("feedbackId masuk: " + feedbackId);
       if(feedbackMessages.length == 0){
         let interval = setInterval(() => {
-          console.log("interval is working...");
           axios({
             method: "put",
             url: `${BASE_URL}/api/v1/feedback/by-feedback/read/${feedbackId}`,
@@ -245,7 +234,6 @@ function Respondent (props) {
       let tempNav = [];
       formItems.map((data) => tempNav.push(-1));
       if(tempNav.length > 0) tempNav.push(-1);
-      console.log("check init navigator", tempNav);
       setNavigator(tempNav);
       localStorage.setItem("navigator", JSON.stringify(tempNav));
     }
@@ -529,7 +517,6 @@ function Respondent (props) {
     let current;
     if(index <= length){
       current = formItems[index-1];
-      console.log(formItems[index-1]);
     }
     return (
       <div className="preview-flex">
@@ -599,14 +586,7 @@ function Respondent (props) {
       answerSelectionValue: value,
     }
     responses[index-1] = formItemResponse;
-    console.log("responses ");
-    console.log(responses);
-    console.log("formResponse");
-    console.log(formResponse);
-    console.log("formItems.length");
-    console.log(formItems.length);
     if(formResponse && formResponse.length == formItems.length){
-      console.log("set item");
       localStorage.setItem("tempFormResponse", JSON.stringify(responses));
     }
     setFormResponse(responses);
@@ -796,10 +776,8 @@ function Respondent (props) {
   }
 
   const submitForm = async () => {
-    console.log("submitForm", formResponse);
     formResponse.map(async(response, resIdx) => {
       if(!Array.isArray(response)) {
-        console.log("masuk 1", response);
         try {
           await axios({
             method: "post",
@@ -811,8 +789,6 @@ function Respondent (props) {
         }
       } else {
         response.map(async (respItem, respIndex) => {
-          console.log("Submitting form item index: " + respIndex);
-          console.log("masuk 2", respItem);
           try {
             await axios({
               method: "post",
@@ -828,7 +804,6 @@ function Respondent (props) {
     });
     localStorage.setItem("isSubmitted", JSON.stringify("true"));
     let currentVersion = JSON.parse(localStorage.getItem("selectedForm")).versionNo;
-    console.log("currentVersion", currentVersion);
     axios({
       method: "put",
       url: `${BASE_URL}/api/v1/forms/submit-form/${formRespondentId}`,
@@ -848,7 +823,6 @@ function Respondent (props) {
       userId: userId,
       feedbackMessage: tempMessage,
     };
-    console.log(newMessage);
     try {
       axios({
         method: "post",

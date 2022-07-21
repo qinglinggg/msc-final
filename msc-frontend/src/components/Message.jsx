@@ -82,11 +82,9 @@ function Message(props) {
       message["date"] = current.date;
       message["time"] = current.time;
     });
-    console.log(listOfInsert);
     listOfInsert.map((insert) => {
       messages.splice(insert.index, 0, insert.date);
     })
-    console.log(messages);
     setCurrDateTime(tempDateTime);
     setFormMessages(messages);
   }

@@ -9,12 +9,10 @@ const calculateResponses = (countData) => {
 
 const Summary = (props) => {
   let counter = 0;
-  console.log(props);
   return (
     <React.Fragment>
       {props.data ? props.data.map((item, i) => {
         counter += 1;
-        console.log(props.countData[i]);
         return (
           <div className="result-container" key={"summary-" + props.renderCount + "-" + i}>
             <div className="question-field">

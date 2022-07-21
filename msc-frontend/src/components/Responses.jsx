@@ -10,9 +10,7 @@ function Responses(props) {
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
-    console.log(props.responses);
     if(props.responses && selectedResponse == ""){
-      console.log("masuk");
       setSelectedResponse(props.responses[0]);
     }
   }, []);
@@ -44,12 +42,10 @@ function Responses(props) {
     }).then((res) => {
       let tempAnswers = []
       if(res.data) {
-        console.log("res.data", res.data);
         let keys = Object.keys(res.data);
         keys.map((key) => {
           tempAnswers.push({answerSelectionId: key, value: res.data[key].answerSelectionValue});
         })
-        console.log("keys", keys);
         setAnswerList(tempAnswers);
       }
     });
