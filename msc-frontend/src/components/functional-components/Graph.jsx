@@ -19,6 +19,7 @@ class Graph extends React.Component {
     type : "bar",
     optionData : {}
   }
+
   colorCount = 1;
   r = [255, 183 ,76];
   g = [0, 121, 204];
@@ -71,6 +72,9 @@ class Graph extends React.Component {
     } catch(e) {
       console.log("Failed to destroy chart");
     }
+    let currentOpt = this.state.optionData;
+    console.log(canvas)
+    currentOpt.plugins.datalabels.font.size = canvas.canvas.clientWidth / 20;
     // config
     charts[count] = new Chart(canvas, {
       type: this.state.type,
@@ -111,9 +115,13 @@ class Graph extends React.Component {
         datalabels: {
           labels: {
             value: {
-              color: 'white',
+              color: 'black',
               textAlign: 'center'
-            }
+            },
+          },
+          font: {
+            weight: 300,
+            size: 10,
           },
           formatter: this.props.type != "SA" ? (
             function(value) {

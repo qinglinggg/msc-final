@@ -281,21 +281,12 @@ function DataVisualization(props) {
               />
             </div>
           </div>
-          <div style={{"width": container ? (container.clientWidth + "px") : "450px", "border-bottom": "2px solid gray", "margin-bottom": "15px"}}/>
+          <div style={{width: container ? (container.clientWidth + "px") : "450px", borderBottom: "2px solid gray", marginBottom: "15px"}}/>
           {selectedExport == "pdf" ? displayExportToPdf() : null}
           {selectedExport == "csv" ? displayExportToCSV() : null}
         </div>
       </React.Fragment>
     );
-  }
-
-  const copyCanvas = (oldCanvas) => {
-      let newCanvas = document.createElement("canvas");
-      let context = newCanvas.getContext("2d");
-      newCanvas.width = oldCanvas.width;
-      newCanvas.height = oldCanvas.height;
-      context.drawImage(oldCanvas, 0, 0);
-      return newCanvas;
   }
 
   String.prototype.removeEnd = function() {
@@ -397,31 +388,42 @@ function DataVisualization(props) {
       let section = item.querySelector(".sub-graph");
       let graph = document.getElementById("graph-"+(idx+1));
       // elementToPrint.appendChild(copyCanvas(graph));
-      
-      let graph_url = graph.toDataURL("image/png");
+      let graph_url = "";
+      if(graph) {
+        graph.style.maxWidth = "500px";
+        graph.style.width = "500px";
+        graph.style.maxHeight = "300px";
+        graph.style.height = "300px";
+        graph_url = graph.toDataURL("image/png", 1);
+      }
       elementToPrint.innerHTML += `
-      <div class="result-container" style="width: 80%;height: fit-content; padding: 15px; border: .5px solid gray; margin: 15px; border-radius: 15px; align-self: center">
+      <div class="result-container" style="width: 80%;height: fit-content; padding: 15px 15px 0 15px; border: .5px solid gray; margin: 15px; border-radius: 15px; align-self: center">
         <div class="question-field" style="width: 100%;font-size: 20px;color: black;">
           ${field.innerHTML}
         </div>
         <div class="graph-section" style="width: 100%;height: fit-content;font-size: 15px;color: black;display: flex;flex-direction: row; align-items: center; justify-content: center;">
-          <img src="${graph_url}" style="max-width: 50%; height: auto;"></img>
-          <div class="sub-graph" style="width: 50%; display: flex; align-items: center; justify-content: center; color: black;">${section.innerHTML}</div>
+          <img src=${graph_url} style="max-width: 50%; height: auto; width: 500px; display: flex; align-items: center; justify-content: center;"></img>
+          <div class="sub-graph" style="width: 50%; display: flex; align-items: center; justify-content: center; color: black;">${section ? section.innerHTML : "No responses yet."}</div>
         </div>
       </div>
       `;
+      graph.style.maxWidth = "50%";
+      graph.style.maxHeight = "150px";
     });
-    worker.from(elementToPrint).toPdf().set({
-      margin: [0, 0, 0, 0],
-      filename: `[Form Results] - ${currentForm.title}.pdf`,
-      pageBreak: { mode: 'css'},
-      jsPDF: { orientation: 'portrait', format: 'a4'}
-    }).save();
+    setTimeout(() => {
+      worker.from(elementToPrint).toPdf().set({
+        margin: [0, 0, 0, 0],
+        filename: `[Form Results] - ${currentForm.title}.pdf`,
+        pageBreak: { mode: 'css'},
+        jsPDF: { orientation: 'portrait', format: 'a4'}
+      }).save();
+    }, 2000);
   }
 
   const displayExportToPdf = () => {
     return (
       <React.Fragment>
+        <div className="page-title">Export to PDF</div>
         <div id="preview-box">
           <div id="preview">
             <div id="doc-header">
@@ -429,12 +431,11 @@ function DataVisualization(props) {
             </div>
             {temporarySum}
           </div>
+          <span>Format size: A4 (1.4:1)</span>
         </div>
-        <div id="export-save-box">
-          <div id="export-save-button" onClick={() => {
-            generatePdf();
-          }}>Download Results</div>
-        </div>
+        <button id="export-save-box" onClick={() => generatePdf()}>
+          Download PDF
+        </button>
       </React.Fragment>
     );
   }
