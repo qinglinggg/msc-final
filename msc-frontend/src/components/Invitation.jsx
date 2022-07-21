@@ -24,6 +24,8 @@ function Invitation(props) {
   const [tagsElement, setTagsElement] = useState([]);
   const [clipboardState, setClipboardState] = useState(false);
   const [currentStep, setCurrentStep] = useState([]);
+  const [shareMessage, setShareMessage] = useState("");
+  const [openedShareMessage, setOpenedShareMessage] = useState(false);
 
   const handleCurrentSelection = (item) => {
     let listSelection = document.querySelectorAll(".page-button");
@@ -69,6 +71,8 @@ function Invitation(props) {
     });
     getTargetedUserList();
     getTeamMember();
+    setOpenedShareMessage(false);
+    setShareMessage(`Halo teman-teman,\nBolehkah meminta waktunya sebentar untuk mengisi survey berikut?\nLink Form: ${formUrl}\nTerima kasih atas bantuannya.`);
   }, []);
 
   useEffect(() => {
@@ -162,9 +166,12 @@ function Invitation(props) {
 
   useEffect(() => {
     if(!clipboardState) return;
-    navigator.clipboard.writeText(`${formUrl}`);
-    console.log("clipboard copiedddd");
+    if(!openedShareMessage) navigator.clipboard.writeText(`${formUrl}`);
+    else {
+      navigator.clipboard.writeText(shareMessage);
+    }
     setTimeout(() => setClipboardState(false), 3000);
+    setTimeout(() => setOpenedShareMessage(false), 5000);
   }, [clipboardState])
 
   const displayClipboard = () => {
@@ -173,6 +180,13 @@ function Invitation(props) {
         Copied to clipboard.
       </div>
     );
+  }
+
+  const handleShareMessage = (e) => {
+    let value = "";
+    if(e.target) value = e.target.value;
+    else value = e.value;
+    setShareMessage(value);
   }
 
   const displaySharePage = () => {
@@ -201,22 +215,38 @@ function Invitation(props) {
                 </div>
               </div>
               <div id="invitation-share-publicly-innerbox-iconcontainer">
-                <img
-                  className="invitation-share-publicly-innerbox-icon"
-                  src={iconLINE}
-                  alt=""
-                />
-                <img
-                  className="invitation-share-publicly-innerbox-icon"
-                  src={iconTelegram}
-                  alt=""
-                />
-                <img
-                  className="invitation-share-publicly-innerbox-icon"
-                  src={iconWhatsApp}
-                  alt=""
-                />
+                <div className="share-to-btn" onClick={() => setOpenedShareMessage(true)}>
+                  <span>Share to:</span>
+                  <img
+                    className="invitation-share-publicly-innerbox-icon"
+                    src={iconLINE}
+                    alt=""
+                  />
+                  <img
+                    className="invitation-share-publicly-innerbox-icon"
+                    src={iconTelegram}
+                    alt=""
+                  />
+                  <img
+                    className="invitation-share-publicly-innerbox-icon"
+                    src={iconWhatsApp}
+                    alt=""
+                  />
+                </div>
               </div>
+              {openedShareMessage ? (
+                <div className="shareMessage">
+                  <span>Format Message:</span>
+                  <AutoHeightTextarea 
+                  id="invitation-share-publicly-innerbox-textarea"
+                  value={shareMessage}
+                  onChange={(e) => handleShareMessage(e)}
+                  style={{height: "80px"}}
+                  onClick={(e) => {
+                    if(e.target) e.target.select();
+                    setClipboardState(true);
+                  }}/>
+                </div>) : null}
             </div>
           </div>
           <div id="invitation-share-divider">

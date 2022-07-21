@@ -1427,6 +1427,7 @@ body {
   height: fit-content;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
 }
 
@@ -1447,6 +1448,26 @@ body {
   padding-bottom: 2.5%;
   display: flex;
   flex-direction: column;
+  align-items: center;
+}
+
+.share-to-btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid black;
+  padding: 10px 15px 10px 15px;
+  border-radius: 25px;
+}
+
+.share-to-btn span {
+  font-style: italic;
+  font-size: small;
+}
+
+.share-to-btn:hover {
+  cursor: pointer;
 }
 
 #invitation-share-publicly-innerbox-text {
@@ -1504,17 +1525,39 @@ body {
 }
 
 #invitation-share-publicly-innerbox-iconcontainer {
+  width: 80%;
   display: flex;
   flex-direction: row;
-  padding-left: 35px;
   margin-top: 10px;
+  align-self: flex-start;
 }
 
 .invitation-share-publicly-innerbox-icon {
   width: 30px;
   height: 30px;
   margin-left: 10px;
-  cursor: pointer;
+}
+
+.shareMessage {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin-top: 25px;
+}
+
+#invitation-share-publicly-innerbox-textarea {
+  border: var(--border-page);
+  border-radius: 5px;
+  width: 77%;
+  height: 25px;
+  align-self: center;
+  align-items: center;
+  margin-right: 70px;
+  padding: 5px;
+  margin-top: 20px;
 }
 
 #invitation-share-divider {
