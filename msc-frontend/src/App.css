@@ -1558,6 +1558,16 @@ body {
   margin-right: 70px;
   padding: 5px;
   margin-top: 20px;
+  animation: expand 2s forwards;
+}
+
+@keyframes expand {
+  0% {
+    height: 0px;
+  },
+  100% {
+    height: 80px;
+  }
 }
 
 #invitation-share-divider {
