@@ -421,8 +421,8 @@
             <!-- placeholder required for site:stage -->
             <distributionManagement>
                 <site>
-                    <id>10.61.54.168</id>
-                    <url>http://10.61.54.168</url>
+                    <id>localhost</id>
+                    <url>http://localhost</url>
                 </site>
             </distributionManagement>
         </profile>
