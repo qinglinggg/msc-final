@@ -4,4 +4,5 @@ ENV http_proxy http://u072467:Jsuryad3@kpproxygsit:8080
 RUN apt-get update && apt-get -y install docker.io
 RUN apt-get update && apt-get -y install sudo
 RUN apt-get update && apt-get -y install docker-compose
+RUN apt-get update && apt-get -y install maven
 USER jenkins
