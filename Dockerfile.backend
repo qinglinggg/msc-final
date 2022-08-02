@@ -2,5 +2,4 @@ FROM openjdk:11
 WORKDIR /app
 ARG APP_NAME
 COPY ./msc-backend/target/msc-backend.jar ./artifacts/msc-backend.jar
-COPY settings.xml /usr/share/maven/ref/
 CMD ["java", "-jar", "./artifacts/msc-backend.jar"]
