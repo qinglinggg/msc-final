@@ -1,7 +1,7 @@
 FROM node:16 AS build
 WORKDIR /app
 COPY ./msc-frontend/package.json .
-RUN npm config set proxy http://U072467:Jsuryad3@kpproxygsit:8080
+RUN npm config set proxy http://U072468:mercinnamon@kpproxygsit:8080
 RUN npm install --force
 COPY ./msc-frontend/ .
 RUN npm run build
