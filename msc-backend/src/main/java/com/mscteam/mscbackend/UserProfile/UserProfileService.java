@@ -55,12 +55,11 @@ public class UserProfileService {
             if(status != null && status == 0) {
                 String candidateId = userProfileDAO.userAuthentication(user);
                 if (candidateId != null) return candidateId;
-                String props = auth.getProps(user.getUserdomain(), "2.5.4.3");
+                String props = auth.getProps(user.getUserdomain(), "cn");
                 eaiResponse = mapper.readValue(props, EaiLoginResponse.class);
                 String fullname = eaiResponse.getOutputSchema().getValue().get(0);
                 if(fullname == null) return null;
-
-                props = auth.getProps(user.getUserdomain(), "1.2.840.113556.1.4.656");
+                props = auth.getProps(user.getUserdomain(), "userPrincipalName");
                 eaiResponse = mapper.readValue(props, EaiLoginResponse.class);
                 String email = eaiResponse.getOutputSchema().getValue().get(0);
                 if(email == null) return null;
