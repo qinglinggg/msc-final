@@ -4,7 +4,7 @@ import SearchField from "react-search-field";
 import Popup from "reactjs-popup";
 import axios from "axios";
 
-const APP_URL = "http://localhost:3001";
+const APP_URL = "http://10.61.42.160:3001";
 
 class Home extends React.Component {
   constructor(props) {
