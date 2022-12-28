@@ -43,7 +43,8 @@ public class UserProfileService {
     }
 
     public String userAuthentication(UserProfile user) {
-        String clientId = "CD9634C0A0212F5DE05400144FFA3B5D";
+        // CD9634C0A0212F5DE05400144FFA3B5D
+        String clientId = "EF503C543D897360E05400144FFA3B5D";
         RemoteEaiAuth auth = new RemoteEaiAuth(clientId);
         ObjectMapper mapper = new ObjectMapper();
         String response = null;

@@ -39,7 +39,8 @@ public class RemoteEaiAuth {
     }
 
     public String encodeTDes(UserAuth user) throws Exception{
-        byte[] secretKey = "AdiNIadp9ipKWKGI5838hdfa".getBytes();
+        // AdiNIadp9ipKWKGI5838hdfa
+        byte[] secretKey = "ADm4SrtV3C0m93EfzG6RI5In".getBytes();
         SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey, "TripleDES");
         Cipher desCipher = Cipher.getInstance("DESede/ECB/NoPadding");
         desCipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
